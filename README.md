@@ -13,6 +13,127 @@ A zero-dependency TypeScript library that normalizes LLM streaming responses —
 
 > A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
 
+## How it works
+
+Raw provider bytes enter through a **thin adapter**, get assembled into **typed events**, and leave through the same transform layer whether you stream live, replay fixtures, or proxy to a browser.
+
+```mermaid
+flowchart TB
+	subgraph PROVIDERS["LLM providers"]
+		direction LR
+		PC["OpenAI Chat"]
+		PA["Anthropic Messages"]
+		PO["OpenAI-compatible hosts"]
+		PR["OpenAI Responses"]
+	end
+
+	subgraph ADAPTERS["Adapters · parseChunk / parseResponse"]
+		direction LR
+		AC["openaiChatAdapter"]
+		AA["anthropicAdapter"]
+		AO["openaiCompatibleAdapter"]
+		AR["openaiResponsesAdapter"]
+	end
+
+	subgraph CORE["Core assembly · provider-agnostic"]
+		direction TB
+		STREAM(["ReadableStream / SSE"])
+		JSON(["JSON response body"])
+		PARSE["parseSSE · parsePartialJSON"]
+		RAW["RawChunk[]"]
+		ASM["EventAssembler"]
+		EVENTS(["StreamEvent stream"])
+		STREAM --> PARSE --> RAW --> ASM --> EVENTS
+		JSON --> RAW
+	end
+
+	subgraph TRANSFORMS["Transforms & helpers"]
+		direction LR
+		COL["collectStream"]
+		TAP["tapEvents"]
+		SSEOUT["toSSE"]
+		REPLAY["assembleFromFile"]
+	end
+
+	subgraph APPS["Your application"]
+		direction LR
+		UI["Chat UI"]
+		AGENT["Agents & tool routing"]
+		PROXY["Backend proxy"]
+		OBS["Logs & metrics"]
+	end
+
+	PC --> AC
+	PA --> AA
+	PO --> AO
+	PR --> AR
+	PARSE --> AC
+	PARSE --> AA
+	PARSE --> AO
+	PARSE --> AR
+	AC --> RAW
+	AA --> RAW
+	AO --> RAW
+	AR --> RAW
+	JSON --> AC
+	JSON --> AA
+	JSON --> AO
+	JSON --> AR
+	EVENTS --> COL
+	EVENTS --> TAP
+	EVENTS --> SSEOUT
+	EVENTS --> REPLAY
+	COL --> UI
+	COL --> AGENT
+	SSEOUT --> PROXY
+	TAP --> OBS
+
+	classDef provider fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#e0f2fe
+	classDef adapter fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ede9fe
+	classDef core fill:#042f2e,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
+	classDef io fill:#134e4a,stroke:#5eead4,stroke-width:2px,color:#f0fdfa
+	classDef transform fill:#431407,stroke:#fb923c,stroke-width:2px,color:#ffedd5
+	classDef app fill:#172554,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
+
+	class PC,PA,PO,PR provider
+	class AC,AA,AO,AR adapter
+	class PARSE,RAW,ASM core
+	class STREAM,JSON,EVENTS io
+	class COL,TAP,SSEOUT,REPLAY transform
+	class UI,AGENT,PROXY,OBS app
+```
+
+Every adapter maps provider-specific fragments into the same **`StreamEvent`** union — one event model for streaming and non-streaming code paths:
+
+```mermaid
+mindmap
+	root((StreamEvent))
+		Text
+			text.delta
+			text.done
+		Reasoning
+			reasoning.delta
+			reasoning.done
+		Tools
+			tool_call.start
+			tool_call.args.delta
+			tool_call.done
+		Structured
+			json.delta
+			json.done
+		Control
+			message.start
+			metadata
+			usage
+			finish
+			error
+		Safety
+			refusal.delta
+			refusal.done
+```
+
+**Design constraints:** adapters never accumulate cross-chunk state beyond id/index reconciliation; assembly, buffering, and `.done` emission live in core. No HTTP client, no tool execution, no UI — just the stream layer.
+
 ## Install
 
 ```bash
