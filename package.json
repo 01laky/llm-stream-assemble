@@ -1,0 +1,27 @@
+{
+  "name": "llm-stream-assemble",
+  "version": "0.0.1",
+  "description": "Assemble and normalize LLM streaming responses into unified events — text, tool calls, reasoning. Provider-agnostic stream layer, not an LLM SDK.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "llm",
+    "streaming",
+    "sse",
+    "openai",
+    "anthropic",
+    "tool-calling",
+    "server-sent-events"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/01laky/llm-stream-assemble.git"
+  },
+  "bugs": {
+    "url": "https://github.com/01laky/llm-stream-assemble/issues"
+  },
+  "homepage": "https://github.com/01laky/llm-stream-assemble#readme"
+}

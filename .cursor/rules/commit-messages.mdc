@@ -1,0 +1,78 @@
+---
+description: Write long, detailed git commit messages with full context in subject and body.
+alwaysApply: true
+---
+
+# Commit message standards
+
+Every commit must have a **detailed, long** message. Short one-liners are not acceptable unless the change is truly trivial (typo in comment only).
+
+## Structure
+
+Use a subject line plus a full body separated by a blank line.
+
+```
+<type>(<scope>): <subject — still descriptive, up to ~72 chars>
+
+<body: multiple paragraphs, as long as needed>
+
+<optional footer: issue refs only — never Co-authored-by for tools>
+```
+
+## Subject line
+
+- Use conventional type: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`.
+- Include scope when helpful: `core`, `adapter-openai`, `adapter-anthropic`, `examples`, `docs`.
+- Summarize the *intent*, not just the file touched.
+
+## Body (required for non-trivial changes)
+
+The body must explain:
+
+1. **What** changed — files, modules, public API.
+2. **Why** — problem, motivation, trade-off.
+3. **How** — approach, key design choices.
+4. **Testing** — what was run, fixture IDs, manual checks.
+5. **Follow-ups** — known gaps or deferred work, if any.
+
+Write complete sentences. Prefer 3–10+ lines for feature work; more for large changes. Do not stop at two words.
+
+## Examples
+
+```
+# BAD
+fix parser
+
+# BAD
+feat: anthropic adapter
+
+# GOOD
+feat(adapter-anthropic): map Messages API stream to unified tool_call events
+
+Add anthropicAdapter() for the Anthropic Messages streaming format.
+Handles content_block_start/delta/stop, tool_use blocks, and thinking
+blocks mapped to reasoning.* events. Reconciles tool calls by block
+index until provider id is present.
+
+Partial tool input under eager_input_streaming may be invalid JSON;
+core parsePartialJSON is used best-effort for args.delta.partial only.
+
+Tests: LSA-A1 through LSA-A10 green. Manual smoke with node-fetch
+example pending API key.
+
+# GOOD
+fix(core): recover SSE payloads split mid-line across TCP chunks
+
+The previous line buffer flushed only on newline, dropping bytes when
+providers split a "data: {...}" line across two reads. Buffer now
+accumulates until CRLF or LF before yielding payloads.
+
+Fixes garbled JSON on slow networks and large tool-call argument streams.
+Tests: LSA-C3, LSA-C4 added with fixtures split-at-byte-boundary.
+```
+
+## When committing on behalf of the user
+
+- Draft the full message before running `git commit`.
+- Use HEREDOC for multi-line messages.
+- Never shorten to satisfy laziness — length and clarity are required.
