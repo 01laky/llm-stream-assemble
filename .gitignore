@@ -9,3 +9,6 @@ coverage/
 prompts/
 
 .cursor/
+
+# Local-only integration playground (not part of the published package)
+.local-playground/

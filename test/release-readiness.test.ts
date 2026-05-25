@@ -43,8 +43,8 @@ describe("release readiness", () => {
 		expect(read("README.md")).toContain("## Non-goals");
 	});
 
-	it("LSA-REL07: README status is pre-1.0 release candidate", () => {
-		expect(read("README.md")).toContain("Pre-1.0 release candidate");
+	it("LSA-REL07: README status is stable 1.0.0", () => {
+		expect(read("README.md")).toContain("Stable `1.0.0`");
 	});
 
 	it("LSA-REL08: README mentions publish-facing GitHub description", () => {
@@ -60,17 +60,21 @@ describe("release readiness", () => {
 		expect(read("docs/proposal.md")).toContain("historical");
 	});
 
-	it("LSA-REL11: npm pack dry-run includes dist README and LICENSE", () => {
-		const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
-			cwd: rootDir,
-			encoding: "utf8",
-		});
-		const [pack] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
-		const files = pack.files.map((file) => file.path);
-		expect(files).toContain("dist/index.js");
-		expect(files).toContain("README.md");
-		expect(files).toContain("LICENSE");
-	});
+	it(
+		"LSA-REL11: npm pack dry-run includes dist README and LICENSE",
+		() => {
+			const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
+				cwd: rootDir,
+				encoding: "utf8",
+			});
+			const [pack] = JSON.parse(output) as Array<{ files: Array<{ path: string }> }>;
+			const files = pack.files.map((file) => file.path);
+			expect(files).toContain("dist/index.js");
+			expect(files).toContain("README.md");
+			expect(files).toContain("LICENSE");
+		},
+		30_000,
+	);
 
 	it("LSA-REL12: package smoke script exists", () => {
 		const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };

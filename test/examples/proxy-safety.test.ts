@@ -99,11 +99,18 @@ describe("proxy safety examples", () => {
 	});
 
 	it("LSA-X18: missing upstream API key returns safe client error", async () => {
-		const response = await handleLLMProxyRequest(proxyRequest({ prompt: "hi" }), {
-			fetchImpl: fakeStreamingFetch(openAISSE),
-		});
-		expect(response.status).toBe(500);
-		expect(await response.text()).toContain("LLM proxy is not configured.");
+		const previous = process.env.OPENAI_API_KEY;
+		delete process.env.OPENAI_API_KEY;
+		try {
+			const response = await handleLLMProxyRequest(proxyRequest({ prompt: "hi" }), {
+				fetchImpl: fakeStreamingFetch(openAISSE),
+			});
+			expect(response.status).toBe(500);
+			expect(await response.text()).toContain("LLM proxy is not configured.");
+		} finally {
+			if (previous === undefined) delete process.env.OPENAI_API_KEY;
+			else process.env.OPENAI_API_KEY = previous;
+		}
 	});
 
 	it("LSA-X19: Cache-Control no-cache header is set", async () => {

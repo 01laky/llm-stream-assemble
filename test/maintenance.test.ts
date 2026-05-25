@@ -123,10 +123,9 @@ describe("maintenance adapter regressions", () => {
 	});
 });
 
-describe("maintenance scaffold helper compatibility", () => {
-	it("LSA-MAINT12: notImplemented is marked deprecated in source comments", () => {
-		const source = readFileSync(join(rootDir, "src/helpers/not-implemented.ts"), "utf8");
-		expect(source).toContain("@deprecated");
+describe("maintenance public API cleanup", () => {
+	it("LSA-MAINT12: scaffold notImplemented helpers are removed from source", () => {
+		expect(existsSync(join(rootDir, "src/helpers/not-implemented.ts"))).toBe(false);
 	});
 
 	it("LSA-MAINT13: README and docs do not mention notImplemented as user API", () => {
@@ -140,9 +139,9 @@ describe("maintenance scaffold helper compatibility", () => {
 		expect(() => lib.openaiResponsesAdapter().parseChunk("{")).toThrow(/^llm-stream-assemble:/);
 	});
 
-	it("LSA-MAINT15: root export compatibility for notImplemented helpers is preserved", () => {
-		expect(typeof lib.notImplemented).toBe("function");
-		expect(typeof lib.notImplementedAsyncIterable).toBe("function");
+	it("LSA-MAINT15: root export no longer exposes scaffold helpers", () => {
+		expect("notImplemented" in lib).toBe(false);
+		expect("notImplementedAsyncIterable" in lib).toBe(false);
 	});
 });
 

@@ -3,6 +3,39 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.0]
+
+### Added
+
+- First stable release: core stream assembly, four provider adapters (OpenAI Chat,
+  OpenAI-compatible, Anthropic Messages, OpenAI Responses), transforms
+  (`collectStream`, `tapEvents`, `toSSE`), Node replay helper (`assembleFromFile`),
+  type guards, and documented examples.
+
+### Changed
+
+- README, compatibility matrix, and release-readiness checks now reflect stable
+  `1.0.0` status instead of pre-1.0 release candidate wording.
+- package.json version bumped to 1.0.0.
+
+### Migration from 0.8.x
+
+- Upgrade through `0.9.0` semantics: remove any imports of `notImplemented` or
+  `notImplementedAsyncIterable` — those scaffold exports were removed in 0.9.0.
+
+## [0.9.0]
+
+### Removed
+
+- Public exports `notImplemented` and `notImplementedAsyncIterable` — Phase 0
+  scaffold helpers are no longer part of the package API. All core functions,
+  adapters, transforms, and type guards are fully implemented; callers should
+  not depend on throw-on-use placeholders.
+
+### Changed
+
+- package.json version bumped to 0.9.0 as the first 1.0 API cleanup release.
+
 ## [0.8.0]
 
 ### Added

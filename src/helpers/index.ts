@@ -1,4 +1,3 @@
-export { notImplemented, notImplementedAsyncIterable } from "./not-implemented";
 export { matchEvent } from "./match-event";
 export {
 	isMessageStart,

@@ -38,10 +38,18 @@ const TYPE_GUARD_EXPORTS = [
 	"isError",
 ] as const;
 
+const REMOVED_SCAFFOLD_EXPORTS = ["notImplemented", "notImplementedAsyncIterable"] as const;
+
 describe("exports.test.ts — public API surface", () => {
 	it("LSA-E01: exports all required functions", () => {
 		for (const name of REQUIRED_EXPORTS) {
 			expect(typeof lib[name]).toBe("function");
+		}
+	});
+
+	it("LSA-E03: does not export removed scaffold helpers", () => {
+		for (const name of REMOVED_SCAFFOLD_EXPORTS) {
+			expect(name in lib).toBe(false);
 		}
 	});
 

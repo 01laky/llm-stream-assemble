@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.8.0-blue)
+![core](https://img.shields.io/badge/core-1.0.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-430%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-470%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-pre_1.0_rc-orange)
+![status](https://img.shields.io/badge/status-stable_1.0.0-brightgreen)
 
-A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
+A zero-dependency TypeScript library that normalizes LLM streaming responses — text, tool calls, reasoning, JSON, usage, errors, and non-streaming payloads — into unified events.
 
-**Status:** Pre-1.0 release candidate (`0.8.0`). Core, provider adapters, transforms, replay helpers, and examples are functional. APIs may still change before 1.0. Use in production with normal pre-1.0 caution: pin versions and review changelog entries before upgrading.
+**Status:** Stable `1.0.0`. Core, OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses adapters, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 > A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
 
