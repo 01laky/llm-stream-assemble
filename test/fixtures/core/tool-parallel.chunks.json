@@ -1,0 +1,20 @@
+{
+	"payloads": {
+		"a": [
+			{ "kind": "tool-start", "id": "call_a", "name": "weather", "index": 0 },
+			{ "kind": "tool-start", "id": "call_b", "name": "time", "index": 1 }
+		],
+		"b": [
+			{ "kind": "tool-args-delta", "id": "call_a", "delta": "{\"city\":\"Pra", "index": 0 },
+			{ "kind": "tool-args-delta", "id": "call_b", "delta": "{\"zone\":\"UT", "index": 1 }
+		],
+		"c": [
+			{ "kind": "tool-args-delta", "id": "call_a", "delta": "gue\"}", "index": 0 },
+			{ "kind": "tool-args-delta", "id": "call_b", "delta": "C\"}", "index": 1 }
+		],
+		"d": [
+			{ "kind": "tool-done", "id": "call_a", "index": 0 },
+			{ "kind": "tool-done", "id": "call_b", "index": 1 }
+		]
+	}
+}

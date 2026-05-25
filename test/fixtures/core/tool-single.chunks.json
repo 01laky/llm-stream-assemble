@@ -1,0 +1,10 @@
+{
+	"payloads": {
+		"{\"seq\":1}": [{ "kind": "tool-start", "id": "call_1", "name": "search", "index": 0 }],
+		"{\"seq\":2}": [{ "kind": "tool-args-delta", "id": "call_1", "delta": "{\"query\":\"llm" }],
+		"{\"seq\":3}": [
+			{ "kind": "tool-args-delta", "id": "call_1", "delta": " stream\"}" },
+			{ "kind": "tool-done", "id": "call_1" }
+		]
+	}
+}

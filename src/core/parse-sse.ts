@@ -1,7 +1,24 @@
-import { notImplementedAsyncIterable } from "../helpers/not-implemented";
+import { sourceToStrings } from "./utils/source";
+import { SSEParser } from "./utils/sse-parser";
 
 export function parseSSE(
-  _source: ReadableStream<Uint8Array> | AsyncIterable<string>,
+	source: ReadableStream<Uint8Array> | AsyncIterable<string>,
 ): AsyncIterable<string> {
-  return notImplementedAsyncIterable<string>("parseSSE");
+	return parseSSEGenerator(source);
+}
+
+async function* parseSSEGenerator(
+	source: ReadableStream<Uint8Array> | AsyncIterable<string>,
+): AsyncIterable<string> {
+	const parser = new SSEParser();
+
+	for await (const chunk of sourceToStrings(source)) {
+		for (const payload of parser.push(chunk)) {
+			yield payload;
+		}
+	}
+
+	for (const payload of parser.flush()) {
+		yield payload;
+	}
 }

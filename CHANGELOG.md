@@ -3,6 +3,42 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.0]
+
+### Added
+
+- Core SSE parser (`parseSSE`) with UTF-8 streaming decode, multiline `data:`
+  support, `[DONE]` terminal marker handling, CRLF support, comment skipping, and
+  split-chunk recovery.
+- Partial JSON parser (`parsePartialJSON`) for live previews of incomplete JSON
+  fragments used by structured output and tool-call argument streams.
+- Event assembler state machine for text, reasoning, refusal, structured JSON,
+  parallel tool calls, index-based tool reconciliation, metadata, usage, finish,
+  and provider error events.
+- Streaming entry points: `assembleFromPayloads`, `assembleStream`, and
+  `createAssemblyTransform`.
+- Non-streaming entry point: `assembleResponse` with `adapter.parseResponse`
+  support so stream and non-stream paths share the same event model.
+- Abort and lifecycle handling: `finish.reason: "aborted"` for `AbortSignal`,
+  `finish.reason: "incomplete"` for truncated streams, and clean `[DONE]`
+  mapping to `finish.reason: "stop"`.
+- `maxBufferBytes` option to cap accumulated text, reasoning, refusal, JSON, and
+  tool-call argument buffers without silently truncating output.
+- Core golden fixtures under `test/fixtures/core/`, mock test adapters, and
+  detailed LSA-C01 through LSA-C52 coverage including cleanup and performance
+  smoke tests.
+
+### Changed
+
+- Core function stubs now have real implementations; provider adapter parsing,
+  `collectStream`, `toSSE`, `tapEvents`, and `assembleFromFile` remain planned
+  stubs for later phases.
+- Stub and scaffold tests now reflect the implemented core behavior while keeping
+  adapter and transform stub boundaries explicit.
+- README status updated for Phase 1 with badges, core usage notes, and memory
+  buffering guidance.
+- package.json version bumped to 0.1.0.
+
 ## [0.0.5]
 
 ### Added

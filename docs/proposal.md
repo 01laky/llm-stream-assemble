@@ -187,39 +187,39 @@ All providers normalize to the same `StreamEvent` union:
 
 ```ts
 type StreamEvent =
-  | { type: "message.start"; id?: string; choiceIndex?: number }
-  | { type: "metadata"; model?: string; responseId?: string; created?: number; raw?: unknown }
-  | { type: "text.delta"; text: string; choiceIndex?: number }
-  | { type: "text.done"; text: string; choiceIndex?: number }
-  | { type: "reasoning.delta"; text: string; variant?: "summary" | "detail" }
-  | { type: "reasoning.done"; text: string; variant?: "summary" | "detail" }
-  | { type: "refusal.delta"; text: string }
-  | { type: "refusal.done"; text: string }
-  | { type: "json.delta"; delta: string; partial?: unknown }
-  | { type: "json.done"; value: unknown }
-  | { type: "tool_call.start"; id: string; name: string; index?: number; choiceIndex?: number }
-  | { type: "tool_call.args.delta"; id: string; delta: string; partial?: unknown }
-  | { type: "tool_call.done"; id: string; name: string; args: unknown }
-  | {
-      type: "usage";
-      inputTokens?: number;
-      outputTokens?: number;
-      reasoningTokens?: number;
-      raw?: unknown;
-    }
-  | {
-      type: "finish";
-      reason:
-        | "stop"
-        | "tool_calls"
-        | "length"
-        | "content_filter"
-        | "error"
-        | "incomplete"
-        | "aborted";
-      choiceIndex?: number;
-    }
-  | { type: "error"; error: Error; recoverable?: boolean; sanitized?: string };
+	| { type: "message.start"; id?: string; choiceIndex?: number }
+	| { type: "metadata"; model?: string; responseId?: string; created?: number; raw?: unknown }
+	| { type: "text.delta"; text: string; choiceIndex?: number }
+	| { type: "text.done"; text: string; choiceIndex?: number }
+	| { type: "reasoning.delta"; text: string; variant?: "summary" | "detail" }
+	| { type: "reasoning.done"; text: string; variant?: "summary" | "detail" }
+	| { type: "refusal.delta"; text: string }
+	| { type: "refusal.done"; text: string }
+	| { type: "json.delta"; delta: string; partial?: unknown }
+	| { type: "json.done"; value: unknown }
+	| { type: "tool_call.start"; id: string; name: string; index?: number; choiceIndex?: number }
+	| { type: "tool_call.args.delta"; id: string; delta: string; partial?: unknown }
+	| { type: "tool_call.done"; id: string; name: string; args: unknown }
+	| {
+			type: "usage";
+			inputTokens?: number;
+			outputTokens?: number;
+			reasoningTokens?: number;
+			raw?: unknown;
+	  }
+	| {
+			type: "finish";
+			reason:
+				| "stop"
+				| "tool_calls"
+				| "length"
+				| "content_filter"
+				| "error"
+				| "incomplete"
+				| "aborted";
+			choiceIndex?: number;
+	  }
+	| { type: "error"; error: Error; recoverable?: boolean; sanitized?: string };
 ```
 
 ### Event ordering contract
@@ -252,41 +252,41 @@ For each logical unit, consumers can rely on:
 
 ```ts
 function assembleStream(
-  source: ReadableStream<Uint8Array> | AsyncIterable<string>,
-  adapter: StreamAdapter,
-  options?: AssembleOptions,
+	source: ReadableStream<Uint8Array> | AsyncIterable<string>,
+	adapter: StreamAdapter,
+	options?: AssembleOptions,
 ): AsyncIterable<StreamEvent>;
 
 function assembleFromPayloads(
-  payloads: AsyncIterable<string>,
-  adapter: StreamAdapter,
-  options?: AssembleOptions,
+	payloads: AsyncIterable<string>,
+	adapter: StreamAdapter,
+	options?: AssembleOptions,
 ): AsyncIterable<StreamEvent>;
 
 function createAssemblyTransform(
-  adapter: StreamAdapter,
-  options?: AssembleOptions,
+	adapter: StreamAdapter,
+	options?: AssembleOptions,
 ): TransformStream<Uint8Array, StreamEvent>;
 
 function parseSSE(
-  source: ReadableStream<Uint8Array> | AsyncIterable<string>,
+	source: ReadableStream<Uint8Array> | AsyncIterable<string>,
 ): AsyncIterable<string>;
 
 function parsePartialJSON(input: string): {
-  value?: unknown;
-  complete: boolean;
+	value?: unknown;
+	complete: boolean;
 };
 
 interface StreamAdapter {
-  parseChunk(raw: string): RawChunk[];
-  parseResponse?(body: unknown): RawChunk[]; // non-streaming JSON
+	parseChunk(raw: string): RawChunk[];
+	parseResponse?(body: unknown): RawChunk[]; // non-streaming JSON
 }
 
 interface AssembleOptions {
-  recoverMalformed?: boolean;
-  signal?: AbortSignal;
-  sanitizeErrors?: boolean; // strip provider internals from error events / toSSE output
-  strictToolArgs?: boolean; // throw on invalid JSON at tool_call.done (default: false)
+	recoverMalformed?: boolean;
+	signal?: AbortSignal;
+	sanitizeErrors?: boolean; // strip provider internals from error events / toSSE output
+	strictToolArgs?: boolean; // throw on invalid JSON at tool_call.done (default: false)
 }
 ```
 
@@ -294,9 +294,9 @@ interface AssembleOptions {
 
 ```ts
 function assembleResponse(
-  body: unknown,
-  adapter: StreamAdapter,
-  options?: AssembleOptions,
+	body: unknown,
+	adapter: StreamAdapter,
+	options?: AssembleOptions,
 ): StreamEvent[];
 ```
 
@@ -306,23 +306,23 @@ Same event types as streaming — enables one consumer code path for UI and batc
 
 ```ts
 function collectStream(events: AsyncIterable<StreamEvent>): Promise<{
-  text: string;
-  reasoning: string;
-  refusals: string;
-  json: unknown;
-  toolCalls: Array<{ id: string; name: string; args: unknown }>;
-  usage?: StreamEvent & { type: "usage" };
-  finishReason?: StreamEvent & { type: "finish" };
+	text: string;
+	reasoning: string;
+	refusals: string;
+	json: unknown;
+	toolCalls: Array<{ id: string; name: string; args: unknown }>;
+	usage?: StreamEvent & { type: "usage" };
+	finishReason?: StreamEvent & { type: "finish" };
 }>;
 
 function toSSE(
-  events: AsyncIterable<StreamEvent>,
-  options?: { sanitizeErrors?: boolean },
+	events: AsyncIterable<StreamEvent>,
+	options?: { sanitizeErrors?: boolean },
 ): ReadableStream<Uint8Array>;
 
 function tapEvents(
-  events: AsyncIterable<StreamEvent>,
-  onEvent: (event: StreamEvent) => void,
+	events: AsyncIterable<StreamEvent>,
+	onEvent: (event: StreamEvent) => void,
 ): AsyncIterable<StreamEvent>;
 ```
 
@@ -331,13 +331,13 @@ function tapEvents(
 ```ts
 function isTextDelta(event: StreamEvent): event is Extract<StreamEvent, { type: "text.delta" }>;
 function isToolCallDone(
-  event: StreamEvent,
+	event: StreamEvent,
 ): event is Extract<StreamEvent, { type: "tool_call.done" }>;
 // ... guards for each event type
 
 function matchEvent<R>(
-  event: StreamEvent,
-  handlers: Partial<{ [K in StreamEvent["type"]]: (e: Extract<StreamEvent, { type: K }>) => R }>,
+	event: StreamEvent,
+	handlers: Partial<{ [K in StreamEvent["type"]]: (e: Extract<StreamEvent, { type: K }>) => R }>,
 ): R | undefined;
 ```
 
@@ -347,9 +347,9 @@ Zero runtime cost for guards; `matchEvent` is a thin switch helper.
 
 ```ts
 function assembleFromFile(
-  path: string,
-  adapter: StreamAdapter,
-  options?: AssembleOptions & { format?: "sse" | "json" },
+	path: string,
+	adapter: StreamAdapter,
+	options?: AssembleOptions & { format?: "sse" | "json" },
 ): AsyncIterable<StreamEvent>;
 ```
 
@@ -368,13 +368,13 @@ openaiResponsesAdapter(): StreamAdapter;    // v0.2 unless time allows
 
 ```json
 {
-  "exports": {
-    ".": "./dist/index.js",
-    "./core": "./dist/core.js",
-    "./adapters/openai-chat": "./dist/adapters/openai-chat.js",
-    "./adapters/openai-compatible": "./dist/adapters/openai-compatible.js",
-    "./adapters/anthropic": "./dist/adapters/anthropic.js"
-  }
+	"exports": {
+		".": "./dist/index.js",
+		"./core": "./dist/core.js",
+		"./adapters/openai-chat": "./dist/adapters/openai-chat.js",
+		"./adapters/openai-compatible": "./dist/adapters/openai-compatible.js",
+		"./adapters/anthropic": "./dist/adapters/anthropic.js"
+	}
 }
 ```
 
@@ -384,31 +384,31 @@ openaiResponsesAdapter(): StreamAdapter;    // v0.2 unless time allows
 import { assembleStream, openaiChatAdapter, matchEvent } from "llm-stream-assemble";
 
 const response = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  signal: controller.signal,
-  headers: {
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    model: "gpt-4o",
-    messages,
-    tools,
-    stream: true,
-    stream_options: { include_usage: true },
-  }),
+	method: "POST",
+	signal: controller.signal,
+	headers: {
+		Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		model: "gpt-4o",
+		messages,
+		tools,
+		stream: true,
+		stream_options: { include_usage: true },
+	}),
 });
 
 for await (const event of assembleStream(response.body!, openaiChatAdapter(), {
-  signal: controller.signal,
-  sanitizeErrors: true,
+	signal: controller.signal,
+	sanitizeErrors: true,
 })) {
-  matchEvent(event, {
-    "text.delta": (e) => process.stdout.write(e.text),
-    "tool_call.args.delta": (e) => updateToolUI(e.id, e.delta),
-    "tool_call.done": (e) => queueToolExecution(e.name, e.args),
-    finish: (e) => console.log("done:", e.reason),
-  });
+	matchEvent(event, {
+		"text.delta": (e) => process.stdout.write(e.text),
+		"tool_call.args.delta": (e) => updateToolUI(e.id, e.delta),
+		"tool_call.done": (e) => queueToolExecution(e.name, e.args),
+		finish: (e) => console.log("done:", e.reason),
+	});
 }
 ```
 
@@ -418,14 +418,14 @@ for await (const event of assembleStream(response.body!, openaiChatAdapter(), {
 import { assembleResponse, collectStream, anthropicAdapter } from "llm-stream-assemble";
 
 const response = await fetch("https://api.anthropic.com/v1/messages", {
-  /* stream: false */
+	/* stream: false */
 });
 const body = await response.json();
 const events = assembleResponse(body, anthropicAdapter());
 const result = await collectStream(
-  (async function* () {
-    for (const e of events) yield e;
-  })(),
+	(async function* () {
+		for (const e of events) yield e;
+	})(),
 );
 ```
 
@@ -646,12 +646,12 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 
 ```json
 {
-  "name": "llm-stream-assemble",
-  "version": "0.1.0",
-  "type": "module",
-  "engines": { "node": ">=18" },
-  "sideEffects": false,
-  "license": "MIT"
+	"name": "llm-stream-assemble",
+	"version": "0.1.0",
+	"type": "module",
+	"engines": { "node": ">=18" },
+	"sideEffects": false,
+	"license": "MIT"
 }
 ```
 

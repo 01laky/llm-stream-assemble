@@ -1,0 +1,11 @@
+{
+	"payloads": {
+		"{\"seq\":1}": [{ "kind": "text-delta", "text": "Hello" }],
+		"{\"seq\":2}": [{ "kind": "text-delta", "text": " world" }]
+	},
+	"response": [
+		{ "kind": "text-delta", "text": "Hello" },
+		{ "kind": "text-delta", "text": " world" },
+		{ "kind": "finish", "reason": "stop" }
+	]
+}

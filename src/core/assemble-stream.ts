@@ -1,10 +1,11 @@
-import { notImplementedAsyncIterable } from "../helpers/not-implemented";
 import type { AssembleOptions, StreamAdapter, StreamEvent } from "./types";
+import { assembleFromPayloads } from "./assemble-payloads";
+import { parseSSE } from "./parse-sse";
 
 export function assembleStream(
-  _source: ReadableStream<Uint8Array> | AsyncIterable<string>,
-  _adapter: StreamAdapter,
-  _options?: AssembleOptions,
+	source: ReadableStream<Uint8Array> | AsyncIterable<string>,
+	adapter: StreamAdapter,
+	options?: AssembleOptions,
 ): AsyncIterable<StreamEvent> {
-  return notImplementedAsyncIterable<StreamEvent>("assembleStream");
+	return assembleFromPayloads(parseSSE(source), adapter, options);
 }

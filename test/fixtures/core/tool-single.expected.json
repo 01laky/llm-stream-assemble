@@ -1,0 +1,17 @@
+[
+	{ "type": "tool_call.start", "id": "call_1", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_1",
+		"delta": "{\"query\":\"llm",
+		"partial": { "query": "llm" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_1",
+		"delta": " stream\"}",
+		"partial": { "query": "llm stream" }
+	},
+	{ "type": "tool_call.done", "id": "call_1", "name": "search", "args": { "query": "llm stream" } },
+	{ "type": "finish", "reason": "stop" }
+]
