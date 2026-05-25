@@ -381,10 +381,6 @@ Scripts:
 | `pnpm test`        | Vitest smoke tests                     |
 | `pnpm build`       | tsup → ESM + CJS + declarations        |
 
-## Local prompts
-
-Implementation prompts live in `prompts/` on your machine only — that directory is gitignored. The canonical spec is [`docs/proposal.md`](./docs/proposal.md).
-
 ## Author
 
 **Ladislav Kostolny** — [01laky@gmail.com](mailto:01laky@gmail.com) · [GitHub @01laky](https://github.com/01laky)
