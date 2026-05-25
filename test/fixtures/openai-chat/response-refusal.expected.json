@@ -1,0 +1,12 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_response_refusal" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_response_refusal",
+		"created": 1710000013
+	},
+	{ "type": "refusal.delta", "text": "I cannot comply." },
+	{ "type": "refusal.done", "text": "I cannot comply." },
+	{ "type": "finish", "reason": "content_filter" }
+]

@@ -1,0 +1,19 @@
+{
+	"id": "chatcmpl_response_legacy",
+	"object": "chat.completion",
+	"created": 1710000012,
+	"model": "gpt-3.5-turbo",
+	"choices": [
+		{
+			"index": 0,
+			"message": {
+				"role": "assistant",
+				"function_call": {
+					"name": "lookup",
+					"arguments": "{\"id\":\"legacy\"}"
+				}
+			},
+			"finish_reason": "function_call"
+		}
+	]
+}

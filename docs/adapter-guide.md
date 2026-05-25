@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Draft (Phase 0) — golden-test fixtures land in Phase 1.
+**Status:** Draft (Phase 2) — OpenAI Chat is the first concrete reference adapter.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -8,6 +8,7 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 
 - Read [`proposal.md`](./proposal.md) § Provider Adapters and § Unified Event Model.
 - Adapters emit **raw chunks** only — cross-chunk assembly lives in core.
+- Use `src/adapters/openai-chat.ts` and `test/fixtures/openai-chat/` as the reference implementation for mapping provider payloads into `RawChunk[]`.
 
 ## Steps
 
@@ -16,12 +17,14 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - Record redacted `.sse` or `.json` files under `test/fixtures/<adapter-name>/`.
 - Never commit API keys or private data.
 - Include edge cases: empty deltas, unicode, parallel tools, large tool args.
+- Add a fixture provenance note when fixtures are synthetic, docs-shaped, or redacted-live.
 
 ### 2. Implement `parseChunk`
 
 - Input: one SSE `data:` payload string (or JSONL line).
 - Output: `RawChunk[]` — zero or more chunks.
 - Do **not** accumulate text, tool args, or reasoning across calls.
+- Minimal provider state is allowed only when required to preserve ids/indexes before core assembly, such as OpenAI tool-call `choiceIndex:index` tracking.
 
 ### 3. Implement `parseResponse` (optional)
 
@@ -45,6 +48,9 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - [ ] Incomplete stream (no terminal marker)
 - [ ] Provider error payloads
 - [ ] Invalid partial JSON (Anthropic fine-grained streaming)
+- [ ] Unknown finish reasons
+- [ ] Usage-only chunks
+- [ ] Non-streaming response parity
 
 ### 6. Update compatibility matrix
 

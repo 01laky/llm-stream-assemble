@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.2.0]
+
+### Added
+
+- OpenAI Chat Completions adapter for streaming SSE payloads: text, tool calls,
+  legacy function_call, refusal, reasoning, usage, finish reasons, provider
+  errors, JSON mode via adapter option, and multi-choice `choiceIndex`.
+- `openaiChatAdapter().parseResponse` for non-streaming Chat Completions JSON
+  using the same RawChunk pipeline as streaming.
+- OpenAI Chat golden fixtures under `test/fixtures/openai-chat/`, fixture
+  provenance docs, and detailed LSA-O01 through LSA-O53 coverage.
+
+### Changed
+
+- README status and usage examples now include OpenAI Chat adapter usage, adapter
+  instance lifecycle guidance, streaming usage notes, and JSON mode guidance.
+- docs/compatibility.md marks OpenAI Chat Completions as supported and documents
+  OpenAI-specific notes for usage, JSON mode, and legacy function_call.
+- docs/adapter-guide.md points future adapter authors at OpenAI Chat as the first
+  concrete reference adapter.
+- package.json version bumped to 0.2.0.
+
 ## [0.1.1]
 
 ### Fixed

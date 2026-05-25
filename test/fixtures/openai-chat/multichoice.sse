@@ -1,0 +1,4 @@
+data: {"id":"chatcmpl_multi","created":1710000006,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"A"},"finish_reason":"stop"},{"index":1,"delta":{"content":"B"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

@@ -1,0 +1,12 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_multi" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_multi",
+		"created": 1710000006
+	},
+	{ "type": "text.delta", "text": "A" },
+	{ "type": "text.done", "text": "A" },
+	{ "type": "finish", "reason": "stop" }
+]

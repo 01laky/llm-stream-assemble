@@ -1,0 +1,16 @@
+{
+	"id": "chatcmpl_response_refusal",
+	"object": "chat.completion",
+	"created": 1710000013,
+	"model": "gpt-4o-mini",
+	"choices": [
+		{
+			"index": 0,
+			"message": {
+				"role": "assistant",
+				"refusal": "I cannot comply."
+			},
+			"finish_reason": "content_filter"
+		}
+	]
+}

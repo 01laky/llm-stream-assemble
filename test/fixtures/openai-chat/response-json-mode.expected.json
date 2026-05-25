@@ -1,0 +1,12 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_response_json" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_response_json",
+		"created": 1710000014
+	},
+	{ "type": "json.delta", "delta": "{\"ok\":true}", "partial": { "ok": true } },
+	{ "type": "json.done", "value": { "ok": true } },
+	{ "type": "finish", "reason": "stop" }
+]

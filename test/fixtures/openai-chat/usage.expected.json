@@ -1,0 +1,11 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_usage" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_usage",
+		"created": 1710000005
+	},
+	{ "type": "usage", "inputTokens": 10, "outputTokens": 20, "reasoningTokens": 3 },
+	{ "type": "finish", "reason": "stop" }
+]

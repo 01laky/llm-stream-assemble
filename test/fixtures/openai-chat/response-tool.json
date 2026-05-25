@@ -1,0 +1,25 @@
+{
+	"id": "chatcmpl_response_tool",
+	"object": "chat.completion",
+	"created": 1710000011,
+	"model": "gpt-4o-mini",
+	"choices": [
+		{
+			"index": 0,
+			"message": {
+				"role": "assistant",
+				"tool_calls": [
+					{
+						"id": "call_response",
+						"type": "function",
+						"function": {
+							"name": "search",
+							"arguments": "{\"query\":\"response\"}"
+						}
+					}
+				]
+			},
+			"finish_reason": "tool_calls"
+		}
+	]
+}

@@ -1,0 +1,48 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_parallel" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_parallel",
+		"created": 1710000002
+	},
+	{ "type": "tool_call.start", "id": "call_weather", "name": "weather", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_weather",
+		"delta": "{\"city\":\"Pra",
+		"partial": { "city": "Pra" }
+	},
+	{ "type": "tool_call.start", "id": "call_time", "name": "time", "index": 1 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_time",
+		"delta": "{\"zone\":\"UT",
+		"partial": { "zone": "UT" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_weather",
+		"delta": "gue\"}",
+		"partial": { "city": "Prague" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_time",
+		"delta": "C\"}",
+		"partial": { "zone": "UTC" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_weather",
+		"name": "weather",
+		"args": { "city": "Prague" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_time",
+		"name": "time",
+		"args": { "zone": "UTC" }
+	},
+	{ "type": "finish", "reason": "tool_calls" }
+]

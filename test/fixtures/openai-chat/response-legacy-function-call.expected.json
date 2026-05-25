@@ -1,0 +1,23 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_response_legacy" },
+	{
+		"type": "metadata",
+		"model": "gpt-3.5-turbo",
+		"responseId": "chatcmpl_response_legacy",
+		"created": 1710000012
+	},
+	{ "type": "tool_call.start", "id": "legacy_function:0", "name": "lookup", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "legacy_function:0",
+		"delta": "{\"id\":\"legacy\"}",
+		"partial": { "id": "legacy" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "legacy_function:0",
+		"name": "lookup",
+		"args": { "id": "legacy" }
+	},
+	{ "type": "finish", "reason": "tool_calls" }
+]

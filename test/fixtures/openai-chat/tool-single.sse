@@ -1,0 +1,8 @@
+data: {"id":"chatcmpl_tool","created":1710000001,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_search","type":"function","function":{"name":"search","arguments":"{\"query\":\"llm"}}]},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_tool","created":1710000001,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":" stream\"}"}}]},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_tool","created":1710000001,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}]}
+
+data: [DONE]
+

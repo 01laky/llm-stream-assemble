@@ -1,0 +1,29 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_tool" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_tool",
+		"created": 1710000001
+	},
+	{ "type": "tool_call.start", "id": "call_search", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_search",
+		"delta": "{\"query\":\"llm",
+		"partial": { "query": "llm" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_search",
+		"delta": " stream\"}",
+		"partial": { "query": "llm stream" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_search",
+		"name": "search",
+		"args": { "query": "llm stream" }
+	},
+	{ "type": "finish", "reason": "tool_calls" }
+]

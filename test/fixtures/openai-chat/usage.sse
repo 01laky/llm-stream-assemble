@@ -1,0 +1,4 @@
+data: {"id":"chatcmpl_usage","created":1710000005,"model":"gpt-4o-mini","choices":[],"usage":{"prompt_tokens":10,"completion_tokens":20,"completion_tokens_details":{"reasoning_tokens":3}}}
+
+data: [DONE]
+

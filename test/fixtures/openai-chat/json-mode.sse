@@ -1,0 +1,6 @@
+data: {"id":"chatcmpl_json","created":1710000007,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"{\"answer\":\""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_json","created":1710000007,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"yes\"}"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

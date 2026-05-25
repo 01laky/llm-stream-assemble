@@ -1,0 +1,23 @@
+[
+	{ "type": "message.start", "id": "chatcmpl_response_tool" },
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_response_tool",
+		"created": 1710000011
+	},
+	{ "type": "tool_call.start", "id": "call_response", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_response",
+		"delta": "{\"query\":\"response\"}",
+		"partial": { "query": "response" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_response",
+		"name": "search",
+		"args": { "query": "response" }
+	},
+	{ "type": "finish", "reason": "tool_calls" }
+]

@@ -118,8 +118,8 @@ describe("stubs.test.ts", () => {
 	});
 
 	describe("adapter parseChunk stubs", () => {
-		it("LSA-ST11: openaiChatAdapter.parseChunk throws", () => {
-			expect(() => openaiChatAdapter().parseChunk("{}")).toThrow(/openaiChatAdapter\.parseChunk/i);
+		it("LSA-ST11: openaiChatAdapter.parseChunk is implemented", () => {
+			expect(openaiChatAdapter().parseChunk("{}")).toEqual([]);
 		});
 
 		it("LSA-ST12: openaiCompatibleAdapter.parseChunk throws", () => {
@@ -140,6 +140,6 @@ describe("stubs.test.ts", () => {
 	});
 
 	it("LSA-ST15: error messages include llm-stream-assemble prefix", () => {
-		expect(() => openaiChatAdapter().parseChunk("{}")).toThrow(/^llm-stream-assemble:/);
+		expect(() => openaiCompatibleAdapter().parseChunk("{}")).toThrow(/^llm-stream-assemble:/);
 	});
 });
