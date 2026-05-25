@@ -1,5 +1,7 @@
 # Contributing to llm-stream-assemble
 
+**Maintainer:** Ladislav Kostolny ([01laky@gmail.com](mailto:01laky@gmail.com))
+
 Thank you for your interest in contributing.
 
 ## Canonical spec

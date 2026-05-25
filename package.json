@@ -1,14 +1,19 @@
 {
   "name": "llm-stream-assemble",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Assemble and normalize LLM streaming responses into unified events — text, tool calls, reasoning. Provider-agnostic stream layer, not an LLM SDK.",
   "license": "MIT",
+  "author": "Ladislav Kostolny <01laky@gmail.com>",
   "type": "module",
   "sideEffects": false,
   "engines": {
     "node": ">=18"
   },
-  "files": ["dist", "LICENSE", "README.md"],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

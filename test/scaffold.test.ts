@@ -77,11 +77,14 @@ describe("LSA-S07: isTextDelta", () => {
 describe("LSA-S08: matchEvent", () => {
   it("calls the text.delta handler", () => {
     let text = "";
-    matchEvent({ type: "text.delta", text: "hello" }, {
-      "text.delta": (event) => {
-        text = event.text;
+    matchEvent(
+      { type: "text.delta", text: "hello" },
+      {
+        "text.delta": (event) => {
+          text = event.text;
+        },
       },
-    });
+    );
     expect(text).toBe("hello");
   });
 });

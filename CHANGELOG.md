@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.0.4]
+
+### Added
+
+- Author metadata: Ladislav Kostolny <01laky@gmail.com> in package.json, LICENSE,
+  README (Author section), and CONTRIBUTING (Maintainer).
+
+### Changed
+
+- Prettier format pass across source, tests, and documentation (no logic changes).
+
 ## [0.0.3]
 
 ### Added

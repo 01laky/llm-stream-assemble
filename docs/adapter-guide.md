@@ -58,12 +58,12 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 
 ## Factory naming convention
 
-| Provider | Export |
-| -------- | ------ |
-| OpenAI Chat | `openaiChatAdapter()` |
+| Provider                | Export                      |
+| ----------------------- | --------------------------- |
+| OpenAI Chat             | `openaiChatAdapter()`       |
 | OpenAI-compatible hosts | `openaiCompatibleAdapter()` |
-| Anthropic Messages | `anthropicAdapter()` |
-| OpenAI Responses | `openaiResponsesAdapter()` |
+| Anthropic Messages      | `anthropicAdapter()`        |
+| OpenAI Responses        | `openaiResponsesAdapter()`  |
 
 ## Community adapters
 

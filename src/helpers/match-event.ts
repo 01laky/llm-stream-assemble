@@ -1,9 +1,6 @@
 import type { StreamEvent, StreamEventHandlers } from "../core/types";
 
-export function matchEvent<R>(
-  event: StreamEvent,
-  handlers: StreamEventHandlers<R>,
-): R | undefined {
+export function matchEvent<R>(event: StreamEvent, handlers: StreamEventHandlers<R>): R | undefined {
   switch (event.type) {
     case "message.start":
       return handlers["message.start"]?.(event);

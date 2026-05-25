@@ -54,7 +54,9 @@ export function isJsonDelta(
   return event.type === "json.delta";
 }
 
-export function isJsonDone(event: StreamEvent): event is Extract<StreamEvent, { type: "json.done" }> {
+export function isJsonDone(
+  event: StreamEvent,
+): event is Extract<StreamEvent, { type: "json.done" }> {
   return event.type === "json.done";
 }
 

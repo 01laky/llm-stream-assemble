@@ -14,7 +14,7 @@ It sits between raw provider payloads (SSE / JSONL / bytes / JSON from OpenAI, A
 
 **Positioning:**
 
-> *The missing stream assembly layer between LLM providers and your app.*
+> _The missing stream assembly layer between LLM providers and your app._
 
 **Core promise:**
 
@@ -58,16 +58,16 @@ Existing solutions (LangChain, Vercel AI SDK, `@node-llm/core`, etc.) address th
 
 A focused TypeScript library with a single responsibility:
 
-| In scope | Out of scope |
-| -------- | ------------ |
-| Parse provider-specific stream chunks and JSON responses | HTTP client, auth, retries |
-| Assemble text, tool calls, reasoning, structured JSON | Agent loop, tool execution |
-| Emit unified `StreamEvent`s (stream + non-stream) | Memory / persistence |
-| Partial JSON for live preview | Billing, telemetry |
-| Provider adapters (pluggable) | React hooks, UI components |
-| Transforms: `toSSE`, `collectStream`, `TransformStream` | Multimodal audio/video streams (v1) |
-| Type-safe event helpers | Optional Zod validation (peer dep) |
-| Proxy error sanitization option | Logprobs / citations (future) |
+| In scope                                                 | Out of scope                        |
+| -------------------------------------------------------- | ----------------------------------- |
+| Parse provider-specific stream chunks and JSON responses | HTTP client, auth, retries          |
+| Assemble text, tool calls, reasoning, structured JSON    | Agent loop, tool execution          |
+| Emit unified `StreamEvent`s (stream + non-stream)        | Memory / persistence                |
+| Partial JSON for live preview                            | Billing, telemetry                  |
+| Provider adapters (pluggable)                            | React hooks, UI components          |
+| Transforms: `toSSE`, `collectStream`, `TransformStream`  | Multimodal audio/video streams (v1) |
+| Type-safe event helpers                                  | Optional Zod validation (peer dep)  |
+| Proxy error sanitization option                          | Logprobs / citations (future)       |
 
 ### Target users
 
@@ -78,11 +78,11 @@ A focused TypeScript library with a single responsibility:
 
 ### Differentiation
 
-| Existing approach | Gap |
-| ----------------- | --- |
-| LangChain / AI SDK | Full stack; hard to extract only stream assembly |
-| Provider SDKs | Vendor-specific; no unified event model |
-| `@tashiscool/stream` | Broader scope (mux, cursors); less known |
+| Existing approach    | Gap                                              |
+| -------------------- | ------------------------------------------------ |
+| LangChain / AI SDK   | Full stack; hard to extract only stream assembly |
+| Provider SDKs        | Vendor-specific; no unified event model          |
+| `@tashiscool/stream` | Broader scope (mux, cursors); less known         |
 
 `llm-stream-assemble` should be the **primitive**:
 
@@ -96,10 +96,10 @@ A focused TypeScript library with a single responsibility:
 
 ## Dependency Policy
 
-| Package area | Runtime dependencies |
-| ------------ | -------------------- |
-| **Core** | **0** — SSE parser, assembler, event types, helpers |
-| **Adapters** | **0** — included in main package, no SDK imports |
+| Package area       | Runtime dependencies                                                          |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Core**           | **0** — SSE parser, assembler, event types, helpers                           |
+| **Adapters**       | **0** — included in main package, no SDK imports                              |
 | **Optional peers** | `zod` (strict tool-arg validation), `@ai-sdk/provider` (interop mapper, v0.2) |
 
 This is a primary selling point and must be preserved in CI (dependency audit gate).
@@ -120,13 +120,13 @@ flowchart LR
 
 ### Layers
 
-| Layer | Responsibility |
-| ----- | -------------- |
-| **Core** | Event types, `assembleStream()`, `assembleResponse()`, SSE parser, partial JSON, assembler state machine |
-| **Adapters** | Map provider JSON → internal raw chunks (stream + non-stream) |
-| **Assemblers** | Accumulate deltas into complete text, tool args, reasoning, structured JSON |
-| **Transforms** | `toSSE()`, `collectStream()`, `createAssemblyTransform()`, `tapEvents()`, AI SDK mapper (v0.2) |
-| **Helpers** | `matchEvent()`, type guards, `assembleFromFile()` for fixture replay |
+| Layer          | Responsibility                                                                                           |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| **Core**       | Event types, `assembleStream()`, `assembleResponse()`, SSE parser, partial JSON, assembler state machine |
+| **Adapters**   | Map provider JSON → internal raw chunks (stream + non-stream)                                            |
+| **Assemblers** | Accumulate deltas into complete text, tool args, reasoning, structured JSON                              |
+| **Transforms** | `toSSE()`, `collectStream()`, `createAssemblyTransform()`, `tapEvents()`, AI SDK mapper (v0.2)           |
+| **Helpers**    | `matchEvent()`, type guards, `assembleFromFile()` for fixture replay                                     |
 
 ### Pipeline (streaming)
 
@@ -200,10 +200,23 @@ type StreamEvent =
   | { type: "tool_call.start"; id: string; name: string; index?: number; choiceIndex?: number }
   | { type: "tool_call.args.delta"; id: string; delta: string; partial?: unknown }
   | { type: "tool_call.done"; id: string; name: string; args: unknown }
-  | { type: "usage"; inputTokens?: number; outputTokens?: number; reasoningTokens?: number; raw?: unknown }
+  | {
+      type: "usage";
+      inputTokens?: number;
+      outputTokens?: number;
+      reasoningTokens?: number;
+      raw?: unknown;
+    }
   | {
       type: "finish";
-      reason: "stop" | "tool_calls" | "length" | "content_filter" | "error" | "incomplete" | "aborted";
+      reason:
+        | "stop"
+        | "tool_calls"
+        | "length"
+        | "content_filter"
+        | "error"
+        | "incomplete"
+        | "aborted";
       choiceIndex?: number;
     }
   | { type: "error"; error: Error; recoverable?: boolean; sanitized?: string };
@@ -241,22 +254,22 @@ For each logical unit, consumers can rely on:
 function assembleStream(
   source: ReadableStream<Uint8Array> | AsyncIterable<string>,
   adapter: StreamAdapter,
-  options?: AssembleOptions
+  options?: AssembleOptions,
 ): AsyncIterable<StreamEvent>;
 
 function assembleFromPayloads(
   payloads: AsyncIterable<string>,
   adapter: StreamAdapter,
-  options?: AssembleOptions
+  options?: AssembleOptions,
 ): AsyncIterable<StreamEvent>;
 
 function createAssemblyTransform(
   adapter: StreamAdapter,
-  options?: AssembleOptions
+  options?: AssembleOptions,
 ): TransformStream<Uint8Array, StreamEvent>;
 
 function parseSSE(
-  source: ReadableStream<Uint8Array> | AsyncIterable<string>
+  source: ReadableStream<Uint8Array> | AsyncIterable<string>,
 ): AsyncIterable<string>;
 
 function parsePartialJSON(input: string): {
@@ -266,14 +279,14 @@ function parsePartialJSON(input: string): {
 
 interface StreamAdapter {
   parseChunk(raw: string): RawChunk[];
-  parseResponse?(body: unknown): RawChunk[];  // non-streaming JSON
+  parseResponse?(body: unknown): RawChunk[]; // non-streaming JSON
 }
 
 interface AssembleOptions {
   recoverMalformed?: boolean;
   signal?: AbortSignal;
-  sanitizeErrors?: boolean;   // strip provider internals from error events / toSSE output
-  strictToolArgs?: boolean;   // throw on invalid JSON at tool_call.done (default: false)
+  sanitizeErrors?: boolean; // strip provider internals from error events / toSSE output
+  strictToolArgs?: boolean; // throw on invalid JSON at tool_call.done (default: false)
 }
 ```
 
@@ -283,7 +296,7 @@ interface AssembleOptions {
 function assembleResponse(
   body: unknown,
   adapter: StreamAdapter,
-  options?: AssembleOptions
+  options?: AssembleOptions,
 ): StreamEvent[];
 ```
 
@@ -292,9 +305,7 @@ Same event types as streaming — enables one consumer code path for UI and batc
 ### Transforms (v0.1)
 
 ```ts
-function collectStream(
-  events: AsyncIterable<StreamEvent>
-): Promise<{
+function collectStream(events: AsyncIterable<StreamEvent>): Promise<{
   text: string;
   reasoning: string;
   refusals: string;
@@ -306,12 +317,12 @@ function collectStream(
 
 function toSSE(
   events: AsyncIterable<StreamEvent>,
-  options?: { sanitizeErrors?: boolean }
+  options?: { sanitizeErrors?: boolean },
 ): ReadableStream<Uint8Array>;
 
 function tapEvents(
   events: AsyncIterable<StreamEvent>,
-  onEvent: (event: StreamEvent) => void
+  onEvent: (event: StreamEvent) => void,
 ): AsyncIterable<StreamEvent>;
 ```
 
@@ -319,12 +330,14 @@ function tapEvents(
 
 ```ts
 function isTextDelta(event: StreamEvent): event is Extract<StreamEvent, { type: "text.delta" }>;
-function isToolCallDone(event: StreamEvent): event is Extract<StreamEvent, { type: "tool_call.done" }>;
+function isToolCallDone(
+  event: StreamEvent,
+): event is Extract<StreamEvent, { type: "tool_call.done" }>;
 // ... guards for each event type
 
 function matchEvent<R>(
   event: StreamEvent,
-  handlers: Partial<{ [K in StreamEvent["type"]]: (e: Extract<StreamEvent, { type: K }>) => R }>
+  handlers: Partial<{ [K in StreamEvent["type"]]: (e: Extract<StreamEvent, { type: K }>) => R }>,
 ): R | undefined;
 ```
 
@@ -336,7 +349,7 @@ Zero runtime cost for guards; `matchEvent` is a thin switch helper.
 function assembleFromFile(
   path: string,
   adapter: StreamAdapter,
-  options?: AssembleOptions & { format?: "sse" | "json" }
+  options?: AssembleOptions & { format?: "sse" | "json" },
 ): AsyncIterable<StreamEvent>;
 ```
 
@@ -404,12 +417,16 @@ for await (const event of assembleStream(response.body!, openaiChatAdapter(), {
 ```ts
 import { assembleResponse, collectStream, anthropicAdapter } from "llm-stream-assemble";
 
-const response = await fetch("https://api.anthropic.com/v1/messages", { /* stream: false */ });
+const response = await fetch("https://api.anthropic.com/v1/messages", {
+  /* stream: false */
+});
 const body = await response.json();
 const events = assembleResponse(body, anthropicAdapter());
-const result = await collectStream(async function* () {
-  for (const e of events) yield e;
-}());
+const result = await collectStream(
+  (async function* () {
+    for (const e of events) yield e;
+  })(),
+);
 ```
 
 ---
@@ -474,13 +491,13 @@ Defer from v0.1 unless time allows.
 
 Living document at `docs/compatibility.md`, summarized in README:
 
-| Provider / API | Adapter | Text | Tools | Reasoning | Refusal | JSON stream | Usage | Multi-choice | Notes |
-| -------------- | ------- | ---- | ----- | --------- | ------- | ----------- | ----- | ------------ | ----- |
-| OpenAI Chat Completions | `openaiChatAdapter` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅¹ | ✅ | ¹needs `stream_options.include_usage` |
-| OpenAI-compatible | `openaiCompatibleAdapter` | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | Provider-dependent; quirks documented per host |
-| Anthropic Messages | `anthropicAdapter` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | `eager_input_streaming` recommended |
-| OpenAI Responses | `openaiResponsesAdapter` | — | ✅ | — | — | — | — | — | v0.2 |
-| Gemini | TBD | — | — | — | — | — | — | — | v0.2+ |
+| Provider / API          | Adapter                   | Text | Tools | Reasoning | Refusal | JSON stream | Usage | Multi-choice | Notes                                          |
+| ----------------------- | ------------------------- | ---- | ----- | --------- | ------- | ----------- | ----- | ------------ | ---------------------------------------------- |
+| OpenAI Chat Completions | `openaiChatAdapter`       | ✅   | ✅    | ✅        | ✅      | ✅          | ✅¹   | ✅           | ¹needs `stream_options.include_usage`          |
+| OpenAI-compatible       | `openaiCompatibleAdapter` | ✅   | ✅    | ⚠️        | ⚠️      | ⚠️          | ⚠️    | ⚠️           | Provider-dependent; quirks documented per host |
+| Anthropic Messages      | `anthropicAdapter`        | ✅   | ✅    | ✅        | ✅      | ✅          | ✅    | —            | `eager_input_streaming` recommended            |
+| OpenAI Responses        | `openaiResponsesAdapter`  | —    | ✅    | —         | —       | —           | —     | —            | v0.2                                           |
+| Gemini                  | TBD                       | —    | —     | —         | —       | —           | —     | —            | v0.2+                                          |
 
 Legend: ✅ supported · ⚠️ best-effort / provider-dependent · — not applicable or not yet implemented
 
@@ -513,13 +530,13 @@ When used as an Express/Hono proxy (`examples/express-proxy`), raw provider erro
 
 ### Runtime compatibility matrix (test in CI)
 
-| Runtime | Target | Notes |
-| ------- | ------ | ----- |
-| Node 18+ | ✅ primary | LTS versions 18, 20, 22 in CI |
-| Bun | ⚠️ smoke | ReadableStream compatibility smoke test |
-| Deno | ⚠️ smoke | Import npm: specifiers |
-| Cloudflare Workers | ⚠️ smoke | TransformStream + fetch proxy |
-| Browser | ⚠️ documented | If bundle size < 10 KB gzip for core |
+| Runtime            | Target        | Notes                                   |
+| ------------------ | ------------- | --------------------------------------- |
+| Node 18+           | ✅ primary    | LTS versions 18, 20, 22 in CI           |
+| Bun                | ⚠️ smoke      | ReadableStream compatibility smoke test |
+| Deno               | ⚠️ smoke      | Import npm: specifiers                  |
+| Cloudflare Workers | ⚠️ smoke      | TransformStream + fetch proxy           |
+| Browser            | ⚠️ documented | If bundle size < 10 KB gzip for core    |
 
 ### Benchmark (informational CI job)
 
@@ -551,18 +568,18 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 
 **Goal:** Ship a production-grade primitive — not a minimal toy.
 
-| Area | Deliverable |
-| ---- | ----------- |
-| Core | SSE parser, assemblers, partial JSON, `assembleStream`, `assembleResponse`, `assembleFromPayloads` |
-| Core | `createAssemblyTransform`, `AbortSignal` support, incomplete/aborted finish reasons |
-| Adapters | OpenAI Chat, **OpenAI-compatible**, Anthropic Messages |
-| Transforms | `collectStream`, `toSSE` (lite), `tapEvents` |
-| Helpers | Type guards, `matchEvent` |
-| Events | metadata, refusal, json stream, choiceIndex, extended finish reasons |
-| Examples | `node-fetch` CLI, `express-proxy` with sanitized errors |
-| Docs | README, `docs/compatibility.md`, `docs/adapter-guide.md`, CONTRIBUTING.md, LICENSE |
-| Quality | Golden + unit tests; CI; optional benchmark job; bundle size < 5 KB gzip (core) |
-| OSS | Bundlephobia badge in README; runtime smoke matrix |
+| Area       | Deliverable                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| Core       | SSE parser, assemblers, partial JSON, `assembleStream`, `assembleResponse`, `assembleFromPayloads` |
+| Core       | `createAssemblyTransform`, `AbortSignal` support, incomplete/aborted finish reasons                |
+| Adapters   | OpenAI Chat, **OpenAI-compatible**, Anthropic Messages                                             |
+| Transforms | `collectStream`, `toSSE` (lite), `tapEvents`                                                       |
+| Helpers    | Type guards, `matchEvent`                                                                          |
+| Events     | metadata, refusal, json stream, choiceIndex, extended finish reasons                               |
+| Examples   | `node-fetch` CLI, `express-proxy` with sanitized errors                                            |
+| Docs       | README, `docs/compatibility.md`, `docs/adapter-guide.md`, CONTRIBUTING.md, LICENSE                 |
+| Quality    | Golden + unit tests; CI; optional benchmark job; bundle size < 5 KB gzip (core)                    |
+| OSS        | Bundlephobia badge in README; runtime smoke matrix                                                 |
 
 **Deferred from v0.1:** OpenAI Responses adapter, Gemini, Bedrock, multiplex, AI SDK mapper, stream resume/cursors, optional Zod peer validation.
 
@@ -592,18 +609,18 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 
 ### Coverage areas
 
-| Area | Examples |
-| ---- | -------- |
-| SSE parser | Multi-line `data:`, `[DONE]`, chunk split mid-line |
-| Text assembler | Unicode, empty deltas, delta → done, multi-choice |
+| Area           | Examples                                                                          |
+| -------------- | --------------------------------------------------------------------------------- |
+| SSE parser     | Multi-line `data:`, `[DONE]`, chunk split mid-line                                |
+| Text assembler | Unicode, empty deltas, delta → done, multi-choice                                 |
 | Tool assembler | Parallel tools, 50+ arg chunks, index → id reconciliation, legacy `function_call` |
-| JSON assembler | Structured output streaming, invalid partial fragments |
-| Partial JSON | Incomplete strings, nested objects, invalid Anthropic fragments |
-| Non-streaming | `assembleResponse` parity with streaming fixtures |
-| Transforms | `collectStream`, `toSSE`, `createAssemblyTransform` |
-| Error handling | Malformed JSON, `sanitizeErrors`, `recoverMalformed` |
-| Lifecycle | AbortSignal, incomplete stream (no terminal marker) |
-| Adapters | Provider-specific golden fixtures per adapter |
+| JSON assembler | Structured output streaming, invalid partial fragments                            |
+| Partial JSON   | Incomplete strings, nested objects, invalid Anthropic fragments                   |
+| Non-streaming  | `assembleResponse` parity with streaming fixtures                                 |
+| Transforms     | `collectStream`, `toSSE`, `createAssemblyTransform`                               |
+| Error handling | Malformed JSON, `sanitizeErrors`, `recoverMalformed`                              |
+| Lifecycle      | AbortSignal, incomplete stream (no terminal marker)                               |
+| Adapters       | Provider-specific golden fixtures per adapter                                     |
 
 ### Manual QA
 
@@ -617,13 +634,13 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 
 ## Tooling
 
-| Tool | Purpose |
-| ---- | ------- |
-| TypeScript 5.x | Implementation + types |
-| tsup | ESM + CJS + `.d.ts`, subpath exports |
-| Vitest | Unit + golden tests |
-| ESLint + Prettier | Lint / format |
-| pnpm | Package management |
+| Tool              | Purpose                              |
+| ----------------- | ------------------------------------ |
+| TypeScript 5.x    | Implementation + types               |
+| tsup              | ESM + CJS + `.d.ts`, subpath exports |
+| Vitest            | Unit + golden tests                  |
+| ESLint + Prettier | Lint / format                        |
+| pnpm              | Package management                   |
 
 ### Package metadata (v0.1)
 
@@ -648,16 +665,16 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 
 Before npm publish:
 
-| Item | Purpose |
-| ---- | ------- |
-| `LICENSE` (MIT) | Legal clarity |
-| `CONTRIBUTING.md` | Points to adapter guide + test requirements |
-| `docs/compatibility.md` | Living provider matrix |
-| `docs/adapter-guide.md` | Community adapter onboarding |
-| Bundlephobia badge | Prove < 5 KB gzip core claim |
-| Benchmark CI job | Throughput transparency |
-| Runtime smoke matrix | Node + Bun + Workers documented |
-| CHANGELOG (no dates) | Version-only entries per project convention |
+| Item                    | Purpose                                     |
+| ----------------------- | ------------------------------------------- |
+| `LICENSE` (MIT)         | Legal clarity                               |
+| `CONTRIBUTING.md`       | Points to adapter guide + test requirements |
+| `docs/compatibility.md` | Living provider matrix                      |
+| `docs/adapter-guide.md` | Community adapter onboarding                |
+| Bundlephobia badge      | Prove < 5 KB gzip core claim                |
+| Benchmark CI job        | Throughput transparency                     |
+| Runtime smoke matrix    | Node + Bun + Workers documented             |
+| CHANGELOG (no dates)    | Version-only entries per project convention |
 
 ---
 
@@ -680,19 +697,19 @@ Publish only when explicitly requested. Before first release:
 
 ## Decisions
 
-| # | Decision | Choice | Rationale |
-| - | -------- | ------ | --------- |
-| 1 | Package structure | Single package for v0.1 | Faster to ship; split at v0.2 if needed |
-| 2 | v0.1 adapters | OpenAI Chat + **OpenAI-compatible** + Anthropic | Maximum reach with minimal code |
-| 3 | Non-streaming API | `assembleResponse` in v0.1 | One event model for all code paths |
-| 4 | Transforms | `collectStream`, `toSSE`, `TransformStream` in v0.1 | Production proxy + edge use cases |
-| 5 | Responses API | v0.2 | Newer API; lower priority than compatible adapter |
-| 6 | Runtime | Node 18+ primary, Web Streams for edge | Matches fetch/Workers patterns |
-| 7 | npm name | `llm-stream-assemble` | Available, descriptive |
-| 8 | License | MIT | Standard for OSS npm libraries |
-| 9 | CI live tests | Fixtures only by default | No secrets required for contributors |
-| 10 | Core dependencies | **Zero runtime deps** | Primary differentiator |
-| 11 | Proxy errors | `sanitizeErrors` opt-in | Prevent provider leak to browsers |
+| #   | Decision          | Choice                                              | Rationale                                         |
+| --- | ----------------- | --------------------------------------------------- | ------------------------------------------------- |
+| 1   | Package structure | Single package for v0.1                             | Faster to ship; split at v0.2 if needed           |
+| 2   | v0.1 adapters     | OpenAI Chat + **OpenAI-compatible** + Anthropic     | Maximum reach with minimal code                   |
+| 3   | Non-streaming API | `assembleResponse` in v0.1                          | One event model for all code paths                |
+| 4   | Transforms        | `collectStream`, `toSSE`, `TransformStream` in v0.1 | Production proxy + edge use cases                 |
+| 5   | Responses API     | v0.2                                                | Newer API; lower priority than compatible adapter |
+| 6   | Runtime           | Node 18+ primary, Web Streams for edge              | Matches fetch/Workers patterns                    |
+| 7   | npm name          | `llm-stream-assemble`                               | Available, descriptive                            |
+| 8   | License           | MIT                                                 | Standard for OSS npm libraries                    |
+| 9   | CI live tests     | Fixtures only by default                            | No secrets required for contributors              |
+| 10  | Core dependencies | **Zero runtime deps**                               | Primary differentiator                            |
+| 11  | Proxy errors      | `sanitizeErrors` opt-in                             | Prevent provider leak to browsers                 |
 
 Record any changes to these decisions in README when implementation starts.
 
@@ -700,18 +717,18 @@ Record any changes to these decisions in README when implementation starts.
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-| ---- | ---------- |
-| Provider changes SSE format | Golden tests; semver minor for adapter fixes |
-| Competing libraries absorb this niche | Clear positioning as primitive; zero deps; compatibility matrix |
-| Anthropic partial JSON is invalid mid-stream | Best-effort `parsePartialJSON`; document limitations |
-| OpenAI tool `id` arrives late | Index-based reconciliation until id is known |
-| Scope creep (agent loop, retry, memory) | Non-goals in README; strict reviews |
-| npm name squatted before publish | Register early or use scoped fallback |
-| OpenAI-compatible dialect drift | `openaiCompatibleAdapter` documents quirks; golden tests per known host |
-| Proxy leaks provider errors | `sanitizeErrors`; document express-proxy pattern |
-| Memory growth on huge tool args | Document inherent buffering; streaming UI should not use `collectStream` |
-| Expanded v0.1 scope delays ship | Phase implementation: core → openai → compatible → anthropic → transforms |
+| Risk                                         | Mitigation                                                                |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| Provider changes SSE format                  | Golden tests; semver minor for adapter fixes                              |
+| Competing libraries absorb this niche        | Clear positioning as primitive; zero deps; compatibility matrix           |
+| Anthropic partial JSON is invalid mid-stream | Best-effort `parsePartialJSON`; document limitations                      |
+| OpenAI tool `id` arrives late                | Index-based reconciliation until id is known                              |
+| Scope creep (agent loop, retry, memory)      | Non-goals in README; strict reviews                                       |
+| npm name squatted before publish             | Register early or use scoped fallback                                     |
+| OpenAI-compatible dialect drift              | `openaiCompatibleAdapter` documents quirks; golden tests per known host   |
+| Proxy leaks provider errors                  | `sanitizeErrors`; document express-proxy pattern                          |
+| Memory growth on huge tool args              | Document inherent buffering; streaming UI should not use `collectStream`  |
+| Expanded v0.1 scope delays ship              | Phase implementation: core → openai → compatible → anthropic → transforms |
 
 ---
 
