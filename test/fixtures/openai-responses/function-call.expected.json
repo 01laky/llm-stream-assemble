@@ -1,0 +1,19 @@
+[
+	{ "type": "message.start", "id": "resp_tool" },
+	{ "type": "metadata", "model": "gpt-4.1-mini", "responseId": "resp_tool", "created": 1710000101 },
+	{ "type": "tool_call.start", "id": "call_1", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_1",
+		"delta": "{\"query\":\"res",
+		"partial": { "query": "res" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_1",
+		"delta": "ponses\"}",
+		"partial": { "query": "responses" }
+	},
+	{ "type": "tool_call.done", "id": "call_1", "name": "search", "args": { "query": "responses" } },
+	{ "type": "finish", "reason": "stop" }
+]

@@ -5,4 +5,4 @@ export {
 	type OpenAICompatibleProvider,
 } from "./openai-compatible";
 export { anthropicAdapter } from "./anthropic";
-export { openaiResponsesAdapter } from "./openai-responses";
+export { openaiResponsesAdapter, type OpenAIResponsesAdapterOptions } from "./openai-responses";

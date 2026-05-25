@@ -1,0 +1,5 @@
+[
+	{ "type": "message.start", "id": "resp_incomplete" },
+	{ "type": "metadata", "responseId": "resp_incomplete" },
+	{ "type": "finish", "reason": "incomplete" }
+]

@@ -73,6 +73,8 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
   from a proxy so raw provider internals are not exposed to browsers.
 - Use `tapEvents()` for adapter debugging, logging, and metrics without changing
   the event stream.
+- Use `openaiResponsesAdapter()` as the reference pattern for event-name-driven
+  parsing where provider payloads are not Chat-style choice deltas.
 
 ## Factory naming convention
 

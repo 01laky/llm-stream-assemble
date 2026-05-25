@@ -1,0 +1,4 @@
+[
+	{ "type": "error", "recoverable": false },
+	{ "type": "finish", "reason": "error" }
+]

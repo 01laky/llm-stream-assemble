@@ -1,0 +1,9 @@
+[
+	{ "type": "message.start", "id": "resp_text" },
+	{ "type": "metadata", "model": "gpt-4.1-mini", "responseId": "resp_text", "created": 1710000100 },
+	{ "type": "text.delta", "text": "Hello" },
+	{ "type": "text.delta", "text": " Responses" },
+	{ "type": "usage", "inputTokens": 4, "outputTokens": 6, "reasoningTokens": 1 },
+	{ "type": "text.done", "text": "Hello Responses" },
+	{ "type": "finish", "reason": "stop" }
+]

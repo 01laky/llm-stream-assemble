@@ -123,10 +123,8 @@ describe("stubs.test.ts", () => {
 			expect(() => anthropicAdapter().parseChunk("{}")).toThrow(/anthropicAdapter\.parseChunk/i);
 		});
 
-		it("LSA-ST14: openaiResponsesAdapter.parseChunk throws", () => {
-			expect(() => openaiResponsesAdapter().parseChunk("{}")).toThrow(
-				/openaiResponsesAdapter\.parseChunk/i,
-			);
+		it("LSA-ST14: openaiResponsesAdapter.parseChunk is implemented", () => {
+			expect(openaiResponsesAdapter().parseChunk("{}")).toEqual([]);
 		});
 	});
 

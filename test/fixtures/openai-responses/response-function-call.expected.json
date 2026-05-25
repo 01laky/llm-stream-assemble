@@ -1,0 +1,13 @@
+[
+	{ "type": "message.start", "id": "resp_response_tool" },
+	{ "type": "metadata", "model": "gpt-4.1-mini", "responseId": "resp_response_tool" },
+	{ "type": "tool_call.start", "id": "call_response", "name": "lookup", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_response",
+		"delta": "{\"id\":\"abc\"}",
+		"partial": { "id": "abc" }
+	},
+	{ "type": "tool_call.done", "id": "call_response", "name": "lookup", "args": { "id": "abc" } },
+	{ "type": "finish", "reason": "stop" }
+]

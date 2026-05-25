@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.6.0-blue)
+![core](https://img.shields.io/badge/core-0.7.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
 ![tests](https://img.shields.io/badge/tests-330%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_6_examples-orange)
+![status](https://img.shields.io/badge/status-phase_7_responses-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 6 — core, provider adapters, transforms, replay helpers, and examples functional (`0.6.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, local fixture replay, and example usage are implemented. Publish prep is still planned, so **do not use in production yet**.
+**Status:** Phase 7 — core, provider adapters, transforms, replay helpers, examples, and OpenAI Responses adapter functional (`0.7.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, local fixture replay, and example usage are implemented. Publish prep is still planned, so **do not use in production yet**.
 
 ## Requirements
 
@@ -134,6 +134,20 @@ for await (const event of assembleStream(response.body!, anthropicAdapter())) {
 ```
 
 Anthropic tool calls are emitted from `tool_use` content blocks. Fine-grained tool input streaming is supported through `input_json_delta`; partial input may be invalid JSON until the block ends, and core handles those partial previews best-effort. Thinking blocks map to `reasoning.*` events with `variant: "detail"`.
+
+## OpenAI Responses Usage
+
+`openaiResponsesAdapter()` parses OpenAI Responses API streaming events and non-streaming response objects. It focuses on output text and function call argument streams; Realtime, audio, and multimodal binary output are out of scope.
+
+```ts
+import { assembleStream, openaiResponsesAdapter } from "llm-stream-assemble";
+
+for await (const event of assembleStream(response.body!, openaiResponsesAdapter())) {
+	if (event.type === "tool_call.args.delta") console.log(event.delta);
+}
+```
+
+Use `openaiResponsesAdapter({ jsonMode: true })` to map output text to `json.*` events. Reasoning support is best-effort for string summary/detail fields. Create a new adapter instance per stream.
 
 ## Collecting a Stream
 

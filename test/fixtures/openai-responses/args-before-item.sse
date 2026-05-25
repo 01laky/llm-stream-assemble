@@ -1,0 +1,8 @@
+data: {"type":"response.function_call_arguments.delta","output_index":0,"item_id":"fc_late","delta":"{\"q\":\"early\"}"}
+
+data: {"type":"response.output_item.added","output_index":0,"item":{"id":"fc_late","type":"function_call","name":"late_tool","arguments":""}}
+
+data: {"type":"response.output_item.done","output_index":0,"item":{"id":"fc_late","type":"function_call","name":"late_tool"}}
+
+data: {"type":"response.completed","response":{"id":"resp_late","status":"completed"}}
+

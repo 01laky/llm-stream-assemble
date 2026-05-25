@@ -1,0 +1,8 @@
+[
+	{ "type": "message.start", "id": "resp_json" },
+	{ "type": "metadata", "model": "gpt-4.1-mini", "responseId": "resp_json" },
+	{ "type": "json.delta", "delta": "{\"ok\":", "partial": {} },
+	{ "type": "json.delta", "delta": "true}", "partial": { "ok": true } },
+	{ "type": "json.done", "value": { "ok": true } },
+	{ "type": "finish", "reason": "stop" }
+]

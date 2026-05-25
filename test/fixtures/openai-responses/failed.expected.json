@@ -1,0 +1,6 @@
+[
+	{ "type": "message.start", "id": "resp_failed" },
+	{ "type": "metadata", "responseId": "resp_failed" },
+	{ "type": "error", "recoverable": false },
+	{ "type": "finish", "reason": "error" }
+]

@@ -1,0 +1,7 @@
+[
+	{ "type": "message.start", "id": "resp_refusal" },
+	{ "type": "metadata", "model": "gpt-4.1-mini", "responseId": "resp_refusal" },
+	{ "type": "refusal.delta", "text": "I cannot comply." },
+	{ "type": "refusal.done", "text": "I cannot comply." },
+	{ "type": "finish", "reason": "stop" }
+]

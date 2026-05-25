@@ -1,0 +1,8 @@
+data: {"type":"response.created","response":{"id":"resp_text","model":"gpt-4.1-mini","created_at":1710000100}}
+
+data: {"type":"response.output_text.delta","delta":"Hello"}
+
+data: {"type":"response.output_text.delta","delta":" Responses"}
+
+data: {"type":"response.completed","response":{"id":"resp_text","status":"completed","usage":{"input_tokens":4,"output_tokens":6,"output_tokens_details":{"reasoning_tokens":1}}}}
+

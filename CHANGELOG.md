@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.0]
+
+### Added
+
+- OpenAI Responses adapter for streaming event payloads and non-streaming response
+  objects, including output text, function call item lifecycle, streamed function
+  call arguments, usage, failed/incomplete lifecycle events, JSON mode, best-effort
+  string reasoning fields, and provider errors.
+- OpenAI Responses fixtures under `test/fixtures/openai-responses/` and tests
+  LSA-R01 through LSA-R41.
+
+### Changed
+
+- README and compatibility docs document OpenAI Responses support and limitations.
+- docs/adapter-guide.md notes that OpenAI Responses uses event-name-driven parsing
+  instead of Chat-style choice deltas.
+- package.json version bumped to 0.7.0.
+
 ## [0.6.0]
 
 ### Added

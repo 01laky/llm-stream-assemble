@@ -1,0 +1,13 @@
+[
+	{ "type": "tool_call.start", "id": "fc_late", "name": "unknown", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "fc_late",
+		"delta": "{\"q\":\"early\"}",
+		"partial": { "q": "early" }
+	},
+	{ "type": "tool_call.done", "id": "fc_late", "name": "unknown", "args": { "q": "early" } },
+	{ "type": "message.start", "id": "resp_late" },
+	{ "type": "metadata", "responseId": "resp_late" },
+	{ "type": "finish", "reason": "stop" }
+]

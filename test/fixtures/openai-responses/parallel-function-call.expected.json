@@ -1,0 +1,11 @@
+[
+	{ "type": "tool_call.start", "id": "call_a", "name": "a", "index": 0 },
+	{ "type": "tool_call.start", "id": "call_b", "name": "b", "index": 1 },
+	{ "type": "tool_call.args.delta", "id": "call_a", "delta": "{\"a\":1}", "partial": { "a": 1 } },
+	{ "type": "tool_call.args.delta", "id": "call_b", "delta": "{\"b\":2}", "partial": { "b": 2 } },
+	{ "type": "tool_call.done", "id": "call_a", "name": "a", "args": { "a": 1 } },
+	{ "type": "tool_call.done", "id": "call_b", "name": "b", "args": { "b": 2 } },
+	{ "type": "message.start", "id": "resp_parallel" },
+	{ "type": "metadata", "responseId": "resp_parallel" },
+	{ "type": "finish", "reason": "stop" }
+]

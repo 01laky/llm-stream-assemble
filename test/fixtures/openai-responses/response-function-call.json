@@ -1,0 +1,14 @@
+{
+	"id": "resp_response_tool",
+	"model": "gpt-4.1-mini",
+	"status": "completed",
+	"output": [
+		{
+			"id": "fc_response",
+			"type": "function_call",
+			"call_id": "call_response",
+			"name": "lookup",
+			"arguments": "{\"id\":\"abc\"}"
+		}
+	]
+}
