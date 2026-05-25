@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.1.1]
+
+### Fixed
+
+- GitHub Actions CI now lets `pnpm/action-setup` read the package manager version
+  from `package.json` instead of also specifying `version: 9` in the workflow.
+  This avoids the action's multiple-version error and keeps `pnpm@9.15.9` as the
+  single source of truth.
+
 ## [0.1.0]
 
 ### Added
