@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.0.5]
+
+### Added
+
+- Comprehensive Phase 0 edge-case tests:
+  - LSA-G01…G17 — all 16 type guards (positive, negative, mutual exclusivity).
+  - LSA-M01…M19 — matchEvent dispatch for every StreamEvent type, finish reason
+    variants, and missing-handler behavior.
+  - LSA-ST01…ST15 — all core/transform/adapter stubs throw not-implemented.
+  - LSA-P01…P05 — subpath dist exports (root, core, all adapters).
+  - LSA-B01…B10 — build artifact presence (ESM, CJS, declarations).
+  - LSA-E01…E02 — expanded export surface assertions (16 type guards).
+- test/fixtures/sample-events.ts — sample events with unicode, choiceIndex, variants,
+  partial tool args, and all finish reasons.
+
+### Changed
+
+- pnpm verify and GitHub CI now run build before tests so dist artifact tests are
+  reliable on clean checkouts.
+- CI workflow simplified to a single `pnpm verify` step.
+
 ## [0.0.4]
 
 ### Added

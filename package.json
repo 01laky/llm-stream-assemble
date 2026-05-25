@@ -1,6 +1,6 @@
 {
   "name": "llm-stream-assemble",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Assemble and normalize LLM streaming responses into unified events — text, tool calls, reasoning. Provider-agnostic stream layer, not an LLM SDK.",
   "license": "MIT",
   "author": "Ladislav Kostolny <01laky@gmail.com>",
@@ -54,7 +54,7 @@
     "format:fix": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "verify": "pnpm verify:deps && pnpm lint && pnpm typecheck && pnpm build && pnpm test",
     "verify:deps": "node scripts/verify-zero-deps.mjs"
   },
   "keywords": [
