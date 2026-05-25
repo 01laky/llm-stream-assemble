@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.4.0]
+
+### Added
+
+- Anthropic Messages adapter for streaming SSE payloads: message lifecycle,
+  text blocks, thinking blocks, tool_use blocks with fine-grained input JSON
+  deltas, refusal blocks, usage, finish reasons, provider errors, and JSON mode.
+- `anthropicAdapter().parseResponse` for non-streaming Anthropic Messages
+  responses using the same RawChunk pipeline as streaming.
+- Anthropic fixtures under `test/fixtures/anthropic/`, fixture provenance docs,
+  and detailed LSA-A01 through LSA-A25 coverage.
+
+### Changed
+
+- README status and usage docs now include Anthropic Messages adapter usage and
+  fine-grained tool input streaming notes.
+- docs/compatibility.md marks Anthropic Messages as supported and documents
+  Anthropic-specific streaming/tool-use notes.
+- docs/adapter-guide.md includes Anthropic-specific edge cases for content block
+  streams and fine-grained tool input.
+- package.json version bumped to 0.4.0.
+
 ## [0.3.0]
 
 ### Added

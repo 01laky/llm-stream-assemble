@@ -36,7 +36,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 	it("LSA-OC43: README mentions OpenAI-compatible usage and status", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
 		expect(readme).toContain("OpenAI-Compatible Usage");
-		expect(readme).toContain("phase_3_openai_compatible");
+		expect(readme).toContain("OpenAI Chat + OpenAI-compatible");
 	});
 
 	it("LSA-OC44: README contains a provider preset table", () => {

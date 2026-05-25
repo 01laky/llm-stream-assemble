@@ -1,0 +1,9 @@
+{
+	"id": "msg_response_text",
+	"type": "message",
+	"role": "assistant",
+	"model": "claude-3-5-sonnet",
+	"content": [{ "type": "text", "text": "Hello response" }],
+	"stop_reason": "end_turn",
+	"usage": { "input_tokens": 5, "output_tokens": 7 }
+}

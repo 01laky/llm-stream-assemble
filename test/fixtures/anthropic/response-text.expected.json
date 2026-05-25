@@ -1,0 +1,8 @@
+[
+	{ "type": "message.start", "id": "msg_response_text" },
+	{ "type": "metadata", "model": "claude-3-5-sonnet", "responseId": "msg_response_text" },
+	{ "type": "usage", "inputTokens": 5, "outputTokens": 7 },
+	{ "type": "text.delta", "text": "Hello response" },
+	{ "type": "text.done", "text": "Hello response" },
+	{ "type": "finish", "reason": "stop" }
+]

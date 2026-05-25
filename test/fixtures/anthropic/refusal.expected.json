@@ -1,0 +1,9 @@
+[
+	{ "type": "message.start", "id": "msg_refusal" },
+	{ "type": "metadata", "model": "claude-3-5-sonnet", "responseId": "msg_refusal" },
+	{ "type": "usage", "inputTokens": 4, "outputTokens": 0 },
+	{ "type": "refusal.delta", "text": "I cannot help with that." },
+	{ "type": "usage", "outputTokens": 6 },
+	{ "type": "refusal.done", "text": "I cannot help with that." },
+	{ "type": "finish", "reason": "content_filter" }
+]

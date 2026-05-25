@@ -52,6 +52,9 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - [ ] Unknown finish reasons
 - [ ] Usage-only chunks
 - [ ] Non-streaming response parity
+- [ ] Anthropic content block lifecycle: start, delta, stop
+- [ ] Anthropic fine-grained `input_json_delta` tool streaming
+- [ ] Anthropic thinking / redacted thinking blocks
 
 ### 6. Update compatibility matrix
 

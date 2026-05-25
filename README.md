@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.3.0-blue)
+![core](https://img.shields.io/badge/core-0.4.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-210%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-280%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_3_openai_compatible-orange)
+![status](https://img.shields.io/badge/status-phase_4_anthropic-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 3 — core + OpenAI Chat + OpenAI-compatible adapters functional (`0.3.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, OpenAI Chat Completions parsing, and OpenAI-compatible parsing are implemented. Anthropic and convenience transforms are still planned, so **do not use in production yet**.
+**Status:** Phase 4 — core + OpenAI Chat + OpenAI-compatible + Anthropic Messages adapters functional (`0.4.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, and the first provider adapters are implemented. Convenience transforms are still planned, so **do not use in production yet**.
 
 ## Requirements
 
@@ -120,6 +120,20 @@ Known limitations:
 - Non-string reasoning payloads are skipped.
 - Multi-choice terminal behavior is limited by the current core single terminal finish event.
 - Missing tool ids are tolerated because core can synthesize stable ids by index.
+
+## Anthropic Messages Usage
+
+`anthropicAdapter()` parses Anthropic Messages streaming events and non-streaming responses. Create one adapter instance per request/stream.
+
+```ts
+import { anthropicAdapter, assembleStream } from "llm-stream-assemble";
+
+for await (const event of assembleStream(response.body!, anthropicAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+Anthropic tool calls are emitted from `tool_use` content blocks. Fine-grained tool input streaming is supported through `input_json_delta`; partial input may be invalid JSON until the block ends, and core handles those partial previews best-effort. Thinking blocks map to `reasoning.*` events with `variant: "detail"`.
 
 ## Development
 

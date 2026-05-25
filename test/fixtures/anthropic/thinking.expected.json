@@ -1,0 +1,9 @@
+[
+	{ "type": "message.start", "id": "msg_thinking" },
+	{ "type": "metadata", "model": "claude-3-7-sonnet", "responseId": "msg_thinking" },
+	{ "type": "usage", "inputTokens": 3, "outputTokens": 0 },
+	{ "type": "reasoning.delta", "text": "I should reason.", "variant": "detail" },
+	{ "type": "usage", "outputTokens": 4 },
+	{ "type": "reasoning.done", "text": "I should reason.", "variant": "detail" },
+	{ "type": "finish", "reason": "stop" }
+]

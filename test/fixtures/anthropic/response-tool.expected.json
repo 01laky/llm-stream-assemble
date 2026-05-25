@@ -1,0 +1,14 @@
+[
+	{ "type": "message.start", "id": "msg_response_tool" },
+	{ "type": "metadata", "model": "claude-3-5-sonnet", "responseId": "msg_response_tool" },
+	{ "type": "usage", "inputTokens": 6, "outputTokens": 9 },
+	{ "type": "tool_call.start", "id": "toolu_response", "name": "lookup", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_response",
+		"delta": "{\"id\":\"abc\"}",
+		"partial": { "id": "abc" }
+	},
+	{ "type": "tool_call.done", "id": "toolu_response", "name": "lookup", "args": { "id": "abc" } },
+	{ "type": "finish", "reason": "tool_calls" }
+]

@@ -1,0 +1,10 @@
+data: {"type":"message_start","message":{"id":"msg_refusal","model":"claude-3-5-sonnet","usage":{"input_tokens":4,"output_tokens":0}}}
+
+data: {"type":"content_block_start","index":0,"content_block":{"type":"refusal","refusal":"I cannot help with that."}}
+
+data: {"type":"content_block_stop","index":0}
+
+data: {"type":"message_delta","delta":{"stop_reason":"refusal"},"usage":{"output_tokens":6}}
+
+data: {"type":"message_stop"}
+

@@ -1,0 +1,16 @@
+{
+	"id": "msg_response_tool",
+	"type": "message",
+	"role": "assistant",
+	"model": "claude-3-5-sonnet",
+	"content": [
+		{
+			"type": "tool_use",
+			"id": "toolu_response",
+			"name": "lookup",
+			"input": { "id": "abc" }
+		}
+	],
+	"stop_reason": "tool_use",
+	"usage": { "input_tokens": 6, "output_tokens": 9 }
+}

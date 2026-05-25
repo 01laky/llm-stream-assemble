@@ -1,0 +1,21 @@
+[
+	{ "type": "message.start", "id": "msg_tool" },
+	{ "type": "metadata", "model": "claude-3-5-sonnet", "responseId": "msg_tool" },
+	{ "type": "usage", "inputTokens": 12, "outputTokens": 0 },
+	{ "type": "tool_call.start", "id": "toolu_1", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_1",
+		"delta": "{\"query\":\"anth",
+		"partial": { "query": "anth" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_1",
+		"delta": "ropic\"}",
+		"partial": { "query": "anthropic" }
+	},
+	{ "type": "tool_call.done", "id": "toolu_1", "name": "search", "args": { "query": "anthropic" } },
+	{ "type": "usage", "outputTokens": 8 },
+	{ "type": "finish", "reason": "tool_calls" }
+]
