@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.5.0-blue)
+![core](https://img.shields.io/badge/core-0.6.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
 ![tests](https://img.shields.io/badge/tests-330%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_5_transforms-orange)
+![status](https://img.shields.io/badge/status-phase_6_examples-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 5 — core, provider adapters, transforms, and replay helpers functional (`0.5.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, and local fixture replay are implemented. Examples and publish prep are still planned, so **do not use in production yet**.
+**Status:** Phase 6 — core, provider adapters, transforms, replay helpers, and examples functional (`0.6.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, local fixture replay, and example usage are implemented. Publish prep is still planned, so **do not use in production yet**.
 
 ## Requirements
 
@@ -186,6 +186,22 @@ for await (const event of assembleFromFile(
 	console.log(event);
 }
 ```
+
+## Examples
+
+- `examples/node-fetch/openai-chat.ts`
+- `examples/node-fetch/openai-compatible.ts`
+- `examples/node-fetch/anthropic.ts`
+- `examples/node-fetch/replay-fixture.ts`
+- `examples/proxy-safety/web-standard-proxy.ts`
+- `examples/proxy-safety/browser-client.ts`
+
+Proxy safety:
+
+- Use `toSSE(events, { sanitizeErrors: true })` for browser-facing streams.
+- Use `tapEvents` for server-side observation and logging.
+- Never forward raw provider errors or upstream non-OK response bodies to browsers.
+- CORS headers are application-specific and intentionally omitted from the Web-standard example.
 
 ## Development
 

@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.6.0]
+
+### Added
+
+- Node fetch examples for OpenAI Chat, OpenAI-compatible providers, Anthropic
+  Messages, and local fixture replay.
+- Web-standard proxy safety examples showing `tapEvents` for server-side logging
+  and `toSSE(..., { sanitizeErrors: true })` for browser-facing streams.
+- Browser-side data-only unified SSE reader example for proxy responses.
+- Example tests LSA-X01 through LSA-X33 using fake fetch responses and checked-in
+  fixtures, with no live provider calls.
+
+### Changed
+
+- README links examples and documents proxy safety guidance.
+- examples/README.md documents manual usage, environment variables, and CI-safe
+  injected fetch testing.
+- examples/proxy-safety/README.md documents sanitization, log redaction, request
+  schema validation, CORS guidance, and browser SSE consumption.
+- package.json version bumped to 0.6.0.
+
 ## [0.5.0]
 
 ### Added
