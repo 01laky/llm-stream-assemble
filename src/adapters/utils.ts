@@ -1,5 +1,6 @@
 /** Internal adapter utilities. Not part of the public API. */
-import type { RawChunk } from "../core/types";
+import type { RawChunk, StreamAdapter } from "../core/types";
+import { adapterScopedError } from "./errors";
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -20,7 +21,22 @@ export function optionalRawChunk(input: Record<string, unknown>): RawChunk {
 }
 
 export function prefixedAdapterError(feature: string, message: string): Error {
-	return new Error(`llm-stream-assemble: ${feature}: ${message}`);
+	return adapterScopedError(feature, message);
+}
+
+export function createStreamAdapter<TOptions>(config: {
+	parser: { parseChunk(raw: string): RawChunk[] };
+	parseResponse: (body: unknown, options: TOptions) => RawChunk[];
+	options: TOptions;
+}): StreamAdapter {
+	return {
+		parseChunk(raw) {
+			return config.parser.parseChunk(raw);
+		},
+		parseResponse(body) {
+			return config.parseResponse(body, config.options);
+		},
+	};
 }
 
 export function parseAdapterJSON(raw: string, feature: string): unknown {

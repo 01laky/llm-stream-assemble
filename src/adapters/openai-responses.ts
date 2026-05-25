@@ -1,5 +1,13 @@
 import type { RawChunk, StreamAdapter } from "../core/types";
-import { asNumber, asString, isRecord, optionalRawChunk, parseAdapterJSON } from "./utils";
+import { libraryError, providerErrorChunksFromMessage } from "./errors";
+import {
+	asNumber,
+	asString,
+	createStreamAdapter,
+	isRecord,
+	optionalRawChunk,
+	parseAdapterJSON,
+} from "./utils";
 
 export interface OpenAIResponsesAdapterOptions {
 	jsonMode?: boolean;
@@ -16,14 +24,11 @@ interface ToolState {
 
 export function openaiResponsesAdapter(options: OpenAIResponsesAdapterOptions = {}): StreamAdapter {
 	const parser = new ResponsesParser(options);
-	return {
-		parseChunk(raw) {
-			return parser.parseChunk(raw);
-		},
-		parseResponse(body) {
-			return parseResponse(body, options);
-		},
-	};
+	return createStreamAdapter({
+		parser,
+		parseResponse,
+		options,
+	});
 }
 
 class ResponsesParser {
@@ -38,7 +43,7 @@ class ResponsesParser {
 		if (raw.trim() === "[DONE]") return [];
 		const payload = parseAdapterJSON(raw, "openaiResponsesAdapter.parseChunk");
 		if (!isRecord(payload)) {
-			throw prefixedError("openaiResponsesAdapter.parseChunk expected a JSON object");
+			throw libraryError("openaiResponsesAdapter.parseChunk expected a JSON object");
 		}
 
 		if (isErrorPayload(payload)) return providerErrorChunks(errorMessage(payload));
@@ -294,7 +299,7 @@ class ResponsesParser {
 
 function parseResponse(body: unknown, options: OpenAIResponsesAdapterOptions): RawChunk[] {
 	if (!isRecord(body)) {
-		throw prefixedError("openaiResponsesAdapter.parseResponse expected an OpenAI Responses object");
+		throw libraryError("openaiResponsesAdapter.parseResponse expected an OpenAI Responses object");
 	}
 	if (isErrorPayload(body) || asString(body.status) === "failed") {
 		return providerErrorChunks(errorMessage(body));
@@ -426,10 +431,7 @@ function textChunk(text: string, options: OpenAIResponsesAdapterOptions): RawChu
 }
 
 function providerErrorChunks(message: string): RawChunk[] {
-	return [
-		{ kind: "provider-error", error: prefixedError(message), recoverable: false },
-		{ kind: "finish", reason: "error" },
-	];
+	return providerErrorChunksFromMessage(message, false);
 }
 
 function errorMessage(payload: Record<string, unknown>): string {
@@ -451,8 +453,4 @@ function toolId(payload: Record<string, unknown>, item?: Record<string, unknown>
 	const itemId = asString(item?.id) ?? asString(payload.item_id);
 	const index = asNumber(payload.output_index);
 	return callId ?? itemId ?? `response_tool:${index ?? 0}`;
-}
-
-function prefixedError(message: string): Error {
-	return new Error(`llm-stream-assemble: ${message}`);
 }

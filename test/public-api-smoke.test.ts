@@ -22,7 +22,7 @@ async function* emptyStrings(): AsyncIterable<string> {
 	// no yields
 }
 
-describe("stubs.test.ts", () => {
+describe("public API smoke", () => {
 	describe("core streaming stubs", () => {
 		it("LSA-ST01: assembleStream yields events", async () => {
 			await expect(
