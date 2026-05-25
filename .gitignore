@@ -5,3 +5,6 @@ coverage/
 .env
 .env.*
 .DS_Store
+
+# Local-only AI implementation prompts (not published to the repo)
+prompts/

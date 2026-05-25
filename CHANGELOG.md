@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.0.2]
+
+### Changed
+
+- `prompts/` is now gitignored — implementation prompts are maintained locally
+  only and are no longer tracked or pushed to GitHub.
+- README updated to document the local-only prompts workflow; canonical project
+  spec remains in `docs/proposal.md`.
+
+### Removed
+
+- Tracked `prompts/README.md` removed from the repository index (files stay on
+  disk locally if present).
+
 ## [0.0.1]
 
 ### Added

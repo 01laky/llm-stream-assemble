@@ -10,6 +10,8 @@ A small npm library (planned) that normalizes LLM streaming responses — text, 
 
 - [Product & technical proposal](./docs/proposal.md)
 
-## Prompts
+## Local prompts
 
-Implementation prompts will be added incrementally under [`prompts/`](./prompts/).
+Implementation prompts live in `prompts/` on your machine only — that directory is
+gitignored and is not pushed to GitHub. The canonical spec is
+[`docs/proposal.md`](./docs/proposal.md).
