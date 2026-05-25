@@ -3,7 +3,7 @@
 ![core](https://img.shields.io/badge/core-1.0.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-470%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-547%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
 ![status](https://img.shields.io/badge/status-stable_1.0.0-brightgreen)
 

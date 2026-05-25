@@ -44,4 +44,51 @@ describe("parsePartialJSON", () => {
 		expect(parsePartialJSON("true")).toEqual({ complete: true, value: true });
 		expect(parsePartialJSON("42")).toEqual({ complete: true, value: 42 });
 	});
+
+	it("LSA-PJ-EXT01: recovers incomplete top-level array values", () => {
+		expect(parsePartialJSON("[1,2,")).toEqual({ complete: false, value: [1, 2] });
+	});
+
+	it("LSA-PJ-EXT02: recovers object with trailing comma", () => {
+		expect(parsePartialJSON('{"a":1,')).toEqual({ complete: false, value: { a: 1 } });
+	});
+
+	it("LSA-PJ-EXT03: recovers dangling key fragment", () => {
+		expect(parsePartialJSON('{"a":')).toEqual({ complete: false, value: { a: undefined } });
+	});
+
+	it("LSA-PJ-EXT04: returns incomplete without value for unrecoverable garbage", () => {
+		expect(parsePartialJSON("not json")).toEqual({ complete: false });
+		expect(parsePartialJSON("{")).toEqual({ complete: false, value: {} });
+	});
+
+	it("LSA-PJ-EXT05: repairs open string with trailing backslash to empty value", () => {
+		const result = parsePartialJSON('{"a":"\\');
+		expect(result.complete).toBe(false);
+		expect(result.value).toEqual({ a: "" });
+	});
+
+	it("LSA-PJ-EXT06: recovers partial top-level string literal", () => {
+		expect(parsePartialJSON('"hello')).toEqual({ complete: false, value: "hello" });
+	});
+
+	it("LSA-PJ-EXT07: recovers nested incomplete array inside object", () => {
+		expect(parsePartialJSON('{"items":[1,')).toEqual({ complete: false, value: { items: [1] } });
+	});
+
+	it("LSA-PJ-EXT08: preserves escaped quotes inside partial strings", () => {
+		expect(parsePartialJSON('{"msg":"say \\"hi')).toEqual({
+			complete: false,
+			value: { msg: 'say "hi' },
+		});
+	});
+
+	it("LSA-PJ-EXT09: rejects mismatched brackets without emitting false value", () => {
+		expect(parsePartialJSON('{"a":]')).toEqual({ complete: false });
+	});
+
+	it("LSA-PJ-EXT10: does not emit value for partial numeric fragments", () => {
+		expect(parsePartialJSON("12.")).toEqual({ complete: false });
+		expect(parsePartialJSON("-")).toEqual({ complete: false });
+	});
 });

@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.1]
+
+### Added
+
+- Extended edge-case test coverage across core pipeline, SSE parser, byte/source
+  utilities, transforms, adapter helpers, type guards, and file replay — 77 new
+  tests (547 total). Covers EventAssembler lifecycle and buffer limits, SSE flush
+  and CR-only line endings, UTF-8 chunk boundaries, stream cancellation,
+  `collectStream`/`toSSE`/`tapEvents` edge paths, `recoverMalformed` behavior,
+  and additional `parsePartialJSON` fixtures (LSA-PJ-EXT01–10).
+
 ## [1.0.0]
 
 ### Added
