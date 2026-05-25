@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.0.0` — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, OpenAI Responses, transforms, replay helpers, and examples are functional. Additional provider adapters (e.g. Gemini) remain planned.
+**Current package status:** Stable `1.0.0` — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, OpenAI Responses, transforms, replay helpers, and examples are functional. Additional provider adapters (e.g. Gemini) remain planned; see [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md).
 
 | Provider / API          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | ----------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |

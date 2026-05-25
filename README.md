@@ -27,6 +27,7 @@ pnpm add llm-stream-assemble
 ## Documentation
 
 - [Product & technical proposal](./docs/proposal.md)
+- [Post-1.0 provider roadmap (proposal)](./docs/post-1.0-provider-roadmap.md)
 - [Provider compatibility matrix](./docs/compatibility.md)
 - [Adapter author guide](./docs/adapter-guide.md)
 
