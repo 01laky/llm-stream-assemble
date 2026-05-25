@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.1]
+
+### Changed
+
+- Refactored repeated adapter helper logic into internal utilities for safer
+  unknown-value narrowing, JSON parsing, optional RawChunk construction, and
+  prefixed adapter errors.
+- Marked scaffold `notImplemented` helpers as deprecated internal implementation
+  details while preserving compatibility.
+- Added internal adapter utility tests and bundle/build regression checks to guard
+  the maintenance refactor.
+
+### Fixed
+
+- Removed stale documentation wording that implied implemented adapters were still
+  scaffold stubs.
+
 ## [0.7.0]
 
 ### Added

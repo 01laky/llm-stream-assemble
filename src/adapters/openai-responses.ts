@@ -1,4 +1,5 @@
 import type { RawChunk, StreamAdapter } from "../core/types";
+import { asNumber, asString, isRecord, optionalRawChunk, parseAdapterJSON } from "./utils";
 
 export interface OpenAIResponsesAdapterOptions {
 	jsonMode?: boolean;
@@ -35,7 +36,7 @@ class ResponsesParser {
 
 	parseChunk(raw: string): RawChunk[] {
 		if (raw.trim() === "[DONE]") return [];
-		const payload = parseJson(raw, "openaiResponsesAdapter.parseChunk");
+		const payload = parseAdapterJSON(raw, "openaiResponsesAdapter.parseChunk");
 		if (!isRecord(payload)) {
 			throw prefixedError("openaiResponsesAdapter.parseChunk expected a JSON object");
 		}
@@ -133,7 +134,12 @@ class ResponsesParser {
 			const chunks: RawChunk[] = [];
 			if (!state.started) {
 				chunks.push(
-					optionalChunk({ kind: "tool-start", id: state.id, name: state.name, index: state.index }),
+					optionalRawChunk({
+						kind: "tool-start",
+						id: state.id,
+						name: state.name,
+						index: state.index,
+					}),
 				);
 				state.started = true;
 			}
@@ -141,7 +147,12 @@ class ResponsesParser {
 			if (args && state.args.length === 0) {
 				state.args += args;
 				chunks.push(
-					optionalChunk({ kind: "tool-args-delta", id: state.id, delta: args, index: state.index }),
+					optionalRawChunk({
+						kind: "tool-args-delta",
+						id: state.id,
+						delta: args,
+						index: state.index,
+					}),
 				);
 			}
 			return chunks;
@@ -157,13 +168,18 @@ class ResponsesParser {
 		const chunks: RawChunk[] = [];
 		if (!state.started) {
 			chunks.push(
-				optionalChunk({ kind: "tool-start", id: state.id, name: state.name, index: state.index }),
+				optionalRawChunk({
+					kind: "tool-start",
+					id: state.id,
+					name: state.name,
+					index: state.index,
+				}),
 			);
 			state.started = true;
 		}
 		state.args += args;
 		chunks.push(
-			optionalChunk({ kind: "tool-args-delta", id: state.id, delta: args, index: state.index }),
+			optionalRawChunk({ kind: "tool-args-delta", id: state.id, delta: args, index: state.index }),
 		);
 		return chunks;
 	}
@@ -174,7 +190,7 @@ class ResponsesParser {
 		const state = this.toolState(payload, item);
 		if (state.done) return [];
 		state.done = true;
-		return [optionalChunk({ kind: "tool-done", id: state.id, index: state.index })];
+		return [optionalRawChunk({ kind: "tool-done", id: state.id, index: state.index })];
 	}
 
 	private functionArgsDelta(payload: Record<string, unknown>): RawChunk[] {
@@ -184,13 +200,18 @@ class ResponsesParser {
 		const chunks: RawChunk[] = [];
 		if (!state.started) {
 			chunks.push(
-				optionalChunk({ kind: "tool-start", id: state.id, name: state.name, index: state.index }),
+				optionalRawChunk({
+					kind: "tool-start",
+					id: state.id,
+					name: state.name,
+					index: state.index,
+				}),
 			);
 			state.started = true;
 		}
 		state.args += delta;
 		chunks.push(
-			optionalChunk({ kind: "tool-args-delta", id: state.id, delta, index: state.index }),
+			optionalRawChunk({ kind: "tool-args-delta", id: state.id, delta, index: state.index }),
 		);
 		return chunks;
 	}
@@ -201,7 +222,7 @@ class ResponsesParser {
 		const finalArgs = asString(payload.arguments);
 		if (finalArgs && finalArgs !== state.args && !finalArgs.startsWith(state.args)) {
 			chunks.push(
-				optionalChunk({
+				optionalRawChunk({
 					kind: "tool-args-delta",
 					id: state.id,
 					delta: finalArgs,
@@ -216,7 +237,7 @@ class ResponsesParser {
 		) {
 			const missing = finalArgs.slice(state.args.length);
 			chunks.push(
-				optionalChunk({
+				optionalRawChunk({
 					kind: "tool-args-delta",
 					id: state.id,
 					delta: missing,
@@ -227,12 +248,17 @@ class ResponsesParser {
 		}
 		if (!state.started) {
 			chunks.unshift(
-				optionalChunk({ kind: "tool-start", id: state.id, name: state.name, index: state.index }),
+				optionalRawChunk({
+					kind: "tool-start",
+					id: state.id,
+					name: state.name,
+					index: state.index,
+				}),
 			);
 			state.started = true;
 		}
 		if (!state.done) {
-			chunks.push(optionalChunk({ kind: "tool-done", id: state.id, index: state.index }));
+			chunks.push(optionalRawChunk({ kind: "tool-done", id: state.id, index: state.index }));
 			state.done = true;
 		}
 		return chunks;
@@ -302,7 +328,7 @@ function metadataChunks(response: Record<string, unknown>): RawChunk[] {
 	const id = asString(response.id);
 	const chunks: RawChunk[] = [];
 	if (id) chunks.push({ kind: "message-start", id });
-	const metadata = optionalChunk({
+	const metadata = optionalRawChunk({
 		kind: "metadata",
 		responseId: id,
 		model: asString(response.model),
@@ -385,7 +411,7 @@ function usageFromResponse(response: Record<string, unknown>): RawChunk[] {
 	if (inputTokens === undefined && outputTokens === undefined && reasoningTokens === undefined)
 		return [];
 	return [
-		optionalChunk({
+		optionalRawChunk({
 			kind: "usage",
 			inputTokens,
 			outputTokens,
@@ -425,33 +451,6 @@ function toolId(payload: Record<string, unknown>, item?: Record<string, unknown>
 	const itemId = asString(item?.id) ?? asString(payload.item_id);
 	const index = asNumber(payload.output_index);
 	return callId ?? itemId ?? `response_tool:${index ?? 0}`;
-}
-
-function parseJson(raw: string, feature: string): unknown {
-	try {
-		return JSON.parse(raw) as unknown;
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		throw prefixedError(`${feature}: ${message}`);
-	}
-}
-
-function optionalChunk(input: Record<string, unknown>): RawChunk {
-	return Object.fromEntries(
-		Object.entries(input).filter(([, value]) => value !== undefined),
-	) as RawChunk;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function asString(value: unknown): string | undefined {
-	return typeof value === "string" ? value : undefined;
-}
-
-function asNumber(value: unknown): number | undefined {
-	return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 function prefixedError(message: string): Error {

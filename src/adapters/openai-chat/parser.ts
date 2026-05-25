@@ -1,4 +1,5 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../../core/types";
+import { asNumber, asString, isRecord, parseAdapterJSON } from "../utils";
 
 export interface OpenAIChatLikeParserOptions {
 	jsonMode?: boolean;
@@ -42,7 +43,7 @@ class OpenAIChatLikeParser {
 	parseChunk(raw: string): RawChunk[] {
 		if (raw.trim() === "[DONE]") return [];
 
-		const payload = parseJson(raw, `${this.options.errorPrefix}.parseChunk`);
+		const payload = parseAdapterJSON(raw, `${this.options.errorPrefix}.parseChunk`);
 		if (!isRecord(payload)) {
 			throw prefixedAdapterError(
 				"expected a JSON object",
@@ -504,15 +505,6 @@ function errorFromPayload(
 	return error;
 }
 
-function parseJson(raw: string, feature: string): unknown {
-	try {
-		return JSON.parse(raw) as unknown;
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		throw new Error(`llm-stream-assemble: ${feature}: ${message}`);
-	}
-}
-
 function choiceIndexFor(
 	choice: Record<string, unknown>,
 	position: number,
@@ -593,18 +585,6 @@ function firstNumber(source: Record<string, unknown>, fields: string[]): number 
 		if (value !== undefined) return value;
 	}
 	return undefined;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function asString(value: unknown): string | undefined {
-	return typeof value === "string" ? value : undefined;
-}
-
-function asNumber(value: unknown): number | undefined {
-	return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 function prefixedAdapterError(message: string, prefix: string): Error {

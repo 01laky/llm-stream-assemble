@@ -3,7 +3,7 @@
 ![core](https://img.shields.io/badge/core-0.7.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-330%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-430%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
 ![status](https://img.shields.io/badge/status-phase_7_responses-orange)
 
@@ -23,7 +23,7 @@ A small npm library (in development) that normalizes LLM streaming responses —
 
 ## Core Usage
 
-Provider adapters are still stubs in this phase, but the core works with any adapter that emits `RawChunk[]`:
+The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, and OpenAI Responses adapters:
 
 ```ts
 import { assembleFromPayloads, type StreamAdapter } from "llm-stream-assemble";
@@ -151,7 +151,7 @@ Use `openaiResponsesAdapter({ jsonMode: true })` to map output text to `json.*` 
 
 ## Collecting a Stream
 
-`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not collect metadata in Phase 5.
+`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
 
 ```ts
 import { collectStream } from "llm-stream-assemble";
@@ -174,7 +174,7 @@ for await (const event of tapEvents(events, (event) => console.debug(event.type)
 
 ## Forwarding Unified SSE
 
-`toSSE()` serializes unified `StreamEvent` objects as `data: <json>` SSE messages. It does not emit named SSE `event:` fields in Phase 5, and it emits unified event JSON rather than raw provider SSE.
+`toSSE()` serializes unified `StreamEvent` objects as `data: <json>` SSE messages. It does not currently emit named SSE `event:` fields, and it emits unified event JSON rather than raw provider SSE.
 
 ```ts
 import { toSSE } from "llm-stream-assemble";

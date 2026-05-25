@@ -1,4 +1,5 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
+import { asNumber, asString, isRecord, optionalRawChunk, parseAdapterJSON } from "./utils";
 
 export interface AnthropicAdapterOptions {
 	/**
@@ -32,7 +33,7 @@ class AnthropicStreamParser {
 	constructor(private readonly options: AnthropicAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		const payload = parseJson(raw, "anthropicAdapter.parseChunk");
+		const payload = parseAdapterJSON(raw, "anthropicAdapter.parseChunk");
 		if (!isRecord(payload)) {
 			throw prefixedError("anthropicAdapter.parseChunk expected a JSON object");
 		}
@@ -68,7 +69,7 @@ class AnthropicStreamParser {
 		const model = asString(message.model);
 		if (id) chunks.push({ kind: "message-start", id });
 		if (id || model) {
-			chunks.push(optionalChunk({ kind: "metadata", responseId: id, model, raw: message }));
+			chunks.push(optionalRawChunk({ kind: "metadata", responseId: id, model, raw: message }));
 		}
 		const usage = usageChunk(message.usage);
 		if (usage) chunks.push(usage);
@@ -99,11 +100,11 @@ class AnthropicStreamParser {
 				const name = asString(block.name) ?? "unknown";
 				if (id) state.id = id;
 				state.name = name;
-				const chunks: RawChunk[] = [optionalChunk({ kind: "tool-start", id, name, index })];
+				const chunks: RawChunk[] = [optionalRawChunk({ kind: "tool-start", id, name, index })];
 				const input = block.input;
 				if (input !== undefined && !(isRecord(input) && Object.keys(input).length === 0)) {
 					chunks.push(
-						optionalChunk({ kind: "tool-args-delta", id, delta: JSON.stringify(input), index }),
+						optionalRawChunk({ kind: "tool-args-delta", id, delta: JSON.stringify(input), index }),
 					);
 				}
 				return chunks;
@@ -144,7 +145,9 @@ class AnthropicStreamParser {
 			case "input_json_delta": {
 				const partial = asString(delta.partial_json);
 				if (!partial) return [];
-				return [optionalChunk({ kind: "tool-args-delta", id: state?.id, delta: partial, index })];
+				return [
+					optionalRawChunk({ kind: "tool-args-delta", id: state?.id, delta: partial, index }),
+				];
 			}
 			case "signature_delta":
 				return [];
@@ -158,7 +161,7 @@ class AnthropicStreamParser {
 		const state = this.blocks.get(index);
 		this.blocks.delete(index);
 		if (state?.type === "tool_use") {
-			return [optionalChunk({ kind: "tool-done", id: state.id, index })];
+			return [optionalRawChunk({ kind: "tool-done", id: state.id, index })];
 		}
 		return [];
 	}
@@ -197,7 +200,7 @@ function parseResponse(body: unknown, options: AnthropicAdapterOptions): RawChun
 	const model = asString(body.model);
 	if (id) chunks.push({ kind: "message-start", id });
 	if (id || model)
-		chunks.push(optionalChunk({ kind: "metadata", responseId: id, model, raw: body }));
+		chunks.push(optionalRawChunk({ kind: "metadata", responseId: id, model, raw: body }));
 	const inputUsage = usageChunk(body.usage);
 	if (inputUsage) chunks.push(inputUsage);
 
@@ -234,13 +237,18 @@ function responseBlockChunks(
 		case "tool_use": {
 			const id = asString(block.id);
 			const name = asString(block.name) ?? "unknown";
-			const chunks: RawChunk[] = [optionalChunk({ kind: "tool-start", id, name, index })];
+			const chunks: RawChunk[] = [optionalRawChunk({ kind: "tool-start", id, name, index })];
 			if (block.input !== undefined) {
 				chunks.push(
-					optionalChunk({ kind: "tool-args-delta", id, delta: JSON.stringify(block.input), index }),
+					optionalRawChunk({
+						kind: "tool-args-delta",
+						id,
+						delta: JSON.stringify(block.input),
+						index,
+					}),
 				);
 			}
-			chunks.push(optionalChunk({ kind: "tool-done", id, index }));
+			chunks.push(optionalRawChunk({ kind: "tool-done", id, index }));
 			return chunks;
 		}
 		case "refusal": {
@@ -276,7 +284,7 @@ function usageChunk(value: unknown): RawChunk | undefined {
 	const inputTokens = asNumber(value.input_tokens);
 	const outputTokens = asNumber(value.output_tokens);
 	if (inputTokens === undefined && outputTokens === undefined) return undefined;
-	return optionalChunk({ kind: "usage", inputTokens, outputTokens, raw: value });
+	return optionalRawChunk({ kind: "usage", inputTokens, outputTokens, raw: value });
 }
 
 function providerErrorChunks(value: unknown): RawChunk[] {
@@ -289,33 +297,6 @@ function providerErrorChunks(value: unknown): RawChunk[] {
 		},
 		{ kind: "finish", reason: "error" },
 	];
-}
-
-function parseJson(raw: string, feature: string): unknown {
-	try {
-		return JSON.parse(raw) as unknown;
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		throw prefixedError(`${feature}: ${message}`);
-	}
-}
-
-function optionalChunk(input: Record<string, unknown>): RawChunk {
-	return Object.fromEntries(
-		Object.entries(input).filter(([, value]) => value !== undefined),
-	) as RawChunk;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function asString(value: unknown): string | undefined {
-	return typeof value === "string" ? value : undefined;
-}
-
-function asNumber(value: unknown): number | undefined {
-	return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 function prefixedError(message: string): Error {
