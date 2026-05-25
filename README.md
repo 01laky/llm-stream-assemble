@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.4.0-blue)
+![core](https://img.shields.io/badge/core-0.5.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-280%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-330%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_4_anthropic-orange)
+![status](https://img.shields.io/badge/status-phase_5_transforms-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 4 — core + OpenAI Chat + OpenAI-compatible + Anthropic Messages adapters functional (`0.4.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, and the first provider adapters are implemented. Convenience transforms are still planned, so **do not use in production yet**.
+**Status:** Phase 5 — core, provider adapters, transforms, and replay helpers functional (`0.5.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, and local fixture replay are implemented. Examples and publish prep are still planned, so **do not use in production yet**.
 
 ## Requirements
 
@@ -134,6 +134,58 @@ for await (const event of assembleStream(response.body!, anthropicAdapter())) {
 ```
 
 Anthropic tool calls are emitted from `tool_use` content blocks. Fine-grained tool input streaming is supported through `input_json_delta`; partial input may be invalid JSON until the block ends, and core handles those partial previews best-effort. Thinking blocks map to `reasoning.*` events with `variant: "detail"`.
+
+## Collecting a Stream
+
+`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not collect metadata in Phase 5.
+
+```ts
+import { collectStream } from "llm-stream-assemble";
+
+const result = await collectStream(events);
+console.log(result.text, result.toolCalls, result.finishReason);
+```
+
+## Tapping Events
+
+`tapEvents()` lets you observe events for logging or metrics without changing the stream.
+
+```ts
+import { tapEvents } from "llm-stream-assemble";
+
+for await (const event of tapEvents(events, (event) => console.debug(event.type))) {
+	// consume normally
+}
+```
+
+## Forwarding Unified SSE
+
+`toSSE()` serializes unified `StreamEvent` objects as `data: <json>` SSE messages. It does not emit named SSE `event:` fields in Phase 5, and it emits unified event JSON rather than raw provider SSE.
+
+```ts
+import { toSSE } from "llm-stream-assemble";
+
+return new Response(toSSE(events, { sanitizeErrors: true }), {
+	headers: { "Content-Type": "text/event-stream" },
+});
+```
+
+Use `sanitizeErrors: true` when forwarding events to browsers so raw provider internals are not exposed.
+
+## Replaying Fixtures
+
+`assembleFromFile()` is a Node/dev replay helper for local `.sse` and `.json` fixtures. It uses `node:fs/promises`, so avoid it in browser bundles; a dedicated browser/edge entry point can be added later if needed.
+
+```ts
+import { assembleFromFile, openaiChatAdapter } from "llm-stream-assemble";
+
+for await (const event of assembleFromFile(
+	"test/fixtures/openai-chat/text-basic.sse",
+	openaiChatAdapter(),
+)) {
+	console.log(event);
+}
+```
 
 ## Development
 

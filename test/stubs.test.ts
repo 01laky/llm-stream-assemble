@@ -15,24 +15,11 @@ import {
 	tapEvents,
 	toSSE,
 } from "../src/index";
-import { NOT_IMPLEMENTED_PATTERN } from "./fixtures/sample-events";
 import { collectAsync, strings } from "./helpers/collect-events";
 import { mockAdapterFromFixture } from "./helpers/mock-adapter";
 
 async function* emptyStrings(): AsyncIterable<string> {
 	// no yields
-}
-
-async function expectAsyncNotImplemented(iterable: AsyncIterable<unknown>) {
-	await expectForAwaitNotImplemented(iterable);
-}
-
-async function expectForAwaitNotImplemented(iterable: AsyncIterable<unknown>) {
-	await expect(async () => {
-		for await (const _item of iterable) {
-			void _item;
-		}
-	}).rejects.toThrow(NOT_IMPLEMENTED_PATTERN);
 }
 
 describe("stubs.test.ts", () => {
@@ -67,18 +54,20 @@ describe("stubs.test.ts", () => {
 			]);
 		});
 
-		it("LSA-ST03: assembleFromFile throws on iteration", async () => {
-			await expectForAwaitNotImplemented(assembleFromFile("/tmp/fixture.sse", openaiChatAdapter()));
+		it("LSA-ST03: assembleFromFile is implemented and reports missing files", async () => {
+			await expect(
+				collectAsync(assembleFromFile("/tmp/fixture.sse", openaiChatAdapter())),
+			).rejects.toThrow(/^llm-stream-assemble: assembleFromFile/);
 		});
 
 		it("LSA-ST04: parseSSE yields payloads", async () => {
 			await expect(collectAsync(parseSSE(strings("data: ok\n\n")))).resolves.toEqual(["ok"]);
 		});
 
-		it("LSA-ST05: tapEvents throws on iteration", async () => {
-			await expectAsyncNotImplemented(
-				tapEvents(assembleStream(emptyStrings(), openaiChatAdapter()), () => undefined),
-			);
+		it("LSA-ST05: tapEvents yields source events", async () => {
+			await expect(
+				collectAsync(tapEvents(emptyStrings() as AsyncIterable<never>, () => undefined)),
+			).resolves.toEqual([]);
 		});
 	});
 
@@ -103,17 +92,21 @@ describe("stubs.test.ts", () => {
 		});
 	});
 
-	describe("transform stubs", () => {
-		it("LSA-ST09: collectStream rejects", async () => {
-			await expect(
-				collectStream(assembleStream(emptyStrings(), openaiChatAdapter())),
-			).rejects.toThrow(NOT_IMPLEMENTED_PATTERN);
+	describe("transform implementations", () => {
+		it("LSA-ST09: collectStream resolves an empty result", async () => {
+			await expect(collectStream(emptyStrings() as AsyncIterable<never>)).resolves.toMatchObject({
+				text: "",
+				reasoning: "",
+				refusals: "",
+				json: undefined,
+				toolCalls: [],
+			});
 		});
 
-		it("LSA-ST10: toSSE throws immediately", () => {
-			expect(() =>
-				toSSE(assembleStream(emptyStrings(), openaiChatAdapter()), { sanitizeErrors: true }),
-			).toThrow(NOT_IMPLEMENTED_PATTERN);
+		it("LSA-ST10: toSSE returns a ReadableStream", () => {
+			expect(
+				toSSE(emptyStrings() as AsyncIterable<never>, { sanitizeErrors: true }),
+			).toBeInstanceOf(ReadableStream);
 		});
 	});
 

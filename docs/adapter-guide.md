@@ -66,6 +66,14 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 - Run `pnpm verify` before opening PR.
 - Follow [CONTRIBUTING.md](../CONTRIBUTING.md).
 
+## Replay and proxy helpers
+
+- Use `assembleFromFile()` for local fixture replay while developing adapters.
+- Use `toSSE(events, { sanitizeErrors: true })` when forwarding unified events
+  from a proxy so raw provider internals are not exposed to browsers.
+- Use `tapEvents()` for adapter debugging, logging, and metrics without changing
+  the event stream.
+
 ## Factory naming convention
 
 | Provider                | Export                      |

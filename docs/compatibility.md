@@ -49,3 +49,9 @@ Document host-specific deviations here as they are discovered during adapter imp
 - Non-string reasoning payloads are skipped.
 - Multi-choice terminal behavior is limited by the current core single terminal
   finish event.
+
+## Provider-agnostic transforms
+
+`collectStream`, `tapEvents`, `toSSE`, and `assembleFromFile` operate on unified
+`StreamEvent`s or local fixtures and work with all adapters. `assembleFromFile` is
+Node-only because it reads local files with `node:fs/promises`.

@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.5.0]
+
+### Added
+
+- `collectStream()` to materialize text, reasoning, refusals, JSON, tool calls,
+  latest usage, and finish reason from a StreamEvent iterable.
+- `tapEvents()` to observe StreamEvents without changing the stream.
+- `toSSE()` to serialize unified StreamEvents to a Web ReadableStream of SSE
+  bytes, with safe error serialization and `sanitizeErrors` support. Phase 5
+  intentionally emits data-only SSE without named `event:` fields.
+- `assembleFromFile()` for local/dev replay of `.sse` and `.json` fixtures.
+- Transform and replay tests LSA-T01 through LSA-T42 plus edge-case subcases.
+
+### Changed
+
+- README documents collection, tapping, unified SSE forwarding, and fixture replay.
+- README documents collectStream memory behavior and the Node-only/browser bundling
+  note for assembleFromFile.
+- docs/adapter-guide.md references replay helpers for adapter development.
+- docs/compatibility.md notes that convenience transforms are provider-agnostic.
+- package.json version bumped to 0.5.0.
+
 ## [0.4.0]
 
 ### Added

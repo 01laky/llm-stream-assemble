@@ -1,0 +1,13 @@
+{
+	"id": "chatcmpl_custom_json",
+	"model": "gpt-4o-mini",
+	"choices": [
+		{
+			"index": 0,
+			"message": {
+				"content": "Custom JSON extension"
+			},
+			"finish_reason": "stop"
+		}
+	]
+}
