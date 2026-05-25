@@ -1,5 +1,13 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
-import { asNumber, asString, isRecord, optionalRawChunk, parseAdapterJSON } from "./utils";
+import { libraryError, providerErrorChunksFromMessage } from "./errors";
+import {
+	asNumber,
+	asString,
+	createStreamAdapter,
+	isRecord,
+	optionalRawChunk,
+	parseAdapterJSON,
+} from "./utils";
 
 export interface AnthropicAdapterOptions {
 	/**
@@ -16,14 +24,11 @@ interface BlockState {
 
 export function anthropicAdapter(options: AnthropicAdapterOptions = {}): StreamAdapter {
 	const parser = new AnthropicStreamParser(options);
-	return {
-		parseChunk(raw) {
-			return parser.parseChunk(raw);
-		},
-		parseResponse(body) {
-			return parseResponse(body, options);
-		},
-	};
+	return createStreamAdapter({
+		parser,
+		parseResponse,
+		options,
+	});
 }
 
 class AnthropicStreamParser {
@@ -35,7 +40,7 @@ class AnthropicStreamParser {
 	parseChunk(raw: string): RawChunk[] {
 		const payload = parseAdapterJSON(raw, "anthropicAdapter.parseChunk");
 		if (!isRecord(payload)) {
-			throw prefixedError("anthropicAdapter.parseChunk expected a JSON object");
+			throw libraryError("anthropicAdapter.parseChunk expected a JSON object");
 		}
 
 		const type = asString(payload.type);
@@ -57,7 +62,7 @@ class AnthropicStreamParser {
 			case "error":
 				return providerErrorChunks(payload.error);
 			default:
-				throw prefixedError(`anthropicAdapter.parseChunk unknown event type: ${String(type)}`);
+				throw libraryError(`anthropicAdapter.parseChunk unknown event type: ${String(type)}`);
 		}
 	}
 
@@ -189,7 +194,7 @@ class AnthropicStreamParser {
 
 function parseResponse(body: unknown, options: AnthropicAdapterOptions): RawChunk[] {
 	if (!isRecord(body)) {
-		throw prefixedError("anthropicAdapter.parseResponse expected an Anthropic message object");
+		throw libraryError("anthropicAdapter.parseResponse expected an Anthropic message object");
 	}
 	if (asString(body.type) === "error" || isRecord(body.error)) {
 		return providerErrorChunks(body.error);
@@ -289,16 +294,5 @@ function usageChunk(value: unknown): RawChunk | undefined {
 
 function providerErrorChunks(value: unknown): RawChunk[] {
 	const message = isRecord(value) ? asString(value.message) : undefined;
-	return [
-		{
-			kind: "provider-error",
-			error: prefixedError(message ?? "Anthropic provider error"),
-			recoverable: false,
-		},
-		{ kind: "finish", reason: "error" },
-	];
-}
-
-function prefixedError(message: string): Error {
-	return new Error(`llm-stream-assemble: ${message}`);
+	return providerErrorChunksFromMessage(message ?? "Anthropic provider error", false);
 }

@@ -17,9 +17,22 @@ export interface OpenAICompatibleAdapterOptions {
 	looseErrorShape?: boolean;
 	allowMissingMetadata?: boolean;
 	useChoicePositionFallback?: boolean;
-	allowMissingToolIds?: boolean;
 	reasoningFieldAliases?: string[];
 }
+
+const DEFAULT_PRESET = {
+	looseErrorShape: true,
+	allowMissingMetadata: true,
+	useChoicePositionFallback: true,
+	reasoningFieldAliases: ["thinking", "thinking_content"],
+} as const;
+
+const PRESET_OVERRIDES: Partial<
+	Record<OpenAICompatibleProvider, Pick<OpenAICompatibleAdapterOptions, "reasoningFieldAliases">>
+> = {
+	openrouter: { reasoningFieldAliases: ["reasoning"] },
+	together: { reasoningFieldAliases: ["reasoning", "reasoning_delta"] },
+};
 
 export function openaiCompatibleAdapter(
 	options: OpenAICompatibleAdapterOptions = {},
@@ -39,37 +52,9 @@ export function openaiCompatibleAdapter(
 	});
 }
 
-function providerPreset(
-	provider: OpenAICompatibleProvider,
-): Required<
-	Pick<
-		OpenAICompatibleAdapterOptions,
-		"looseErrorShape" | "allowMissingMetadata" | "useChoicePositionFallback" | "allowMissingToolIds"
-	>
-> &
-	Pick<OpenAICompatibleAdapterOptions, "reasoningFieldAliases"> {
-	const base = {
-		looseErrorShape: true,
-		allowMissingMetadata: true,
-		useChoicePositionFallback: true,
-		allowMissingToolIds: true,
-		reasoningFieldAliases: ["thinking", "thinking_content"],
+function providerPreset(provider: OpenAICompatibleProvider) {
+	return {
+		...DEFAULT_PRESET,
+		...PRESET_OVERRIDES[provider],
 	};
-
-	switch (provider) {
-		case "openrouter":
-			return { ...base, reasoningFieldAliases: ["reasoning"] };
-		case "groq":
-			return base;
-		case "ollama":
-			return base;
-		case "lmstudio":
-			return base;
-		case "together":
-			return { ...base, reasoningFieldAliases: ["reasoning", "reasoning_delta"] };
-		case "fireworks":
-			return base;
-		case "generic":
-			return base;
-	}
 }

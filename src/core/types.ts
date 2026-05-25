@@ -38,7 +38,7 @@ export interface StreamAdapter {
 	parseResponse?(body: unknown): RawChunk[];
 }
 
-/** Internal representation between adapter output and assembler — may evolve in Phase 1. */
+/** Internal representation between adapter output and assembler. */
 export type RawChunk =
 	| { kind: "message-start"; id?: string; choiceIndex?: number }
 	| { kind: "text-delta"; text: string; choiceIndex?: number }

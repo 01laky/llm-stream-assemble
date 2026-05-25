@@ -1,8 +1,8 @@
 import type { AssembleOptions, StreamAdapter, StreamEvent } from "./types";
+import { processPayload, resolveTerminalFlush } from "./assembly/process-payload";
 import { EventAssembler } from "./assembler/event-assembler";
 import { Utf8StreamDecoder } from "./utils/bytes";
 import { SSEParser } from "./utils/sse-parser";
-import { errorFromUnknown, prefixedError } from "./utils/source";
 
 export function createAssemblyTransform(
 	adapter: StreamAdapter,
@@ -23,33 +23,20 @@ export function createAssemblyTransform(
 		}
 	};
 
-	const processPayload = (
+	const handlePayload = (
 		payload: string,
 		controller: TransformStreamDefaultController<StreamEvent>,
 	) => {
-		if (payload.trim() === "[DONE]") {
+		const result = processPayload(payload, assembler, adapter, options);
+		if (result.kind === "done-marker") {
 			sawTerminalMarker = true;
 			return;
 		}
-
-		let chunks;
-		try {
-			chunks = adapter.parseChunk(payload);
-		} catch (error) {
-			if (!options.recoverMalformed) {
-				throw error;
-			}
-			controller.enqueue({
-				type: "error",
-				error: prefixedError(errorFromUnknown(error).message),
-				recoverable: true,
-			});
+		if (result.kind === "recoverable-error") {
+			controller.enqueue(result.event);
 			return;
 		}
-
-		for (const chunk of chunks) {
-			emit(controller, assembler.push(chunk));
-		}
+		emit(controller, result.events);
 	};
 
 	return new TransformStream<Uint8Array, StreamEvent>({
@@ -74,7 +61,7 @@ export function createAssemblyTransform(
 			}
 
 			for (const payload of parser.push(decoder.decode(chunk))) {
-				processPayload(payload, controller);
+				handlePayload(payload, controller);
 			}
 		},
 		flush(controller) {
@@ -86,21 +73,15 @@ export function createAssemblyTransform(
 			const decoded = decoder.flush();
 			if (decoded.length > 0) {
 				for (const payload of parser.push(decoded)) {
-					processPayload(payload, controller);
+					handlePayload(payload, controller);
 				}
 			}
 
 			for (const payload of parser.flush()) {
-				processPayload(payload, controller);
+				handlePayload(payload, controller);
 			}
 
-			if (sawTerminalMarker) {
-				emit(controller, assembler.flush({ terminalReason: "stop" }));
-			} else if (assembler.hasFinished()) {
-				emit(controller, assembler.flush());
-			} else {
-				emit(controller, assembler.flush({ terminalReason: "incomplete" }));
-			}
+			emit(controller, resolveTerminalFlush(assembler, { sawTerminalMarker, aborted: false }));
 		},
 	});
 }

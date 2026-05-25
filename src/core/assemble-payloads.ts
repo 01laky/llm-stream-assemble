@@ -1,6 +1,6 @@
 import type { AssembleOptions, StreamAdapter, StreamEvent } from "./types";
+import { processPayload, resolveTerminalFlush } from "./assembly/process-payload";
 import { EventAssembler } from "./assembler/event-assembler";
-import { errorFromUnknown, prefixedError } from "./utils/source";
 
 export function assembleFromPayloads(
 	payloads: AsyncIterable<string>,
@@ -29,42 +29,22 @@ async function* assembleFromPayloadsGenerator(
 			const item = await iterator.next();
 			if (item.done) break;
 
-			const payload = item.value;
-			if (payload.trim() === "[DONE]") {
+			const result = processPayload(item.value, assembler, adapter, options);
+			if (result.kind === "done-marker") {
 				sawTerminalMarker = true;
 				continue;
 			}
-
-			let chunks;
-			try {
-				chunks = adapter.parseChunk(payload);
-			} catch (error) {
-				if (!options.recoverMalformed) {
-					throw error;
-				}
-
-				yield {
-					type: "error",
-					error: prefixedError(errorFromUnknown(error).message),
-					recoverable: true,
-				};
+			if (result.kind === "recoverable-error") {
+				yield result.event;
 				continue;
 			}
-
-			for (const chunk of chunks) {
-				yield* assembler.push(chunk);
-			}
+			yield* result.events;
 		}
 
-		if (options.signal?.aborted) {
-			yield* assembler.flush({ terminalReason: "aborted" });
-		} else if (sawTerminalMarker) {
-			yield* assembler.flush({ terminalReason: "stop" });
-		} else if (assembler.hasFinished()) {
-			yield* assembler.flush();
-		} else {
-			yield* assembler.flush({ terminalReason: "incomplete" });
-		}
+		yield* resolveTerminalFlush(assembler, {
+			sawTerminalMarker,
+			aborted: options.signal?.aborted === true,
+		});
 	} finally {
 		await iterator.return?.();
 	}
