@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.0.3]
+
+### Added
+
+- TypeScript project scaffold: tsup (ESM + CJS + declarations), Vitest, ESLint,
+  Prettier, strict tsconfig.
+- Full public API surface as typed stubs matching docs/proposal.md — core,
+  adapters, transforms, helpers (type guards and matchEvent implemented).
+- Subpath exports: llm-stream-assemble/core, adapters/openai-chat,
+  adapters/openai-compatible, adapters/anthropic.
+- CI workflow (lint, typecheck, test, build, zero-deps verify).
+- scripts/verify-zero-deps.mjs — fails if runtime dependencies are added.
+- LICENSE (MIT), CONTRIBUTING.md, docs/compatibility.md, docs/adapter-guide.md
+  skeletons.
+- Smoke tests LSA-S01 through LSA-S10 and exports.test.ts.
+
+### Changed
+
+- README: status, scripts, documentation links.
+- package.json: build scripts, exports map, devDependencies; version 0.0.3.
+
 ## [0.0.2]
 
 ### Changed
