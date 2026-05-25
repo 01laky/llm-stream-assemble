@@ -1,0 +1,22 @@
+[
+	{ "type": "tool_call.start", "id": "tool:0:0", "name": "search", "index": 0 },
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool:0:0",
+		"delta": "{\"query\":\"lo",
+		"partial": { "query": "lo" }
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool:0:0",
+		"delta": "cal\"}",
+		"partial": { "query": "local" }
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool:0:0",
+		"name": "search",
+		"args": { "query": "local" }
+	},
+	{ "type": "finish", "reason": "tool_calls" }
+]

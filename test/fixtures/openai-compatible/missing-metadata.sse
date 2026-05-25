@@ -1,0 +1,4 @@
+data: {"choices":[{"delta":{"content":"Local model"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

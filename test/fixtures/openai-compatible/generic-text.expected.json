@@ -1,0 +1,7 @@
+[
+	{ "type": "message.start", "id": "compat_text" },
+	{ "type": "metadata", "model": "open-model", "responseId": "compat_text" },
+	{ "type": "text.delta", "text": "Hello compatible" },
+	{ "type": "text.done", "text": "Hello compatible" },
+	{ "type": "finish", "reason": "stop" }
+]

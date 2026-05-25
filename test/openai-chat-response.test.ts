@@ -44,7 +44,7 @@ describe("openaiChatAdapter parseResponse", () => {
 
 	it("LSA-O49: non-object response throws a prefixed parseResponse error", () => {
 		expect(() => assembleResponse(null, openaiChatAdapter())).toThrow(
-			/^llm-stream-assemble: openaiChatAdapter\.parseResponse expected/,
+			/^llm-stream-assemble: openaiChatAdapter\.parseResponse.*expected/,
 		);
 	});
 

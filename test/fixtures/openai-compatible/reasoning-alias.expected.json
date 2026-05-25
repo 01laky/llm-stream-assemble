@@ -1,0 +1,5 @@
+[
+	{ "type": "reasoning.delta", "text": "internal thought", "variant": "detail" },
+	{ "type": "reasoning.done", "text": "internal thought", "variant": "detail" },
+	{ "type": "finish", "reason": "stop" }
+]

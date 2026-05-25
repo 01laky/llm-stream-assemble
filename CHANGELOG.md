@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.3.0]
+
+### Added
+
+- OpenAI-compatible adapter for OpenAI-shaped Chat Completions APIs, reusing the
+  OpenAI Chat parser with provider presets and dialect options.
+- Dialect handling for missing metadata, missing choice indexes, missing tool ids,
+  loose provider error shapes, reasoning aliases, usage token aliases, and JSON
+  mode.
+- OpenAI-compatible fixtures under `test/fixtures/openai-compatible/`, fixture
+  provenance docs, and tests LSA-OC01 through LSA-OC46.
+
+### Changed
+
+- Shared OpenAI Chat parsing internals so OpenAI-compatible behavior stays
+  aligned with the canonical OpenAI adapter.
+- README and compatibility docs document OpenAI-compatible support, provider
+  presets, strict vs loose configuration, and known limitations.
+- package.json version bumped to 0.3.0.
+
 ## [0.2.0]
 
 ### Added

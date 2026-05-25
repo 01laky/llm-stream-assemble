@@ -1,0 +1,6 @@
+data: {"choices":[{"delta":{"content":"{\"ok\":"},"finish_reason":null}]}
+
+data: {"choices":[{"delta":{"content":"true}"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

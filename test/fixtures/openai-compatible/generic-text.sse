@@ -1,0 +1,4 @@
+data: {"id":"compat_text","model":"open-model","choices":[{"index":0,"delta":{"content":"Hello compatible"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

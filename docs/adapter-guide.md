@@ -9,6 +9,7 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - Read [`proposal.md`](./proposal.md) § Provider Adapters and § Unified Event Model.
 - Adapters emit **raw chunks** only — cross-chunk assembly lives in core.
 - Use `src/adapters/openai-chat.ts` and `test/fixtures/openai-chat/` as the reference implementation for mapping provider payloads into `RawChunk[]`.
+- Use `openaiCompatibleAdapter()` as the reference pattern for reusing an existing parser with small dialect options instead of forking adapter logic.
 
 ## Steps
 

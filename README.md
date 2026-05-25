@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.2.0-blue)
+![core](https://img.shields.io/badge/core-0.3.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
 ![tests](https://img.shields.io/badge/tests-210%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_2_openai_chat-orange)
+![status](https://img.shields.io/badge/status-phase_3_openai_compatible-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 2 — core + OpenAI Chat adapter functional (`0.2.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, and OpenAI Chat Completions parsing are implemented. OpenAI-compatible, Anthropic, and convenience transforms are still planned, so **do not use in production yet**.
+**Status:** Phase 3 — core + OpenAI Chat + OpenAI-compatible adapters functional (`0.3.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, OpenAI Chat Completions parsing, and OpenAI-compatible parsing are implemented. Anthropic and convenience transforms are still planned, so **do not use in production yet**.
 
 ## Requirements
 
@@ -69,6 +69,57 @@ for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
 ```
 
 Streaming usage requires `stream_options: { include_usage: true }` on the OpenAI request. JSON mode content is exposed by OpenAI as normal content deltas, so use `openaiChatAdapter({ jsonMode: true })` when you want content mapped to `json.*` events.
+
+## OpenAI-Compatible Usage
+
+`openaiCompatibleAdapter()` supports OpenAI-shaped Chat Completions APIs with best-effort provider presets. Create one adapter instance per request/stream.
+
+```ts
+import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
+
+const adapter = openaiCompatibleAdapter({
+	provider: "openrouter",
+});
+
+for await (const event of assembleStream(response.body!, adapter)) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+Provider presets:
+
+| Preset       | Intended hosts                | Notes                                                       |
+| ------------ | ----------------------------- | ----------------------------------------------------------- |
+| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                              |
+| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear |
+| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model               |
+| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                          |
+| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                    |
+| `together`   | Together AI                   | OpenAI-like, reasoning fields may vary                      |
+| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                         |
+
+Strict vs loose configuration:
+
+```ts
+// Loose default: good for local/open-source OpenAI-compatible hosts.
+openaiCompatibleAdapter({ provider: "ollama" });
+
+// Stricter mode: useful when unexpected payload shapes should fail fast.
+openaiCompatibleAdapter({
+	provider: "generic",
+	allowMissingMetadata: false,
+	looseErrorShape: false,
+	useChoicePositionFallback: false,
+});
+```
+
+Known limitations:
+
+- Provider presets are fixture-tested and best-effort; CI does not call live provider APIs.
+- Hosts can change OpenAI-compatible dialects without notice.
+- Non-string reasoning payloads are skipped.
+- Multi-choice terminal behavior is limited by the current core single terminal finish event.
+- Missing tool ids are tolerated because core can synthesize stable ids by index.
 
 ## Development
 

@@ -1,0 +1,5 @@
+[
+	{ "type": "text.delta", "text": "Local model" },
+	{ "type": "text.done", "text": "Local model" },
+	{ "type": "finish", "reason": "stop" }
+]

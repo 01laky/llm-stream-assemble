@@ -1,0 +1,5 @@
+[
+	{ "type": "text.delta", "text": "No index" },
+	{ "type": "text.done", "text": "No index" },
+	{ "type": "finish", "reason": "stop" }
+]

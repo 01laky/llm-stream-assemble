@@ -1,0 +1,4 @@
+[
+	{ "type": "usage", "inputTokens": 5, "outputTokens": 8 },
+	{ "type": "finish", "reason": "stop" }
+]

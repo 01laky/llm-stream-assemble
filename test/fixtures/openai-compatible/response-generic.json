@@ -1,0 +1,14 @@
+{
+	"choices": [
+		{
+			"message": {
+				"content": "Response compatible"
+			},
+			"finish_reason": "stop"
+		}
+	],
+	"usage": {
+		"input_tokens": 2,
+		"output_tokens": 4
+	}
+}

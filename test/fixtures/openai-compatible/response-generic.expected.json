@@ -1,0 +1,6 @@
+[
+	{ "type": "text.delta", "text": "Response compatible" },
+	{ "type": "usage", "inputTokens": 2, "outputTokens": 4 },
+	{ "type": "text.done", "text": "Response compatible" },
+	{ "type": "finish", "reason": "stop" }
+]

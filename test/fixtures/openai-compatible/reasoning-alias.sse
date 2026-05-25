@@ -1,0 +1,4 @@
+data: {"choices":[{"delta":{"thinking":"internal thought"},"finish_reason":"stop"}]}
+
+data: [DONE]
+
