@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [0.8.0]
+
+### Added
+
+- Package smoke test for npm tarball contents and installed ESM/CJS/subpath imports.
+- Release-readiness tests LSA-REL01 through LSA-REL13.
+
+### Changed
+
+- Added OpenAI Responses subpath export and build artifact coverage.
+- CI now verifies Node 18, 20, and 22.
+- README now includes install, quickstart, non-goals, pre-1.0 release candidate
+  status, and publish-facing project description.
+- Adapter guide and compatibility docs updated for release readiness.
+- package.json version bumped to 0.8.0.
+
 ## [0.7.1]
 
 ### Changed

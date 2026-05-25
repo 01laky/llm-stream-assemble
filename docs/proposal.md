@@ -4,6 +4,9 @@
 **Version:** 0.1 (planned)  
 **Last updated:** 2026-05-25
 
+> Note: This proposal is historical. See the README and docs/compatibility.md for
+> current implementation status.
+
 ---
 
 ## Summary

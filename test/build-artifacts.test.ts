@@ -16,6 +16,11 @@ const subpathEntries = [
 		exportName: "openaiCompatibleAdapter",
 	},
 	{ id: "LSA-P05", path: "dist/adapters/anthropic.js", exportName: "anthropicAdapter" },
+	{
+		id: "LSA-P06",
+		path: "dist/adapters/openai-responses.js",
+		exportName: "openaiResponsesAdapter",
+	},
 ] as const;
 
 const declarationArtifacts = [
@@ -25,6 +30,10 @@ const declarationArtifacts = [
 	"dist/adapters/openai-chat.d.ts",
 	"dist/adapters/openai-compatible.d.ts",
 	"dist/adapters/anthropic.d.ts",
+	"dist/adapters/openai-responses.d.ts",
+	"dist/adapters/openai-responses.d.cts",
+	"dist/adapters/openai-responses.js",
+	"dist/adapters/openai-responses.cjs",
 	"dist/index.js",
 	"dist/index.cjs",
 	"dist/core/index.js",

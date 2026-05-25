@@ -1,15 +1,24 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-0.7.0-blue)
+![core](https://img.shields.io/badge/core-0.8.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
 ![tests](https://img.shields.io/badge/tests-430%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-phase_7_responses-orange)
+![status](https://img.shields.io/badge/status-pre_1.0_rc-orange)
 
 A small npm library (in development) that normalizes LLM streaming responses — text, tool calls, reasoning — into unified events.
 
-**Status:** Phase 7 — core, provider adapters, transforms, replay helpers, examples, and OpenAI Responses adapter functional (`0.7.0`). SSE parsing, partial JSON, stream assembly, non-streaming assembly, TransformStream support, provider adapters, collection, tapping, unified SSE forwarding, local fixture replay, and example usage are implemented. Publish prep is still planned, so **do not use in production yet**.
+**Status:** Pre-1.0 release candidate (`0.8.0`). Core, provider adapters, transforms, replay helpers, and examples are functional. APIs may still change before 1.0. Use in production with normal pre-1.0 caution: pin versions and review changelog entries before upgrading.
+
+> A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
+
+## Install
+
+```bash
+pnpm add llm-stream-assemble
+# or npm install llm-stream-assemble
+```
 
 ## Requirements
 
@@ -41,6 +50,16 @@ for await (const event of assembleFromPayloads(payloads, adapter)) {
 ```
 
 Assembly buffers completed text, reasoning, JSON, and tool-call arguments so it can emit final `.done` events. Use `maxBufferBytes` to cap those buffers for untrusted or unusually large streams.
+
+## Quickstart
+
+```ts
+import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
+
+for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
 
 ## OpenAI Chat Usage
 
@@ -216,6 +235,13 @@ Proxy safety:
 - Use `tapEvents` for server-side observation and logging.
 - Never forward raw provider errors or upstream non-OK response bodies to browsers.
 - CORS headers are application-specific and intentionally omitted from the Web-standard example.
+
+## Non-goals
+
+- No HTTP client, auth, retries, or provider SDK wrapper.
+- No agent loop, tool execution, memory, or persistence.
+- No UI framework, React hooks, or browser components.
+- No multimodal binary/audio/video parsing.
 
 ## Development
 

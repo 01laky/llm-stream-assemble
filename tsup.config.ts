@@ -7,6 +7,7 @@ export default defineConfig({
 		"adapters/openai-chat": "src/adapters/openai-chat.ts",
 		"adapters/openai-compatible": "src/adapters/openai-compatible.ts",
 		"adapters/anthropic": "src/adapters/anthropic.ts",
+		"adapters/openai-responses": "src/adapters/openai-responses.ts",
 	},
 	format: ["esm", "cjs"],
 	dts: true,

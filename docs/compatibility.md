@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Phase 7 (`0.7.0`) — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, and OpenAI Responses adapters are functional. Other provider adapters remain planned.
+**Current package status:** Pre-1.0 release candidate (`0.8.0`) — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, OpenAI Responses, transforms, replay helpers, and examples are functional. Other provider adapters remain planned.
 
 | Provider / API          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | ----------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |

@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Draft (Phase 7) — OpenAI Chat, OpenAI-compatible, Anthropic Messages, and OpenAI Responses are concrete reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible, Anthropic Messages, and OpenAI Responses are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -8,6 +8,7 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 
 - Read [`proposal.md`](./proposal.md) § Provider Adapters and § Unified Event Model.
 - Adapters emit **raw chunks** only — cross-chunk assembly lives in core.
+- Keep adapters dependency-free; provider SDKs do not belong in adapter implementations.
 - Use `src/adapters/openai-chat.ts` and `test/fixtures/openai-chat/` as the reference implementation for mapping provider payloads into `RawChunk[]`.
 - Use `openaiCompatibleAdapter()` as the reference pattern for reusing an existing parser with small dialect options instead of forking adapter logic.
 - Adapter authors should prefer local provider-specific parsing logic, but internal shared helpers exist for safe unknown narrowing, optional RawChunk construction, JSON parsing, and prefixed adapter errors.
@@ -20,6 +21,7 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - Never commit API keys or private data.
 - Include edge cases: empty deltas, unicode, parallel tools, large tool args.
 - Add a fixture provenance note when fixtures are synthetic, docs-shaped, or redacted-live.
+- Add golden tests for every provider feature and edge case.
 
 ### 2. Implement `parseChunk`
 

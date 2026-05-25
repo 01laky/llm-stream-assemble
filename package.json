@@ -1,7 +1,7 @@
 {
 	"name": "llm-stream-assemble",
-	"version": "0.7.1",
-	"description": "Assemble and normalize LLM streaming responses into unified events — text, tool calls, reasoning. Provider-agnostic stream layer, not an LLM SDK.",
+	"version": "0.8.0",
+	"description": "A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses.",
 	"license": "MIT",
 	"author": "Ladislav Kostolny <01laky@gmail.com>",
 	"type": "module",
@@ -42,6 +42,11 @@
 			"types": "./dist/adapters/anthropic.d.ts",
 			"import": "./dist/adapters/anthropic.js",
 			"require": "./dist/adapters/anthropic.cjs"
+		},
+		"./adapters/openai-responses": {
+			"types": "./dist/adapters/openai-responses.d.ts",
+			"import": "./dist/adapters/openai-responses.js",
+			"require": "./dist/adapters/openai-responses.cjs"
 		}
 	},
 	"scripts": {
@@ -54,8 +59,9 @@
 		"format:fix": "prettier --write .",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"verify": "pnpm verify:deps && pnpm lint && pnpm typecheck && pnpm build && pnpm test",
-		"verify:deps": "node scripts/verify-zero-deps.mjs"
+		"verify": "pnpm verify:deps && pnpm lint && pnpm typecheck && pnpm build && pnpm test && pnpm smoke:package",
+		"verify:deps": "node scripts/verify-zero-deps.mjs",
+		"smoke:package": "node scripts/smoke-package.mjs"
 	},
 	"keywords": [
 		"llm",
