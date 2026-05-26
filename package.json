@@ -73,7 +73,9 @@
 		"smoke:deepseek": "node scripts/live-smoke/deepseek-compatible.mjs",
 		"smoke:perplexity": "node scripts/live-smoke/perplexity-compatible.mjs",
 		"smoke:xai": "node scripts/live-smoke/xai-compatible.mjs",
-		"smoke:azure": "node scripts/live-smoke/azure-openai-compatible.mjs"
+		"smoke:azure": "node scripts/live-smoke/azure-openai-compatible.mjs",
+		"release:prep": "node scripts/release-prep.mjs",
+		"diagrams:build": "node scripts/build-diagrams.mjs"
 	},
 	"keywords": [
 		"llm",

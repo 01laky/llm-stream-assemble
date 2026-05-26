@@ -3,8 +3,9 @@ flowchart TB
 		direction LR
 		PC["OpenAI Chat"]
 		PA["Anthropic Messages"]
-		PO["OpenAI-compatible hosts"]
+		PO["OpenAI-compatible<br/>Groq · Azure · OpenRouter · …"]
 		PR["OpenAI Responses"]
+		PG["Google Gemini"]
 	end
 
 	subgraph ADAPTERS["Adapters · parseChunk / parseResponse"]
@@ -13,6 +14,7 @@ flowchart TB
 		AA["anthropicAdapter"]
 		AO["openaiCompatibleAdapter"]
 		AR["openaiResponsesAdapter"]
+		AG["geminiAdapter"]
 	end
 
 	subgraph CORE["Core assembly · provider-agnostic"]
@@ -47,18 +49,22 @@ flowchart TB
 	PA --> AA
 	PO --> AO
 	PR --> AR
+	PG --> AG
 	PARSE --> AC
 	PARSE --> AA
 	PARSE --> AO
 	PARSE --> AR
+	PARSE --> AG
 	AC --> RAW
 	AA --> RAW
 	AO --> RAW
 	AR --> RAW
+	AG --> RAW
 	JSON --> AC
 	JSON --> AA
 	JSON --> AO
 	JSON --> AR
+	JSON --> AG
 	EVENTS --> COL
 	EVENTS --> TAP
 	EVENTS --> SSEOUT
@@ -75,8 +81,8 @@ flowchart TB
 	classDef transform fill:#431407,stroke:#fb923c,stroke-width:2px,color:#ffedd5
 	classDef app fill:#172554,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
 
-	class PC,PA,PO,PR provider
-	class AC,AA,AO,AR adapter
+	class PC,PA,PO,PR,PG provider
+	class AC,AA,AO,AR,AG adapter
 	class PARSE,RAW,ASM core
 	class STREAM,JSON,EVENTS io
 	class COL,TAP,SSEOUT,REPLAY transform

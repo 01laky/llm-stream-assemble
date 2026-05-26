@@ -3,29 +3,78 @@
 ![core](https://img.shields.io/badge/core-1.2.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-750%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-755%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
 ![status](https://img.shields.io/badge/status-stable_1.2.0-brightgreen)
 
-A zero-dependency TypeScript library that normalizes LLM streaming responses — text, tool calls, reasoning, JSON, usage, errors, and non-streaming payloads — into unified events.
+**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
-**Status:** Stable `1.2.0`. Core, OpenAI Chat, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+> A zero-dependency TypeScript layer for assembling **OpenAI**, **Anthropic**, **Google Gemini**, and **OpenAI-compatible** LLM streams into unified events — so you can stop hand-rolling provider parsers and keep one clean, typed event model across chat UIs, agents, proxies, and backends.
 
-> A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
+**Status:** Stable `1.2.0`. Five built-in adapters, twelve OpenAI-compatible host presets (including **Azure OpenAI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
-## How it works
+---
+
+## Contents
+
+- [Why use this](#why-use-this)
+- [Architecture](#architecture)
+- [Providers at a glance](#providers-at-a-glance)
+- [Install](#install)
+- [Quickstart](#quickstart)
+- [Documentation](#documentation)
+- [Usage guides](#usage-guides)
+- [Transforms & replay](#transforms--replay)
+- [Examples & proxy safety](#examples--proxy-safety)
+- [Non-goals](#non-goals)
+- [Development](#development)
+
+---
+
+## Why use this
+
+- **Zero runtime dependencies** — thin adapters + core assembly, no provider SDKs.
+- **Stream and non-stream parity** — same `StreamEvent` union from SSE chunks or JSON bodies.
+- **Provider presets, not forks** — Groq, Azure, Perplexity, xAI, and others reuse one compatible parser with dialect options.
+- **Proxy-ready transforms** — `toSSE({ sanitizeErrors: true })`, `tapEvents`, `collectStream`, fixture replay.
+
+---
+
+## Architecture
 
 Raw provider bytes enter through a **thin adapter**, get assembled into **typed events**, and leave through the same transform layer whether you stream live, replay fixtures, or proxy to a browser.
 
-![Architecture pipeline](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/pipeline.svg)
+![End-to-end pipeline](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/pipeline.svg)
 
-Every adapter maps provider-specific fragments into the same **`StreamEvent`** union — one event model for streaming and non-streaming code paths:
+### Built-in adapters
+
+![Built-in adapters and compatible presets](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/adapters-overview.svg)
+
+### Unified event model
+
+Every adapter maps provider-specific fragments into the same **`StreamEvent`** union:
 
 ![StreamEvent mindmap](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/stream-event.svg)
 
-Diagram sources (Mermaid): [`docs/img/pipeline.mmd`](./docs/img/pipeline.mmd), [`docs/img/stream-event.mmd`](./docs/img/stream-event.mmd). Regenerate SVGs with `@mermaid-js/mermaid-cli` after editing.
-
 **Design constraints:** adapters never accumulate cross-chunk state beyond id/index reconciliation; assembly, buffering, and `.done` emission live in core. No HTTP client, no tool execution, no UI — just the stream layer.
+
+Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Regenerate with `pnpm diagrams:build`.
+
+---
+
+## Providers at a glance
+
+| Adapter                                 | Provider / API                                                                                                          | Import                                      |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                 | `llm-stream-assemble`                       |
+| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, generic | `llm-stream-assemble`                       |
+| `anthropicAdapter()`                    | Anthropic Messages                                                                                                      | `llm-stream-assemble`                       |
+| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                    | `llm-stream-assemble`                       |
+| `geminiAdapter()`                       | Google AI Gemini                                                                                                        | `llm-stream-assemble` or `/adapters/gemini` |
+
+Full feature flags and quirks: [compatibility matrix](./docs/compatibility.md).
+
+---
 
 ## Install
 
@@ -34,19 +83,36 @@ pnpm add llm-stream-assemble
 # or npm install llm-stream-assemble
 ```
 
-## Requirements
+**Requirements:** Node.js 18+
 
-- Node.js 18+
+---
+
+## Quickstart
+
+```ts
+import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
+
+for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+---
 
 ## Documentation
 
-- [Product & technical proposal](./docs/proposal.md)
-- [Post-1.0 provider roadmap (proposal)](./docs/post-1.0-provider-roadmap.md)
 - [Provider compatibility matrix](./docs/compatibility.md)
 - [Adapter author guide](./docs/adapter-guide.md)
+- [Architecture diagrams](./docs/img/README.md)
 - [Live smoke checklist (maintainers)](./docs/live-smoke.md)
+- [Post-1.0 provider roadmap](./docs/post-1.0-provider-roadmap.md)
+- [Product & technical proposal](./docs/proposal.md)
 
-## Core Usage
+---
+
+## Usage guides
+
+### Core Usage
 
 The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, and Google Gemini adapters:
 
@@ -67,17 +133,7 @@ for await (const event of assembleFromPayloads(payloads, adapter)) {
 
 Assembly buffers completed text, reasoning, JSON, and tool-call arguments so it can emit final `.done` events. Use `maxBufferBytes` to cap those buffers for untrusted or unusually large streams.
 
-## Quickstart
-
-```ts
-import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
-
-for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-## OpenAI Chat Usage
+### OpenAI Chat Usage
 
 `openaiChatAdapter()` parses OpenAI Chat Completions payloads. Create one adapter instance per request/stream because it keeps minimal state for metadata and tool-call indexes.
 
@@ -105,7 +161,7 @@ for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
 
 Streaming usage requires `stream_options: { include_usage: true }` on the OpenAI request. JSON mode content is exposed by OpenAI as normal content deltas, so use `openaiChatAdapter({ jsonMode: true })` when you want content mapped to `json.*` events.
 
-## OpenAI-Compatible Usage
+### OpenAI-Compatible Usage
 
 `openaiCompatibleAdapter()` supports OpenAI-shaped Chat Completions APIs with best-effort provider presets. Create one adapter instance per request/stream.
 
@@ -163,7 +219,7 @@ Known limitations:
 - Multi-choice terminal behavior is limited by the current core single terminal finish event.
 - Missing tool ids are tolerated because core can synthesize stable ids by index.
 
-## Azure OpenAI Usage
+### Azure OpenAI Usage
 
 Azure OpenAI Chat Completions uses a deployment-scoped URL and **`api-key`** authentication instead of Bearer tokens. Use the **`azure`** preset — not `generic` — for stricter parsing aligned with OpenAI Chat semantics (`allowMissingMetadata: false`, `looseErrorShape: false`).
 
@@ -200,7 +256,7 @@ Use `openaiCompatibleAdapter({ provider: "azure", jsonMode: true })` when struct
 
 See `examples/node-fetch/azure-openai.ts` for a URL builder helper and `examples/proxy-safety/README.md` for server-side proxy notes.
 
-## Anthropic Messages Usage
+### Anthropic Messages Usage
 
 `anthropicAdapter()` parses Anthropic Messages streaming events and non-streaming responses. Create one adapter instance per request/stream.
 
@@ -214,7 +270,7 @@ for await (const event of assembleStream(response.body!, anthropicAdapter())) {
 
 Anthropic tool calls are emitted from `tool_use` content blocks. Fine-grained tool input streaming is supported through `input_json_delta`; partial input may be invalid JSON until the block ends, and core handles those partial previews best-effort. Thinking blocks map to `reasoning.*` events with `variant: "detail"`.
 
-## OpenAI Responses Usage
+### OpenAI Responses Usage
 
 `openaiResponsesAdapter()` parses OpenAI Responses API streaming events and non-streaming response objects. It focuses on output text and function call argument streams; Realtime, audio, and multimodal binary output are out of scope.
 
@@ -228,7 +284,7 @@ for await (const event of assembleStream(response.body!, openaiResponsesAdapter(
 
 Use `openaiResponsesAdapter({ jsonMode: true })` to map output text to `json.*` events. Reasoning support is best-effort for string summary/detail fields. Create a new adapter instance per stream.
 
-## Gemini Usage
+### Gemini Usage
 
 `geminiAdapter()` parses Google AI Gemini `GenerateContentResponse` payloads from `streamGenerateContent?alt=sse` and non-streaming `generateContent`. Create one adapter instance per request/stream.
 
@@ -259,7 +315,13 @@ Subpath import: `import { geminiAdapter } from "llm-stream-assemble/adapters/gem
 
 Vertex AI and the Interactions API are out of scope for this adapter; see [compatibility matrix](./docs/compatibility.md).
 
-## Collecting a Stream
+---
+
+## Transforms & replay
+
+![Transforms and helpers](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/transforms.svg)
+
+### Collecting a Stream
 
 `collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
 
@@ -270,7 +332,7 @@ const result = await collectStream(events);
 console.log(result.text, result.toolCalls, result.finishReason);
 ```
 
-## Tapping Events
+### Tapping Events
 
 `tapEvents()` lets you observe events for logging or metrics without changing the stream.
 
@@ -282,7 +344,7 @@ for await (const event of tapEvents(events, (event) => console.debug(event.type)
 }
 ```
 
-## Forwarding Unified SSE
+### Forwarding Unified SSE
 
 `toSSE()` serializes unified `StreamEvent` objects as `data: <json>` SSE messages. It does not currently emit named SSE `event:` fields, and it emits unified event JSON rather than raw provider SSE.
 
@@ -296,7 +358,7 @@ return new Response(toSSE(events, { sanitizeErrors: true }), {
 
 Use `sanitizeErrors: true` when forwarding events to browsers so raw provider internals are not exposed.
 
-## Replaying Fixtures
+### Replaying Fixtures
 
 `assembleFromFile()` is a Node/dev replay helper for local `.sse` and `.json` fixtures. It uses `node:fs/promises`, so avoid it in browser bundles; a dedicated browser/edge entry point can be added later if needed.
 
@@ -311,16 +373,21 @@ for await (const event of assembleFromFile(
 }
 ```
 
-## Examples
+---
 
-- `examples/node-fetch/openai-chat.ts`
-- `examples/node-fetch/openai-compatible.ts`
-- `examples/node-fetch/azure-openai.ts`
-- `examples/node-fetch/anthropic.ts`
-- `examples/node-fetch/gemini.ts`
-- `examples/node-fetch/replay-fixture.ts`
-- `examples/proxy-safety/web-standard-proxy.ts`
-- `examples/proxy-safety/browser-client.ts`
+## Examples & proxy safety
+
+| Example                                                                                  | Description                             |
+| ---------------------------------------------------------------------------------------- | --------------------------------------- |
+| [`examples/node-fetch/openai-chat.ts`](./examples/node-fetch/openai-chat.ts)             | OpenAI Chat Completions streaming       |
+| [`examples/node-fetch/openai-compatible.ts`](./examples/node-fetch/openai-compatible.ts) | OpenAI-compatible presets               |
+| [`examples/node-fetch/azure-openai.ts`](./examples/node-fetch/azure-openai.ts)           | Azure OpenAI deployment URL + `api-key` |
+| [`examples/node-fetch/perplexity.ts`](./examples/node-fetch/perplexity.ts)               | Perplexity streaming                    |
+| [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                             | xAI Grok streaming                      |
+| [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                 | Anthropic Messages                      |
+| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                       | Google Gemini SSE                       |
+| [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)       | Local fixture replay                    |
+| [`examples/proxy-safety/`](./examples/proxy-safety/)                                     | Proxy + browser client patterns         |
 
 Proxy safety:
 
@@ -329,12 +396,16 @@ Proxy safety:
 - Never forward raw provider errors or upstream non-OK response bodies to browsers.
 - CORS headers are application-specific and intentionally omitted from the Web-standard example.
 
+---
+
 ## Non-goals
 
 - No HTTP client, auth, retries, or provider SDK wrapper.
 - No agent loop, tool execution, memory, or persistence.
 - No UI framework, React hooks, or browser components.
 - No multimodal binary/audio/video parsing.
+
+---
 
 ## Development
 
@@ -343,14 +414,16 @@ pnpm install
 pnpm verify
 ```
 
-Scripts:
+| Command               | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `pnpm verify`         | lint + typecheck + test + build                     |
+| `pnpm verify:deps`    | fail if runtime dependencies are added              |
+| `pnpm release:prep`   | pre-tag checks (version, CHANGELOG, dist, npm pack) |
+| `pnpm diagrams:build` | regenerate README SVGs from Mermaid sources         |
+| `pnpm test`           | Vitest smoke tests                                  |
+| `pnpm build`          | tsup → ESM + CJS + declarations                     |
 
-| Command            | Description                            |
-| ------------------ | -------------------------------------- |
-| `pnpm verify`      | lint + typecheck + test + build        |
-| `pnpm verify:deps` | fail if runtime dependencies are added |
-| `pnpm test`        | Vitest smoke tests                     |
-| `pnpm build`       | tsup → ESM + CJS + declarations        |
+---
 
 ## Author
 
