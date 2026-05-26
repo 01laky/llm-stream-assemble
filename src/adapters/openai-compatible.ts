@@ -1,20 +1,24 @@
 import type { StreamAdapter } from "../core/types";
 import { createOpenAIChatLikeAdapter } from "./openai-chat/parser";
+import {
+	DEFAULT_PRESET,
+	type OpenAICompatibleProvider,
+	providerPreset,
+} from "./openai-compatible-presets";
 
-export type OpenAICompatibleProvider =
-	| "generic"
-	| "openrouter"
-	| "groq"
-	| "deepseek"
-	| "mistral"
-	| "ollama"
-	| "lmstudio"
-	| "together"
-	| "fireworks"
-	| "perplexity"
-	| "xai"
-	| "azure"
-	| "cloudflare";
+export type { OpenAICompatibleProvider } from "./openai-compatible-presets";
+export {
+	DEFAULT_PRESET,
+	HOST_COMPATIBLE_PRESETS,
+	LOOSE_HOST_PRESETS,
+	OPENAI_COMPATIBLE_PROVIDERS,
+	PRESET_OVERRIDE_KEYS,
+	PRESET_OVERRIDES,
+	STRICT_COMPATIBLE_PRESETS,
+	hasPresetOverride,
+	isStrictCompatiblePreset,
+	providerPreset,
+} from "./openai-compatible-presets";
 
 export interface OpenAICompatibleAdapterOptions {
 	provider?: OpenAICompatibleProvider;
@@ -25,35 +29,6 @@ export interface OpenAICompatibleAdapterOptions {
 	useChoicePositionFallback?: boolean;
 	reasoningFieldAliases?: string[];
 }
-
-type PresetOverrides = Partial<
-	Pick<
-		OpenAICompatibleAdapterOptions,
-		| "reasoningFieldAliases"
-		| "looseErrorShape"
-		| "allowMissingMetadata"
-		| "useChoicePositionFallback"
-	>
->;
-
-const DEFAULT_PRESET = {
-	looseErrorShape: true,
-	allowMissingMetadata: true,
-	useChoicePositionFallback: true,
-	reasoningFieldAliases: ["thinking", "thinking_content"],
-} as const satisfies PresetOverrides;
-
-const PRESET_OVERRIDES: Partial<Record<OpenAICompatibleProvider, PresetOverrides>> = {
-	deepseek: { reasoningFieldAliases: ["reasoning_content", "reasoning", "thinking"] },
-	openrouter: { reasoningFieldAliases: ["reasoning"] },
-	together: { reasoningFieldAliases: ["reasoning", "reasoning_delta"] },
-	azure: {
-		looseErrorShape: false,
-		allowMissingMetadata: false,
-		useChoicePositionFallback: true,
-		reasoningFieldAliases: [],
-	},
-};
 
 export function openaiCompatibleAdapter(
 	options: OpenAICompatibleAdapterOptions = {},
@@ -84,11 +59,4 @@ export function openaiCompatibleAdapter(
 			...(options.reasoningFieldAliases ?? []),
 		],
 	});
-}
-
-function providerPreset(provider: OpenAICompatibleProvider): PresetOverrides {
-	return {
-		...DEFAULT_PRESET,
-		...PRESET_OVERRIDES[provider],
-	};
 }

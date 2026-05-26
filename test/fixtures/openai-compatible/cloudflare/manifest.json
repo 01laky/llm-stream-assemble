@@ -1,0 +1,36 @@
+{
+	"text-basic": {
+		"kind": "stream",
+		"goldenTestId": "OC142",
+		"conformanceTestId": "OC158"
+	},
+	"missing-metadata": {
+		"kind": "stream",
+		"goldenTestId": "OC143",
+		"conformanceTestId": "OC197"
+	},
+	"tool-single": {
+		"kind": "stream",
+		"goldenTestId": "OC144",
+		"conformanceTestId": "OC195"
+	},
+	"usage-stream": {
+		"kind": "stream",
+		"goldenTestId": "OC145",
+		"conformanceTestId": "OC196"
+	},
+	"provider-error": {
+		"kind": "stream",
+		"goldenTestId": "OC146"
+	},
+	"response-basic": {
+		"kind": "response",
+		"goldenTestId": "OC147"
+	},
+	"json-mode": {
+		"kind": "stream",
+		"goldenTestId": "OC169",
+		"conformanceTestId": "OC198",
+		"adapterOptions": { "jsonMode": true }
+	}
+}

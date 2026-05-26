@@ -9,7 +9,11 @@ import {
 	providerErrorChunksFromMessage,
 	providerErrorChunksFromPayload,
 } from "../src/adapters/errors";
-import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
+import {
+	isStrictCompatiblePreset,
+	openaiCompatibleAdapter,
+	OPENAI_COMPATIBLE_PROVIDERS,
+} from "../src/adapters/openai-compatible";
 import { createStreamAdapter } from "../src/adapters/utils";
 import {
 	isDoneMarker,
@@ -198,25 +202,9 @@ describe("refactor: createStreamAdapter factory", () => {
 });
 
 describe("refactor: openai-compatible presets", () => {
-	const providers = [
-		"generic",
-		"openrouter",
-		"groq",
-		"deepseek",
-		"mistral",
-		"ollama",
-		"lmstudio",
-		"together",
-		"fireworks",
-		"perplexity",
-		"xai",
-		"azure",
-		"cloudflare",
-	] as const;
-
 	it("LSA-RF14: all provider presets parse empty object without throw", () => {
-		for (const provider of providers) {
-			if (provider === "azure") {
+		for (const provider of OPENAI_COMPATIBLE_PROVIDERS) {
+			if (isStrictCompatiblePreset(provider)) {
 				expect(() => openaiCompatibleAdapter({ provider }).parseChunk("{}")).toThrow(
 					/openaiCompatibleAdapter\.parseChunk/,
 				);

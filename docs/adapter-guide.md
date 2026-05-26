@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.0`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.1`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -83,13 +83,13 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 
 ## Factory naming convention
 
-| Provider                  | Export                                                                                                                                                                                                                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                                    |
-| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0` |
-| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                     |
-| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                               |
-| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                        |
+| Provider                  | Export                                                                                                                                                                                                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                                                                                         |
+| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0`; preset SSOT and manifest-driven tests since `1.3.1` |
+| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                                                                          |
+| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                    |
+| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                             |
 
 ## Azure preset vs generic
 

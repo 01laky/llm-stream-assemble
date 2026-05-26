@@ -11,27 +11,23 @@ import { dirname, join } from "node:path";
 import { ReadableStream } from "node:stream/web";
 import { TextEncoder } from "node:util";
 import { fileURLToPath } from "node:url";
-import { openaiCompatibleAdapter } from "../dist/adapters/openai-compatible.js";
+import {
+	HOST_COMPATIBLE_PRESETS,
+	openaiCompatibleAdapter,
+} from "../dist/adapters/openai-compatible.js";
 import { assembleStream } from "../dist/core/index.js";
 import { assembleResponse } from "../dist/index.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const fixturesRoot = join(root, "test/fixtures/openai-compatible");
 
-const HOSTS = [
-	"groq",
-	"deepseek",
-	"mistral",
-	"ollama",
-	"lmstudio",
-	"together",
-	"fireworks",
-	"openrouter",
-	"perplexity",
-	"xai",
-	"azure",
-	"cloudflare",
-];
+const HOSTS = HOST_COMPATIBLE_PRESETS;
+
+function loadManifest(host) {
+	const path = join(fixturesRoot, host, "manifest.json");
+	if (!existsSync(path)) return {};
+	return JSON.parse(readFileSync(path, "utf8"));
+}
 
 function parseArgs(argv) {
 	const args = { check: false, host: undefined, name: undefined, kind: undefined };
@@ -108,7 +104,11 @@ function discoverFixtures(hostFilter, nameFilter) {
 				const name = file.slice(0, -4);
 				if (nameFilter && name !== nameFilter) continue;
 				entries.push({ host, name, kind: "stream" });
-			} else if (file.endsWith(".json") && !file.endsWith(".expected.json")) {
+			} else if (
+				file.endsWith(".json") &&
+				!file.endsWith(".expected.json") &&
+				file !== "manifest.json"
+			) {
 				const name = file.slice(0, -5);
 				if (nameFilter && name !== nameFilter) continue;
 				entries.push({ host, name, kind: "response" });
@@ -128,7 +128,9 @@ async function generateEntry(entry, options = {}) {
 		events = collectResponseEvents(body, host);
 	} else {
 		const sse = readFileSync(join(dir, `${name}.sse`), "utf8");
-		const adapterOptions = name === "json-mode" ? { jsonMode: true } : {};
+		const manifest = loadManifest(host);
+		const adapterOptions =
+			manifest[name]?.adapterOptions ?? (name === "json-mode" ? { jsonMode: true } : {});
 		events = await collectStreamEvents(sse, host, adapterOptions);
 	}
 	const serialized = `${JSON.stringify(events, null, 2)}\n`;

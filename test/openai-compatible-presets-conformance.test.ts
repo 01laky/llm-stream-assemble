@@ -5,6 +5,7 @@ import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { runAdapterGoldenStream } from "./helpers/adapter-conformance";
 import {
 	expectedHostCompatibleEvents,
+	loadHostFixtureManifest,
 	normalizeCompatibleEvents,
 } from "./helpers/compatible-fixtures";
 
@@ -50,18 +51,29 @@ describe("openaiCompatibleAdapter host preset conformance", () => {
 		);
 		expect(events).toEqual(expectedHostCompatibleEvents("azure", "text-basic"));
 	});
+});
 
-	it("LSA-OC158: runAdapterGoldenStream parity for cloudflare/text-basic", async () => {
-		const events = normalizeCompatibleEvents(
-			await runAdapterGoldenStream({
-				adapter: openaiCompatibleAdapter({ provider: "cloudflare" }),
-				fixtureSsePath: join(fixturesDir, "cloudflare", "text-basic.sse"),
-				expectedEventsPath: join(fixturesDir, "cloudflare", "text-basic.expected.json"),
-				adapterFactory: () => openaiCompatibleAdapter({ provider: "cloudflare" }),
-			}),
-		);
-		expect(events).toEqual(expectedHostCompatibleEvents("cloudflare", "text-basic"));
-	});
+describe("openaiCompatibleAdapter cloudflare manifest conformance", () => {
+	const manifest = loadHostFixtureManifest("cloudflare");
+	const cloudflareDir = join(fixturesDir, "cloudflare");
+
+	for (const [name, entry] of Object.entries(manifest)) {
+		if (!entry.conformanceTestId || entry.kind !== "stream") continue;
+
+		it(`LSA-${entry.conformanceTestId}: runAdapterGoldenStream parity for cloudflare/${name}`, async () => {
+			const adapterOptions = entry.adapterOptions ?? {};
+			const events = normalizeCompatibleEvents(
+				await runAdapterGoldenStream({
+					adapter: openaiCompatibleAdapter({ provider: "cloudflare", ...adapterOptions }),
+					fixtureSsePath: join(cloudflareDir, `${name}.sse`),
+					expectedEventsPath: join(cloudflareDir, `${name}.expected.json`),
+					adapterFactory: () =>
+						openaiCompatibleAdapter({ provider: "cloudflare", ...adapterOptions }),
+				}),
+			);
+			expect(events).toEqual(expectedHostCompatibleEvents("cloudflare", name));
+		});
+	}
 });
 
 describe("openaiCompatibleAdapter host preset fixture drift", () => {

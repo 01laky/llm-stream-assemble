@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
+import {
+	hasPresetOverride,
+	isStrictCompatiblePreset,
+	openaiCompatibleAdapter,
+	OPENAI_COMPATIBLE_PROVIDERS,
+} from "../src/adapters/openai-compatible";
 import { assembleStream } from "../src/core/assemble-stream";
 import { byteStreamFromStrings, collectAsync } from "./helpers/collect-events";
 import {
@@ -9,24 +14,10 @@ import {
 } from "./helpers/compatible-fixtures";
 
 describe("openaiCompatibleAdapter host preset edge cases", () => {
-	it("LSA-OC73: ALL_COMPATIBLE_PROVIDERS covers every OpenAICompatibleProvider key", () => {
-		expect(ALL_COMPATIBLE_PROVIDERS).toEqual([
-			"generic",
-			"openrouter",
-			"groq",
-			"deepseek",
-			"mistral",
-			"ollama",
-			"lmstudio",
-			"together",
-			"fireworks",
-			"perplexity",
-			"xai",
-			"azure",
-			"cloudflare",
-		]);
-		for (const provider of ALL_COMPATIBLE_PROVIDERS) {
-			if (provider === "azure") {
+	it("LSA-OC73: OPENAI_COMPATIBLE_PROVIDERS is the SSOT for every preset key", () => {
+		expect(ALL_COMPATIBLE_PROVIDERS).toEqual([...OPENAI_COMPATIBLE_PROVIDERS]);
+		for (const provider of OPENAI_COMPATIBLE_PROVIDERS) {
+			if (isStrictCompatiblePreset(provider)) {
 				expect(() => openaiCompatibleAdapter({ provider }).parseChunk("{}")).toThrow(
 					/openaiCompatibleAdapter\.parseChunk/,
 				);
@@ -34,6 +25,13 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 				expect(openaiCompatibleAdapter({ provider }).parseChunk("{}")).toEqual([]);
 			}
 		}
+	});
+
+	it("LSA-OC210: cloudflare uses DEFAULT_PRESET without PRESET_OVERRIDES entry", () => {
+		expect(hasPresetOverride("cloudflare")).toBe(false);
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(JSON.stringify({ foo: 1 })),
+		).toEqual([]);
 	});
 
 	it("LSA-OC74: provider preset does not change error prefix", () => {

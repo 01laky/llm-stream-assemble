@@ -1,42 +1,30 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { OpenAICompatibleProvider } from "../../src/adapters/openai-compatible";
+import type { OpenAICompatibleAdapterOptions } from "../../src/adapters/openai-compatible";
+import type { OpenAICompatibleProvider } from "../../src/adapters/openai-compatible-presets";
 import type { RawChunk, StreamEvent } from "../../src/core/types";
 
+export {
+	HOST_COMPATIBLE_PRESETS,
+	LOOSE_HOST_PRESETS,
+	OPENAI_COMPATIBLE_PROVIDERS,
+	STRICT_COMPATIBLE_PRESETS,
+} from "../../src/adapters/openai-compatible-presets";
+
+/** @deprecated Use `OPENAI_COMPATIBLE_PROVIDERS` — kept for existing LSA test IDs. */
+export { OPENAI_COMPATIBLE_PROVIDERS as ALL_COMPATIBLE_PROVIDERS } from "../../src/adapters/openai-compatible-presets";
+
+export type HostFixtureManifestEntry = {
+	kind: "stream" | "response";
+	goldenTestId?: string;
+	conformanceTestId?: string;
+	adapterOptions?: OpenAICompatibleAdapterOptions;
+};
+
+export type HostFixtureManifest = Record<string, HostFixtureManifestEntry>;
+
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), "../fixtures/openai-compatible");
-
-/** Every host preset key — keep in sync with `OpenAICompatibleProvider`. */
-export const ALL_COMPATIBLE_PROVIDERS = [
-	"generic",
-	"openrouter",
-	"groq",
-	"deepseek",
-	"mistral",
-	"ollama",
-	"lmstudio",
-	"together",
-	"fireworks",
-	"perplexity",
-	"xai",
-	"azure",
-	"cloudflare",
-] as const satisfies readonly OpenAICompatibleProvider[];
-
-export const HOST_COMPATIBLE_PRESETS = [
-	"groq",
-	"deepseek",
-	"mistral",
-	"ollama",
-	"lmstudio",
-	"together",
-	"fireworks",
-	"openrouter",
-	"perplexity",
-	"xai",
-	"azure",
-	"cloudflare",
-] as const satisfies readonly OpenAICompatibleProvider[];
 
 export function compatibleTextFixture(name: string, extension: string): string {
 	return readFileSync(join(fixturesDir, `${name}.${extension}`), "utf8");
@@ -76,6 +64,11 @@ export function expectedHostCompatibleEvents(
 	name: string,
 ): unknown {
 	return hostCompatibleFixture(host, name, "expected.json");
+}
+
+export function loadHostFixtureManifest(host: OpenAICompatibleProvider): HostFixtureManifest {
+	const path = join(fixturesDir, host, "manifest.json");
+	return JSON.parse(readFileSync(path, "utf8")) as HostFixtureManifest;
 }
 
 export function normalizeCompatibleEvents(events: StreamEvent[]): unknown[] {

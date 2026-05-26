@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	openaiCompatibleAdapter,
-	type OpenAICompatibleProvider,
+	OPENAI_COMPATIBLE_PROVIDERS,
 } from "../src/adapters/openai-compatible";
 
 const payload = (value: unknown) => JSON.stringify(value);
@@ -97,22 +97,7 @@ describe("openaiCompatibleAdapter dialect options", () => {
 	});
 
 	it("LSA-OC14c: every provider preset parses a generic text chunk", () => {
-		const providers: OpenAICompatibleProvider[] = [
-			"generic",
-			"openrouter",
-			"groq",
-			"deepseek",
-			"mistral",
-			"ollama",
-			"lmstudio",
-			"together",
-			"fireworks",
-			"perplexity",
-			"xai",
-			"azure",
-			"cloudflare",
-		];
-		for (const provider of providers) {
+		for (const provider of OPENAI_COMPATIBLE_PROVIDERS) {
 			expect(
 				openaiCompatibleAdapter({ provider }).parseChunk(
 					payload({ choices: [{ delta: { content: provider } }] }),

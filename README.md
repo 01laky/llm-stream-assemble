@@ -1,17 +1,17 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.3.0-blue)
+![core](https://img.shields.io/badge/core-1.3.1-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-833%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-828%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.3.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.3.1-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
 > A zero-dependency TypeScript layer for assembling **OpenAI**, **Anthropic**, **Google Gemini**, and **OpenAI-compatible** LLM streams into unified events — so you can stop hand-rolling provider parsers and keep one clean, typed event model across chat UIs, agents, proxies, and backends.
 
-**Status:** Stable `1.3.0`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.3.1`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 

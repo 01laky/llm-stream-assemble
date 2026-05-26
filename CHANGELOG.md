@@ -3,6 +3,42 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.1]
+
+### Added
+
+- **`openai-compatible-presets.ts`**: single source of truth for `OPENAI_COMPATIBLE_PROVIDERS`,
+  `HOST_COMPATIBLE_PRESETS`, `LOOSE_HOST_PRESETS`, `STRICT_COMPATIBLE_PRESETS`, `DEFAULT_PRESET`,
+  and `PRESET_OVERRIDES` with helpers `isStrictCompatiblePreset()` and `hasPresetOverride()`.
+- Cloudflare fixture **`manifest.json`** mapping golden (**LSA-OC142**–**OC147**, **OC169**) and
+  conformance (**LSA-OC158**, **OC195**–**OC198**) test ids to stream/response fixtures and
+  `adapterOptions`.
+- Loose host preset matrix suite `test/openai-compatible-loose-matrix.test.ts`
+  (**LSA-OC211**–**LSA-OC216**): parameterized guards for malformed JSON, empty object, loose
+  string errors, sparse metadata, reasoning aliases, and unrecognizable payloads across all
+  non-strict presets.
+- Test helpers `test/helpers/compatible-preset-matrix.ts` for shared matrix assertions.
+
+### Changed
+
+- `openai-compatible.ts` imports preset metadata from the SSOT module and re-exports it publicly
+  (including from `src/adapters/index.ts`).
+- `scripts/generate-compatible-preset-fixtures.mjs` reads `HOST_COMPATIBLE_PRESETS` from dist
+  instead of a hardcoded host list; reads `adapterOptions` from per-host `manifest.json` when present.
+- Cloudflare golden and conformance tests are table-driven from `manifest.json` instead of
+  seven/eight duplicate `it` blocks.
+- Cloudflare robust suite slimmed to Workers-AI-specific behavior; generic loose-preset checks
+  moved to the matrix suite.
+- **LSA-OC73**, **LSA-OC14c**, **LSA-RF14** use `OPENAI_COMPATIBLE_PROVIDERS` and
+  `isStrictCompatiblePreset()` instead of duplicated provider arrays.
+- **LSA-OC106** and **LSA-OC134** repurposed from duplicate version guards to SSOT/manifest
+  regression checks; **LSA-OC84** remains the canonical package version test.
+
+### Migration from 1.3.0 to 1.3.1
+
+No breaking API changes. Preset constants moved to `openai-compatible-presets.ts` but remain
+re-exported from `openaiCompatibleAdapter`'s module path.
+
 ## [1.3.0]
 
 ### Added
