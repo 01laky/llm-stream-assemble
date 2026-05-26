@@ -13,6 +13,7 @@ import {
 	isStrictCompatiblePreset,
 	openaiCompatibleAdapter,
 	OPENAI_COMPATIBLE_PROVIDERS,
+	resolveCompatibleAdapterConfig,
 } from "../src/adapters/openai-compatible";
 import { createStreamAdapter } from "../src/adapters/utils";
 import {
@@ -331,6 +332,20 @@ describe("refactor: openai-compatible presets", () => {
 		const cf = openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(loose);
 		const generic = openaiCompatibleAdapter({ provider: "generic" }).parseChunk(loose);
 		expect(cf.map((chunk) => chunk.kind)).toEqual(generic.map((chunk) => chunk.kind));
+	});
+
+	it("LSA-RF27: resolveCompatibleAdapterConfig exposes resolved strict and loose preset fields", () => {
+		const azure = resolveCompatibleAdapterConfig({ provider: "azure" });
+		expect(azure.rejectUnrecognizedPayloads).toBe(true);
+		expect(azure.looseErrorShape).toBe(false);
+		const groq = resolveCompatibleAdapterConfig({ provider: "groq" });
+		expect(groq.rejectUnrecognizedPayloads).toBe(false);
+		expect(groq.looseErrorShape).toBe(true);
+		for (const provider of OPENAI_COMPATIBLE_PROVIDERS) {
+			expect(resolveCompatibleAdapterConfig({ provider }).reasoningFieldAliases).toEqual(
+				expect.any(Array),
+			);
+		}
 	});
 });
 

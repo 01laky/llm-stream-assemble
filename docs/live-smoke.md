@@ -168,8 +168,11 @@ Expect at least one `text.delta` event.
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).
-2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC141`).
+2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC141`, and cloudflare manifest goldens **LSA-OC142** … **LSA-OC169**).
 3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, `pnpm smoke:xai`, `pnpm smoke:azure`, and/or `pnpm smoke:cloudflare` when hosts are available.
-4. Cloudflare robust suite **LSA-OC170**–**LSA-OC210** green when touching compatible parser defaults.
+4. When touching compatible parser defaults or preset metadata:
+   - Loose host matrix **LSA-OC211**–**LSA-OC216** green (all non-strict presets).
+   - Cloudflare Workers-AI robust suite **LSA-OC172**–**LSA-OC209** green.
+   - SSOT guards **LSA-OC73** and **LSA-OC210** green.
 5. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
 6. Bump `CHANGELOG.md` + `package.json` version together.

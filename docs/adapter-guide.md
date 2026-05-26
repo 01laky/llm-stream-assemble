@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.1`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.3`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -83,13 +83,13 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 
 ## Factory naming convention
 
-| Provider                  | Export                                                                                                                                                                                                                                                                                        |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                                                                                         |
-| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0`; preset SSOT and manifest-driven tests since `1.3.1` |
-| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                                                                          |
-| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                    |
-| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                             |
+| Provider                  | Export                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                                                                                                                                        |
+| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0`; preset SSOT and manifest-driven tests since `1.3.1`; maintainer fixture docs aligned since `1.3.2` |
+| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                                                                                                                         |
+| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                                                                   |
+| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                                                                            |
 
 ## Azure preset vs generic
 
@@ -98,6 +98,20 @@ Use `openaiCompatibleAdapter({ provider: "azure" })` **only** for Azure OpenAI C
 ## Cloudflare preset vs generic
 
 Use `openaiCompatibleAdapter({ provider: "cloudflare" })` for **Cloudflare Workers AI REST** at `https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions`. Do **not** use this preset for Azure, OpenAI, or arbitrary OpenAI-shaped hosts — use `generic` or the matching host preset instead. The `cloudflare` preset uses **DEFAULT_PRESET** (loose like Groq): it tolerates sparse metadata and returns `[]` for wholly unrecognizable payloads. It is **not** registered in `PRESET_OVERRIDES` with strict azure-style defaults. Worker `env.AI.run()` binding streams are documented in examples but tested via REST fixtures in CI.
+
+## Maintainer: host golden fixtures
+
+When adding or changing OpenAI-compatible host fixtures:
+
+1. Place `.sse` / `.json` inputs and `.expected.json` under `test/fixtures/openai-compatible/<host>/`.
+2. Regenerate expected files with `pnpm fixtures:generate-compatible` (see fixture README).
+3. Optional: add `manifest.json` to drive golden/conformance test ids and `adapterOptions` (see `cloudflare/manifest.json`).
+4. Generic loose-preset behavior belongs in **LSA-OC211**–**LSA-OC216** (`openai-compatible-loose-matrix.test.ts`); host-specific quirks get dedicated tests.
+5. Preset keys must match `OPENAI_COMPATIBLE_PROVIDERS` in `openai-compatible-presets.ts`.
+
+Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset flags without constructing an adapter (since **1.3.3**).
+
+See [`test/fixtures/openai-compatible/README.md`](../test/fixtures/openai-compatible/README.md) and [`docs/live-smoke.md`](./live-smoke.md) checklist.
 
 ## Community adapters
 

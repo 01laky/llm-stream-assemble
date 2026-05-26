@@ -1,8 +1,11 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { OpenAICompatibleAdapterOptions } from "../../src/adapters/openai-compatible";
-import type { OpenAICompatibleProvider } from "../../src/adapters/openai-compatible-presets";
+import {
+	HOST_COMPATIBLE_PRESETS,
+	type OpenAICompatibleProvider,
+} from "../../src/adapters/openai-compatible-presets";
 import type { RawChunk, StreamEvent } from "../../src/core/types";
 
 export {
@@ -66,9 +69,38 @@ export function expectedHostCompatibleEvents(
 	return hostCompatibleFixture(host, name, "expected.json");
 }
 
+export type HostCompatiblePreset = (typeof HOST_COMPATIBLE_PRESETS)[number];
+
 export function loadHostFixtureManifest(host: OpenAICompatibleProvider): HostFixtureManifest {
 	const path = join(fixturesDir, host, "manifest.json");
+	if (!existsSync(path)) return {};
 	return JSON.parse(readFileSync(path, "utf8")) as HostFixtureManifest;
+}
+
+export function listHostStreamFixtures(host: HostCompatiblePreset): string[] {
+	const dir = join(fixturesDir, host);
+	if (!existsSync(dir)) return [];
+	return readdirSync(dir)
+		.filter((file) => file.endsWith(".sse"))
+		.map((file) => file.slice(0, -4))
+		.sort();
+}
+
+export function listHostResponseFixtures(host: HostCompatiblePreset): string[] {
+	const dir = join(fixturesDir, host);
+	if (!existsSync(dir)) return [];
+	return readdirSync(dir)
+		.filter((file) => file.endsWith(".json") && !file.endsWith(".expected.json"))
+		.map((file) => file.slice(0, -5))
+		.sort();
+}
+
+export function hostFixtureAdapterOptions(
+	host: HostCompatiblePreset,
+	name: string,
+): OpenAICompatibleAdapterOptions {
+	const manifest = loadHostFixtureManifest(host);
+	return manifest[name]?.adapterOptions ?? (name === "json-mode" ? { jsonMode: true } : {});
 }
 
 export function normalizeCompatibleEvents(events: StreamEvent[]): unknown[] {

@@ -3,6 +3,45 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.3]
+
+### Added
+
+- **`openai-compatible-resolve.ts`**: `resolveCompatibleAdapterConfig()` and
+  `ResolvedCompatibleAdapterConfig` — explicit resolution of preset options before adapter
+  construction (re-exported from the compatible adapter module).
+- **Strict host matrix** `test/openai-compatible-strict-matrix.test.ts` (**LSA-OC218**–**OC218h**):
+  azure strict preset guards mirroring the loose matrix.
+- **Preset reasoning matrix** `test/openai-compatible-reasoning-matrix.test.ts` (**LSA-OC219**):
+  table-driven `thinking`, `reasoning`, `reasoning_delta`, `reasoning_content`, and
+  `reasoning_summary` expectations per preset.
+- **Exhaustive compatible suite** `test/openai-compatible-presets-exhaustive.test.ts`
+  (**LSA-OC220**–**OC241**, **LSA-OC228**, **LSA-OC231**–**OC233**): finish/usage/refusal/
+  multichoice/legacy function_call edges, full **52** host stream `runAdapterGoldenStream`
+  conformance loops, tool-stream `openaiChatAdapter` parity for nine host fixtures, missing groq
+  `tool-single` golden, unknown delta key matrix, and resolve-config SSOT checks.
+- Test helpers: `listHostStreamFixtures`, `listHostResponseFixtures`, `hostFixtureAdapterOptions`,
+  extended `compatible-preset-matrix.ts` (`PRESET_REASONING_FIELD_CASES`, parity helpers).
+- **LSA-RF27**: `resolveCompatibleAdapterConfig` regression guard.
+
+### Changed
+
+- `openaiCompatibleAdapter()` delegates option resolution to `resolveCompatibleAdapterConfig()`.
+- **`test/fixtures/openai-compatible/README.md`**: documents loose matrix (**LSA-OC211**–**OC216**),
+  Cloudflare robust (**LSA-OC172**–**OC209**), optional per-host `manifest.json`, and SSOT preset
+  module reference — replaces stale **OC170**–**OC210** maintainer wording.
+- **`docs/live-smoke.md`** checklist aligned with post-1.3.1 test layout (matrix + robust + SSOT
+  guards).
+- **`docs/adapter-guide.md`**: maintainer subsection for host golden fixtures and manifest pattern.
+- **`docs/post-1.0-provider-roadmap.md`** §10 Cloudflare deliverables list updated to current test ids.
+- `loadHostFixtureManifest()` returns `{}` when a host has no manifest (safe for future rollout).
+- README test badge **917**; stable **1.3.3**.
+
+### Migration from 1.3.1 to 1.3.3
+
+Documentation, test infrastructure, and `resolveCompatibleAdapterConfig` additive export.
+Preset runtime behavior unchanged.
+
 ## [1.3.1]
 
 ### Added

@@ -1,12 +1,24 @@
 import { expect } from "vitest";
-import { openaiCompatibleAdapter } from "../../src/adapters/openai-compatible";
+import { openaiChatAdapter } from "../../src/adapters/openai-chat";
+import {
+	openaiCompatibleAdapter,
+	resolveCompatibleAdapterConfig,
+} from "../../src/adapters/openai-compatible";
 import {
 	isStrictCompatiblePreset,
+	LOOSE_HOST_PRESETS,
 	type OpenAICompatibleProvider,
+	STRICT_COMPATIBLE_PRESETS,
 } from "../../src/adapters/openai-compatible-presets";
-import { LOOSE_HOST_PRESETS } from "../../src/adapters/openai-compatible-presets";
+import { assembleStream } from "../../src/core/assemble-stream";
+import { byteStreamFromStrings, collectAsync } from "./collect-events";
+import {
+	hostCompatibleFixture,
+	hostFixtureAdapterOptions,
+	normalizeCompatibleEvents,
+} from "./compatible-fixtures";
 
-export { LOOSE_HOST_PRESETS };
+export { LOOSE_HOST_PRESETS, STRICT_COMPATIBLE_PRESETS };
 
 export function jsonPayload(value: unknown): string {
 	return JSON.stringify(value);
@@ -76,4 +88,154 @@ export function assertUnrecognizablePayloadSilent(provider: OpenAICompatibleProv
 		return;
 	}
 	expect(openaiCompatibleAdapter({ provider }).parseChunk(unrecognizable)).toEqual([]);
+}
+
+export function assertValidMinimalChunk(provider: OpenAICompatibleProvider): void {
+	const valid = jsonPayload({
+		id: "min",
+		model: "test-model",
+		choices: [{ delta: { content: "ok" } }],
+	});
+	expect(openaiCompatibleAdapter({ provider }).parseChunk(valid)).toContainEqual({
+		kind: "text-delta",
+		text: "ok",
+		choiceIndex: 0,
+	});
+}
+
+export function assertObjectErrorShape(provider: OpenAICompatibleProvider): void {
+	const objectError = jsonPayload({
+		error: { message: "bad", type: "invalid_request_error", code: "x" },
+	});
+	expect(openaiCompatibleAdapter({ provider }).parseChunk(objectError)).toContainEqual(
+		expect.objectContaining({ kind: "provider-error" }),
+	);
+}
+
+export function assertUnknownDeltaKeysIgnored(provider: OpenAICompatibleProvider): void {
+	expect(
+		openaiCompatibleAdapter({ provider }).parseChunk(
+			jsonPayload({ choices: [{ delta: { content: "hi", unknown_field: "x" } }] }),
+		),
+	).toContainEqual({ kind: "text-delta", text: "hi", choiceIndex: 0 });
+}
+
+export type ReasoningExpectation = "detail" | "summary" | "none";
+
+export const PRESET_REASONING_FIELD_CASES: Array<{
+	field: string;
+	expectations: Partial<Record<OpenAICompatibleProvider, ReasoningExpectation>>;
+}> = [
+	{
+		field: "thinking_content",
+		expectations: {
+			generic: "detail",
+			deepseek: "none",
+			openrouter: "none",
+			azure: "none",
+		},
+	},
+	{
+		field: "thinking",
+		expectations: {
+			generic: "detail",
+			openrouter: "none",
+			deepseek: "detail",
+		},
+	},
+	{
+		field: "reasoning_delta",
+		expectations: {
+			generic: "none",
+			together: "detail",
+		},
+	},
+	{
+		field: "reasoning",
+		expectations: {
+			generic: "detail",
+			openrouter: "detail",
+			deepseek: "detail",
+			together: "detail",
+		},
+	},
+	{
+		field: "reasoning_content",
+		expectations: {
+			generic: "detail",
+			deepseek: "detail",
+			openrouter: "detail",
+			together: "detail",
+			azure: "detail",
+			cloudflare: "detail",
+		},
+	},
+	{
+		field: "reasoning_summary",
+		expectations: {
+			generic: "summary",
+			azure: "summary",
+		},
+	},
+];
+
+export function assertPresetReasoningField(
+	provider: OpenAICompatibleProvider,
+	field: string,
+	expectation: ReasoningExpectation,
+): void {
+	const payload = jsonPayload({ choices: [{ delta: { [field]: "trace" } }] });
+	const chunks = openaiCompatibleAdapter({ provider }).parseChunk(payload);
+	if (expectation === "none") {
+		expect(chunks.filter((chunk) => chunk.kind === "reasoning-delta")).toEqual([]);
+		return;
+	}
+	expect(chunks).toEqual([
+		{
+			kind: "reasoning-delta",
+			text: "trace",
+			variant: expectation,
+		},
+	]);
+}
+
+export async function assertOpenAIChatStreamParity(
+	host: OpenAICompatibleProvider,
+	fixtureName: string,
+): Promise<void> {
+	const sse = hostCompatibleFixture(host, fixtureName, "sse") as string;
+	const adapterOptions = hostFixtureAdapterOptions(host, fixtureName);
+	const compatibleEvents = normalizeCompatibleEvents(
+		await collectAsync(
+			assembleStream(
+				byteStreamFromStrings(sse),
+				openaiCompatibleAdapter({ provider: host, ...adapterOptions }),
+			),
+		),
+	);
+	const chatEvents = normalizeCompatibleEvents(
+		await collectAsync(
+			assembleStream(
+				byteStreamFromStrings(sse),
+				openaiChatAdapter(adapterOptions.jsonMode ? { jsonMode: true } : {}),
+			),
+		),
+	);
+	expect(compatibleEvents).toEqual(chatEvents);
+}
+
+export function assertResolvedStrictPreset(provider: "azure"): void {
+	const resolved = resolveCompatibleAdapterConfig({ provider });
+	expect(resolved.allowMissingMetadata).toBe(false);
+	expect(resolved.looseErrorShape).toBe(false);
+	expect(resolved.rejectUnrecognizedPayloads).toBe(true);
+	expect(resolved.reasoningFieldAliases).toEqual([]);
+}
+
+export function assertResolvedLooseDefault(provider: OpenAICompatibleProvider): void {
+	if (isStrictCompatiblePreset(provider)) return;
+	const resolved = resolveCompatibleAdapterConfig({ provider });
+	expect(resolved.allowMissingMetadata).toBe(true);
+	expect(resolved.looseErrorShape).toBe(true);
+	expect(resolved.rejectUnrecognizedPayloads).toBe(false);
 }

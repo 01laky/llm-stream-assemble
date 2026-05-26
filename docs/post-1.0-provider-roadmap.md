@@ -428,7 +428,7 @@ hosting patterns.
 - [x] Preset `cloudflare` with DEFAULT_PRESET (loose, not strict like azure)
 - [x] Fixtures under `test/fixtures/openai-compatible/cloudflare/` (text, tools, usage,
       json-mode, provider-error, response)
-- [x] Tests **LSA-OC142**–**LSA-OC210**, **LSA-RF23**–**LSA-RF26**, **LSA-X36**–**LSA-X41**; cross guards **OC100/104/110/111**
+- [x] Tests **LSA-OC142**–**LSA-OC169** (manifest goldens), **LSA-OC172**–**LSA-OC209** (Workers-AI robust), **LSA-OC211**–**LSA-OC216** (loose matrix), **LSA-RF23**–**LSA-RF26**, **LSA-X36**–**LSA-X41**; cross guards **OC100/104/110/111**
 - [x] Example `examples/workers-ai/rest-chat-completions.ts`; live smoke `pnpm smoke:cloudflare`
 - [x] Document `@cf/` model naming and account binding stays outside the adapter
 

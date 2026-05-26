@@ -1,10 +1,9 @@
 import type { StreamAdapter } from "../core/types";
 import { createOpenAIChatLikeAdapter } from "./openai-chat/parser";
 import {
-	DEFAULT_PRESET,
-	type OpenAICompatibleProvider,
-	providerPreset,
-} from "./openai-compatible-presets";
+	resolveCompatibleAdapterConfig,
+	type OpenAICompatibleAdapterOptions,
+} from "./openai-compatible-resolve";
 
 export type { OpenAICompatibleProvider } from "./openai-compatible-presets";
 export {
@@ -19,44 +18,27 @@ export {
 	isStrictCompatiblePreset,
 	providerPreset,
 } from "./openai-compatible-presets";
-
-export interface OpenAICompatibleAdapterOptions {
-	provider?: OpenAICompatibleProvider;
-	jsonMode?: boolean;
-	legacyFunctionIdPrefix?: string;
-	looseErrorShape?: boolean;
-	allowMissingMetadata?: boolean;
-	useChoicePositionFallback?: boolean;
-	reasoningFieldAliases?: string[];
-}
+export {
+	type OpenAICompatibleAdapterOptions,
+	type ResolvedCompatibleAdapterConfig,
+	compatibleProviderLabel,
+	resolveCompatibleAdapterConfig,
+} from "./openai-compatible-resolve";
 
 export function openaiCompatibleAdapter(
 	options: OpenAICompatibleAdapterOptions = {},
 ): StreamAdapter {
-	const preset = providerPreset(options.provider ?? "generic");
-	const resolvedAllowMissingMetadata =
-		options.allowMissingMetadata ??
-		preset.allowMissingMetadata ??
-		DEFAULT_PRESET.allowMissingMetadata;
-	const resolvedLooseErrorShape =
-		options.looseErrorShape ?? preset.looseErrorShape ?? DEFAULT_PRESET.looseErrorShape;
-	const resolvedUseChoicePositionFallback =
-		options.useChoicePositionFallback ??
-		preset.useChoicePositionFallback ??
-		DEFAULT_PRESET.useChoicePositionFallback;
+	const resolved = resolveCompatibleAdapterConfig(options);
 
 	return createOpenAIChatLikeAdapter({
 		...options,
-		looseErrorShape: resolvedLooseErrorShape,
-		allowMissingMetadata: resolvedAllowMissingMetadata,
-		useChoicePositionFallback: resolvedUseChoicePositionFallback,
+		looseErrorShape: resolved.looseErrorShape,
+		allowMissingMetadata: resolved.allowMissingMetadata,
+		useChoicePositionFallback: resolved.useChoicePositionFallback,
 		errorPrefix: "openaiCompatibleAdapter",
 		usageInputTokenFields: ["prompt_tokens", "input_tokens"],
 		usageOutputTokenFields: ["completion_tokens", "output_tokens"],
-		rejectUnrecognizedPayloads: resolvedAllowMissingMetadata === false,
-		reasoningFieldAliases: [
-			...(preset.reasoningFieldAliases ?? []),
-			...(options.reasoningFieldAliases ?? []),
-		],
+		rejectUnrecognizedPayloads: resolved.rejectUnrecognizedPayloads,
+		reasoningFieldAliases: resolved.reasoningFieldAliases,
 	});
 }
