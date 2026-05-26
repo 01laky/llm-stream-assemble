@@ -7,12 +7,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 
 ### Added
 
-- Extended edge-case test coverage across core pipeline, SSE parser, byte/source
-  utilities, transforms, adapter helpers, type guards, and file replay — 77 new
-  tests (547 total). Covers EventAssembler lifecycle and buffer limits, SSE flush
-  and CR-only line endings, UTF-8 chunk boundaries, stream cancellation,
-  `collectStream`/`toSSE`/`tapEvents` edge paths, `recoverMalformed` behavior,
-  and additional `parsePartialJSON` fixtures (LSA-PJ-EXT01–10).
+- Architecture diagram sources and exports under `docs/img/` (`pipeline.mmd`, `stream-event.mmd`,
+  and matching SVGs) so README illustrations can be regenerated with `@mermaid-js/mermaid-cli`.
+
+### Changed
+
+- README **How it works** section replaces Mermaid fences with GitHub-hosted SVG images so
+  pipeline and `StreamEvent` diagrams render on npmjs.com (npm README does not execute Mermaid).
 
 ## [1.0.0]
 
