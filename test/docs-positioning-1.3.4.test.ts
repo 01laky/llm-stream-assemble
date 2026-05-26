@@ -119,6 +119,7 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		const script = read("scripts/build-diagrams.mjs");
 		expect(script).toContain("quick-decision.mmd");
 		expect(script).toContain("assembler-lifecycle.mmd");
+		expect(script).toContain("chunk-assembly.mmd");
 	});
 
 	it("LSA-DOC14: examples README has When to use which example table", () => {
@@ -131,8 +132,8 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(doc).toMatch(/tool calling/i);
 	});
 
-	it("LSA-DOC16: compatibility.md stable status is 1.3.4", () => {
-		expect(read("docs/compatibility.md")).toContain("Stable `1.3.4`");
+	it("LSA-DOC16: compatibility.md stable status is 1.3.5", () => {
+		expect(read("docs/compatibility.md")).toContain("Stable `1.3.5`");
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {

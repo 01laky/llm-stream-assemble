@@ -11,6 +11,7 @@ Mermaid — always commit updated **`.svg`** files alongside **`.mmd`** edits.
 | `transforms.mmd`          | `collectStream`, `tapEvents`, `toSSE`, replay |
 | `quick-decision.mmd`      | Adapter routing decision tree (README)        |
 | `assembler-lifecycle.mmd` | Stateful assembler vs stateless adapters      |
+| `chunk-assembly.mmd`      | SSE fragments → unified StreamEvent flow      |
 
 Regenerate after editing sources:
 

@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.5]
+
+### Added
+
+- **`docs/edge-cases.md`** — SSE mid-line split, tool JSON partials, JSON mode streaming, UI/markdown fence non-goal, DIY vs `assembleStream` table, `assembleFromFile` fixture replay, and fixture/test provenance table.
+- README **Edge-case showcase** teaser with **`docs/img/chunk-assembly.svg`** mental model diagram.
+- README **First success in 30 seconds** — minimal `assembleStream` loop using real exports (no fictional `StreamAssembler` API).
+- README **`### Why not \`text += chunk\`?`** — explicit skeptic framing with six failure modes.
+- README **Performance at a glance** under Why use this — zero deps, incremental SSE, O(n) assembly, bounded buffers, `pnpm bench:smoke`.
+- README hero line — “not another `+=` loop” positioning.
+- FAQ entry linking to **`docs/edge-cases.md`**.
+
+### Changed
+
+- README Contents section order (Edge-case showcase, First success anchors); version labels **1.3.5** across docs and diagrams.
+- **`scripts/build-diagrams.mjs`** — **`chunk-assembly.mmd`**.
+- Docs regression tests **LSA-DOC21**–**DOC34**, **LSA-X51**; **LSA-DOC16** → **1.3.5**; **LSA-OC84**/**107**/**135**/**165** → **1.3.5**; README test badge **961+**.
+
 ## [1.3.4]
 
 ### Added

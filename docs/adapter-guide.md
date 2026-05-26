@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.4`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.5`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -109,7 +109,7 @@ When adding or changing OpenAI-compatible host fixtures:
 4. Generic loose-preset behavior belongs in **LSA-OC211**–**LSA-OC216** (`openai-compatible-loose-matrix.test.ts`); host-specific quirks get dedicated tests.
 5. Preset keys must match `OPENAI_COMPATIBLE_PROVIDERS` in `openai-compatible-presets.ts`.
 
-Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset flags without constructing an adapter (since **1.3.4**).
+Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset flags without constructing an adapter (since **1.3.5**).
 
 ## Assembler vs adapter state
 

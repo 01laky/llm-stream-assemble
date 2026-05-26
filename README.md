@@ -1,27 +1,31 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.3.4-blue)
+![core](https://img.shields.io/badge/core-1.3.5-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-946%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-961%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.3.4-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.3.5-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
 > A zero-dependency TypeScript layer for assembling **OpenAI**, **Anthropic**, **Google Gemini**, and **OpenAI-compatible** LLM streams into unified events — so you can stop hand-rolling provider parsers and keep one clean, typed event model across chat UIs, agents, proxies, and backends.
 
-**Status:** Stable `1.3.4`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+Turn provider SSE fragments into typed events — **not another `+=` loop**.
+
+**Status:** Stable `1.3.5`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
 ## Contents
 
 - [Why not just concatenate?](#why-not-just-concatenate)
+- [Edge-case showcase](#edge-case-showcase)
 - [Why use this](#why-use-this)
 - [Architecture](#architecture)
 - [Providers at a glance](#providers-at-a-glance)
 - [Install](#install)
+- [First success in 30 seconds](#first-success-in-30-seconds)
 - [Quickstart](#quickstart)
 - [Quick decision guide](#quick-decision-guide)
 - [Documentation](#documentation)
@@ -50,6 +54,35 @@ Raw LLM streams look like text, but **simple string concatenation or naive `JSON
 
 This library is the **assembly layer** between those raw bytes and your UI, agent, or proxy.
 
+### Why not `text += chunk`?
+
+The first reaction is often: “Why not `message += chunk`?” Provider streams are **protocol events**, not finished message strings.
+
+| Failure mode                      | What breaks with `+=` / naive parse                 | This library                                      |
+| --------------------------------- | --------------------------------------------------- | ------------------------------------------------- |
+| **Chunk boundaries**              | SSE `data:` line split mid-payload across TCP reads | Line buffer — `parse-sse.ts`                      |
+| **Incomplete structures**         | One SSE payload ≠ one complete JSON message         | Adapter per payload; assembler until `.done`      |
+| **State management**              | Parallel tools, reasoning vs text channels          | `EventAssembler` per stream                       |
+| **Parser invalidity mid-stream**  | Anthropic `input_json_delta`, partial tool args     | Partial preview; valid at `.done`                 |
+| **JSON partials**                 | Structured output streams as fragments              | `json.*`, `tool_call.args.delta`                  |
+| **Markdown fences in model text** | ` ```json ` split across **text tokens**            | **Out of scope** — render `text.delta` in your UI |
+
+See [Edge-case showcase](#edge-case-showcase) for concrete chunk examples.
+
+---
+
+## Edge-case showcase
+
+Raw streams break in predictable ways. Three layers — **SSE framing**, **tool/JSON assembly**, **UI text** — fail differently:
+
+![Chunk assembly: SSE fragments to unified events](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/chunk-assembly.svg)
+
+- **SSE mid-line split** — TCP reads break `data: {...}\n` across buffers; line parser required.
+- **Tool JSON partials** — args stream as `{`, `"city":`, `"Paris"}` before `tool_call.done`.
+- **JSON mode** — structured output arrives as `json.delta` strings, not a parsed object.
+
+**[Full edge-case walkthrough →](./docs/edge-cases.md)** — DIY vs `assembleStream`, fixture replay, test IDs (**LSA-C04**, **LSA-C52**, golden fixtures).
+
 ---
 
 ## Why use this
@@ -58,6 +91,14 @@ This library is the **assembly layer** between those raw bytes and your UI, agen
 - **Stream and non-stream parity** — same `StreamEvent` union from SSE chunks or JSON bodies.
 - **Provider presets, not forks** — Groq, Azure, Cloudflare, Perplexity, xAI, and others reuse one compatible parser with dialect options.
 - **Proxy-ready transforms** — `toSSE({ sanitizeErrors: true })`, `tapEvents`, `collectStream`, fixture replay.
+
+### Performance at a glance
+
+- **Zero runtime dependencies** — verified in CI (`pnpm verify:deps`)
+- **Incremental SSE parsing** — line buffer; no full-stream re-parse
+- **Single-pass O(n) assembly** — **LSA-C52** smoke test on 10k chunks
+- **Bounded buffers** — `maxBufferBytes` for untrusted streams
+- **Local repro:** `pnpm bench:smoke` — see [performance](./docs/performance.md)
 
 ---
 
@@ -119,6 +160,23 @@ pnpm add llm-stream-assemble
 
 ---
 
+## First success in 30 seconds
+
+Minimal loop once you have a streaming `response.body` — see [Quickstart](#quickstart) for full `fetch` setup:
+
+```ts
+import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
+
+for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+	if (event.type === "text.done") console.log("\n--- done:", event.text);
+}
+```
+
+Swap `openaiChatAdapter()` for `anthropicAdapter()`, `geminiAdapter()`, or `openaiCompatibleAdapter({ provider: "ollama" })` — [Quick decision guide](#quick-decision-guide).
+
+---
+
 ## Quickstart
 
 ```ts
@@ -153,6 +211,7 @@ Pick an adapter in ~30 seconds:
 - [Provider compatibility matrix](./docs/compatibility.md)
 - [Adapter author guide](./docs/adapter-guide.md)
 - [Performance & runtime behavior](./docs/performance.md)
+- [Edge-case showcase](./docs/edge-cases.md)
 - [How this compares](./docs/comparison.md)
 - [FAQ](./docs/faq.md)
 - [Architecture diagrams](./docs/img/README.md)

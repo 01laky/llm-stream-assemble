@@ -169,4 +169,8 @@ describe("examples docs regression", () => {
 		expect(performance).toContain("bench:smoke");
 		expect(performance).toContain("bench-smoke.mjs");
 	});
+
+	it("LSA-X51: README contains Edge-case showcase heading", () => {
+		expect(read("README.md")).toContain("Edge-case showcase");
+	});
 });

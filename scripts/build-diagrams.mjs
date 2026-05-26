@@ -13,6 +13,7 @@ const diagrams = [
 	"transforms.mmd",
 	"quick-decision.mmd",
 	"assembler-lifecycle.mmd",
+	"chunk-assembly.mmd",
 ];
 
 for (const name of diagrams) {

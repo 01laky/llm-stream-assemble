@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.3.4`
+**Status:** Active guide — `1.3.5`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -57,6 +57,8 @@ Use `openaiChatAdapter({ jsonMode: true })`, `openaiCompatibleAdapter({ jsonMode
 ## Why not just concatenate SSE chunks?
 
 Raw LLM streams split JSON across chunks, use different event shapes per provider, interleave tool args and reasoning, and emit lifecycle markers like `[DONE]` separately from finish reasons. Concatenation breaks in production edge cases — see README [Why not just concatenate?](../README.md#why-not-just-concatenate).
+
+**Where are the concrete edge-case examples?** → [docs/edge-cases.md](./edge-cases.md) — SSE splits, tool JSON partials, JSON mode, DIY vs `assembleStream`, and `assembleFromFile` replay.
 
 ---
 

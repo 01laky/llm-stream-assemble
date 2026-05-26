@@ -1,0 +1,37 @@
+flowchart TB
+	subgraph IN["SSE byte stream"]
+		C1["TCP read may split mid-line"]
+		C2["data: payload strings"]
+	end
+
+	subgraph PARSE["parse-sse · line buffer"]
+		LB["Accumulate until LF/CRLF"]
+	end
+
+	subgraph ADAPTER["Adapter · stateless per payload"]
+		PC["parseChunk → RawChunk[]"]
+	end
+
+	subgraph CORE["EventAssembler · stateful per stream"]
+		BUF["Buffers text · tools · json"]
+		DONE["Emits .done + finish"]
+	end
+
+	subgraph OUT["StreamEvent stream"]
+		EV["text.done · tool_call.done · json.done"]
+	end
+
+	C1 --> LB
+	C2 --> LB
+	LB --> PC
+	PC --> BUF
+	BUF --> DONE
+	DONE --> EV
+
+	classDef in fill:#1e3a5f,stroke:#60a5fa,stroke-width:2px,color:#e0f2fe
+	classDef mid fill:#4a1d96,stroke:#c084fc,stroke-width:2px,color:#f3e8ff
+	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
+
+	class IN,PARSE in
+	class ADAPTER,CORE mid
+	class OUT out
