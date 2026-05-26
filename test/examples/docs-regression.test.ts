@@ -108,4 +108,65 @@ describe("examples docs regression", () => {
 		expect(env).toContain("CLOUDFLARE_ACCOUNT_ID");
 		expect(env).toContain("CLOUDFLARE_MODEL");
 	});
+
+	it("LSA-X42: README contains Why not just concatenate section", () => {
+		expect(read("README.md")).toContain("Why not just concatenate");
+	});
+
+	it("LSA-X43: README links comparison, performance, and faq docs", () => {
+		const readme = read("README.md");
+		expect(readme).toContain("docs/comparison.md");
+		expect(readme).toContain("docs/performance.md");
+		expect(readme).toContain("docs/faq.md");
+	});
+
+	it("LSA-X44: comparison, performance, and faq docs exist with expected content", () => {
+		const comparison = read("docs/comparison.md");
+		expect(comparison).toContain("Vercel AI SDK");
+		expect(comparison).toContain("When **not** to use this");
+
+		const performance = read("docs/performance.md");
+		expect(performance).toContain("LSA-C52");
+		expect(performance).toContain("bench:smoke");
+
+		const faq = read("docs/faq.md");
+		expect(faq).toContain("EventAssembler");
+		expect(faq).toContain("sanitizeErrors");
+	});
+
+	it("LSA-X45: README Architecture documents lifecycle and concurrency", () => {
+		const readme = read("README.md");
+		expect(readme).toContain("Lifecycle & concurrency");
+		expect(readme).toMatch(/stateful per stream/i);
+		expect(readme).toContain("reset()");
+	});
+
+	it("LSA-X46: README contains Quick decision guide and quick-decision.svg", () => {
+		const readme = read("README.md");
+		expect(readme).toContain("Quick decision guide");
+		expect(readme).toContain("quick-decision.svg");
+	});
+
+	it("LSA-X47: README Architecture embeds assembler-lifecycle.svg", () => {
+		expect(read("README.md")).toContain("assembler-lifecycle.svg");
+	});
+
+	it("LSA-X48: package.json keywords include ollama and structured-output", () => {
+		const pkg = JSON.parse(read("package.json")) as { keywords?: string[] };
+		expect(pkg.keywords).toContain("ollama");
+		expect(pkg.keywords).toContain("structured-output");
+		expect(pkg.keywords).toContain("stream-assembly");
+	});
+
+	it("LSA-X49: package.json scripts include bench:smoke", () => {
+		const pkg = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
+		expect(pkg.scripts?.["bench:smoke"]).toContain("bench-smoke");
+	});
+
+	it("LSA-X50: bench-smoke script exists and performance doc documents how to run it", () => {
+		expect(read("scripts/bench-smoke.mjs")).toContain("LSA-C52");
+		const performance = read("docs/performance.md");
+		expect(performance).toContain("bench:smoke");
+		expect(performance).toContain("bench-smoke.mjs");
+	});
 });

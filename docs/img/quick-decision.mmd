@@ -1,0 +1,36 @@
+flowchart TD
+	START(["What are you parsing?"])
+
+	START --> STREAM{Streaming bytes?}
+	STREAM -->|No — JSON body| RESP["assembleResponse(body, adapter)"]
+	STREAM -->|Yes — SSE / bytes| SHAPE{Provider shape?}
+
+	SHAPE -->|OpenAI Chat Completions| OAI["openaiChatAdapter()"]
+	SHAPE -->|OpenAI Responses API| OAR["openaiResponsesAdapter()"]
+	SHAPE -->|Anthropic Messages| ANT["anthropicAdapter()"]
+	SHAPE -->|Google Gemini GenerateContent| GEM["geminiAdapter()"]
+	SHAPE -->|OpenAI-compatible host| COMP["openaiCompatibleAdapter({ provider })"]
+
+	COMP --> PRESET["Pick preset: ollama · groq · azure · cloudflare · generic · …"]
+
+	OAI --> ASM["assembleStream(response.body, adapter)"]
+	OAR --> ASM
+	ANT --> ASM
+	GEM --> ASM
+	PRESET --> ASM
+	RESP --> DONE(["Unified StreamEvent stream"])
+
+	ASM --> DONE
+
+	UI["Need React chat UI or agent framework?"]
+	UI --> SDK["Use AI SDK — see docs/comparison.md"]
+	TAG["Need XML/markdown tag parsing?"]
+	TAG --> NO["Out of scope — see Non-goals"]
+
+	classDef pick fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ede9fe
+	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
+	classDef warn fill:#451a03,stroke:#fb923c,stroke-width:1px,color:#ffedd5
+
+	class OAI,OAR,ANT,GEM,COMP,PRESET,ASM,RESP pick
+	class DONE out
+	class SDK,TAG,NO warn

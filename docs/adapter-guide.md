@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.3`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.4`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -109,7 +109,16 @@ When adding or changing OpenAI-compatible host fixtures:
 4. Generic loose-preset behavior belongs in **LSA-OC211**–**LSA-OC216** (`openai-compatible-loose-matrix.test.ts`); host-specific quirks get dedicated tests.
 5. Preset keys must match `OPENAI_COMPATIBLE_PROVIDERS` in `openai-compatible-presets.ts`.
 
-Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset flags without constructing an adapter (since **1.3.3**).
+Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset flags without constructing an adapter (since **1.3.4**).
+
+## Assembler vs adapter state
+
+- **Adapters** map one SSE/JSON payload → `RawChunk[]`. They must not accumulate text, tool args, or reasoning across payloads. Minimal per-stream state is allowed only for id/index reconciliation (e.g. OpenAI tool `index` before `id`).
+- **`EventAssembler`** (core) is **stateful per stream**: it buffers text, reasoning, JSON, refusals, and open tool calls until `.done` / `finish` events. Public APIs create a **new assembler per** `assembleStream`, `assembleFromPayloads`, `assembleResponse`, or `createAssemblyTransform` call — do not share one instance across concurrent streams.
+- **`EventAssembler.reset()`** clears all assembly state and is intended for **tests** or explicit reuse after a stream completes — not for multiplexing concurrent requests on one instance.
+- **Transforms** (`tapEvents`, `toSSE`, `collectStream`) are stateless over the unified event stream.
+
+See README Architecture lifecycle diagram (`docs/img/assembler-lifecycle.svg`) and [FAQ](./faq.md).
 
 See [`test/fixtures/openai-compatible/README.md`](../test/fixtures/openai-compatible/README.md) and [`docs/live-smoke.md`](./live-smoke.md) checklist.
 

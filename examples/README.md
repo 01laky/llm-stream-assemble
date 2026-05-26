@@ -4,16 +4,49 @@ These examples are small TypeScript snippets that use plain `fetch` and the publ
 `llm-stream-assemble` API. They do not run on import and they are tested with fake
 fetch responses in CI; no live provider calls are made by default.
 
-## Node fetch examples
+## When to use which example
+
+| Goal                                  | Start here                                                  |
+| ------------------------------------- | ----------------------------------------------------------- |
+| OpenAI Chat Completions streaming     | `node-fetch/openai-chat.ts`                                 |
+| Local Ollama or other compatible host | `node-fetch/openai-compatible.ts` (`provider: "ollama"`, …) |
+| Anthropic Messages                    | `node-fetch/anthropic.ts`                                   |
+| Google Gemini SSE                     | `node-fetch/gemini.ts`                                      |
+| Azure / Cloudflare / Perplexity / xAI | matching `node-fetch/*.ts` or `workers-ai/`                 |
+| Proxy unified SSE to a browser        | `proxy-safety/`                                             |
+| Replay a checked-in fixture offline   | `node-fetch/replay-fixture.ts`                              |
+
+Full README index: [Examples](../README.md#examples).
+
+## OpenAI
 
 - `examples/node-fetch/openai-chat.ts` — OpenAI Chat Completions streaming.
+
+## Ollama & OpenAI-compatible
+
 - `examples/node-fetch/openai-compatible.ts` — OpenAI-compatible providers (`OPENAI_COMPATIBLE_PROVIDER` preset: `groq`, `deepseek`, `mistral`, `ollama`, …).
+
+## Anthropic
+
 - `examples/node-fetch/anthropic.ts` — Anthropic Messages streaming.
+
+## Google Gemini
+
 - `examples/node-fetch/gemini.ts` — Google Gemini `streamGenerateContent` (SSE).
+
+## Other compatible hosts
+
 - `examples/node-fetch/perplexity.ts` — Perplexity OpenAI-compatible streaming (`provider: "perplexity"`).
 - `examples/node-fetch/xai.ts` — xAI Grok OpenAI-compatible streaming (`provider: "xai"`).
 - `examples/node-fetch/azure-openai.ts` — Azure OpenAI Chat Completions (`provider: "azure"`, deployment URL + `api-key`).
 - `examples/workers-ai/rest-chat-completions.ts` — Cloudflare Workers AI REST (`provider: "cloudflare"`, Bearer + account id).
+
+## Streaming JSON & tool calling
+
+Use `jsonMode: true` on the matching adapter when structured JSON should map to `json.*` events. Tool calls surface as `tool_call.args.delta` and `tool_call.done` — see README Usage guides and `test/fixtures/` goldens.
+
+## Fixture replay
+
 - `examples/node-fetch/replay-fixture.ts` — local fixture replay with `assembleFromFile`.
 
 Required environment variables when running manually:

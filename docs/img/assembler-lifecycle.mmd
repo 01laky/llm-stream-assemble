@@ -1,0 +1,47 @@
+flowchart LR
+	subgraph IN["Input"]
+		BYTES["Raw bytes<br/>SSE / JSONL"]
+	end
+
+	subgraph ADAPTER["Adapter — stateless per chunk"]
+		PC["parseChunk(payload)"]
+		MAP["Minimal id/index map<br/>per stream only"]
+		PC --> RC["RawChunk[]"]
+		MAP -.-> PC
+	end
+
+	subgraph CORE["EventAssembler — stateful per stream"]
+		BUF["Text · reasoning · JSON · refusal buffers"]
+		TOOLS["Open tool calls"]
+		FIN["finishEmitted flag"]
+		RC --> EA["push() / flush()"]
+		EA --> BUF
+		EA --> TOOLS
+		EA --> FIN
+	end
+
+	subgraph OUT["StreamEvent[]"]
+		EV["text.* · tool_call.* · json.* · usage · finish"]
+	end
+
+	subgraph XFORM["Transforms — stateless"]
+		TAP["tapEvents"]
+		SSE["toSSE"]
+		COL["collectStream"]
+	end
+
+	BYTES --> PC
+	FIN --> EV
+	EV --> TAP
+	EV --> SSE
+	EV --> COL
+
+	NOTE["New EventAssembler per<br/>assembleStream / assembleResponse"]
+
+	classDef stateless fill:#1e3a5f,stroke:#60a5fa,stroke-width:2px,color:#e0f2fe
+	classDef stateful fill:#4a1d96,stroke:#c084fc,stroke-width:2px,color:#f3e8ff
+	classDef note fill:#334155,stroke:#94a3b8,stroke-width:1px,color:#f1f5f9
+
+	class ADAPTER,XFORM stateless
+	class CORE,BUF,TOOLS,FIN stateful
+	class NOTE note

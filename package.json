@@ -1,7 +1,7 @@
 {
 	"name": "llm-stream-assemble",
-	"version": "1.3.3",
-	"description": "A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses.",
+	"version": "1.3.4",
+	"description": "Zero-dependency TypeScript stream assembly for OpenAI, Anthropic, Gemini, and OpenAI-compatible LLM APIs — unified StreamEvent model for text, tools, reasoning, JSON, usage, and non-streaming responses.",
 	"license": "MIT",
 	"author": "Ladislav Kostolny <01laky@gmail.com>",
 	"type": "module",
@@ -76,18 +76,25 @@
 		"smoke:azure": "node scripts/live-smoke/azure-openai-compatible.mjs",
 		"smoke:cloudflare": "node scripts/live-smoke/cloudflare-workers-ai-compatible.mjs",
 		"release:prep": "node scripts/release-prep.mjs",
-		"diagrams:build": "node scripts/build-diagrams.mjs"
+		"diagrams:build": "node scripts/build-diagrams.mjs",
+		"bench:smoke": "node scripts/bench-smoke.mjs"
 	},
 	"keywords": [
 		"llm",
 		"streaming",
 		"sse",
+		"sse-parser",
+		"stream-assembly",
 		"openai",
 		"anthropic",
 		"gemini",
 		"google",
+		"ollama",
+		"groq",
+		"structured-output",
 		"tool-calling",
-		"server-sent-events"
+		"server-sent-events",
+		"cloudflare-workers"
 	],
 	"repository": {
 		"type": "git",

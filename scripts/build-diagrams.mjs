@@ -6,7 +6,14 @@ import { fileURLToPath } from "node:url";
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const imgDir = join(rootDir, "docs/img");
 
-const diagrams = ["pipeline.mmd", "adapters-overview.mmd", "stream-event.mmd", "transforms.mmd"];
+const diagrams = [
+	"pipeline.mmd",
+	"adapters-overview.mmd",
+	"stream-event.mmd",
+	"transforms.mmd",
+	"quick-decision.mmd",
+	"assembler-lifecycle.mmd",
+];
 
 for (const name of diagrams) {
 	const input = join(imgDir, name);

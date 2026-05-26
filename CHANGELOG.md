@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.4]
+
+### Added
+
+- **`docs/performance.md`** — design characteristics (incremental SSE, O(n) assembly, bounded buffers), memory notes, and **`pnpm bench:smoke`** reproduction steps for LSA-C52.
+- **`docs/comparison.md`** — positioning vs full-stack AI SDKs, provider SDKs, schema stream parsers, tag parsers, and DIY concatenation; when to use / when not to use.
+- **`docs/faq.md`** — ten common questions (lifecycle, proxy safety, JSON mode, Anthropic partial JSON, vs AI SDK, bench script).
+- **`scripts/bench-smoke.mjs`** and **`pnpm bench:smoke`** — local LSA-C52 timing script (not a CI gate; requires `pnpm build`).
+- README **“Why not just concatenate?”** — eight stream edge cases (SSE splits, tool args, reasoning, JSON mode, lifecycle, errors, dual code path).
+- README **quick decision guide** with **`docs/img/quick-decision.svg`** — adapter routing in ~30 seconds.
+- README **examples index** (OpenAI, Ollama, Anthropic, JSON mode, tool calling, proxy, replay) with links to `examples/` and Usage guides.
+- README **“How this compares”** teaser linking to full comparison doc.
+- Architecture **lifecycle & concurrency** prose and **`docs/img/assembler-lifecycle.svg`** (stateful assembler vs stateless adapters/transforms).
+
+### Changed
+
+- README Contents reordered; **`examples/README.md`** headings aligned (OpenAI, Ollama, Anthropic, Streaming JSON, Tool calling, Proxy safety).
+- **`docs/adapter-guide.md`** — assembler vs adapter state section; version refs **1.3.4**.
+- **`docs/compatibility.md`**, **`docs/img/adapters-overview.mmd`**, and README badges — **1.3.4**.
+- **`package.json`** `description` and **`keywords`** — npm/GitHub SEO (ollama, structured-output, stream-assembly, cloudflare-workers, …).
+- Docs regression tests **LSA-X42**–**LSA-X50** and **`test/docs-positioning-1.3.4.test.ts`** (**LSA-DOC01**–**DOC20**) edge-case guards; README test badge **946**.
+
 ## [1.3.3]
 
 ### Added
