@@ -22,20 +22,21 @@ Used by **LSA-OC31**–**LSA-OC40** with default `openaiCompatibleAdapter()` (ge
 
 ## Host subfolders (preset-specific)
 
-Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109** call `openaiCompatibleAdapter({ provider: "<host>" })`.
+Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109**, **LSA-OC113**–**LSA-OC141** call `openaiCompatibleAdapter({ provider: "<host>" })`.
 
-| Folder        | Preset key   | Notes                                                |
-| ------------- | ------------ | ---------------------------------------------------- |
-| `groq/`       | `groq`       | Sparse metadata, tools, non-stream response          |
-| `deepseek/`   | `deepseek`   | `reasoning_content`, tools, provider error, response |
-| `mistral/`    | `mistral`    | Text, parallel tools, sparse metadata                |
-| `ollama/`     | `ollama`     | Local sparse metadata and missing tool ids           |
-| `lmstudio/`   | `lmstudio`   | Local sparse metadata                                |
-| `together/`   | `together`   | `reasoning` alias (not `thinking`)                   |
-| `fireworks/`  | `fireworks`  | Text and tool streaming                              |
-| `openrouter/` | `openrouter` | Router metadata fields                               |
-| `perplexity/` | `perplexity` | Citations/search metadata, provider error, response  |
-| `xai/`        | `xai`        | Grok OpenAI-compatible; reasoning stream, tools      |
+| Folder        | Preset key   | Notes                                                                        |
+| ------------- | ------------ | ---------------------------------------------------------------------------- |
+| `groq/`       | `groq`       | Sparse metadata, tools, non-stream response                                  |
+| `deepseek/`   | `deepseek`   | `reasoning_content`, tools, provider error, response                         |
+| `mistral/`    | `mistral`    | Text, parallel tools, sparse metadata                                        |
+| `ollama/`     | `ollama`     | Local sparse metadata and missing tool ids                                   |
+| `lmstudio/`   | `lmstudio`   | Local sparse metadata                                                        |
+| `together/`   | `together`   | `reasoning` alias (not `thinking`)                                           |
+| `fireworks/`  | `fireworks`  | Text and tool streaming                                                      |
+| `openrouter/` | `openrouter` | Router metadata fields                                                       |
+| `perplexity/` | `perplexity` | Citations/search metadata, provider error, response                          |
+| `xai/`        | `xai`        | Grok OpenAI-compatible; reasoning stream, tools                              |
+| `azure/`      | `azure`      | Deployment-shaped Chat Completions; content filter, json-mode, strict preset |
 
 ## Regenerating `.expected.json`
 

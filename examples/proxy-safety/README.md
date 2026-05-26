@@ -41,6 +41,18 @@ portable across Fetch runtimes.
 CORS headers are app-specific and intentionally omitted. Add them in your own
 application boundary if needed.
 
+## Azure OpenAI proxy notes
+
+When proxying **Azure OpenAI Chat Completions** to a browser:
+
+- Build the upstream URL with the deployment path:
+  `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`
+- Forward the **`api-key`** header server-side only — never expose it to the browser.
+- Parse the upstream stream with `openaiCompatibleAdapter({ provider: "azure" })` in your
+  server handler, then emit unified SSE via `toSSE(events, { sanitizeErrors: true })`.
+- If an API Management gateway strips metadata from chunks, you may soften strict parsing with
+  `openaiCompatibleAdapter({ provider: "azure", allowMissingMetadata: true })` on the server only.
+
 ## Browser client
 
 `browser-client.ts` demonstrates consuming data-only unified SSE via `fetch` and a

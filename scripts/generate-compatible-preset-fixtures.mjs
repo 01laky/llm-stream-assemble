@@ -29,6 +29,7 @@ const HOSTS = [
 	"openrouter",
 	"perplexity",
 	"xai",
+	"azure",
 ];
 
 function parseArgs(argv) {

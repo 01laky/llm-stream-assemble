@@ -195,4 +195,12 @@ describe("proxy safety examples", () => {
 		);
 		expect(seen).toEqual([{ type: "finish", reason: "stop" }]);
 	});
+
+	it("LSA-X35: proxy-safety README documents Azure OpenAI api-key proxy pattern", () => {
+		const readme = readFileSync(join(rootDir, "examples/proxy-safety/README.md"), "utf8");
+		expect(readme).toContain("Azure OpenAI");
+		expect(readme).toContain("api-key");
+		expect(readme).toContain("openai.azure.com");
+		expect(readme).toContain("deployments");
+	});
 });

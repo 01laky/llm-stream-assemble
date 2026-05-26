@@ -22,9 +22,16 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 			"fireworks",
 			"perplexity",
 			"xai",
+			"azure",
 		]);
 		for (const provider of ALL_COMPATIBLE_PROVIDERS) {
-			expect(openaiCompatibleAdapter({ provider }).parseChunk("{}")).toEqual([]);
+			if (provider === "azure") {
+				expect(() => openaiCompatibleAdapter({ provider }).parseChunk("{}")).toThrow(
+					/openaiCompatibleAdapter\.parseChunk/,
+				);
+			} else {
+				expect(openaiCompatibleAdapter({ provider }).parseChunk("{}")).toEqual([]);
+			}
 		}
 	});
 
@@ -39,6 +46,9 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 			openaiCompatibleAdapter({ provider: "perplexity" }).parseChunk("{not-json"),
 		).toThrow(/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/);
 		expect(() => openaiCompatibleAdapter({ provider: "xai" }).parseChunk("{not-json")).toThrow(
+			/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/,
+		);
+		expect(() => openaiCompatibleAdapter({ provider: "azure" }).parseChunk("{not-json")).toThrow(
 			/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/,
 		);
 	});
@@ -164,5 +174,62 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 				choiceIndex: 0,
 			});
 		}
+	});
+
+	it("LSA-OC123: azure preset default rejects wholly unrecognizable payload", () => {
+		const unrecognizable = JSON.stringify({ foo: "bar" });
+		expect(() => openaiCompatibleAdapter({ provider: "azure" }).parseChunk(unrecognizable)).toThrow(
+			/openaiCompatibleAdapter\.parseChunk/,
+		);
+		expect(openaiCompatibleAdapter({ provider: "generic" }).parseChunk(unrecognizable)).toEqual([]);
+	});
+
+	it("LSA-OC124: azure content-filter parseChunk preserves filter fields in metadata.raw", () => {
+		const raw = hostCompatibleFixture("azure", "content-filter-metadata", "sse") as string;
+		const dataLine = raw
+			.split("\n")
+			.find((line) => line.startsWith("data: ") && !line.includes("[DONE]"))!;
+		const payload = dataLine.slice("data: ".length);
+		const chunks = openaiCompatibleAdapter({ provider: "azure" }).parseChunk(payload);
+		const metadata = chunks.find((chunk) => chunk.kind === "metadata");
+		expect(metadata).toBeDefined();
+		const rawBody = (metadata as { raw?: Record<string, unknown> }).raw;
+		expect(rawBody?.prompt_filter_results).toBeDefined();
+		expect(
+			(rawBody?.choices as Array<{ content_filter_results?: unknown }>)?.[0]
+				?.content_filter_results,
+		).toBeDefined();
+	});
+
+	it("LSA-OC126: azure preset ignores unknown non-text delta keys without throw", () => {
+		const multimodal = JSON.stringify({
+			id: "x",
+			model: "m",
+			choices: [
+				{
+					delta: {
+						content: "visible",
+						images: [{ url: "https://example.com/img.png" }],
+					},
+				},
+			],
+		});
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "azure" }).parseChunk(multimodal),
+		).not.toThrow();
+		expect(openaiCompatibleAdapter({ provider: "azure" }).parseChunk(multimodal)).toContainEqual({
+			kind: "text-delta",
+			text: "visible",
+			choiceIndex: 0,
+		});
+	});
+
+	it("LSA-OC141: azure allowMissingMetadata override accepts unrecognizable payload", () => {
+		const unrecognizable = JSON.stringify({ foo: "bar" });
+		expect(
+			openaiCompatibleAdapter({ provider: "azure", allowMissingMetadata: true }).parseChunk(
+				unrecognizable,
+			),
+		).toEqual([]);
 	});
 });

@@ -19,6 +19,7 @@ describe("examples docs regression", () => {
 			"gemini",
 			"perplexity",
 			"xai",
+			"azure-openai",
 			"replay-fixture",
 			"proxy-safety",
 		]) {
@@ -46,6 +47,7 @@ describe("examples docs regression", () => {
 			"examples/node-fetch/openai-compatible.ts",
 			"examples/node-fetch/anthropic.ts",
 			"examples/node-fetch/gemini.ts",
+			"examples/node-fetch/azure-openai.ts",
 		];
 		for (const file of files) {
 			const text = read(file);

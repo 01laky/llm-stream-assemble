@@ -81,4 +81,24 @@ describe("openaiCompatibleAdapter host preset parseChunk", () => {
 			),
 		).toEqual([{ kind: "text-delta", text: "sparse", choiceIndex: 0 }]);
 	});
+
+	it("LSA-OC121: azure preset parses standard text chunk with id/model present", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "azure" }).parseChunk(
+				payload({
+					id: "chatcmpl-az",
+					model: "gpt-4o-deployment",
+					choices: [{ delta: { content: "Azure text" } }],
+				}),
+			),
+		).toContainEqual({ kind: "text-delta", text: "Azure text", choiceIndex: 0 });
+	});
+
+	it("LSA-OC122: azure looseErrorShape false rejects loose string error shape", () => {
+		const looseError = payload({ error: "something went wrong" });
+		expect(openaiCompatibleAdapter({ provider: "azure" }).parseChunk(looseError)).toEqual([]);
+		expect(openaiCompatibleAdapter({ provider: "generic" }).parseChunk(looseError)).toContainEqual(
+			expect.objectContaining({ kind: "provider-error" }),
+		);
+	});
 });

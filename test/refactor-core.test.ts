@@ -204,10 +204,17 @@ describe("refactor: openai-compatible presets", () => {
 		"fireworks",
 		"perplexity",
 		"xai",
+		"azure",
 	] as const;
 
 	it("LSA-RF14: all provider presets parse empty object without throw", () => {
 		for (const provider of providers) {
+			if (provider === "azure") {
+				expect(() => openaiCompatibleAdapter({ provider }).parseChunk("{}")).toThrow(
+					/openaiCompatibleAdapter\.parseChunk/,
+				);
+				continue;
+			}
 			expect(openaiCompatibleAdapter({ provider }).parseChunk("{}")).toEqual([]);
 		}
 	});
@@ -258,6 +265,32 @@ describe("refactor: openai-compatible presets", () => {
 		expect((metadata as { raw?: { citations?: string[] } }).raw?.citations).toContain(
 			"https://example.com/doc",
 		);
+	});
+
+	it("LSA-RF21: parseResponse on azure response-content-filter preserves filter metadata.raw", () => {
+		const body = JSON.parse(
+			readFileSync(
+				join(
+					dirname(fileURLToPath(import.meta.url)),
+					"fixtures/openai-compatible/azure/response-content-filter.json",
+				),
+				"utf8",
+			),
+		);
+		const chunks = openaiCompatibleAdapter({ provider: "azure" }).parseResponse!(body);
+		const metadata = chunks.find((chunk) => chunk.kind === "metadata");
+		expect(metadata).toBeDefined();
+		const raw = (metadata as { raw?: Record<string, unknown> }).raw;
+		expect(raw?.prompt_filter_results).toBeDefined();
+		expect(
+			(raw?.choices as Array<{ content_filter_results?: unknown }>)?.[0]?.content_filter_results,
+		).toBeDefined();
+	});
+
+	it("LSA-RF22: azure preset allowMissingMetadata false activates strict mode without explicit option", () => {
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "azure" }).parseChunk(JSON.stringify({ foo: "bar" })),
+		).toThrow(/openaiCompatibleAdapter\.parseChunk/);
 	});
 });
 

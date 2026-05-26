@@ -1,0 +1,28 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl-az-usage"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-deployment",
+		"responseId": "chatcmpl-az-usage"
+	},
+	{
+		"type": "text.delta",
+		"text": "With usage"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 12,
+		"outputTokens": 4
+	},
+	{
+		"type": "text.done",
+		"text": "With usage"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

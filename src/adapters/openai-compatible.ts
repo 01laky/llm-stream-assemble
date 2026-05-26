@@ -12,7 +12,8 @@ export type OpenAICompatibleProvider =
 	| "together"
 	| "fireworks"
 	| "perplexity"
-	| "xai";
+	| "xai"
+	| "azure";
 
 export interface OpenAICompatibleAdapterOptions {
 	provider?: OpenAICompatibleProvider;
@@ -24,32 +25,59 @@ export interface OpenAICompatibleAdapterOptions {
 	reasoningFieldAliases?: string[];
 }
 
+type PresetOverrides = Partial<
+	Pick<
+		OpenAICompatibleAdapterOptions,
+		| "reasoningFieldAliases"
+		| "looseErrorShape"
+		| "allowMissingMetadata"
+		| "useChoicePositionFallback"
+	>
+>;
+
 const DEFAULT_PRESET = {
 	looseErrorShape: true,
 	allowMissingMetadata: true,
 	useChoicePositionFallback: true,
 	reasoningFieldAliases: ["thinking", "thinking_content"],
-} as const;
+} as const satisfies PresetOverrides;
 
-const PRESET_OVERRIDES: Partial<
-	Record<OpenAICompatibleProvider, Pick<OpenAICompatibleAdapterOptions, "reasoningFieldAliases">>
-> = {
+const PRESET_OVERRIDES: Partial<Record<OpenAICompatibleProvider, PresetOverrides>> = {
 	deepseek: { reasoningFieldAliases: ["reasoning_content", "reasoning", "thinking"] },
 	openrouter: { reasoningFieldAliases: ["reasoning"] },
 	together: { reasoningFieldAliases: ["reasoning", "reasoning_delta"] },
+	azure: {
+		looseErrorShape: false,
+		allowMissingMetadata: false,
+		useChoicePositionFallback: true,
+		reasoningFieldAliases: [],
+	},
 };
 
 export function openaiCompatibleAdapter(
 	options: OpenAICompatibleAdapterOptions = {},
 ): StreamAdapter {
 	const preset = providerPreset(options.provider ?? "generic");
+	const resolvedAllowMissingMetadata =
+		options.allowMissingMetadata ??
+		preset.allowMissingMetadata ??
+		DEFAULT_PRESET.allowMissingMetadata;
+	const resolvedLooseErrorShape =
+		options.looseErrorShape ?? preset.looseErrorShape ?? DEFAULT_PRESET.looseErrorShape;
+	const resolvedUseChoicePositionFallback =
+		options.useChoicePositionFallback ??
+		preset.useChoicePositionFallback ??
+		DEFAULT_PRESET.useChoicePositionFallback;
+
 	return createOpenAIChatLikeAdapter({
-		...preset,
 		...options,
+		looseErrorShape: resolvedLooseErrorShape,
+		allowMissingMetadata: resolvedAllowMissingMetadata,
+		useChoicePositionFallback: resolvedUseChoicePositionFallback,
 		errorPrefix: "openaiCompatibleAdapter",
 		usageInputTokenFields: ["prompt_tokens", "input_tokens"],
 		usageOutputTokenFields: ["completion_tokens", "output_tokens"],
-		rejectUnrecognizedPayloads: options.allowMissingMetadata === false,
+		rejectUnrecognizedPayloads: resolvedAllowMissingMetadata === false,
 		reasoningFieldAliases: [
 			...(preset.reasoningFieldAliases ?? []),
 			...(options.reasoningFieldAliases ?? []),
@@ -57,7 +85,7 @@ export function openaiCompatibleAdapter(
 	});
 }
 
-function providerPreset(provider: OpenAICompatibleProvider) {
+function providerPreset(provider: OpenAICompatibleProvider): PresetOverrides {
 	return {
 		...DEFAULT_PRESET,
 		...PRESET_OVERRIDES[provider],

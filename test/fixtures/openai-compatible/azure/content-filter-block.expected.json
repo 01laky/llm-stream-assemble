@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl-az-block"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-deployment",
+		"responseId": "chatcmpl-az-block"
+	},
+	{
+		"type": "refusal.delta",
+		"text": "Content blocked by Azure content policy."
+	},
+	{
+		"type": "refusal.done",
+		"text": "Content blocked by Azure content policy."
+	},
+	{
+		"type": "finish",
+		"reason": "content_filter"
+	}
+]

@@ -96,8 +96,8 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.1.0  ✅  Google Gemini adapter (first net-new provider)
 1.1.5  ✅  OpenAI-compatible preset expansion (Groq, Mistral, DeepSeek, Ollama, …)
 1.1.6  ✅  Perplexity + xAI Grok OpenAI-compatible presets
-1.2.0      AWS Bedrock adapter OR Azure OpenAI adapter (pick one enterprise path)
-1.4.0      Second enterprise / niche adapter (Bedrock or Azure, whichever missed 1.2)
+1.2.0  ✅  Azure OpenAI Chat Completions compatible preset (`azure`)
+1.4.0      AWS Bedrock adapter (enterprise path deferred from 1.2)
 1.5.0      Cohere adapter (if demand exists)
 1.6.0      Cloudflare Workers AI preset (if fixtures confirm shape)
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
@@ -336,22 +336,27 @@ export interface BedrockAdapterOptions {
 
 ### 6. Azure OpenAI (`azureOpenAIAdapter` or compatible preset)
 
-**Target version:** `1.2.0` or `1.4.0`  
+**Target version:** `1.2.0` (shipped)  
 **Priority:** High for Microsoft/Azure shops; **medium complexity**.
 
 #### Approach decision tree
 
 1. If Azure Chat Completions stream payloads are **byte-identical** to OpenAI Chat aside
    from URL/query parameters → extend `openaiChatAdapter` or compatible adapter with
-   `azure` preset (deployment name, `api-version` query param documentation only).
+   `azure` preset (deployment name, `api-version` query param documentation only). **Shipped in 1.2.0.**
 2. If Azure OpenAI Responses or Assistants streams diverge → dedicated parser module
    reusing shared internals from `openai-chat/parser.ts` and `openai-responses.ts`.
 
-#### Work items
+#### Deliverables checklist
 
-- Fixtures from Azure-shaped responses (redacted).
-- Document required headers (`api-key`), deployment URL pattern, and `api-version`.
-- Tests for Chat and (if in scope) Responses streaming parity.
+- [x] Preset `azure` with stricter defaults and host golden fixtures (text, content filter, json-mode, tools, usage, reasoning, provider-error, responses)
+- [x] Tests **LSA-OC113**–**LSA-OC141**, **LSA-RF21**, **LSA-RF22**; parity **LSA-OC127**–**LSA-OC129**, **LSA-OC139**
+- [x] Example `examples/node-fetch/azure-openai.ts`; live smoke `pnpm smoke:azure`
+- [x] Proxy-safety docs for `api-key` forwarding and deployment URL pattern
+
+#### Work items (remaining / deferred)
+
+- Azure OpenAI Responses streaming (if divergent from OpenAI Responses) — future minor.
 
 ---
 

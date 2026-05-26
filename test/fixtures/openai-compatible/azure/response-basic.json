@@ -1,0 +1,14 @@
+{
+	"id": "chatcmpl-az-resp",
+	"object": "chat.completion",
+	"created": 1710000001,
+	"model": "gpt-4o-deployment",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hello from Azure response" },
+			"finish_reason": "stop"
+		}
+	],
+	"usage": { "prompt_tokens": 8, "completion_tokens": 6, "total_tokens": 14 }
+}

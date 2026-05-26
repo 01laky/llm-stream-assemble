@@ -23,6 +23,21 @@ async function streamHostFixture(host: HostPreset, name: string) {
 	);
 }
 
+async function streamHostFixtureWithAdapter(
+	host: HostPreset,
+	name: string,
+	adapterOptions: Parameters<typeof openaiCompatibleAdapter>[0] = {},
+) {
+	return normalizeCompatibleEvents(
+		await collectAsync(
+			assembleStream(
+				byteStreamFromStrings(hostCompatibleFixture(host, name, "sse") as string),
+				openaiCompatibleAdapter({ provider: host, ...adapterOptions }),
+			),
+		),
+	);
+}
+
 function responseHostFixture(host: HostPreset, name: string) {
 	return normalizeCompatibleEvents(
 		assembleResponse(
@@ -210,6 +225,66 @@ describe("openaiCompatibleAdapter host preset golden fixtures", () => {
 	it("LSA-OC109: xai/reasoning-stream.sse matches expected events", async () => {
 		await expect(streamHostFixture("xai", "reasoning-stream")).resolves.toEqual(
 			expectedHostCompatibleEvents("xai", "reasoning-stream"),
+		);
+	});
+
+	it("LSA-OC113: azure/text-basic.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "text-basic")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "text-basic"),
+		);
+	});
+
+	it("LSA-OC114: azure/content-filter-metadata.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "content-filter-metadata")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "content-filter-metadata"),
+		);
+	});
+
+	it("LSA-OC115: azure/tool-single.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "tool-single")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "tool-single"),
+		);
+	});
+
+	it("LSA-OC116: azure/usage-stream.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "usage-stream")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "usage-stream"),
+		);
+	});
+
+	it("LSA-OC117: azure/provider-error.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "provider-error")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "provider-error"),
+		);
+	});
+
+	it("LSA-OC118: azure/reasoning-stream.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "reasoning-stream")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "reasoning-stream"),
+		);
+	});
+
+	it("LSA-OC119: azure/response-basic.json matches expected events", () => {
+		expect(responseHostFixture("azure", "response-basic")).toEqual(
+			expectedHostCompatibleEvents("azure", "response-basic"),
+		);
+	});
+
+	it("LSA-OC120: azure/response-content-filter.json matches expected events", () => {
+		expect(responseHostFixture("azure", "response-content-filter")).toEqual(
+			expectedHostCompatibleEvents("azure", "response-content-filter"),
+		);
+	});
+
+	it("LSA-OC138: azure/json-mode.sse matches expected events with jsonMode", async () => {
+		await expect(
+			streamHostFixtureWithAdapter("azure", "json-mode", { jsonMode: true }),
+		).resolves.toEqual(expectedHostCompatibleEvents("azure", "json-mode"));
+	});
+
+	it("LSA-OC140: azure/content-filter-block.sse matches expected events", async () => {
+		await expect(streamHostFixture("azure", "content-filter-block")).resolves.toEqual(
+			expectedHostCompatibleEvents("azure", "content-filter-block"),
 		);
 	});
 });

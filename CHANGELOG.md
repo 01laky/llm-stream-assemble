@@ -3,6 +3,43 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.2.0]
+
+### Added
+
+- OpenAI-compatible preset **`azure`** for Azure OpenAI Chat Completions with stricter
+  defaults aligned to OpenAI Chat semantics (`looseErrorShape: false`,
+  `allowMissingMetadata: false`).
+- Azure host golden fixtures: content-filter metadata, content-filter block (refusal),
+  json-mode stream, usage stream, provider-error, reasoning stream, and non-stream responses.
+- Example `examples/node-fetch/azure-openai.ts` with deployment URL builder and `api-key`
+  authentication pattern.
+- Proxy-safety documentation for Azure OpenAI server-side forwarding.
+- Live smoke: `pnpm smoke:azure`.
+- Tests **LSA-OC113** through **LSA-OC141**, **LSA-RF21**, **LSA-RF22**, **LSA-X34**, **LSA-X35**.
+
+### Fixed
+
+- `openaiCompatibleAdapter` now applies preset-level `allowMissingMetadata` and
+  `looseErrorShape` when the caller does not pass explicit options (required for azure
+  strict defaults).
+- Strict `looseErrorShape: false` silently ignores loose string `error` payloads instead
+  of throwing when `rejectUnrecognizedPayloads` is enabled.
+
+### Changed
+
+- `PRESET_OVERRIDES` supports per-preset `looseErrorShape`, `allowMissingMetadata`, and
+  `useChoicePositionFallback`.
+
+### Migration from 1.1.6 to 1.2.0
+
+- New optional preset: `openaiCompatibleAdapter({ provider: "azure" })`.
+- No changes required for existing integrations.
+- Azure callers should prefer the azure preset over `generic` for stricter error handling
+  and documented content-filter metadata behavior.
+- Override example: `openaiCompatibleAdapter({ provider: "azure", allowMissingMetadata: true })`
+  when a gateway normalizes lossy payloads.
+
 ## [1.1.6]
 
 ### Added

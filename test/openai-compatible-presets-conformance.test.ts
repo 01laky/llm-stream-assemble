@@ -38,6 +38,18 @@ describe("openaiCompatibleAdapter host preset conformance", () => {
 			expect(events).toEqual(expectedHostCompatibleEvents(host, "text-basic"));
 		}
 	});
+
+	it("LSA-OC130: runAdapterGoldenStream parity for azure/text-basic", async () => {
+		const events = normalizeCompatibleEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiCompatibleAdapter({ provider: "azure" }),
+				fixtureSsePath: join(fixturesDir, "azure", "text-basic.sse"),
+				expectedEventsPath: join(fixturesDir, "azure", "text-basic.expected.json"),
+				adapterFactory: () => openaiCompatibleAdapter({ provider: "azure" }),
+			}),
+		);
+		expect(events).toEqual(expectedHostCompatibleEvents("azure", "text-basic"));
+	});
 });
 
 describe("openaiCompatibleAdapter host preset fixture drift", () => {
