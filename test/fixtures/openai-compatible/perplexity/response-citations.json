@@ -1,0 +1,12 @@
+{
+	"id": "pplx_r1",
+	"model": "sonar",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Grounded answer" },
+			"finish_reason": "stop"
+		}
+	],
+	"citations": ["https://example.com/doc"]
+}

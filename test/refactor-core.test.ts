@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
 	adapterScopedError,
@@ -199,6 +202,8 @@ describe("refactor: openai-compatible presets", () => {
 		"lmstudio",
 		"together",
 		"fireworks",
+		"perplexity",
+		"xai",
 	] as const;
 
 	it("LSA-RF14: all provider presets parse empty object without throw", () => {
@@ -235,6 +240,24 @@ describe("refactor: openai-compatible presets", () => {
 			{ kind: "reasoning-delta", text: "trace", variant: "detail" },
 		]);
 		expect(deepseek.parseChunk(payload)).toEqual([]);
+	});
+
+	it("LSA-RF20: parseResponse on perplexity response-citations preserves citations in metadata.raw", () => {
+		const body = JSON.parse(
+			readFileSync(
+				join(
+					dirname(fileURLToPath(import.meta.url)),
+					"fixtures/openai-compatible/perplexity/response-citations.json",
+				),
+				"utf8",
+			),
+		);
+		const chunks = openaiCompatibleAdapter({ provider: "perplexity" }).parseResponse!(body);
+		const metadata = chunks.find((chunk) => chunk.kind === "metadata");
+		expect(metadata).toBeDefined();
+		expect((metadata as { raw?: { citations?: string[] } }).raw?.citations).toContain(
+			"https://example.com/doc",
+		);
 	});
 });
 

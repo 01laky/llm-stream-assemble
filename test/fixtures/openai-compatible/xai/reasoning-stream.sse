@@ -1,0 +1,6 @@
+data: {"id":"xai_reason","model":"grok-3","choices":[{"index":0,"delta":{"reasoning_content":"Thinking step"}}]}
+
+data: {"choices":[{"index":0,"delta":{"content":"Answer"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

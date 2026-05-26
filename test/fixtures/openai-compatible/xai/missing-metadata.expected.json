@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "sparse xai"
+	},
+	{
+		"type": "text.done",
+		"text": "sparse xai"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

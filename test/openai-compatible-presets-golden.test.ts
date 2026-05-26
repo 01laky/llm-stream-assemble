@@ -152,4 +152,64 @@ describe("openaiCompatibleAdapter host preset golden fixtures", () => {
 			expectedHostCompatibleEvents("deepseek", "response-basic"),
 		);
 	});
+
+	it("LSA-OC87: perplexity/text-basic.sse matches expected events", async () => {
+		await expect(streamHostFixture("perplexity", "text-basic")).resolves.toEqual(
+			expectedHostCompatibleEvents("perplexity", "text-basic"),
+		);
+	});
+
+	it("LSA-OC88: perplexity/citations-stream.sse matches expected events", async () => {
+		await expect(streamHostFixture("perplexity", "citations-stream")).resolves.toEqual(
+			expectedHostCompatibleEvents("perplexity", "citations-stream"),
+		);
+	});
+
+	it("LSA-OC89: perplexity/missing-metadata.sse matches expected events", async () => {
+		await expect(streamHostFixture("perplexity", "missing-metadata")).resolves.toEqual(
+			expectedHostCompatibleEvents("perplexity", "missing-metadata"),
+		);
+	});
+
+	it("LSA-OC90: perplexity/response-citations.json matches expected events", () => {
+		expect(responseHostFixture("perplexity", "response-citations")).toEqual(
+			expectedHostCompatibleEvents("perplexity", "response-citations"),
+		);
+	});
+
+	it("LSA-OC91: xai/text-basic.sse matches expected events", async () => {
+		await expect(streamHostFixture("xai", "text-basic")).resolves.toEqual(
+			expectedHostCompatibleEvents("xai", "text-basic"),
+		);
+	});
+
+	it("LSA-OC92: xai/tool-single.sse matches expected events", async () => {
+		await expect(streamHostFixture("xai", "tool-single")).resolves.toEqual(
+			expectedHostCompatibleEvents("xai", "tool-single"),
+		);
+	});
+
+	it("LSA-OC93: xai/missing-metadata.sse matches expected events", async () => {
+		await expect(streamHostFixture("xai", "missing-metadata")).resolves.toEqual(
+			expectedHostCompatibleEvents("xai", "missing-metadata"),
+		);
+	});
+
+	it("LSA-OC94: xai/response-basic.json matches expected events", () => {
+		expect(responseHostFixture("xai", "response-basic")).toEqual(
+			expectedHostCompatibleEvents("xai", "response-basic"),
+		);
+	});
+
+	it("LSA-OC108: perplexity/provider-error.sse matches expected events", async () => {
+		await expect(streamHostFixture("perplexity", "provider-error")).resolves.toEqual(
+			expectedHostCompatibleEvents("perplexity", "provider-error"),
+		);
+	});
+
+	it("LSA-OC109: xai/reasoning-stream.sse matches expected events", async () => {
+		await expect(streamHostFixture("xai", "reasoning-stream")).resolves.toEqual(
+			expectedHostCompatibleEvents("xai", "reasoning-stream"),
+		);
+	});
 });

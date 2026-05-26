@@ -1,0 +1,11 @@
+{
+	"id": "xai_r1",
+	"model": "grok-3",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hello" },
+			"finish_reason": "stop"
+		}
+	]
+}

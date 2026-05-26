@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.1.5` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
+**Current package status:** Stable `1.1.6` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
 | Provider / API            | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | ------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
@@ -47,6 +47,11 @@ Living document — update when adapters ship or provider quirks are discovered.
 | Together           | Reasoning via `reasoning` / `reasoning_delta` fields                | Use `provider: "together"` — not the generic `thinking` alias         |
 | Fireworks          | OpenAI-like; tool and usage details vary by model                   | Use `provider: "fireworks"`                                           |
 | OpenRouter         | Router metadata and multi-model routing headers                     | Use `provider: "openrouter"`; extra fields may appear in raw          |
+| Perplexity         | Citations/search metadata on stream or response                     | Preserved in `metadata.raw`; no dedicated `citation.*` events in 1.x  |
+| Perplexity         | Non-text delta fields (images, multimodal parts) ignored            | Out of scope; adapter does not throw on unknown delta keys            |
+| Perplexity         | Model list and response shape may change independently              | Presets are best-effort and fixture-tested                            |
+| xAI                | OpenAI-compatible Grok API; preset key is `xai` not `grok`          | Use `provider: "xai"`; `reasoning_content` mapped via base parser     |
+| xAI                | Non-text delta fields ignored without throw                         | Multimodal extras out of scope for 1.x                                |
 | Anthropic Messages | Tool use input may stream as invalid partial JSON                   | Core emits best-effort partial previews and assembles final args      |
 | Anthropic Messages | Extended thinking uses thinking blocks                              | Adapter maps thinking deltas to `reasoning.*` detail events           |
 | Anthropic Messages | Usage can arrive on message_start and message_delta                 | Adapter emits usage chunks whenever token fields are present          |

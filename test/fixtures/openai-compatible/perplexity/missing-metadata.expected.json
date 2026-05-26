@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "sparse perplexity"
+	},
+	{
+		"type": "text.done",
+		"text": "sparse perplexity"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

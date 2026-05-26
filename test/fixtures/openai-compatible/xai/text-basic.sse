@@ -1,0 +1,4 @@
+data: {"id":"xai_1","model":"grok-3","choices":[{"index":0,"delta":{"content":"Grok says hi"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

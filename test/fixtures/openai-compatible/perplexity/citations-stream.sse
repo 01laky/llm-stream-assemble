@@ -1,0 +1,4 @@
+data: {"id":"pplx_cite","model":"sonar-pro","citations":["https://example.com/a","https://example.com/b"],"search_results":[{"title":"Source A","url":"https://example.com/a"}],"choices":[{"index":0,"delta":{"content":"With sources"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

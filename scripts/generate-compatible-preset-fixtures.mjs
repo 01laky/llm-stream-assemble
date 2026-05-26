@@ -27,6 +27,8 @@ const HOSTS = [
 	"together",
 	"fireworks",
 	"openrouter",
+	"perplexity",
+	"xai",
 ];
 
 function parseArgs(argv) {

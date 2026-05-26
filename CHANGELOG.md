@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.6]
+
+### Added
+
+- OpenAI-compatible presets **`perplexity`** and **`xai`** with host golden fixtures under
+  `test/fixtures/openai-compatible/<host>/`.
+- Perplexity citation/search metadata preserved in `metadata.raw` (stream + response).
+- Perplexity provider-error and xAI reasoning-stream fixtures.
+- Examples `examples/node-fetch/perplexity.ts` and `examples/node-fetch/xai.ts`.
+- Live smoke: `pnpm smoke:perplexity`, `pnpm smoke:xai` (manual only, not CI).
+- Tests **LSA-OC87** through **LSA-OC112**, **LSA-RF20**.
+
+### Migration from 1.1.5 to 1.1.6
+
+- New optional presets: `openaiCompatibleAdapter({ provider: "perplexity" | "xai" })`.
+- No changes required for existing integrations.
+
 ## [1.1.5]
 
 ### Added

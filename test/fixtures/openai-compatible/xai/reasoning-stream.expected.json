@@ -1,0 +1,33 @@
+[
+	{
+		"type": "message.start",
+		"id": "xai_reason"
+	},
+	{
+		"type": "metadata",
+		"model": "grok-3",
+		"responseId": "xai_reason"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "Thinking step",
+		"variant": "detail"
+	},
+	{
+		"type": "text.delta",
+		"text": "Answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Answer"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "Thinking step",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -22,7 +22,7 @@ Used by **LSA-OC31**–**LSA-OC40** with default `openaiCompatibleAdapter()` (ge
 
 ## Host subfolders (preset-specific)
 
-Golden tests **LSA-OC47**–**LSA-OC66** call `openaiCompatibleAdapter({ provider: "<host>" })`.
+Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109** call `openaiCompatibleAdapter({ provider: "<host>" })`.
 
 | Folder        | Preset key   | Notes                                                |
 | ------------- | ------------ | ---------------------------------------------------- |
@@ -34,6 +34,8 @@ Golden tests **LSA-OC47**–**LSA-OC66** call `openaiCompatibleAdapter({ provide
 | `together/`   | `together`   | `reasoning` alias (not `thinking`)                   |
 | `fireworks/`  | `fireworks`  | Text and tool streaming                              |
 | `openrouter/` | `openrouter` | Router metadata fields                               |
+| `perplexity/` | `perplexity` | Citations/search metadata, provider error, response  |
+| `xai/`        | `xai`        | Grok OpenAI-compatible; reasoning stream, tools      |
 
 ## Regenerating `.expected.json`
 

@@ -10,7 +10,9 @@ export type OpenAICompatibleProvider =
 	| "ollama"
 	| "lmstudio"
 	| "together"
-	| "fireworks";
+	| "fireworks"
+	| "perplexity"
+	| "xai";
 
 export interface OpenAICompatibleAdapterOptions {
 	provider?: OpenAICompatibleProvider;

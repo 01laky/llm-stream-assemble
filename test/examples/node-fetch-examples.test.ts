@@ -6,13 +6,23 @@ import { runAnthropicExample } from "../../examples/node-fetch/anthropic";
 import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
+import { runPerplexityExample } from "../../examples/node-fetch/perplexity";
 import { runReplayFixtureExample } from "../../examples/node-fetch/replay-fixture";
+import { runXaiExample } from "../../examples/node-fetch/xai";
 import { fakeStreamingFetch, withEnv } from "./helpers";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const openAISSE = readFileSync(join(rootDir, "test/fixtures/openai-chat/text-basic.sse"), "utf8");
 const anthropicSSE = readFileSync(join(rootDir, "test/fixtures/anthropic/text-basic.sse"), "utf8");
 const geminiSSE = readFileSync(join(rootDir, "test/fixtures/gemini/text-basic.sse"), "utf8");
+const perplexitySSE = readFileSync(
+	join(rootDir, "test/fixtures/openai-compatible/perplexity/text-basic.sse"),
+	"utf8",
+);
+const xaiSSE = readFileSync(
+	join(rootDir, "test/fixtures/openai-compatible/xai/text-basic.sse"),
+	"utf8",
+);
 
 describe("node fetch examples", () => {
 	it("LSA-X01: OpenAI example exports function and does not run on import", () => {
@@ -140,5 +150,35 @@ describe("node fetch examples", () => {
 			write: (text) => output.push(text),
 		});
 		expect(output.length).toBeGreaterThan(0);
+	});
+
+	it("LSA-X13: Perplexity example validates PERPLEXITY_API_KEY and uses injected fetch", async () => {
+		await withEnv({ PERPLEXITY_API_KEY: undefined }, async () => {
+			await expect(
+				runPerplexityExample({ fetchImpl: fakeStreamingFetch(perplexitySSE) }),
+			).rejects.toThrow("PERPLEXITY_API_KEY is required");
+		});
+		const output: string[] = [];
+		await runPerplexityExample({
+			apiKey: "key",
+			fetchImpl: fakeStreamingFetch(perplexitySSE),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Answer from search");
+	});
+
+	it("LSA-X14: xAI example validates XAI_API_KEY and uses injected fetch", async () => {
+		await withEnv({ XAI_API_KEY: undefined }, async () => {
+			await expect(runXaiExample({ fetchImpl: fakeStreamingFetch(xaiSSE) })).rejects.toThrow(
+				"XAI_API_KEY is required",
+			);
+		});
+		const output: string[] = [];
+		await runXaiExample({
+			apiKey: "key",
+			fetchImpl: fakeStreamingFetch(xaiSSE),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Grok says hi");
 	});
 });

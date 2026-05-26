@@ -17,6 +17,8 @@ export const ALL_COMPATIBLE_PROVIDERS = [
 	"lmstudio",
 	"together",
 	"fireworks",
+	"perplexity",
+	"xai",
 ] as const satisfies readonly OpenAICompatibleProvider[];
 
 export const HOST_COMPATIBLE_PRESETS = [
@@ -28,6 +30,8 @@ export const HOST_COMPATIBLE_PRESETS = [
 	"together",
 	"fireworks",
 	"openrouter",
+	"perplexity",
+	"xai",
 ] as const satisfies readonly OpenAICompatibleProvider[];
 
 export function compatibleTextFixture(name: string, extension: string): string {
