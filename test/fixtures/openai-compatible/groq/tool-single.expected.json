@@ -1,0 +1,24 @@
+[
+	{
+		"type": "tool_call.start",
+		"id": "call_groq_1",
+		"name": "get_time",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_groq_1",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_groq_1",
+		"name": "get_time",
+		"args": {}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

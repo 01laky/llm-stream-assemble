@@ -1,0 +1,4 @@
+data: {"id":"fw_1","model":"accounts/fireworks/models/llama-v3p1-8b-instruct","choices":[{"index":0,"delta":{"content":"fireworks"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

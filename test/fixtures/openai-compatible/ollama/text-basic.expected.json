@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "ollama local"
+	},
+	{
+		"type": "text.done",
+		"text": "ollama local"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

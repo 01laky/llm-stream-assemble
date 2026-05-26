@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "fw_1"
+	},
+	{
+		"type": "metadata",
+		"model": "accounts/fireworks/models/llama-v3p1-8b-instruct",
+		"responseId": "fw_1"
+	},
+	{
+		"type": "text.delta",
+		"text": "fireworks"
+	},
+	{
+		"type": "text.done",
+		"text": "fireworks"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

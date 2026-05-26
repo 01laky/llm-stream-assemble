@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "groq_1"
+	},
+	{
+		"type": "metadata",
+		"model": "llama-3.1-8b-instant",
+		"responseId": "groq_1"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hi"
+	},
+	{
+		"type": "text.done",
+		"text": "Hi"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

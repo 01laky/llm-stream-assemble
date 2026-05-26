@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "local groq"
+	},
+	{
+		"type": "text.done",
+		"text": "local groq"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -45,7 +45,9 @@ describe("geminiAdapter golden stream fixtures", () => {
 	});
 
 	it("LSA-G40: json-mode.sse matches expected events", async () => {
-		await expect(streamFixture("json-mode", true)).resolves.toEqual(expectedGeminiEvents("json-mode"));
+		await expect(streamFixture("json-mode", true)).resolves.toEqual(
+			expectedGeminiEvents("json-mode"),
+		);
 	});
 
 	it("LSA-G41: metadata-early.sse matches expected events", async () => {

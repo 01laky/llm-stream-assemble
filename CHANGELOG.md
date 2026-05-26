@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.5]
+
+### Added
+
+- OpenAI-compatible presets **`deepseek`** and **`mistral`** with host-specific golden fixtures
+  under `test/fixtures/openai-compatible/<host>/`.
+- Formal host preset coverage for **Groq**, **DeepSeek**, **Mistral**, **Ollama**, **LM Studio**,
+  **Together**, **Fireworks**, and **OpenRouter** — stream and non-stream (groq, deepseek) golden tests
+  **LSA-OC47** through **LSA-OC86**.
+- DeepSeek preset maps `reasoning_content` (and related aliases) to unified `reasoning.*` events.
+- Cross-preset parity tests (`LSA-OC77`–`LSA-OC79`) ensuring generic vs host-specific reasoning aliases.
+- Maintainer script `scripts/generate-compatible-preset-fixtures.mjs` with `--check` drift guard wired into
+  `pnpm verify` via `fixtures:check-compatible`.
+- Live smoke scripts: `pnpm smoke:ollama`, `pnpm smoke:deepseek` (manual only, not CI).
+- Extended `test/helpers/compatible-fixtures.ts` with `hostCompatibleFixture()` and
+  `ALL_COMPATIBLE_PROVIDERS` exhaustiveness guard.
+
+### Changed
+
+- `openaiCompatibleAdapter({ provider })` preset table in README and compatibility quirks expanded per host.
+- `examples/node-fetch/openai-compatible.ts` accepts `OPENAI_COMPATIBLE_PROVIDER` env (default `generic`).
+- `.env.example` documents optional keys for DeepSeek, Mistral, Groq, and Ollama smoke runs.
+
+### Migration from 1.1.0 to 1.1.5
+
+- New optional presets: `openaiCompatibleAdapter({ provider: "deepseek" | "mistral" })`.
+- Existing integrations unchanged when using `generic` or prior presets.
+
 ## [1.1.0]
 
 ### Added

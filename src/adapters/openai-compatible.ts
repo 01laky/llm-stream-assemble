@@ -5,6 +5,8 @@ export type OpenAICompatibleProvider =
 	| "generic"
 	| "openrouter"
 	| "groq"
+	| "deepseek"
+	| "mistral"
 	| "ollama"
 	| "lmstudio"
 	| "together"
@@ -30,6 +32,7 @@ const DEFAULT_PRESET = {
 const PRESET_OVERRIDES: Partial<
 	Record<OpenAICompatibleProvider, Pick<OpenAICompatibleAdapterOptions, "reasoningFieldAliases">>
 > = {
+	deepseek: { reasoningFieldAliases: ["reasoning_content", "reasoning", "thinking"] },
 	openrouter: { reasoningFieldAliases: ["reasoning"] },
 	together: { reasoningFieldAliases: ["reasoning", "reasoning_delta"] },
 };

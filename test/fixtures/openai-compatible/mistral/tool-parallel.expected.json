@@ -1,0 +1,42 @@
+[
+	{
+		"type": "tool_call.start",
+		"id": "call_m1",
+		"name": "alpha",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_m1",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_m2",
+		"name": "beta",
+		"index": 1
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_m2",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_m1",
+		"name": "alpha",
+		"args": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_m2",
+		"name": "beta",
+		"args": {}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

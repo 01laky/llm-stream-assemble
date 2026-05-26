@@ -101,6 +101,8 @@ describe("openaiCompatibleAdapter dialect options", () => {
 			"generic",
 			"openrouter",
 			"groq",
+			"deepseek",
+			"mistral",
 			"ollama",
 			"lmstudio",
 			"together",

@@ -1,10 +1,10 @@
 [
-  {
-    "type": "error",
-    "recoverable": false
-  },
-  {
-    "type": "finish",
-    "reason": "error"
-  }
+	{
+		"type": "error",
+		"recoverable": false
+	},
+	{
+		"type": "finish",
+		"reason": "error"
+	}
 ]

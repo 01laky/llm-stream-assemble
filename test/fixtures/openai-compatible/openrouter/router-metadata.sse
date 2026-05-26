@@ -1,0 +1,4 @@
+data: {"id":"gen-xxx","model":"openrouter/auto","provider":"OpenRouter","system_fingerprint":"fp_or_1","choices":[{"index":0,"delta":{"content":"routed"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

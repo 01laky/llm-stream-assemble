@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "together_1"
+	},
+	{
+		"type": "metadata",
+		"model": "meta-llama/Llama-3-8b-chat-hf",
+		"responseId": "together_1"
+	},
+	{
+		"type": "text.delta",
+		"text": "together"
+	},
+	{
+		"type": "text.done",
+		"text": "together"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

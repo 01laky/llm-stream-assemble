@@ -7,7 +7,7 @@ fetch responses in CI; no live provider calls are made by default.
 ## Node fetch examples
 
 - `examples/node-fetch/openai-chat.ts` — OpenAI Chat Completions streaming.
-- `examples/node-fetch/openai-compatible.ts` — OpenAI-compatible providers.
+- `examples/node-fetch/openai-compatible.ts` — OpenAI-compatible providers (`OPENAI_COMPATIBLE_PROVIDER` preset: `groq`, `deepseek`, `mistral`, `ollama`, …).
 - `examples/node-fetch/anthropic.ts` — Anthropic Messages streaming.
 - `examples/node-fetch/gemini.ts` — Google Gemini `streamGenerateContent` (SSE).
 - `examples/node-fetch/replay-fixture.ts` — local fixture replay with `assembleFromFile`.
@@ -18,6 +18,9 @@ Required environment variables when running manually:
 - `OPENAI_COMPATIBLE_BASE_URL`
 - `OPENAI_COMPATIBLE_API_KEY`
 - `OPENAI_COMPATIBLE_MODEL`
+- `OPENAI_COMPATIBLE_PROVIDER` (optional — `generic`, `groq`, `deepseek`, `mistral`, `ollama`, `openrouter`, …)
+- `DEEPSEEK_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` (when using matching host)
+- `OLLAMA_BASE_URL`, `OLLAMA_MODEL` (local Ollama smoke — see [docs/live-smoke.md](../docs/live-smoke.md))
 - `ANTHROPIC_API_KEY`
 - `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Gemini example accepts either)
 

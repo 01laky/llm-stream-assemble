@@ -1,29 +1,29 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_rt"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_rt",
-    "model": "gemini-2.5-flash"
-  },
-  {
-    "type": "usage",
-    "inputTokens": 4,
-    "outputTokens": 2
-  },
-  {
-    "type": "text.delta",
-    "text": "Hello Gemini"
-  },
-  {
-    "type": "text.done",
-    "text": "Hello Gemini"
-  },
-  {
-    "type": "finish",
-    "reason": "stop",
-    "choiceIndex": 0
-  }
+	{
+		"type": "message.start",
+		"id": "resp_rt"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_rt",
+		"model": "gemini-2.5-flash"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 4,
+		"outputTokens": 2
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello Gemini"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello Gemini"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
 ]

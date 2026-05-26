@@ -8,7 +8,9 @@ import {
 } from "./helpers/gemini-fixtures";
 
 function responseFixture(name: string, jsonMode = false) {
-	return normalizeGeminiEvents(assembleResponse(geminiJSONFixture(name), geminiAdapter({ jsonMode })));
+	return normalizeGeminiEvents(
+		assembleResponse(geminiJSONFixture(name), geminiAdapter({ jsonMode })),
+	);
 }
 
 describe("geminiAdapter parseResponse", () => {

@@ -1,0 +1,4 @@
+data: {"id":"together_1","model":"meta-llama/Llama-3-8b-chat-hf","choices":[{"index":0,"delta":{"content":"together"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

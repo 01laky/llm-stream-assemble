@@ -42,9 +42,7 @@ describe("geminiAdapter parseChunk", () => {
 
 	it("LSA-G07: empty text skipped", () => {
 		expect(
-			geminiAdapter().parseChunk(
-				payload({ candidates: [{ content: { parts: [{ text: "" }] } }] }),
-			),
+			geminiAdapter().parseChunk(payload({ candidates: [{ content: { parts: [{ text: "" }] } }] })),
 		).toEqual([]);
 	});
 
@@ -88,9 +86,9 @@ describe("geminiAdapter parseChunk", () => {
 	it("LSA-G11: metadata not duplicated on subsequent chunks", () => {
 		const adapter = geminiAdapter();
 		adapter.parseChunk(payload({ responseId: "r1", modelVersion: "gemini-2.5-flash" }));
-		expect(adapter.parseChunk(payload({ candidates: [{ content: { parts: [{ text: "x" }] } }] }))).toEqual([
-			{ kind: "text-delta", text: "x", choiceIndex: 0 },
-		]);
+		expect(
+			adapter.parseChunk(payload({ candidates: [{ content: { parts: [{ text: "x" }] } }] })),
+		).toEqual([{ kind: "text-delta", text: "x", choiceIndex: 0 }]);
 	});
 
 	it("LSA-G12: usageMetadata maps input and output tokens", () => {
@@ -112,7 +110,9 @@ describe("geminiAdapter parseChunk", () => {
 
 	it("LSA-G13: usage-only chunk with no candidates emits usage", () => {
 		const chunks = geminiAdapter().parseChunk(
-			payload({ usageMetadata: { promptTokenCount: 1, candidatesTokenCount: 0, totalTokenCount: 1 } }),
+			payload({
+				usageMetadata: { promptTokenCount: 1, candidatesTokenCount: 0, totalTokenCount: 1 },
+			}),
 		);
 		expect(chunks).toHaveLength(1);
 		expect(chunks[0]?.kind).toBe("usage");
@@ -125,7 +125,11 @@ describe("geminiAdapter parseChunk", () => {
 	it("LSA-G15: missing candidates key tolerated", () => {
 		expect(geminiAdapter().parseChunk(payload({ responseId: "only_meta" }))).toEqual([
 			{ kind: "message-start", id: "only_meta" },
-			{ kind: "metadata", responseId: "only_meta", raw: { responseId: "only_meta", modelVersion: undefined } },
+			{
+				kind: "metadata",
+				responseId: "only_meta",
+				raw: { responseId: "only_meta", modelVersion: undefined },
+			},
 		]);
 	});
 
@@ -160,7 +164,10 @@ describe("geminiAdapter parseChunk", () => {
 					candidates: [
 						{
 							content: {
-								parts: [{ inlineData: { mimeType: "image/png", data: "abc" } }, { fileData: { fileUri: "x" } }],
+								parts: [
+									{ inlineData: { mimeType: "image/png", data: "abc" } },
+									{ fileData: { fileUri: "x" } },
+								],
 							},
 						},
 					],
