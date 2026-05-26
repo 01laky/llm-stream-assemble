@@ -32,6 +32,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"openrouter/",
 			"perplexity/",
 			"xai/",
+			"azure/",
 		]) {
 			expect(readme).toContain(name);
 		}
@@ -89,6 +90,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"openrouter/",
 			"perplexity/",
 			"xai/",
+			"azure/",
 		]) {
 			expect(readme).toContain(folder);
 		}
@@ -113,6 +115,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"Together",
 			"Fireworks",
 			"OpenRouter",
+			"Azure OpenAI",
 		]) {
 			expect(docs).toContain(host);
 		}
@@ -125,19 +128,18 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("mistral");
 	});
 
-	it("LSA-OC84: package.json version is 1.1.6", () => {
+	it("LSA-OC84: package.json version is 1.2.0", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.1.6");
+		expect(pkg.version).toBe("1.2.0");
 	});
 
-	it("LSA-OC103: README preset table includes perplexity and xai with base URLs", () => {
+	it("LSA-OC103: README preset table includes azure with deployment URL pattern", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("`perplexity`");
-		expect(readme).toContain("`xai`");
-		expect(readme).toContain("api.perplexity.ai");
-		expect(readme).toContain("api.x.ai");
+		expect(readme).toContain("`azure`");
+		expect(readme).toContain("openai.azure.com");
+		expect(readme).toContain("/deployments/");
 	});
 
 	it("LSA-OC104: compatibility docs quirks rows cover Perplexity and xAI", () => {
@@ -146,29 +148,71 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(docs).toContain("xAI");
 	});
 
-	it("LSA-OC105: CHANGELOG documents 1.1.6 preset expansion", () => {
+	it("LSA-OC105: CHANGELOG documents 1.2.0 Azure preset expansion", () => {
 		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
-		expect(changelog).toContain("## [1.1.6]");
-		expect(changelog).toContain("perplexity");
-		expect(changelog).toContain("xai");
+		expect(changelog).toContain("## [1.2.0]");
+		expect(changelog).toContain("azure");
 	});
 
-	it("LSA-OC106: package.json version is 1.1.6", () => {
+	it("LSA-OC106: package.json version is 1.2.0", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.1.6");
+		expect(pkg.version).toBe("1.2.0");
 	});
 
-	it("LSA-OC107: README badges and stable status reference 1.1.6", () => {
+	it("LSA-OC107: README badges and stable status reference 1.2.0", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("1.1.6");
-		expect(readme).toContain("Stable `1.1.6`");
+		expect(readme).toContain("1.2.0");
+		expect(readme).toContain("Stable `1.2.0`");
 	});
 
-	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity and xai preset keys", () => {
+	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity, xai, and azure preset keys", () => {
 		const dts = readFileSync(join(rootDir, "dist/adapters/openai-compatible.d.ts"), "utf8");
 		expect(dts).toContain('"perplexity"');
 		expect(dts).toContain('"xai"');
+		expect(dts).toContain('"azure"');
+	});
+
+	it("LSA-OC131: README Azure OpenAI Usage subsection documents api-key and deployment path", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("Azure OpenAI Usage");
+		expect(readme).toContain("api-key");
+	});
+
+	it("LSA-OC132: compatibility docs Azure OpenAI quirks cover strict preset and content filter", () => {
+		const docs = readFileSync(join(rootDir, "docs/compatibility.md"), "utf8");
+		expect(docs).toContain("Azure OpenAI");
+		expect(docs).toContain("content_filter");
+	});
+
+	it("LSA-OC133: CHANGELOG documents 1.2.0 preset expansion", () => {
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.2.0]");
+		expect(changelog).toContain("LSA-OC113");
+	});
+
+	it("LSA-OC134: package.json version is 1.2.0", () => {
+		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
+			version: string;
+		};
+		expect(pkg.version).toBe("1.2.0");
+	});
+
+	it("LSA-OC135: README badges and stable status reference 1.2.0 release", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toMatch(/1\.2\.0/);
+		expect(readme).toContain("Stable `1.2.0`");
+	});
+
+	it("LSA-OC136: dist openai-compatible.d.ts includes azure in OpenAICompatibleProvider", () => {
+		const dts = readFileSync(join(rootDir, "dist/adapters/openai-compatible.d.ts"), "utf8");
+		expect(dts).toContain('"azure"');
+	});
+
+	it("LSA-OC137: adapter guide warns against using azure preset for non-Azure hosts", () => {
+		const guide = readFileSync(join(rootDir, "docs/adapter-guide.md"), "utf8");
+		expect(guide).toMatch(/azure/i);
+		expect(guide).toMatch(/non-Azure|not Azure|generic/i);
 	});
 });

@@ -1,0 +1,6 @@
+data: {"id":"chatcmpl-az-json","model":"gpt-4o-deployment","choices":[{"index":0,"delta":{"content":"{\"ok\":"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-az-json","model":"gpt-4o-deployment","choices":[{"index":0,"delta":{"content":"true}"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

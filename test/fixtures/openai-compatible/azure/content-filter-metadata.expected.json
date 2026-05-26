@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl-az-filter"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-deployment",
+		"responseId": "chatcmpl-az-filter"
+	},
+	{
+		"type": "text.delta",
+		"text": "Filtered safe text"
+	},
+	{
+		"type": "text.done",
+		"text": "Filtered safe text"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

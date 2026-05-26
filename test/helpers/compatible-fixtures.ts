@@ -19,6 +19,7 @@ export const ALL_COMPATIBLE_PROVIDERS = [
 	"fireworks",
 	"perplexity",
 	"xai",
+	"azure",
 ] as const satisfies readonly OpenAICompatibleProvider[];
 
 export const HOST_COMPATIBLE_PRESETS = [
@@ -32,6 +33,7 @@ export const HOST_COMPATIBLE_PRESETS = [
 	"openrouter",
 	"perplexity",
 	"xai",
+	"azure",
 ] as const satisfies readonly OpenAICompatibleProvider[];
 
 export function compatibleTextFixture(name: string, extension: string): string {

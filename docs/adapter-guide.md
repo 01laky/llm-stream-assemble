@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.1.6`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.2.0`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -83,13 +83,17 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 
 ## Factory naming convention
 
-| Provider                  | Export                                                                                                                                                                                                            |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                             |
-| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai` with host golden fixtures since `1.1.6` |
-| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                              |
-| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                        |
-| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                 |
+| Provider                  | Export                                                                                                                                                                                                                     |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                      |
+| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure` with host golden fixtures since `1.2.0` |
+| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                       |
+| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                 |
+| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                          |
+
+## Azure preset vs generic
+
+Use `openaiCompatibleAdapter({ provider: "azure" })` **only** for Azure OpenAI Chat Completions endpoints (`*.openai.azure.com` with deployment path and `api-key` auth). Do **not** point the `azure` preset at non-Azure hosts — use `generic` or the host-specific preset (`groq`, `mistral`, …) instead. The azure preset enables stricter defaults (`allowMissingMetadata: false`, `looseErrorShape: false`) that will throw on wholly unrecognizable payloads where generic would silently return `[]`.
 
 ## Community adapters
 

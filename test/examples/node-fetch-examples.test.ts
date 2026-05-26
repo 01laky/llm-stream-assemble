@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { runAnthropicExample } from "../../examples/node-fetch/anthropic";
+import { runAzureOpenAIExample } from "../../examples/node-fetch/azure-openai";
 import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
@@ -21,6 +22,10 @@ const perplexitySSE = readFileSync(
 );
 const xaiSSE = readFileSync(
 	join(rootDir, "test/fixtures/openai-compatible/xai/text-basic.sse"),
+	"utf8",
+);
+const azureSSE = readFileSync(
+	join(rootDir, "test/fixtures/openai-compatible/azure/text-basic.sse"),
 	"utf8",
 );
 
@@ -180,5 +185,29 @@ describe("node fetch examples", () => {
 			write: (text) => output.push(text),
 		});
 		expect(output.join("")).toContain("Grok says hi");
+	});
+
+	it("LSA-X34: Azure OpenAI example validates env and uses injected fake fetch", async () => {
+		await withEnv(
+			{
+				AZURE_OPENAI_API_KEY: undefined,
+				AZURE_OPENAI_RESOURCE: undefined,
+				AZURE_OPENAI_DEPLOYMENT: undefined,
+			},
+			async () => {
+				await expect(
+					runAzureOpenAIExample({ fetchImpl: fakeStreamingFetch(azureSSE) }),
+				).rejects.toThrow("AZURE_OPENAI_API_KEY is required");
+			},
+		);
+		const output: string[] = [];
+		await runAzureOpenAIExample({
+			apiKey: "key",
+			resource: "my-resource",
+			deployment: "gpt-4o-deployment",
+			fetchImpl: fakeStreamingFetch(azureSSE),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello from Azure");
 	});
 });

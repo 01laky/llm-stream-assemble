@@ -1,0 +1,6 @@
+data: {"id":"chatcmpl-az-reason","model":"o3-mini-deployment","choices":[{"index":0,"delta":{"reasoning_content":"Planning step"}}]}
+
+data: {"id":"chatcmpl-az-reason","model":"o3-mini-deployment","choices":[{"index":0,"delta":{"content":"Final answer"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

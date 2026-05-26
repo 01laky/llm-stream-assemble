@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.1.6-blue)
+![core](https://img.shields.io/badge/core-1.2.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-720%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-750%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.1.6-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.2.0-brightgreen)
 
 A zero-dependency TypeScript library that normalizes LLM streaming responses — text, tool calls, reasoning, JSON, usage, errors, and non-streaming payloads — into unified events.
 
-**Status:** Stable `1.1.6`. Core, OpenAI Chat, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.2.0`. Core, OpenAI Chat, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 > A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
 
@@ -123,21 +123,22 @@ for await (const event of assembleStream(response.body!, adapter)) {
 
 Provider presets:
 
-| Preset       | Intended hosts                | Notes                                                           |
-| ------------ | ----------------------------- | --------------------------------------------------------------- |
-| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                                  |
-| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear     |
-| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model                   |
-| `deepseek`   | DeepSeek API                  | Maps `reasoning_content` to reasoning events on R1-style models |
-| `mistral`    | Mistral API                   | OpenAI-like; parallel tool calls supported                      |
-| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                              |
-| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                        |
-| `together`   | Together AI                   | OpenAI-like; `reasoning` / `reasoning_delta` aliases            |
-| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                             |
-| `perplexity` | Perplexity API                | Search-grounded answers; citations in `metadata.raw`            |
-| `xai`        | xAI Grok API                  | OpenAI-compatible; `reasoning_content` mapped when present      |
+| Preset       | Intended hosts                | Notes                                                                                       |
+| ------------ | ----------------------------- | ------------------------------------------------------------------------------------------- |
+| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                                                              |
+| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear                                 |
+| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model                                               |
+| `deepseek`   | DeepSeek API                  | Maps `reasoning_content` to reasoning events on R1-style models                             |
+| `mistral`    | Mistral API                   | OpenAI-like; parallel tool calls supported                                                  |
+| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                                                          |
+| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                                                    |
+| `together`   | Together AI                   | OpenAI-like; `reasoning` / `reasoning_delta` aliases                                        |
+| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                                                         |
+| `perplexity` | Perplexity API                | Search-grounded answers; citations in `metadata.raw`                                        |
+| `xai`        | xAI Grok API                  | OpenAI-compatible; `reasoning_content` mapped when present                                  |
+| `azure`      | Azure OpenAI Chat Completions | Stricter preset; deployment URL + `api-key` auth; content filter metadata in `metadata.raw` |
 
-Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`, Perplexity `https://api.perplexity.ai`, xAI `https://api.x.ai/v1`.
+Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`, Perplexity `https://api.perplexity.ai`, xAI `https://api.x.ai/v1`, Azure OpenAI `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`.
 
 Strict vs loose configuration:
 
@@ -161,6 +162,43 @@ Known limitations:
 - Non-string reasoning payloads are skipped.
 - Multi-choice terminal behavior is limited by the current core single terminal finish event.
 - Missing tool ids are tolerated because core can synthesize stable ids by index.
+
+## Azure OpenAI Usage
+
+Azure OpenAI Chat Completions uses a deployment-scoped URL and **`api-key`** authentication instead of Bearer tokens. Use the **`azure`** preset — not `generic` — for stricter parsing aligned with OpenAI Chat semantics (`allowMissingMetadata: false`, `looseErrorShape: false`).
+
+```ts
+import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
+
+const resource = process.env.AZURE_OPENAI_RESOURCE!;
+const deployment = process.env.AZURE_OPENAI_DEPLOYMENT!;
+const apiVersion = process.env.AZURE_OPENAI_API_VERSION ?? "2024-10-21";
+const url = `https://${resource}.openai.azure.com/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+
+const response = await fetch(url, {
+	method: "POST",
+	headers: {
+		"api-key": process.env.AZURE_OPENAI_API_KEY!,
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		messages: [{ role: "user", content: "Hello" }],
+		stream: true,
+		stream_options: { include_usage: true },
+	}),
+});
+
+for await (const event of assembleStream(
+	response.body!,
+	openaiCompatibleAdapter({ provider: "azure" }),
+)) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+Use `openaiCompatibleAdapter({ provider: "azure", jsonMode: true })` when structured JSON output should map to `json.*` events. Content-filter blocks surface as `refusal.*` events with `finish_reason: content_filter`; filter result fields remain in `metadata.raw` for auditing. If an API gateway strips metadata from chunks, soften strict parsing server-side only with `allowMissingMetadata: true`.
+
+See `examples/node-fetch/azure-openai.ts` for a URL builder helper and `examples/proxy-safety/README.md` for server-side proxy notes.
 
 ## Anthropic Messages Usage
 
@@ -277,6 +315,7 @@ for await (const event of assembleFromFile(
 
 - `examples/node-fetch/openai-chat.ts`
 - `examples/node-fetch/openai-compatible.ts`
+- `examples/node-fetch/azure-openai.ts`
 - `examples/node-fetch/anthropic.ts`
 - `examples/node-fetch/gemini.ts`
 - `examples/node-fetch/replay-fixture.ts`

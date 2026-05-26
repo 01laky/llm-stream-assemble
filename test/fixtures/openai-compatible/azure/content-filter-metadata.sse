@@ -1,0 +1,6 @@
+data: {"id":"chatcmpl-az-filter","model":"gpt-4o-deployment","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"delta":{"content":"Filtered safe text"},"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"}}}]}
+
+data: {"id":"chatcmpl-az-filter","model":"gpt-4o-deployment","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+
+data: [DONE]
+

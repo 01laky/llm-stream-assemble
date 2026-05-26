@@ -39,6 +39,10 @@ export class OpenAIChatLikeParser {
 		const looseError = providerErrorPayload(payload, this.options);
 		if (looseError) return openAIProviderErrorChunks(looseError, false, this.options);
 
+		if (!this.options.looseErrorShape && asString(payload.error) && !isRecord(payload.error)) {
+			return [];
+		}
+
 		if (this.options.rejectUnrecognizedPayloads && !this.isRecognizableChunk(payload)) {
 			throwUnrecognizedChunkError(this.options);
 		}

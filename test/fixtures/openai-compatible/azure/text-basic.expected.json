@@ -1,0 +1,24 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl-az-001"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-deployment",
+		"responseId": "chatcmpl-az-001",
+		"created": 1710000000
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello from Azure"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello from Azure"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

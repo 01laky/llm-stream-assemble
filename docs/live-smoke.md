@@ -125,10 +125,30 @@ Requires `XAI_API_KEY`.
 
 Uses `openaiCompatibleAdapter({ provider: "xai" })`. Expect at least one `text.delta` event.
 
+## Azure OpenAI (OpenAI-compatible preset)
+
+```bash
+pnpm build
+pnpm smoke:azure
+```
+
+Requires `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_RESOURCE`, and `AZURE_OPENAI_DEPLOYMENT`.
+
+| Variable                   | Default      | Purpose                                             |
+| -------------------------- | ------------ | --------------------------------------------------- |
+| `AZURE_OPENAI_API_KEY`     | —            | `api-key` header value (not Bearer)                 |
+| `AZURE_OPENAI_RESOURCE`    | —            | Azure resource name (`{resource}.openai.azure.com`) |
+| `AZURE_OPENAI_DEPLOYMENT`  | —            | Deployment name in URL path                         |
+| `AZURE_OPENAI_API_VERSION` | `2024-10-21` | `api-version` query parameter                       |
+
+Uses `openaiCompatibleAdapter({ provider: "azure" })` against the deployment URL
+`https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`.
+Expect at least one `text.delta` event.
+
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).
-2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC109`).
-3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, and/or `pnpm smoke:xai` when hosts are available.
+2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC141`).
+3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, `pnpm smoke:xai`, and/or `pnpm smoke:azure` when hosts are available.
 4. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
 5. Bump `CHANGELOG.md` + `package.json` version together.

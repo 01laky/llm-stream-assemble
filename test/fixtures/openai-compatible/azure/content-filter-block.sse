@@ -1,0 +1,4 @@
+data: {"id":"chatcmpl-az-block","model":"gpt-4o-deployment","choices":[{"index":0,"delta":{"refusal":"Content blocked by Azure content policy."},"finish_reason":"content_filter"}]}
+
+data: [DONE]
+
