@@ -30,6 +30,7 @@ const HOSTS = [
 	"perplexity",
 	"xai",
 	"azure",
+	"cloudflare",
 ];
 
 function parseArgs(argv) {

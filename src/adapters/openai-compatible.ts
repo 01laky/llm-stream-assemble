@@ -13,7 +13,8 @@ export type OpenAICompatibleProvider =
 	| "fireworks"
 	| "perplexity"
 	| "xai"
-	| "azure";
+	| "azure"
+	| "cloudflare";
 
 export interface OpenAICompatibleAdapterOptions {
 	provider?: OpenAICompatibleProvider;

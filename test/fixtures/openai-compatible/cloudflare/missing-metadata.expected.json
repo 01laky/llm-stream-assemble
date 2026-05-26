@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "sparse cf"
+	},
+	{
+		"type": "text.done",
+		"text": "sparse cf"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

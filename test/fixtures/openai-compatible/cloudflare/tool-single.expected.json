@@ -1,0 +1,37 @@
+[
+	{
+		"type": "message.start",
+		"id": "cf-chatcmpl-tool"
+	},
+	{
+		"type": "metadata",
+		"model": "@cf/meta/llama-3.1-8b-instruct",
+		"responseId": "cf-chatcmpl-tool"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_cf_1",
+		"name": "get_weather",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_cf_1",
+		"delta": "{\"city\":\"Prague\"}",
+		"partial": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_cf_1",
+		"name": "get_weather",
+		"args": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

@@ -17,10 +17,16 @@ import {
 	resolveTerminalFlush,
 } from "../src/core/assembly/process-payload";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
+import { assembleResponse } from "../src/core/assemble-response";
 import { createAssemblyTransform } from "../src/core/create-assembly-transform";
 import { EventAssembler } from "../src/core/assembler/event-assembler";
 import type { RawChunk, StreamAdapter } from "../src/core/types";
 import { collectAsync, strings } from "./helpers/collect-events";
+import {
+	expectedHostCompatibleEvents,
+	hostCompatibleFixture,
+	normalizeCompatibleEvents,
+} from "./helpers/compatible-fixtures";
 import { mockAdapterFromFixture } from "./helpers/mock-adapter";
 
 async function collectTransformEvents(
@@ -205,6 +211,7 @@ describe("refactor: openai-compatible presets", () => {
 		"perplexity",
 		"xai",
 		"azure",
+		"cloudflare",
 	] as const;
 
 	it("LSA-RF14: all provider presets parse empty object without throw", () => {
@@ -291,6 +298,51 @@ describe("refactor: openai-compatible presets", () => {
 		expect(() =>
 			openaiCompatibleAdapter({ provider: "azure" }).parseChunk(JSON.stringify({ foo: "bar" })),
 		).toThrow(/openaiCompatibleAdapter\.parseChunk/);
+	});
+
+	it("LSA-RF23: parseResponse on cloudflare response-basic matches golden", () => {
+		const body = hostCompatibleFixture("cloudflare", "response-basic", "json");
+		const events = normalizeCompatibleEvents(
+			assembleResponse(body, openaiCompatibleAdapter({ provider: "cloudflare" })),
+		);
+		expect(events).toEqual(expectedHostCompatibleEvents("cloudflare", "response-basic"));
+	});
+
+	it("LSA-RF24: strict cloudflare allowMissingMetadata false rejects foo bar without explicit azure preset", () => {
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "cloudflare", allowMissingMetadata: false }).parseChunk(
+				JSON.stringify({ foo: "bar" }),
+			),
+		).toThrow(/openaiCompatibleAdapter\.parseChunk/);
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare", allowMissingMetadata: false }).parseChunk(
+				JSON.stringify({
+					id: "cf-rf",
+					model: "@cf/meta/llama-3.1-8b-instruct",
+					choices: [{ delta: { content: "valid" } }],
+				}),
+			),
+		).toContainEqual({ kind: "text-delta", text: "valid", choiceIndex: 0 });
+	});
+
+	it("LSA-RF25: cloudflare parseResponse text content matches stream text-basic phrase", () => {
+		const body = hostCompatibleFixture("cloudflare", "response-basic", "json") as {
+			choices?: Array<{ message?: { content?: string } }>;
+		};
+		const events = normalizeCompatibleEvents(
+			assembleResponse(body, openaiCompatibleAdapter({ provider: "cloudflare" })),
+		);
+		const textDone = events.find((event) => (event as { type?: string }).type === "text.done") as
+			| { text?: string }
+			| undefined;
+		expect(textDone?.text).toContain("Cloudflare response");
+	});
+
+	it("LSA-RF26: cloudflare loose string error parseResponse-free parseChunk matches generic", () => {
+		const loose = JSON.stringify({ error: "upstream failed" });
+		const cf = openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(loose);
+		const generic = openaiCompatibleAdapter({ provider: "generic" }).parseChunk(loose);
+		expect(cf.map((chunk) => chunk.kind)).toEqual(generic.map((chunk) => chunk.kind));
 	});
 });
 

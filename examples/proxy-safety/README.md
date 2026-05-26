@@ -53,6 +53,18 @@ When proxying **Azure OpenAI Chat Completions** to a browser:
 - If an API Management gateway strips metadata from chunks, you may soften strict parsing with
   `openaiCompatibleAdapter({ provider: "azure", allowMissingMetadata: true })` on the server only.
 
+## Cloudflare Workers AI proxy notes
+
+When proxying **Cloudflare Workers AI REST** to a browser:
+
+- Build the upstream URL with the account id in the path:
+  `https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions`
+- Forward the **`Authorization: Bearer {CLOUDFLARE_API_TOKEN}`** header server-side only —
+  **never expose** `CLOUDFLARE_API_TOKEN` or the account id to the browser client.
+- Parse the upstream stream with `openaiCompatibleAdapter({ provider: "cloudflare" })` in your
+  server handler, then emit unified SSE via `toSSE(events, { sanitizeErrors: true })`.
+- Set `stream_options: { include_usage: true }` on the upstream request when you need usage events.
+
 ## Browser client
 
 `browser-client.ts` demonstrates consuming data-only unified SSE via `fetch` and a

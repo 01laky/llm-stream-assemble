@@ -145,10 +145,31 @@ Uses `openaiCompatibleAdapter({ provider: "azure" })` against the deployment URL
 `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`.
 Expect at least one `text.delta` event.
 
+## Cloudflare Workers AI (OpenAI-compatible preset)
+
+```bash
+pnpm build
+pnpm smoke:cloudflare
+```
+
+Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+| Variable                | Default                          | Purpose                   |
+| ----------------------- | -------------------------------- | ------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | —                                | Bearer token for REST API |
+| `CLOUDFLARE_ACCOUNT_ID` | —                                | Account id in URL path    |
+| `CLOUDFLARE_MODEL`      | `@cf/meta/llama-3.1-8b-instruct` | Workers AI model id       |
+
+Uses `openaiCompatibleAdapter({ provider: "cloudflare" })` against
+`https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions`.
+The smoke request sets `stream_options: { include_usage: true }` so usage events may appear.
+Expect at least one `text.delta` event.
+
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).
 2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC141`).
-3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, `pnpm smoke:xai`, and/or `pnpm smoke:azure` when hosts are available.
-4. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
-5. Bump `CHANGELOG.md` + `package.json` version together.
+3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, `pnpm smoke:xai`, `pnpm smoke:azure`, and/or `pnpm smoke:cloudflare` when hosts are available.
+4. Cloudflare robust suite **LSA-OC170**–**LSA-OC210** green when touching compatible parser defaults.
+5. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
+6. Bump `CHANGELOG.md` + `package.json` version together.

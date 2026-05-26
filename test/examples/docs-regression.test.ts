@@ -20,6 +20,7 @@ describe("examples docs regression", () => {
 			"perplexity",
 			"xai",
 			"azure-openai",
+			"workers-ai",
 			"replay-fixture",
 			"proxy-safety",
 		]) {
@@ -93,5 +94,18 @@ describe("examples docs regression", () => {
 
 	it("LSA-X31: optional CLI guards do not execute during import", async () => {
 		await expect(import("../../examples/node-fetch/openai-chat")).resolves.toBeDefined();
+	});
+
+	it("LSA-X37: root README and examples README list workers-ai example", () => {
+		expect(read("README.md")).toContain("examples/workers-ai/rest-chat-completions.ts");
+		expect(read("examples/README.md")).toContain("workers-ai");
+		expect(read("examples/README.md")).toContain("rest-chat-completions.ts");
+	});
+
+	it("LSA-X38: env example documents Cloudflare Workers AI variables", () => {
+		const env = read(".env.example");
+		expect(env).toContain("CLOUDFLARE_API_TOKEN");
+		expect(env).toContain("CLOUDFLARE_ACCOUNT_ID");
+		expect(env).toContain("CLOUDFLARE_MODEL");
 	});
 });

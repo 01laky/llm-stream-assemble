@@ -1,0 +1,13 @@
+{
+	"id": "cf-chatcmpl-resp",
+	"object": "chat.completion",
+	"model": "@cf/meta/llama-3.1-8b-instruct",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hello from Cloudflare response" },
+			"finish_reason": "stop"
+		}
+	],
+	"usage": { "prompt_tokens": 8, "completion_tokens": 6, "total_tokens": 14 }
+}

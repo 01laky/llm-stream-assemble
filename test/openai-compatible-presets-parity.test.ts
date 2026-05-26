@@ -43,7 +43,7 @@ describe("openaiCompatibleAdapter cross-preset parity", () => {
 	it("LSA-OC101: sparse metadata — generic, perplexity, and xai emit identical text-delta", () => {
 		const sparse = payload({ choices: [{ delta: { content: "same" } }] });
 		const expected = [{ kind: "text-delta", text: "same", choiceIndex: 0 }];
-		for (const provider of ["generic", "perplexity", "xai"] as const) {
+		for (const provider of ["generic", "perplexity", "xai", "cloudflare"] as const) {
 			expect(openaiCompatibleAdapter({ provider }).parseChunk(sparse)).toEqual(expected);
 		}
 	});
@@ -59,6 +59,9 @@ describe("openaiCompatibleAdapter cross-preset parity", () => {
 		expect(openaiCompatibleAdapter({ provider: "xai" }).parseChunk(reasoningPayload)).toEqual(
 			expected,
 		);
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(reasoningPayload),
+		).toEqual(expected);
 	});
 
 	it("LSA-OC127: azure text-basic matches openaiChatAdapter normalized stream events", async () => {
@@ -110,5 +113,48 @@ describe("openaiCompatibleAdapter cross-preset parity", () => {
 		expect(azureEvents.filter((event) => (event as { type?: string }).type === "usage")).toEqual(
 			chatEvents.filter((event) => (event as { type?: string }).type === "usage"),
 		);
+	});
+
+	it("LSA-OC155: cloudflare text-basic matches openaiChatAdapter normalized stream events", async () => {
+		const sse = hostCompatibleFixture("cloudflare", "text-basic", "sse") as string;
+		const cloudflareEvents = normalizeCompatibleEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(sse),
+					openaiCompatibleAdapter({ provider: "cloudflare" }),
+				),
+			),
+		);
+		const chatEvents = normalizeCompatibleEvents(
+			await collectAsync(assembleStream(byteStreamFromStrings(sse), openaiChatAdapter())),
+		);
+		expect(cloudflareEvents).toEqual(chatEvents);
+	});
+
+	it("LSA-OC156: cloudflare vs generic on sparse metadata — identical text-delta", () => {
+		const sparse = payload({ choices: [{ delta: { content: "same cf" } }] });
+		const expected = [{ kind: "text-delta", text: "same cf", choiceIndex: 0 }];
+		expect(openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(sparse)).toEqual(
+			expected,
+		);
+		expect(openaiCompatibleAdapter({ provider: "generic" }).parseChunk(sparse)).toEqual(expected);
+	});
+
+	it("LSA-OC157: cloudflare usage-stream usage events match openaiChatAdapter", async () => {
+		const sse = hostCompatibleFixture("cloudflare", "usage-stream", "sse") as string;
+		const cloudflareEvents = normalizeCompatibleEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(sse),
+					openaiCompatibleAdapter({ provider: "cloudflare" }),
+				),
+			),
+		);
+		const chatEvents = normalizeCompatibleEvents(
+			await collectAsync(assembleStream(byteStreamFromStrings(sse), openaiChatAdapter())),
+		);
+		expect(
+			cloudflareEvents.filter((event) => (event as { type?: string }).type === "usage"),
+		).toEqual(chatEvents.filter((event) => (event as { type?: string }).type === "usage"));
 	});
 });

@@ -1,0 +1,6 @@
+data: {"id":"cf-chatcmpl-json","model":"@cf/meta/llama-3.1-8b-instruct","choices":[{"index":0,"delta":{"content":"{\"ok\":"}}]}
+
+data: {"id":"cf-chatcmpl-json","model":"@cf/meta/llama-3.1-8b-instruct","choices":[{"index":0,"delta":{"content":"true}"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

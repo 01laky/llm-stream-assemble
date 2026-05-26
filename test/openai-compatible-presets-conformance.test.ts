@@ -50,6 +50,18 @@ describe("openaiCompatibleAdapter host preset conformance", () => {
 		);
 		expect(events).toEqual(expectedHostCompatibleEvents("azure", "text-basic"));
 	});
+
+	it("LSA-OC158: runAdapterGoldenStream parity for cloudflare/text-basic", async () => {
+		const events = normalizeCompatibleEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiCompatibleAdapter({ provider: "cloudflare" }),
+				fixtureSsePath: join(fixturesDir, "cloudflare", "text-basic.sse"),
+				expectedEventsPath: join(fixturesDir, "cloudflare", "text-basic.expected.json"),
+				adapterFactory: () => openaiCompatibleAdapter({ provider: "cloudflare" }),
+			}),
+		);
+		expect(events).toEqual(expectedHostCompatibleEvents("cloudflare", "text-basic"));
+	});
 });
 
 describe("openaiCompatibleAdapter host preset fixture drift", () => {

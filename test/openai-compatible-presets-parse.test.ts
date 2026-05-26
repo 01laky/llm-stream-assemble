@@ -101,4 +101,24 @@ describe("openaiCompatibleAdapter host preset parseChunk", () => {
 			expect.objectContaining({ kind: "provider-error" }),
 		);
 	});
+
+	it("LSA-OC149: cloudflare preset parses standard text chunk with id/model present", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(
+				payload({
+					id: "cf-chatcmpl-1",
+					model: "@cf/meta/llama-3.1-8b-instruct",
+					choices: [{ delta: { content: "Workers AI text" } }],
+				}),
+			),
+		).toContainEqual({ kind: "text-delta", text: "Workers AI text", choiceIndex: 0 });
+	});
+
+	it("LSA-OC150: cloudflare preset tolerates missing id model created", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(
+				payload({ choices: [{ delta: { content: "sparse cf" } }] }),
+			),
+		).toEqual([{ kind: "text-delta", text: "sparse cf", choiceIndex: 0 }]);
+	});
 });

@@ -23,6 +23,7 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 			"perplexity",
 			"xai",
 			"azure",
+			"cloudflare",
 		]);
 		for (const provider of ALL_COMPATIBLE_PROVIDERS) {
 			if (provider === "azure") {
@@ -51,6 +52,9 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 		expect(() => openaiCompatibleAdapter({ provider: "azure" }).parseChunk("{not-json")).toThrow(
 			/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/,
 		);
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk("{not-json"),
+		).toThrow(/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/);
 	});
 
 	it("LSA-OC75: strict mode behaves same across deepseek and mistral presets", () => {
@@ -146,15 +150,15 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 		]);
 	});
 
-	it("LSA-OC100: error prefix unchanged for perplexity and xai malformed JSON", () => {
-		for (const provider of ["perplexity", "xai"] as const) {
+	it("LSA-OC100: error prefix unchanged for perplexity, xai, and cloudflare malformed JSON", () => {
+		for (const provider of ["perplexity", "xai", "cloudflare"] as const) {
 			expect(() => openaiCompatibleAdapter({ provider }).parseChunk("{bad-json")).toThrow(
 				/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/,
 			);
 		}
 	});
 
-	it("LSA-OC110: perplexity and xai ignore unknown non-text delta keys without throw", () => {
+	it("LSA-OC110: perplexity, xai, and cloudflare ignore unknown non-text delta keys without throw", () => {
 		const multimodal = JSON.stringify({
 			choices: [
 				{
@@ -166,7 +170,7 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 				},
 			],
 		});
-		for (const provider of ["perplexity", "xai"] as const) {
+		for (const provider of ["perplexity", "xai", "cloudflare"] as const) {
 			expect(() => openaiCompatibleAdapter({ provider }).parseChunk(multimodal)).not.toThrow();
 			expect(openaiCompatibleAdapter({ provider }).parseChunk(multimodal)).toContainEqual({
 				kind: "text-delta",
@@ -231,5 +235,60 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 				unrecognizable,
 			),
 		).toEqual([]);
+	});
+
+	it("LSA-OC151: cloudflare malformed JSON throws openaiCompatibleAdapter.parseChunk", () => {
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk("{not-json"),
+		).toThrow(/^llm-stream-assemble: openaiCompatibleAdapter\.parseChunk/);
+	});
+
+	it("LSA-OC152: cloudflare preset ignores unknown non-text delta keys without throw", () => {
+		const multimodal = JSON.stringify({
+			id: "cf-1",
+			model: "@cf/meta/llama-3.1-8b-instruct",
+			choices: [
+				{
+					delta: {
+						content: "visible",
+						images: [{ url: "https://example.com/img.png" }],
+					},
+				},
+			],
+		});
+		expect(() =>
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(multimodal),
+		).not.toThrow();
+		expect(
+			openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(multimodal),
+		).toContainEqual({
+			kind: "text-delta",
+			text: "visible",
+			choiceIndex: 0,
+		});
+	});
+
+	it("LSA-OC153: cloudflare usage-stream parseChunk preserves usage fields", () => {
+		const raw = hostCompatibleFixture("cloudflare", "usage-stream", "sse") as string;
+		const usageLine = raw
+			.split("\n")
+			.find((line) => line.includes('"usage"') && line.startsWith("data: "))!;
+		const payload = usageLine.slice("data: ".length);
+		const chunks = openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(payload);
+		const usage = chunks.find((chunk) => chunk.kind === "usage");
+		expect(usage).toBeDefined();
+		expect(usage).toMatchObject({
+			kind: "usage",
+			inputTokens: 10,
+			outputTokens: 3,
+		});
+	});
+
+	it("LSA-OC154: cloudflare vs generic on unrecognizable payload — both return empty", () => {
+		const unrecognizable = JSON.stringify({});
+		expect(openaiCompatibleAdapter({ provider: "cloudflare" }).parseChunk(unrecognizable)).toEqual(
+			[],
+		);
+		expect(openaiCompatibleAdapter({ provider: "generic" }).parseChunk(unrecognizable)).toEqual([]);
 	});
 });

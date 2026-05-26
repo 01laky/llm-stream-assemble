@@ -203,4 +203,12 @@ describe("proxy safety examples", () => {
 		expect(readme).toContain("openai.azure.com");
 		expect(readme).toContain("deployments");
 	});
+
+	it("LSA-X39: proxy-safety README documents Cloudflare Workers AI Bearer proxy pattern", () => {
+		const readme = readFileSync(join(rootDir, "examples/proxy-safety/README.md"), "utf8");
+		expect(readme).toContain("Cloudflare");
+		expect(readme).toMatch(/CLOUDFLARE_API_TOKEN|Bearer/i);
+		expect(readme).toContain("api.cloudflare.com");
+		expect(readme).toMatch(/never expose|never forward|server-side only|not reach the browser/i);
+	});
 });

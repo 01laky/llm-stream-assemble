@@ -1,0 +1,33 @@
+[
+	{
+		"type": "message.start",
+		"id": "cf-chatcmpl-json"
+	},
+	{
+		"type": "metadata",
+		"model": "@cf/meta/llama-3.1-8b-instruct",
+		"responseId": "cf-chatcmpl-json"
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"ok\":",
+		"partial": {}
+	},
+	{
+		"type": "json.delta",
+		"delta": "true}",
+		"partial": {
+			"ok": true
+		}
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"ok": true
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -287,4 +287,46 @@ describe("openaiCompatibleAdapter host preset golden fixtures", () => {
 			expectedHostCompatibleEvents("azure", "content-filter-block"),
 		);
 	});
+
+	it("LSA-OC142: cloudflare/text-basic.sse matches expected events", async () => {
+		await expect(streamHostFixture("cloudflare", "text-basic")).resolves.toEqual(
+			expectedHostCompatibleEvents("cloudflare", "text-basic"),
+		);
+	});
+
+	it("LSA-OC143: cloudflare/missing-metadata.sse matches expected events", async () => {
+		await expect(streamHostFixture("cloudflare", "missing-metadata")).resolves.toEqual(
+			expectedHostCompatibleEvents("cloudflare", "missing-metadata"),
+		);
+	});
+
+	it("LSA-OC144: cloudflare/tool-single.sse matches expected events", async () => {
+		await expect(streamHostFixture("cloudflare", "tool-single")).resolves.toEqual(
+			expectedHostCompatibleEvents("cloudflare", "tool-single"),
+		);
+	});
+
+	it("LSA-OC145: cloudflare/usage-stream.sse matches expected events", async () => {
+		await expect(streamHostFixture("cloudflare", "usage-stream")).resolves.toEqual(
+			expectedHostCompatibleEvents("cloudflare", "usage-stream"),
+		);
+	});
+
+	it("LSA-OC146: cloudflare/provider-error.sse matches expected events", async () => {
+		await expect(streamHostFixture("cloudflare", "provider-error")).resolves.toEqual(
+			expectedHostCompatibleEvents("cloudflare", "provider-error"),
+		);
+	});
+
+	it("LSA-OC147: cloudflare/response-basic.json matches expected events", () => {
+		expect(responseHostFixture("cloudflare", "response-basic")).toEqual(
+			expectedHostCompatibleEvents("cloudflare", "response-basic"),
+		);
+	});
+
+	it("LSA-OC169: cloudflare/json-mode.sse matches expected events with jsonMode", async () => {
+		await expect(
+			streamHostFixtureWithAdapter("cloudflare", "json-mode", { jsonMode: true }),
+		).resolves.toEqual(expectedHostCompatibleEvents("cloudflare", "json-mode"));
+	});
 });

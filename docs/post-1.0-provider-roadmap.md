@@ -97,9 +97,9 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.1.5  ✅  OpenAI-compatible preset expansion (Groq, Mistral, DeepSeek, Ollama, …)
 1.1.6  ✅  Perplexity + xAI Grok OpenAI-compatible presets
 1.2.0  ✅  Azure OpenAI Chat Completions compatible preset (`azure`)
+1.3.0  ✅  Cloudflare Workers AI OpenAI-compatible preset (`cloudflare`)
 1.4.0      AWS Bedrock adapter (enterprise path deferred from 1.2)
 1.5.0      Cohere adapter (if demand exists)
-1.6.0      Cloudflare Workers AI preset (if fixtures confirm shape)
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
 
@@ -419,15 +419,18 @@ metadata and citation-like fields.
 
 ### 10. Cloudflare Workers AI (`openaiCompatibleAdapter` preset)
 
-**Target version:** `1.6.0`  
+**Target version:** `1.3.0` (shipped)  
 **Priority:** Medium for edge deployments — OpenAI-compatible REST with Workers-specific
 hosting patterns.
 
-#### Work items
+#### Deliverables checklist
 
-- Fixtures for Workers AI chat completions stream (redacted).
-- Example showing `assembleStream` in a Worker fetch handler (no Node `assembleFromFile`).
-- Document `@cf/` model naming and account binding stays outside the adapter.
+- [x] Preset `cloudflare` with DEFAULT_PRESET (loose, not strict like azure)
+- [x] Fixtures under `test/fixtures/openai-compatible/cloudflare/` (text, tools, usage,
+      json-mode, provider-error, response)
+- [x] Tests **LSA-OC142**–**LSA-OC210**, **LSA-RF23**–**LSA-RF26**, **LSA-X36**–**LSA-X41**; cross guards **OC100/104/110/111**
+- [x] Example `examples/workers-ai/rest-chat-completions.ts`; live smoke `pnpm smoke:cloudflare`
+- [x] Document `@cf/` model naming and account binding stays outside the adapter
 
 ---
 

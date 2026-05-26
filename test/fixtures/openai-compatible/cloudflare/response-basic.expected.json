@@ -1,0 +1,28 @@
+[
+	{
+		"type": "message.start",
+		"id": "cf-chatcmpl-resp"
+	},
+	{
+		"type": "metadata",
+		"model": "@cf/meta/llama-3.1-8b-instruct",
+		"responseId": "cf-chatcmpl-resp"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello from Cloudflare response"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 8,
+		"outputTokens": 6
+	},
+	{
+		"type": "text.done",
+		"text": "Hello from Cloudflare response"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

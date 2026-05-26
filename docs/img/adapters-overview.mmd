@@ -1,5 +1,5 @@
 flowchart TB
-	subgraph BUILTIN["Built-in adapters · stable 1.2.0"]
+	subgraph BUILTIN["Built-in adapters · stable 1.3.0"]
 		direction TB
 
 		subgraph DEDICATED["Dedicated parsers"]
@@ -13,7 +13,7 @@ flowchart TB
 		subgraph COMPAT["openaiCompatibleAdapter"]
 			direction TB
 			AO["Host preset via provider option"]
-			PRESETS["generic · groq · deepseek · mistral · ollama · lmstudio<br/>together · fireworks · openrouter · perplexity · xai · azure"]
+			PRESETS["generic · groq · deepseek · mistral · ollama · lmstudio<br/>together · fireworks · openrouter · perplexity · xai · azure · cloudflare"]
 			AO --> PRESETS
 		end
 	end

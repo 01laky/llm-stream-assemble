@@ -33,6 +33,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"perplexity/",
 			"xai/",
 			"azure/",
+			"cloudflare/",
 		]) {
 			expect(readme).toContain(name);
 		}
@@ -91,6 +92,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"perplexity/",
 			"xai/",
 			"azure/",
+			"cloudflare/",
 		]) {
 			expect(readme).toContain(folder);
 		}
@@ -128,11 +130,11 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("mistral");
 	});
 
-	it("LSA-OC84: package.json version is 1.2.0", () => {
+	it("LSA-OC84: package.json version is 1.3.0", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.2.0");
+		expect(pkg.version).toBe("1.3.0");
 	});
 
 	it("LSA-OC103: README preset table includes azure with deployment URL pattern", () => {
@@ -142,10 +144,11 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(readme).toContain("/deployments/");
 	});
 
-	it("LSA-OC104: compatibility docs quirks rows cover Perplexity and xAI", () => {
+	it("LSA-OC104: compatibility docs quirks rows cover Perplexity, xAI, and Cloudflare Workers AI", () => {
 		const docs = readFileSync(join(rootDir, "docs/compatibility.md"), "utf8");
 		expect(docs).toContain("Perplexity");
 		expect(docs).toContain("xAI");
+		expect(docs).toMatch(/Cloudflare Workers AI/i);
 	});
 
 	it("LSA-OC105: CHANGELOG documents 1.2.0 Azure preset expansion", () => {
@@ -154,17 +157,17 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("azure");
 	});
 
-	it("LSA-OC106: package.json version is 1.2.0", () => {
+	it("LSA-OC106: package.json version is 1.3.0", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.2.0");
+		expect(pkg.version).toBe("1.3.0");
 	});
 
-	it("LSA-OC107: README badges and stable status reference 1.2.0", () => {
+	it("LSA-OC107: README badges and stable status reference 1.3.0", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("1.2.0");
-		expect(readme).toContain("Stable `1.2.0`");
+		expect(readme).toContain("1.3.0");
+		expect(readme).toContain("Stable `1.3.0`");
 	});
 
 	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity, xai, and azure preset keys", () => {
@@ -192,17 +195,17 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("LSA-OC113");
 	});
 
-	it("LSA-OC134: package.json version is 1.2.0", () => {
+	it("LSA-OC134: package.json version is 1.3.0", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.2.0");
+		expect(pkg.version).toBe("1.3.0");
 	});
 
-	it("LSA-OC135: README badges and stable status reference 1.2.0 release", () => {
+	it("LSA-OC135: README badges and stable status reference 1.3.0 release", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toMatch(/1\.2\.0/);
-		expect(readme).toContain("Stable `1.2.0`");
+		expect(readme).toMatch(/1\.3\.0/);
+		expect(readme).toContain("Stable `1.3.0`");
 	});
 
 	it("LSA-OC136: dist openai-compatible.d.ts includes azure in OpenAICompatibleProvider", () => {
@@ -214,5 +217,68 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		const guide = readFileSync(join(rootDir, "docs/adapter-guide.md"), "utf8");
 		expect(guide).toMatch(/azure/i);
 		expect(guide).toMatch(/non-Azure|not Azure|generic/i);
+	});
+
+	it("LSA-OC159: README preset table includes cloudflare and api.cloudflare.com", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("`cloudflare`");
+		expect(readme).toContain("api.cloudflare.com");
+	});
+
+	it("LSA-OC160: README documents Cloudflare Workers AI Usage subsection", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toMatch(/Cloudflare Workers AI Usage/i);
+		expect(readme).toContain("CLOUDFLARE_API_TOKEN");
+	});
+
+	it("LSA-OC161: compatibility docs quirks row for Cloudflare Workers AI", () => {
+		const docs = readFileSync(join(rootDir, "docs/compatibility.md"), "utf8");
+		expect(docs).toMatch(/Cloudflare Workers AI/i);
+		expect(docs).toContain("sparse metadata");
+	});
+
+	it("LSA-OC162: CHANGELOG documents 1.3.0 cloudflare preset and LSA-OC142", () => {
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.3.0]");
+		expect(changelog).toContain("cloudflare");
+		expect(changelog).toContain("json-mode");
+		expect(changelog).toContain("LSA-OC142");
+	});
+
+	it("LSA-OC163: dist openai-compatible.d.ts includes cloudflare and source has no PRESET_OVERRIDES entry", () => {
+		const dts = readFileSync(join(rootDir, "dist/adapters/openai-compatible.d.ts"), "utf8");
+		expect(dts).toContain('"cloudflare"');
+		const source = readFileSync(join(rootDir, "src/adapters/openai-compatible.ts"), "utf8");
+		expect(source).not.toMatch(/^\s*cloudflare\s*:/m);
+	});
+
+	it("LSA-OC164: adapter guide lists cloudflare Workers AI REST preset", () => {
+		const guide = readFileSync(join(rootDir, "docs/adapter-guide.md"), "utf8");
+		expect(guide).toContain("cloudflare");
+		expect(guide).toMatch(/Workers AI|Workers AI REST|REST endpoint/i);
+	});
+
+	it("LSA-OC165: adapters-overview.mmd preset list includes cloudflare and stable 1.3.0", () => {
+		const mmd = readFileSync(join(rootDir, "docs/img/adapters-overview.mmd"), "utf8");
+		expect(mmd).toContain("cloudflare");
+		expect(mmd).toContain("1.3.0");
+	});
+
+	it("LSA-OC166: pipeline.mmd OpenAI-compatible hosts mention Cloudflare", () => {
+		const mmd = readFileSync(join(rootDir, "docs/img/pipeline.mmd"), "utf8");
+		expect(mmd).toMatch(/Cloudflare/i);
+	});
+
+	it("LSA-OC167: provider roadmap §10 targets 1.3.0 for Cloudflare Workers AI", () => {
+		const roadmap = readFileSync(join(rootDir, "docs/post-1.0-provider-roadmap.md"), "utf8");
+		expect(roadmap).toMatch(/### 10\. Cloudflare Workers AI/);
+		expect(roadmap).toMatch(/\*\*Target version:\*\* `1\.3\.0`/);
+		expect(roadmap).not.toMatch(/1\.6\.0\s+Cloudflare Workers AI preset/);
+	});
+
+	it("LSA-OC168: README architecture section mentions cloudflare preset", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("docs/img/adapters-overview.svg");
+		expect(readme).toContain("`cloudflare`");
 	});
 });

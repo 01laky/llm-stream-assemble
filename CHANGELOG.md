@@ -3,6 +3,36 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.0]
+
+### Added
+
+- OpenAI-compatible preset **`cloudflare`** for Cloudflare Workers AI REST
+  (`/v1/chat/completions`) with loose defaults like Groq (not strict like `azure`).
+- Host golden fixtures under `test/fixtures/openai-compatible/cloudflare/`: text-basic,
+  missing-metadata, tool-single, usage-stream, provider-error, json-mode, and
+  response-basic.
+- Example `examples/workers-ai/rest-chat-completions.ts` with URL builder, Bearer auth,
+  and `stream_options.include_usage` on streaming requests.
+- Proxy-safety documentation for Cloudflare Workers AI server-side forwarding.
+- Live smoke: `pnpm smoke:cloudflare`.
+- Tests **LSA-OC142** through **LSA-OC210**, **LSA-RF23** through **LSA-RF26**, **LSA-X36** through **LSA-X41**.
+- Dedicated robust regression suite `test/openai-compatible-presets-cloudflare-robust.test.ts`
+  (**LSA-OC170**–**LSA-OC210**): loose vs strict overrides, azure contrast, tool/usage/json
+  streams, reasoning aliases, conformance golden streams, unicode, and statelessness.
+- Extended cross-preset guards: **LSA-OC100**, **LSA-OC110**, **LSA-OC111**, **LSA-OC104** include
+  `cloudflare`.
+
+### Changed
+
+- README architecture diagrams and preset tables include `cloudflare`.
+- `docs/post-1.0-provider-roadmap.md` §10 Workers AI shipped at `1.3.0`.
+
+### Migration from 1.2.0 to 1.3.0
+
+- New optional preset: `openaiCompatibleAdapter({ provider: "cloudflare" })`.
+- No breaking changes.
+
 ## [1.2.0]
 
 ### Added

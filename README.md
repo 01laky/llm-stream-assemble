@@ -1,17 +1,17 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.2.0-blue)
+![core](https://img.shields.io/badge/core-1.3.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-755%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-833%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.2.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.3.0-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
 > A zero-dependency TypeScript layer for assembling **OpenAI**, **Anthropic**, **Google Gemini**, and **OpenAI-compatible** LLM streams into unified events — so you can stop hand-rolling provider parsers and keep one clean, typed event model across chat UIs, agents, proxies, and backends.
 
-**Status:** Stable `1.2.0`. Five built-in adapters, twelve OpenAI-compatible host presets (including **Azure OpenAI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.3.0`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -35,7 +35,7 @@
 
 - **Zero runtime dependencies** — thin adapters + core assembly, no provider SDKs.
 - **Stream and non-stream parity** — same `StreamEvent` union from SSE chunks or JSON bodies.
-- **Provider presets, not forks** — Groq, Azure, Perplexity, xAI, and others reuse one compatible parser with dialect options.
+- **Provider presets, not forks** — Groq, Azure, Cloudflare, Perplexity, xAI, and others reuse one compatible parser with dialect options.
 - **Proxy-ready transforms** — `toSSE({ sanitizeErrors: true })`, `tapEvents`, `collectStream`, fixture replay.
 
 ---
@@ -64,13 +64,13 @@ Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Re
 
 ## Providers at a glance
 
-| Adapter                                 | Provider / API                                                                                                          | Import                                      |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                 | `llm-stream-assemble`                       |
-| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, generic | `llm-stream-assemble`                       |
-| `anthropicAdapter()`                    | Anthropic Messages                                                                                                      | `llm-stream-assemble`                       |
-| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                    | `llm-stream-assemble`                       |
-| `geminiAdapter()`                       | Google AI Gemini                                                                                                        | `llm-stream-assemble` or `/adapters/gemini` |
+| Adapter                                 | Provider / API                                                                                                                                     | Import                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                                            | `llm-stream-assemble`                       |
+| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, **Cloudflare Workers AI**, generic | `llm-stream-assemble`                       |
+| `anthropicAdapter()`                    | Anthropic Messages                                                                                                                                 | `llm-stream-assemble`                       |
+| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                       |
+| `geminiAdapter()`                       | Google AI Gemini                                                                                                                                   | `llm-stream-assemble` or `/adapters/gemini` |
 
 Full feature flags and quirks: [compatibility matrix](./docs/compatibility.md).
 
@@ -193,8 +193,9 @@ Provider presets:
 | `perplexity` | Perplexity API                | Search-grounded answers; citations in `metadata.raw`                                        |
 | `xai`        | xAI Grok API                  | OpenAI-compatible; `reasoning_content` mapped when present                                  |
 | `azure`      | Azure OpenAI Chat Completions | Stricter preset; deployment URL + `api-key` auth; content filter metadata in `metadata.raw` |
+| `cloudflare` | Cloudflare Workers AI REST    | OpenAI-compatible `/v1/chat/completions`; Bearer + account id; loose preset like Groq       |
 
-Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`, Perplexity `https://api.perplexity.ai`, xAI `https://api.x.ai/v1`, Azure OpenAI `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`.
+Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`, Perplexity `https://api.perplexity.ai`, xAI `https://api.x.ai/v1`, Azure OpenAI `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`, Cloudflare Workers AI `https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions`.
 
 Strict vs loose configuration:
 
@@ -255,6 +256,44 @@ for await (const event of assembleStream(
 Use `openaiCompatibleAdapter({ provider: "azure", jsonMode: true })` when structured JSON output should map to `json.*` events. Content-filter blocks surface as `refusal.*` events with `finish_reason: content_filter`; filter result fields remain in `metadata.raw` for auditing. If an API gateway strips metadata from chunks, soften strict parsing server-side only with `allowMissingMetadata: true`.
 
 See `examples/node-fetch/azure-openai.ts` for a URL builder helper and `examples/proxy-safety/README.md` for server-side proxy notes.
+
+### Cloudflare Workers AI Usage
+
+Cloudflare Workers AI exposes an OpenAI-compatible REST endpoint at `/v1/chat/completions` under your account. Use the **`cloudflare`** preset — not `generic` — when you want fixture-tested defaults for Workers AI REST (loose metadata tolerance like Groq).
+
+```ts
+import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
+
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID!;
+const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`;
+
+const response = await fetch(url, {
+	method: "POST",
+	headers: {
+		Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN!}`,
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		model: "@cf/meta/llama-3.1-8b-instruct",
+		messages: [{ role: "user", content: "Hello" }],
+		stream: true,
+		stream_options: { include_usage: true },
+	}),
+});
+
+for await (const event of assembleStream(
+	response.body!,
+	openaiCompatibleAdapter({ provider: "cloudflare" }),
+)) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+Streaming usage requires `stream_options: { include_usage: true }` on the request. Use `openaiCompatibleAdapter({ provider: "cloudflare", jsonMode: true })` when JSON output should map to `json.*` events.
+
+The **`env.AI.run(model, { stream: true })`** Worker binding can return SSE bytes compatible with `assembleStream` when the model streams Chat Completions-shaped payloads — account binding and auth stay in your Worker; this library only parses the bytes.
+
+See `examples/workers-ai/rest-chat-completions.ts` and `examples/proxy-safety/README.md` (Bearer token + account id must never reach the browser).
 
 ### Anthropic Messages Usage
 
@@ -377,17 +416,18 @@ for await (const event of assembleFromFile(
 
 ## Examples & proxy safety
 
-| Example                                                                                  | Description                             |
-| ---------------------------------------------------------------------------------------- | --------------------------------------- |
-| [`examples/node-fetch/openai-chat.ts`](./examples/node-fetch/openai-chat.ts)             | OpenAI Chat Completions streaming       |
-| [`examples/node-fetch/openai-compatible.ts`](./examples/node-fetch/openai-compatible.ts) | OpenAI-compatible presets               |
-| [`examples/node-fetch/azure-openai.ts`](./examples/node-fetch/azure-openai.ts)           | Azure OpenAI deployment URL + `api-key` |
-| [`examples/node-fetch/perplexity.ts`](./examples/node-fetch/perplexity.ts)               | Perplexity streaming                    |
-| [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                             | xAI Grok streaming                      |
-| [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                 | Anthropic Messages                      |
-| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                       | Google Gemini SSE                       |
-| [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)       | Local fixture replay                    |
-| [`examples/proxy-safety/`](./examples/proxy-safety/)                                     | Proxy + browser client patterns         |
+| Example                                                                                          | Description                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| [`examples/node-fetch/openai-chat.ts`](./examples/node-fetch/openai-chat.ts)                     | OpenAI Chat Completions streaming                |
+| [`examples/node-fetch/openai-compatible.ts`](./examples/node-fetch/openai-compatible.ts)         | OpenAI-compatible presets                        |
+| [`examples/node-fetch/azure-openai.ts`](./examples/node-fetch/azure-openai.ts)                   | Azure OpenAI deployment URL + `api-key`          |
+| [`examples/workers-ai/rest-chat-completions.ts`](./examples/workers-ai/rest-chat-completions.ts) | Cloudflare Workers AI REST + `cloudflare` preset |
+| [`examples/node-fetch/perplexity.ts`](./examples/node-fetch/perplexity.ts)                       | Perplexity streaming                             |
+| [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                                     | xAI Grok streaming                               |
+| [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                         | Anthropic Messages                               |
+| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                               | Google Gemini SSE                                |
+| [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)               | Local fixture replay                             |
+| [`examples/proxy-safety/`](./examples/proxy-safety/)                                             | Proxy + browser client patterns                  |
 
 Proxy safety:
 

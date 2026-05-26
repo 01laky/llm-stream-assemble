@@ -22,7 +22,7 @@ Used by **LSA-OC31**–**LSA-OC40** with default `openaiCompatibleAdapter()` (ge
 
 ## Host subfolders (preset-specific)
 
-Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109**, **LSA-OC113**–**LSA-OC141** call `openaiCompatibleAdapter({ provider: "<host>" })`.
+Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109**, **LSA-OC113**–**LSA-OC141**, **LSA-OC142**–**LSA-OC169**, **LSA-OC170**–**LSA-OC210** call `openaiCompatibleAdapter({ provider: "<host>" })`.
 
 | Folder        | Preset key   | Notes                                                                        |
 | ------------- | ------------ | ---------------------------------------------------------------------------- |
@@ -37,6 +37,7 @@ Golden tests **LSA-OC47**–**LSA-OC94**, **LSA-OC108**–**LSA-OC109**, **LSA-O
 | `perplexity/` | `perplexity` | Citations/search metadata, provider error, response                          |
 | `xai/`        | `xai`        | Grok OpenAI-compatible; reasoning stream, tools                              |
 | `azure/`      | `azure`      | Deployment-shaped Chat Completions; content filter, json-mode, strict preset |
+| `cloudflare/` | `cloudflare` | Workers AI REST; sparse metadata, usage chunk finish, json-mode, tools       |
 
 ## Regenerating `.expected.json`
 

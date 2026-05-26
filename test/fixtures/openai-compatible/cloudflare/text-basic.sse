@@ -1,0 +1,6 @@
+data: {"id":"cf-chatcmpl-1","model":"@cf/meta/llama-3.1-8b-instruct","choices":[{"index":0,"delta":{"content":"Hello from Cloudflare"}}]}
+
+data: {"id":"cf-chatcmpl-1","model":"@cf/meta/llama-3.1-8b-instruct","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+
+data: [DONE]
+

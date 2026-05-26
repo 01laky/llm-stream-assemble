@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { runAnthropicExample } from "../../examples/node-fetch/anthropic";
 import { runAzureOpenAIExample } from "../../examples/node-fetch/azure-openai";
+import {
+	runCloudflareWorkersAIExample,
+	buildCloudflareWorkersAIChatCompletionsUrl,
+} from "../../examples/workers-ai/rest-chat-completions";
 import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
@@ -26,6 +30,10 @@ const xaiSSE = readFileSync(
 );
 const azureSSE = readFileSync(
 	join(rootDir, "test/fixtures/openai-compatible/azure/text-basic.sse"),
+	"utf8",
+);
+const cloudflareSSE = readFileSync(
+	join(rootDir, "test/fixtures/openai-compatible/cloudflare/text-basic.sse"),
 	"utf8",
 );
 
@@ -209,5 +217,55 @@ describe("node fetch examples", () => {
 			write: (text) => output.push(text),
 		});
 		expect(output.join("")).toContain("Hello from Azure");
+	});
+
+	it("LSA-X36: Cloudflare Workers AI example validates env and uses injected fake fetch", async () => {
+		await withEnv(
+			{
+				CLOUDFLARE_API_TOKEN: undefined,
+				CLOUDFLARE_ACCOUNT_ID: undefined,
+			},
+			async () => {
+				await expect(
+					runCloudflareWorkersAIExample({ fetchImpl: fakeStreamingFetch(cloudflareSSE) }),
+				).rejects.toThrow("CLOUDFLARE_API_TOKEN is required");
+			},
+		);
+		await withEnv(
+			{
+				CLOUDFLARE_API_TOKEN: "token",
+				CLOUDFLARE_ACCOUNT_ID: undefined,
+			},
+			async () => {
+				await expect(
+					runCloudflareWorkersAIExample({ fetchImpl: fakeStreamingFetch(cloudflareSSE) }),
+				).rejects.toThrow("CLOUDFLARE_ACCOUNT_ID is required");
+			},
+		);
+		const output: string[] = [];
+		await runCloudflareWorkersAIExample({
+			apiToken: "token",
+			accountId: "acct",
+			fetchImpl: fakeStreamingFetch(cloudflareSSE),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello from Cloudflare");
+	});
+
+	it("LSA-X40: buildCloudflareWorkersAIChatCompletionsUrl embeds account id in path", () => {
+		const url = buildCloudflareWorkersAIChatCompletionsUrl({ accountId: "acct_123" });
+		expect(url).toBe(
+			"https://api.cloudflare.com/client/v4/accounts/acct_123/ai/v1/chat/completions",
+		);
+	});
+
+	it("LSA-X41: Cloudflare example source documents stream_options include_usage", () => {
+		const source = readFileSync(
+			join(rootDir, "examples/workers-ai/rest-chat-completions.ts"),
+			"utf8",
+		);
+		expect(source).toContain("stream_options");
+		expect(source).toContain("include_usage");
+		expect(source).toContain('provider: "cloudflare"');
 	});
 });

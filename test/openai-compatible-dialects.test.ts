@@ -110,6 +110,7 @@ describe("openaiCompatibleAdapter dialect options", () => {
 			"perplexity",
 			"xai",
 			"azure",
+			"cloudflare",
 		];
 		for (const provider of providers) {
 			expect(

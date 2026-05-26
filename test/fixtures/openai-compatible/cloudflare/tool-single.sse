@@ -1,0 +1,4 @@
+data: {"id":"cf-chatcmpl-tool","model":"@cf/meta/llama-3.1-8b-instruct","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_cf_1","function":{"name":"get_weather","arguments":"{\"city\":\"Prague\"}"}}]},"finish_reason":"tool_calls"}]}
+
+data: [DONE]
+

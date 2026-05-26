@@ -118,6 +118,7 @@ describe("release readiness", () => {
 			"examples/node-fetch/perplexity.ts",
 			"examples/node-fetch/xai.ts",
 			"examples/node-fetch/gemini.ts",
+			"examples/workers-ai/rest-chat-completions.ts",
 		]) {
 			expect(readme).toContain(sample);
 		}
