@@ -93,9 +93,9 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 
 ```
 1.0.0  ✅  Stable baseline (shipped)
-1.1.0      Google Gemini adapter (first net-new provider)
+1.1.0  ✅  Google Gemini adapter (first net-new provider)
+1.1.5  ✅  OpenAI-compatible preset expansion (Groq, Mistral, DeepSeek, Ollama, …)
 1.2.0      AWS Bedrock adapter OR Azure OpenAI adapter (pick one enterprise path)
-1.3.0      OpenAI-compatible preset expansion (Groq, Mistral, DeepSeek, Ollama)
 1.4.0      Second enterprise / niche adapter (Bedrock or Azure, whichever missed 1.2)
 1.5.0      Cohere adapter (if demand exists)
 1.6.0      Perplexity / Cloudflare Workers AI presets (if fixtures confirm shape)
@@ -187,13 +187,19 @@ export interface GeminiAdapterOptions {
 
 ### 2. Mistral (`openaiCompatibleAdapter` preset + optional dialect)
 
-**Target version:** `1.3.0` (preset bundle) or patch if only minor dialect fixes  
+**Target version:** `1.1.5` (shipped preset bundle)  
 **Priority:** High for European deployments; **low implementation cost** if stream stays OpenAI-shaped.
 
 #### Approach
 
 Prefer extending `openaiCompatibleAdapter({ provider: "mistral" })` rather than a
 standalone adapter unless fixtures prove incompatible event shapes.
+
+#### Deliverables checklist
+
+- [x] `provider: "mistral"` preset + host fixtures under `test/fixtures/openai-compatible/mistral/`
+- [x] Golden tests **LSA-OC53**–**LSA-OC54**; docs quirks row
+- [x] README preset table + base URL
 
 #### Work items
 
@@ -214,7 +220,7 @@ standalone adapter unless fixtures prove incompatible event shapes.
 
 ### 3. Groq, Together, Fireworks (compatible preset expansion)
 
-**Target version:** `1.3.0` (bundled preset release)  
+**Target version:** `1.1.5` (shipped bundled preset release)  
 **Priority:** High reach, **lowest cost** — hosts advertise OpenAI-compatible APIs.
 
 #### Approach
@@ -226,6 +232,12 @@ Extend `OpenAICompatibleProvider` presets:
 | `groq`      | Fast inference; occasional missing usage; tool ids may be late |
 | `together`  | Model-dependent dialect drift                                  |
 | `fireworks` | Similar to Together; verify tool streaming fixtures            |
+
+#### Deliverables checklist
+
+- [x] Host subfolders `groq/`, `together/`, `fireworks/` with golden fixtures
+- [x] Tests **LSA-OC47**–**LSA-OC48**, **LSA-OC59**–**LSA-OC62**
+- [x] README / compatibility quirks per host
 
 #### Deliverables
 
@@ -242,7 +254,7 @@ Extend `OpenAICompatibleProvider` presets:
 
 ### 4. DeepSeek (`openaiCompatibleAdapter` preset + reasoning dialect)
 
-**Target version:** `1.3.0` (bundled with Groq/Mistral/Ollama presets)  
+**Target version:** `1.1.5` (shipped with Groq/Mistral/Ollama presets)  
 **Priority:** High — widely deployed; **OpenAI-compatible base** with model-specific
 reasoning fields (`reasoning_content`, R1-style thinking streams).
 
@@ -253,6 +265,13 @@ Extend `openaiCompatibleAdapter({ provider: "deepseek" })` with dialect options 
 - reasoning/thinking content mapped to `reasoning.*` (reuse existing reasoning alias logic);
 - tool-call streaming parity with OpenAI Chat;
 - usage field aliases if DeepSeek uses `prompt_tokens` / `completion_tokens` variants.
+
+#### Deliverables checklist
+
+- [x] `provider: "deepseek"` + `reasoning_content` alias in `PRESET_OVERRIDES`
+- [x] Host fixtures: text, reasoning, tool, error, non-stream response
+- [x] Tests **LSA-OC49**–**LSA-OC52**, **LSA-OC66**, parity **LSA-OC77**
+- [x] Live smoke `pnpm smoke:deepseek`
 
 #### Work items
 
@@ -410,11 +429,17 @@ hosting patterns.
 
 ### 12. Ollama (formal preset + docs + live smoke)
 
-**Target version:** `1.3.0`  
+**Target version:** `1.1.5` (shipped)  
 **Priority:** High for **free local validation** of live streaming without cloud billing.
 
 Ollama already works through `openaiCompatibleAdapter({ provider: "generic" })` against
 `http://localhost:11434/v1/chat/completions`. Formalization work:
+
+#### Deliverables checklist
+
+- [x] `provider: "ollama"` preset with host golden fixtures
+- [x] Live smoke `pnpm smoke:ollama`
+- [x] Document model pull / startup in `examples/README.md` and `docs/live-smoke.md`
 
 - Add `provider: "ollama"` preset with documented defaults.
 - Fixtures for local streaming quirks (missing ids, slow tool args).
@@ -427,8 +452,13 @@ This is **not** a new adapter unless Ollama diverges from OpenAI shape in practi
 
 ### 13. OpenRouter (preset + dialect documentation)
 
-**Target version:** `1.3.0` or patch  
+**Target version:** `1.1.5` (shipped)  
 **Priority:** Medium — aggregation layer, not a model provider.
+
+#### Deliverables checklist
+
+- [x] Host fixtures under `openrouter/` including router metadata
+- [x] Tests **LSA-OC63**–**LSA-OC64**; parity **LSA-OC79**
 
 - Extend compatible presets with `openrouter`.
 - Fixture tests for router-specific metadata fields and multi-model headers.

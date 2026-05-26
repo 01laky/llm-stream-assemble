@@ -1,24 +1,24 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_meta"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_meta",
-    "model": "gemini-2.5-flash"
-  },
-  {
-    "type": "text.delta",
-    "text": "Hi"
-  },
-  {
-    "type": "text.done",
-    "text": "Hi"
-  },
-  {
-    "type": "finish",
-    "reason": "stop",
-    "choiceIndex": 0
-  }
+	{
+		"type": "message.start",
+		"id": "resp_meta"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_meta",
+		"model": "gemini-2.5-flash"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hi"
+	},
+	{
+		"type": "text.done",
+		"text": "Hi"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
 ]

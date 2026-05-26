@@ -22,6 +22,14 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"json-mode",
 			"response-generic",
 			"response-loose-error",
+			"groq/",
+			"deepseek/",
+			"mistral/",
+			"ollama/",
+			"lmstudio/",
+			"together/",
+			"fireworks/",
+			"openrouter/",
 		]) {
 			expect(readme).toContain(name);
 		}
@@ -64,5 +72,59 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(normalizeCompatibleRawChunks(openaiCompatibleAdapter().parseChunk(raw))).toEqual(
 			normalizeCompatibleRawChunks(openaiChatAdapter().parseChunk(raw)),
 		);
+	});
+
+	it("LSA-OC80: fixture README lists host subfolders and root fixture families", () => {
+		const readme = readFileSync(join(rootDir, "test/fixtures/openai-compatible/README.md"), "utf8");
+		for (const folder of [
+			"groq/",
+			"deepseek/",
+			"mistral/",
+			"ollama/",
+			"lmstudio/",
+			"together/",
+			"fireworks/",
+			"openrouter/",
+		]) {
+			expect(readme).toContain(folder);
+		}
+	});
+
+	it("LSA-OC81: README provider preset table includes deepseek and mistral with base URLs", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("`deepseek`");
+		expect(readme).toContain("`mistral`");
+		expect(readme).toContain("api.deepseek.com");
+		expect(readme).toContain("api.mistral.ai");
+	});
+
+	it("LSA-OC82: compatibility docs quirks rows cover host presets", () => {
+		const docs = readFileSync(join(rootDir, "docs/compatibility.md"), "utf8");
+		for (const host of [
+			"Groq",
+			"DeepSeek",
+			"Mistral",
+			"Ollama",
+			"LM Studio",
+			"Together",
+			"Fireworks",
+			"OpenRouter",
+		]) {
+			expect(docs).toContain(host);
+		}
+	});
+
+	it("LSA-OC83: CHANGELOG documents 1.1.5 preset expansion", () => {
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.1.5]");
+		expect(changelog).toContain("deepseek");
+		expect(changelog).toContain("mistral");
+	});
+
+	it("LSA-OC84: package.json version is 1.1.5", () => {
+		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
+			version: string;
+		};
+		expect(pkg.version).toBe("1.1.5");
 	});
 });

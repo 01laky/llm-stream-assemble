@@ -1,15 +1,15 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_safe"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_safe"
-  },
-  {
-    "type": "finish",
-    "reason": "content_filter",
-    "choiceIndex": 0
-  }
+	{
+		"type": "message.start",
+		"id": "resp_safe"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_safe"
+	},
+	{
+		"type": "finish",
+		"reason": "content_filter",
+		"choiceIndex": 0
+	}
 ]

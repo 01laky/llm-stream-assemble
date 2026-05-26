@@ -16,10 +16,10 @@ pnpm exec tsx scripts/live-smoke/gemini.ts
 
 Optional env:
 
-| Variable | Default | Purpose |
-| -------- | ------- | ------- |
-| `GOOGLE_API_KEY` / `GEMINI_API_KEY` | — | API auth (either name accepted) |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Model id for smoke prompt |
+| Variable                            | Default            | Purpose                         |
+| ----------------------------------- | ------------------ | ------------------------------- |
+| `GOOGLE_API_KEY` / `GEMINI_API_KEY` | —                  | API auth (either name accepted) |
+| `GEMINI_MODEL`                      | `gemini-2.5-flash` | Model id for smoke prompt       |
 
 ### Expected event types (short text prompt)
 
@@ -31,11 +31,11 @@ Optional env:
 
 ### Failure modes
 
-| Symptom | Likely cause |
-| ------- | ------------ |
-| 401 / 403 | Invalid or missing API key |
-| 429 | Quota / rate limit |
-| Empty stream | Model or region restriction |
+| Symptom            | Likely cause                                           |
+| ------------------ | ------------------------------------------------------ |
+| 401 / 403          | Invalid or missing API key                             |
+| 429                | Quota / rate limit                                     |
+| Empty stream       | Model or region restriction                            |
 | Tool smoke skipped | Set `GEMINI_SMOKE_TOOLS=1` to run optional tool prompt |
 
 ## Checklist before tagging a Gemini minor
@@ -50,3 +50,51 @@ Optional env:
 
 - Do not commit `.env` or API keys.
 - Live smoke logs event types only — avoid logging full provider payloads in shared terminals.
+
+## Ollama (OpenAI-compatible preset)
+
+Requires a running Ollama instance with an OpenAI-compatible endpoint (default `http://localhost:11434/v1`).
+
+```bash
+pnpm build
+pnpm smoke:ollama
+```
+
+Optional env:
+
+| Variable          | Default                     | Purpose                    |
+| ----------------- | --------------------------- | -------------------------- |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | OpenAI-compatible base URL |
+| `OLLAMA_MODEL`    | `llama3.2`                  | Model id for smoke prompt  |
+
+If Ollama is unreachable, the script exits **0** with a skip message (local optional check).
+
+### Expected event types
+
+- `text.delta` (required)
+- Optional `finish` with `reason: "stop"`
+
+## DeepSeek (OpenAI-compatible preset)
+
+```bash
+pnpm build
+pnpm smoke:deepseek
+```
+
+Requires `DEEPSEEK_API_KEY`.
+
+| Variable            | Default                    | Purpose      |
+| ------------------- | -------------------------- | ------------ |
+| `DEEPSEEK_API_KEY`  | —                          | Bearer token |
+| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com` | API base     |
+| `DEEPSEEK_MODEL`    | `deepseek-chat`            | Model id     |
+
+Uses `openaiCompatibleAdapter({ provider: "deepseek" })`. Expect at least one `text.delta` event.
+
+## Checklist before tagging a compatible preset patch
+
+1. `pnpm verify` green (includes `fixtures:check-compatible`).
+2. Host golden tests green (`LSA-OC47` … `LSA-OC66`).
+3. Optional: `pnpm smoke:ollama` and/or `pnpm smoke:deepseek` when hosts are available.
+4. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
+5. Bump `CHANGELOG.md` + `package.json` version together.

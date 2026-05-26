@@ -96,7 +96,7 @@ data: {"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model",
 	"json-mode": `data: {"responseId":"resp_json","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"{\\"ok\\":true}"}]}}],"finishReason":"STOP"}
 
 `,
-	"thinking": `data: {"responseId":"resp_think","candidates":[{"index":0,"content":{"role":"model","parts":[{"thought":true,"text":"Let me think"}]}}]}
+	thinking: `data: {"responseId":"resp_think","candidates":[{"index":0,"content":{"role":"model","parts":[{"thought":true,"text":"Let me think"}]}}]}
 
 data: {"candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"Answer"}]}}],"finishReason":"STOP"}
 
@@ -121,7 +121,7 @@ data: {"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model",
 	"provider-error": `data: {"error":{"code":400,"message":"Invalid request","status":"INVALID_ARGUMENT"}}
 
 `,
-	"incomplete": `data: {"responseId":"resp_inc","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"partial"}]}}]}
+	incomplete: `data: {"responseId":"resp_inc","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"partial"}]}}]}
 
 `,
 	"empty-candidates": `data: {"responseId":"resp_ec","candidates":[]}

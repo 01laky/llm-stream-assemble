@@ -1,0 +1,4 @@
+data: {"id":"gen-or-1","model":"openrouter/auto","choices":[{"index":0,"delta":{"content":"router hi"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

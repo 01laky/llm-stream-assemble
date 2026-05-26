@@ -103,7 +103,10 @@ describe("geminiAdapter edge cases", () => {
 	it("LSA-G63: tool-parallel.sse matches expected assembleStream events", async () => {
 		const events = normalizeGeminiEvents(
 			await collectAsync(
-				assembleStream(byteStreamFromStrings(geminiTextFixture("tool-parallel", "sse")), geminiAdapter()),
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("tool-parallel", "sse")),
+					geminiAdapter(),
+				),
 			),
 		);
 		expect(events).toEqual(expectedGeminiEvents("tool-parallel"));

@@ -1,22 +1,22 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_len"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_len"
-  },
-  {
-    "type": "text.delta",
-    "text": "truncated"
-  },
-  {
-    "type": "text.done",
-    "text": "truncated"
-  },
-  {
-    "type": "finish",
-    "reason": "incomplete"
-  }
+	{
+		"type": "message.start",
+		"id": "resp_len"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_len"
+	},
+	{
+		"type": "text.delta",
+		"text": "truncated"
+	},
+	{
+		"type": "text.done",
+		"text": "truncated"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
 ]

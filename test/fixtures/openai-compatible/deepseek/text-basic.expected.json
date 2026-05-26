@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "ds_stream"
+	},
+	{
+		"type": "metadata",
+		"model": "deepseek-chat",
+		"responseId": "ds_stream"
+	},
+	{
+		"type": "text.delta",
+		"text": "DeepSeek reply"
+	},
+	{
+		"type": "text.done",
+		"text": "DeepSeek reply"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

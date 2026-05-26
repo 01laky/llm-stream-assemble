@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "lmstudio sparse"
+	},
+	{
+		"type": "text.done",
+		"text": "lmstudio sparse"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

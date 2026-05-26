@@ -131,10 +131,7 @@ class GeminiStreamParser {
 			const mapped = mapFinishReason(finishReason);
 			if (mapped === "error") {
 				chunks.push(
-					...providerErrorChunksFromMessage(
-						`Gemini finishReason: ${finishReason}`,
-						false,
-					),
+					...providerErrorChunksFromMessage(`Gemini finishReason: ${finishReason}`, false),
 				);
 			} else {
 				chunks.push({ kind: "finish", reason: mapped, choiceIndex });
@@ -380,11 +377,7 @@ function usageChunk(value: unknown): RawChunk | undefined {
 	const inputTokens = asNumber(value.promptTokenCount);
 	const outputTokens = asNumber(value.candidatesTokenCount);
 	const reasoningTokens = asNumber(value.thoughtsTokenCount);
-	if (
-		inputTokens === undefined &&
-		outputTokens === undefined &&
-		reasoningTokens === undefined
-	) {
+	if (inputTokens === undefined && outputTokens === undefined && reasoningTokens === undefined) {
 		return undefined;
 	}
 	return optionalRawChunk({

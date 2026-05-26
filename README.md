@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.1.0-blue)
+![core](https://img.shields.io/badge/core-1.1.5-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-650%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-690%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.1.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.1.5-brightgreen)
 
 A zero-dependency TypeScript library that normalizes LLM streaming responses — text, tool calls, reasoning, JSON, usage, errors, and non-streaming payloads — into unified events.
 
-**Status:** Stable `1.1.0`. Core, OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.1.5`. Core, OpenAI Chat, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 > A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
 
@@ -123,15 +123,19 @@ for await (const event of assembleStream(response.body!, adapter)) {
 
 Provider presets:
 
-| Preset       | Intended hosts                | Notes                                                       |
-| ------------ | ----------------------------- | ----------------------------------------------------------- |
-| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                              |
-| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear |
-| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model               |
-| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                          |
-| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                    |
-| `together`   | Together AI                   | OpenAI-like, reasoning fields may vary                      |
-| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                         |
+| Preset       | Intended hosts                | Notes                                                           |
+| ------------ | ----------------------------- | --------------------------------------------------------------- |
+| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                                  |
+| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear     |
+| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model                   |
+| `deepseek`   | DeepSeek API                  | Maps `reasoning_content` to reasoning events on R1-style models |
+| `mistral`    | Mistral API                   | OpenAI-like; parallel tool calls supported                      |
+| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                              |
+| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                        |
+| `together`   | Together AI                   | OpenAI-like; `reasoning` / `reasoning_delta` aliases            |
+| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                             |
+
+Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`.
 
 Strict vs loose configuration:
 

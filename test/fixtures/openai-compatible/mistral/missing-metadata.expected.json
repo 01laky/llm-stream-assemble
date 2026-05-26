@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "mistral sparse"
+	},
+	{
+		"type": "text.done",
+		"text": "mistral sparse"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

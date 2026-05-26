@@ -1,0 +1,11 @@
+{
+	"id": "groq_1",
+	"model": "llama-3.1-8b-instant",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hi" },
+			"finish_reason": "stop"
+		}
+	]
+}

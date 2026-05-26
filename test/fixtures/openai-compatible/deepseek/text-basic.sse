@@ -1,0 +1,4 @@
+data: {"id":"ds_stream","model":"deepseek-chat","choices":[{"index":0,"delta":{"content":"DeepSeek reply"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

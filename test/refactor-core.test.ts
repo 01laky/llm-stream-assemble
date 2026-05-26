@@ -193,6 +193,8 @@ describe("refactor: openai-compatible presets", () => {
 		"generic",
 		"openrouter",
 		"groq",
+		"deepseek",
+		"mistral",
 		"ollama",
 		"lmstudio",
 		"together",
@@ -221,6 +223,18 @@ describe("refactor: openai-compatible presets", () => {
 	it("LSA-RF16: allowMissingToolIds option removed from public type", () => {
 		const options: Parameters<typeof openaiCompatibleAdapter>[0] = { provider: "groq" };
 		expect("allowMissingToolIds" in (options ?? {})).toBe(false);
+	});
+
+	it("LSA-RF19: deepseek preset omits thinking_content alias while generic maps it", () => {
+		const generic = openaiCompatibleAdapter({ provider: "generic" });
+		const deepseek = openaiCompatibleAdapter({ provider: "deepseek" });
+		const payload = JSON.stringify({
+			choices: [{ delta: { thinking_content: "trace" } }],
+		});
+		expect(generic.parseChunk(payload)).toEqual([
+			{ kind: "reasoning-delta", text: "trace", variant: "detail" },
+		]);
+		expect(deepseek.parseChunk(payload)).toEqual([]);
 	});
 });
 

@@ -1,0 +1,11 @@
+{
+	"id": "ds_1",
+	"model": "deepseek-chat",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hello" },
+			"finish_reason": "stop"
+		}
+	]
+}

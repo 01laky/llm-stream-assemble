@@ -1,0 +1,6 @@
+data: {"choices":[{"index":0,"delta":{"reasoning":"step one"}}]}
+
+data: {"choices":[{"index":0,"delta":{"content":"answer"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

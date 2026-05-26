@@ -1,32 +1,32 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_think"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_think"
-  },
-  {
-    "type": "reasoning.delta",
-    "text": "Let me think",
-    "variant": "detail"
-  },
-  {
-    "type": "text.delta",
-    "text": "Answer"
-  },
-  {
-    "type": "text.done",
-    "text": "Answer"
-  },
-  {
-    "type": "reasoning.done",
-    "text": "Let me think",
-    "variant": "detail"
-  },
-  {
-    "type": "finish",
-    "reason": "incomplete"
-  }
+	{
+		"type": "message.start",
+		"id": "resp_think"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_think"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "Let me think",
+		"variant": "detail"
+	},
+	{
+		"type": "text.delta",
+		"text": "Answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Answer"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "Let me think",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
 ]

@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "Groq fast"
+	},
+	{
+		"type": "text.done",
+		"text": "Groq fast"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

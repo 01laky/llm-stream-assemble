@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "gen-or-1"
+	},
+	{
+		"type": "metadata",
+		"model": "openrouter/auto",
+		"responseId": "gen-or-1"
+	},
+	{
+		"type": "text.delta",
+		"text": "router hi"
+	},
+	{
+		"type": "text.done",
+		"text": "router hi"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -1,0 +1,4 @@
+data: {"id":"mistral_1","model":"mistral-small","choices":[{"index":0,"delta":{"content":"Bonjour"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

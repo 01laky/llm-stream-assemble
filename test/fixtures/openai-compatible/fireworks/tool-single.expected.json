@@ -1,0 +1,24 @@
+[
+	{
+		"type": "tool_call.start",
+		"id": "call_fw",
+		"name": "ping",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_fw",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_fw",
+		"name": "ping",
+		"args": {}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

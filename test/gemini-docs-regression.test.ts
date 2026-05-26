@@ -49,11 +49,7 @@ describe("Gemini adapter docs mapping regression", () => {
 				],
 			}),
 		);
-		expect(chunks.map((c) => c.kind)).toEqual([
-			"tool-start",
-			"tool-args-delta",
-			"tool-done",
-		]);
+		expect(chunks.map((c) => c.kind)).toEqual(["tool-start", "tool-args-delta", "tool-done"]);
 	});
 
 	it("LSA-G67: jsonMode routes text through json-delta", () => {
@@ -68,9 +64,7 @@ describe("Gemini adapter docs mapping regression", () => {
 		expect(
 			geminiAdapter().parseChunk(
 				payload({
-					candidates: [
-						{ content: { parts: [{ thought: true, text: "silent plan" }] } },
-					],
+					candidates: [{ content: { parts: [{ thought: true, text: "silent plan" }] } }],
 				}),
 			),
 		).toEqual([{ kind: "reasoning-delta", text: "silent plan", variant: "detail" }]);
@@ -94,9 +88,7 @@ describe("Gemini adapter docs mapping regression", () => {
 		expect(
 			geminiAdapter().parseChunk(
 				payload({
-					candidates: [
-						{ index: 0, finishReason: "BLOCKLIST", content: { parts: [] } },
-					],
+					candidates: [{ index: 0, finishReason: "BLOCKLIST", content: { parts: [] } }],
 				}),
 			),
 		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });

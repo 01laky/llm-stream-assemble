@@ -50,9 +50,7 @@ describe("geminiAdapter finish and usage", () => {
 		expect(
 			geminiAdapter().parseChunk(
 				payload({
-					candidates: [
-						{ index: 0, finishReason: "SPII", content: { parts: [] } },
-					],
+					candidates: [{ index: 0, finishReason: "SPII", content: { parts: [] } }],
 				}),
 			),
 		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });
@@ -90,9 +88,7 @@ describe("geminiAdapter finish and usage", () => {
 		expect(
 			geminiAdapter().parseChunk(
 				payload({
-					candidates: [
-						{ index: 0, finishReason: "RECITATION", content: { parts: [] } },
-					],
+					candidates: [{ index: 0, finishReason: "RECITATION", content: { parts: [] } }],
 				}),
 			),
 		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });

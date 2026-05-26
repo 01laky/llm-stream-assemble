@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "ollama sparse"
+	},
+	{
+		"type": "text.done",
+		"text": "ollama sparse"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

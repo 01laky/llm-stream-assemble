@@ -1,24 +1,24 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_uni"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_uni",
-    "model": "gemini-2.5-flash"
-  },
-  {
-    "type": "text.delta",
-    "text": "Hello 🌍 你好"
-  },
-  {
-    "type": "text.done",
-    "text": "Hello 🌍 你好"
-  },
-  {
-    "type": "finish",
-    "reason": "stop",
-    "choiceIndex": 0
-  }
+	{
+		"type": "message.start",
+		"id": "resp_uni"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_uni",
+		"model": "gemini-2.5-flash"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello 🌍 你好"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello 🌍 你好"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
 ]

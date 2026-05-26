@@ -1,5 +1,5 @@
 {
-  "promptFeedback": {
-    "blockReason": "SAFETY"
-  }
+	"promptFeedback": {
+		"blockReason": "SAFETY"
+	}
 }

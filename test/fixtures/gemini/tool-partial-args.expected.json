@@ -1,43 +1,43 @@
 [
-  {
-    "type": "message.start",
-    "id": "resp_part"
-  },
-  {
-    "type": "metadata",
-    "responseId": "resp_part"
-  },
-  {
-    "type": "tool_call.start",
-    "id": "gemini:0:0",
-    "name": "controlLight",
-    "index": 0,
-    "choiceIndex": 0
-  },
-  {
-    "type": "tool_call.args.delta",
-    "id": "gemini:0:0",
-    "delta": "{\"brightness\":50}",
-    "partial": {
-      "brightness": 50
-    }
-  },
-  {
-    "type": "tool_call.args.delta",
-    "id": "gemini:0:0",
-    "delta": "%",
-    "partial": {
-      "brightness": 50
-    }
-  },
-  {
-    "type": "tool_call.done",
-    "id": "gemini:0:0",
-    "name": "controlLight",
-    "args": "{\"brightness\":50}%"
-  },
-  {
-    "type": "finish",
-    "reason": "incomplete"
-  }
+	{
+		"type": "message.start",
+		"id": "resp_part"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_part"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "gemini:0:0",
+		"name": "controlLight",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "gemini:0:0",
+		"delta": "{\"brightness\":50}",
+		"partial": {
+			"brightness": 50
+		}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "gemini:0:0",
+		"delta": "%",
+		"partial": {
+			"brightness": 50
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "gemini:0:0",
+		"name": "controlLight",
+		"args": "{\"brightness\":50}%"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
 ]

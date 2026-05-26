@@ -1,9 +1,11 @@
 import { assembleStream, openaiCompatibleAdapter } from "../../src/index";
+import type { OpenAICompatibleProvider } from "../../src/adapters/openai-compatible";
 
 export interface OpenAICompatibleExampleOptions {
 	baseUrl?: string;
 	apiKey?: string;
 	model?: string;
+	provider?: OpenAICompatibleProvider;
 	fetchImpl?: typeof fetch;
 	write?: (text: string) => void;
 }
@@ -14,6 +16,10 @@ export async function runOpenAICompatibleExample(
 	const baseUrl = options.baseUrl ?? process.env.OPENAI_COMPATIBLE_BASE_URL;
 	const apiKey = options.apiKey ?? process.env.OPENAI_COMPATIBLE_API_KEY;
 	const model = options.model ?? process.env.OPENAI_COMPATIBLE_MODEL;
+	const provider =
+		options.provider ??
+		(process.env.OPENAI_COMPATIBLE_PROVIDER as OpenAICompatibleProvider | undefined) ??
+		"generic";
 	if (!baseUrl) throw new Error("OPENAI_COMPATIBLE_BASE_URL is required");
 	if (!apiKey) throw new Error("OPENAI_COMPATIBLE_API_KEY is required");
 	if (!model) throw new Error("OPENAI_COMPATIBLE_MODEL is required");
@@ -35,10 +41,7 @@ export async function runOpenAICompatibleExample(
 
 	if (!response.body) throw new Error("OpenAI-compatible response body is empty");
 
-	for await (const event of assembleStream(
-		response.body,
-		openaiCompatibleAdapter({ provider: "generic" }),
-	)) {
+	for await (const event of assembleStream(response.body, openaiCompatibleAdapter({ provider }))) {
 		if (event.type === "text.delta") write(event.text);
 		if (event.type === "finish") write(`\nFinish: ${event.reason}\n`);
 	}

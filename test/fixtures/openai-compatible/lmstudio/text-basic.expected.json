@@ -1,0 +1,14 @@
+[
+	{
+		"type": "text.delta",
+		"text": "lmstudio local"
+	},
+	{
+		"type": "text.done",
+		"text": "lmstudio local"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

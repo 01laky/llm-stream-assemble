@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "mistral_1"
+	},
+	{
+		"type": "metadata",
+		"model": "mistral-small",
+		"responseId": "mistral_1"
+	},
+	{
+		"type": "text.delta",
+		"text": "Bonjour"
+	},
+	{
+		"type": "text.done",
+		"text": "Bonjour"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]
