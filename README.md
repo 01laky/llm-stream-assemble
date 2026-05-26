@@ -1,11 +1,11 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.3.5-blue)
+![core](https://img.shields.io/badge/core-1.3.6-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-961%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1019%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.3.5-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.3.6-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
@@ -13,7 +13,7 @@
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.3.5`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.3.6`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -31,6 +31,7 @@ Turn provider SSE fragments into typed events — **not another `+=` loop**.
 - [Documentation](#documentation)
 - [How this compares](#how-this-compares)
 - [Examples](#examples)
+- [Integration cookbook](#integration-cookbook)
 - [Usage guides](#usage-guides)
 - [Transforms & replay](#transforms--replay)
 - [Examples & proxy safety](#examples--proxy-safety)
@@ -212,6 +213,7 @@ Pick an adapter in ~30 seconds:
 - [Adapter author guide](./docs/adapter-guide.md)
 - [Performance & runtime behavior](./docs/performance.md)
 - [Edge-case showcase](./docs/edge-cases.md)
+- [Integration cookbook](./docs/integration-cookbook.md)
 - [How this compares](./docs/comparison.md)
 - [FAQ](./docs/faq.md)
 - [Architecture diagrams](./docs/img/README.md)
@@ -298,6 +300,10 @@ Stream `text.delta` into your renderer — this library does **not** parse markd
 ### Fixture replay
 
 → [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)
+
+### Integration cookbook
+
+Wire unified events into **Hono**, **Express**, **Cloudflare Workers**, **LiteLLM**, **Next.js App Router**, AI SDK mapping, and LangChain callbacks — [`examples/integrations/`](./examples/integrations/) · **[Full cookbook →](./docs/integration-cookbook.md)**
 
 ---
 

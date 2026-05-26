@@ -91,6 +91,7 @@ describe("docs positioning 1.3.4 edge cases", () => {
 			"Why not just concatenate SSE chunks",
 			"Does this library make HTTP calls",
 			"How do I run the smoke benchmark locally",
+			"How do I integrate with Hono, Express, Cloudflare Workers, or the Vercel AI SDK",
 		];
 		for (const heading of headings) {
 			expect(faq).toContain(heading);
@@ -132,8 +133,8 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(doc).toMatch(/tool calling/i);
 	});
 
-	it("LSA-DOC16: compatibility.md stable status is 1.3.5", () => {
-		expect(read("docs/compatibility.md")).toContain("Stable `1.3.5`");
+	it("LSA-DOC16: compatibility.md stable status is 1.3.6", () => {
+		expect(read("docs/compatibility.md")).toContain("Stable `1.3.6`");
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {

@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.3.5` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
+**Current package status:** Stable `1.3.6` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
 | Provider / API            | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | ------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |

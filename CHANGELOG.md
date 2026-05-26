@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.6]
+
+### Added
+
+- **`docs/integration-cookbook.md`** — Hono, Express, Cloudflare Worker proxy, LiteLLM, Next.js App Route, `collectStream`, `createAssemblyTransform`, Vercel AI SDK mapping, LangChain callbacks, offline replay mapper; **Edge cases & failure modes** table with runtime notes (Edge vs Node).
+- **`examples/integrations/`** — ten self-contained integration examples (six core stack recipes plus §17: `collect-stream-handler`, `assembly-transform-pipeline`, `nextjs-app-route`, `replay-integration-mapper`) with injected `fetchImpl` and offline CI tests.
+- README **Integration cookbook** teaser and Documentation link.
+- FAQ integration question linking to **`docs/integration-cookbook.md`**.
+- **`.env.example`** — `LITELLM_*` vars with `OPENAI_COMPATIBLE_*` fallback note.
+- Tests **LSA-INT01**–**INT38** (`integration-cookbook.test.ts`, `integration-cookbook-edge.test.ts`), **LSA-DOC35**–**DOC50**, **LSA-X52**–**X55**; extended **LSA-X21** / **LSA-X26** / **LSA-X38**.
+
+### Changed
+
+- **`examples/README.md`** — When to use which example + Integrations section listing all ten integration files.
+- Version labels **1.3.6** across docs and diagrams; **LSA-DOC16**, **LSA-OC84**/**107**/**135**/**165**; README test badge **1019+**.
+
 ## [1.3.5]
 
 ### Added

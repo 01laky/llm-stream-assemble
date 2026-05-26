@@ -6,15 +6,16 @@ fetch responses in CI; no live provider calls are made by default.
 
 ## When to use which example
 
-| Goal                                  | Start here                                                  |
-| ------------------------------------- | ----------------------------------------------------------- |
-| OpenAI Chat Completions streaming     | `node-fetch/openai-chat.ts`                                 |
-| Local Ollama or other compatible host | `node-fetch/openai-compatible.ts` (`provider: "ollama"`, …) |
-| Anthropic Messages                    | `node-fetch/anthropic.ts`                                   |
-| Google Gemini SSE                     | `node-fetch/gemini.ts`                                      |
-| Azure / Cloudflare / Perplexity / xAI | matching `node-fetch/*.ts` or `workers-ai/`                 |
-| Proxy unified SSE to a browser        | `proxy-safety/`                                             |
-| Replay a checked-in fixture offline   | `node-fetch/replay-fixture.ts`                              |
+| Goal                                                                  | Start here                                                                                      |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| OpenAI Chat Completions streaming                                     | `node-fetch/openai-chat.ts`                                                                     |
+| Local Ollama or other compatible host                                 | `node-fetch/openai-compatible.ts` (`provider: "ollama"`, …)                                     |
+| Anthropic Messages                                                    | `node-fetch/anthropic.ts`                                                                       |
+| Google Gemini SSE                                                     | `node-fetch/gemini.ts`                                                                          |
+| Azure / Cloudflare / Perplexity / xAI                                 | matching `node-fetch/*.ts` or `workers-ai/`                                                     |
+| Proxy unified SSE to a browser                                        | `proxy-safety/`                                                                                 |
+| Replay a checked-in fixture offline                                   | `node-fetch/replay-fixture.ts`                                                                  |
+| Wire into Hono, Express, Workers, LiteLLM, Next.js, AI SDK, LangChain | [`integrations/`](./integrations/) + [integration-cookbook.md](../docs/integration-cookbook.md) |
 
 Full README index: [Examples](../README.md#examples).
 
@@ -77,3 +78,7 @@ free when imported.
 See `examples/proxy-safety/` for Web-standard proxy snippets using `tapEvents` for
 server-side observation and `toSSE(events, { sanitizeErrors: true })` for
 browser-facing streams.
+
+## Integrations
+
+Stack wiring recipes under [`integrations/`](./integrations/) — Hono, Express, Cloudflare Worker proxy, LiteLLM, Next.js App Route, `collectStream`, `createAssemblyTransform`, AI SDK mapping, LangChain callbacks, and offline replay mapper. Guide: [docs/integration-cookbook.md](../docs/integration-cookbook.md).

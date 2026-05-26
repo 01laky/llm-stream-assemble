@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.3.5`
+**Status:** Active guide — `1.3.6`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -76,6 +76,12 @@ pnpm bench:smoke
 ```
 
 Replicates **LSA-C52** (10k SSE payloads). See [performance](./performance.md).
+
+---
+
+## How do I integrate with Hono, Express, Cloudflare Workers, or the Vercel AI SDK?
+
+→ [docs/integration-cookbook.md](./integration-cookbook.md) — copy-paste recipes under `examples/integrations/` (Hono, Express, Workers, LiteLLM, Next.js, AI SDK mapping, LangChain callbacks). No official framework plugin — zero runtime dependencies.
 
 ---
 

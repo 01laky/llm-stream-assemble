@@ -133,11 +133,11 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("mistral");
 	});
 
-	it("LSA-OC84: package.json version is 1.3.5", () => {
+	it("LSA-OC84: package.json version is 1.3.6", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.3.5");
+		expect(pkg.version).toBe("1.3.6");
 	});
 
 	it("LSA-OC103: README preset table includes azure with deployment URL pattern", () => {
@@ -167,10 +167,10 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(dts).toContain('"azure"');
 	});
 
-	it("LSA-OC107: README badges and stable status reference 1.3.5", () => {
+	it("LSA-OC107: README badges and stable status reference 1.3.6", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("1.3.5");
-		expect(readme).toContain("Stable `1.3.5`");
+		expect(readme).toContain("1.3.6");
+		expect(readme).toContain("Stable `1.3.6`");
 	});
 
 	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity, xai, and azure preset keys", () => {
@@ -213,10 +213,10 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		});
 	});
 
-	it("LSA-OC135: README badges and stable status reference 1.3.5 release", () => {
+	it("LSA-OC135: README badges and stable status reference 1.3.6 release", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toMatch(/1\.3\.5/);
-		expect(readme).toContain("Stable `1.3.5`");
+		expect(readme).toMatch(/1\.3\.6/);
+		expect(readme).toContain("Stable `1.3.6`");
 	});
 
 	it("LSA-OC136: dist openai-compatible.d.ts includes azure in OpenAICompatibleProvider", () => {
@@ -301,10 +301,10 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(guide).toMatch(/Workers AI|Workers AI REST|REST endpoint/i);
 	});
 
-	it("LSA-OC165: adapters-overview.mmd preset list includes cloudflare and stable 1.3.5", () => {
+	it("LSA-OC165: adapters-overview.mmd preset list includes cloudflare and stable 1.3.6", () => {
 		const mmd = readFileSync(join(rootDir, "docs/img/adapters-overview.mmd"), "utf8");
 		expect(mmd).toContain("cloudflare");
-		expect(mmd).toContain("1.3.5");
+		expect(mmd).toContain("1.3.6");
 	});
 
 	it("LSA-OC166: pipeline.mmd OpenAI-compatible hosts mention Cloudflare", () => {

@@ -1,6 +1,6 @@
 {
 	"name": "llm-stream-assemble",
-	"version": "1.3.5",
+	"version": "1.3.6",
 	"description": "Zero-dependency TypeScript stream assembly for OpenAI, Anthropic, Gemini, and OpenAI-compatible LLM APIs — unified StreamEvent model for text, tools, reasoning, JSON, usage, and non-streaming responses.",
 	"license": "MIT",
 	"author": "Ladislav Kostolny <01laky@gmail.com>",

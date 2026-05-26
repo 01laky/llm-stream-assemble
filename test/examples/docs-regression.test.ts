@@ -23,6 +23,7 @@ describe("examples docs regression", () => {
 			"workers-ai",
 			"replay-fixture",
 			"proxy-safety",
+			"integrations",
 		]) {
 			expect(docs).toContain(name);
 		}
@@ -64,6 +65,16 @@ describe("examples docs regression", () => {
 			"examples/node-fetch/anthropic.ts",
 			"examples/node-fetch/gemini.ts",
 			"examples/proxy-safety/web-standard-proxy.ts",
+			"examples/integrations/hono-proxy.ts",
+			"examples/integrations/express-proxy.ts",
+			"examples/integrations/cloudflare-worker-proxy.ts",
+			"examples/integrations/litellm-openai-compatible.ts",
+			"examples/integrations/stream-event-to-ai-sdk-parts.ts",
+			"examples/integrations/langchain-callback-pattern.ts",
+			"examples/integrations/collect-stream-handler.ts",
+			"examples/integrations/assembly-transform-pipeline.ts",
+			"examples/integrations/nextjs-app-route.ts",
+			"examples/integrations/replay-integration-mapper.ts",
 		]
 			.map(read)
 			.join("\n");
@@ -102,11 +113,14 @@ describe("examples docs regression", () => {
 		expect(read("examples/README.md")).toContain("rest-chat-completions.ts");
 	});
 
-	it("LSA-X38: env example documents Cloudflare Workers AI variables", () => {
+	it("LSA-X38: env example documents Cloudflare Workers AI and LiteLLM variables", () => {
 		const env = read(".env.example");
 		expect(env).toContain("CLOUDFLARE_API_TOKEN");
 		expect(env).toContain("CLOUDFLARE_ACCOUNT_ID");
 		expect(env).toContain("CLOUDFLARE_MODEL");
+		expect(env).toContain("LITELLM_BASE_URL");
+		expect(env).toContain("LITELLM_API_KEY");
+		expect(env).toContain("LITELLM_MODEL");
 	});
 
 	it("LSA-X42: README contains Why not just concatenate section", () => {
@@ -172,5 +186,29 @@ describe("examples docs regression", () => {
 
 	it("LSA-X51: README contains Edge-case showcase heading", () => {
 		expect(read("README.md")).toContain("Edge-case showcase");
+	});
+
+	it("LSA-X52: README contains Integration cookbook heading", () => {
+		expect(read("README.md")).toContain("Integration cookbook");
+	});
+
+	it("LSA-X53: examples README documents integrations folder", () => {
+		const docs = read("examples/README.md");
+		expect(docs).toContain("integrations/");
+		expect(docs).toContain("integration-cookbook.md");
+	});
+
+	it("LSA-X54: integration assembly-transform reads process.env inside exported run function", () => {
+		const text = read("examples/integrations/assembly-transform-pipeline.ts");
+		const runIdx = text.indexOf("runAssemblyTransformPipelineExample");
+		expect(runIdx).toBeGreaterThan(-1);
+		expect(text.indexOf("process.env")).toBeGreaterThan(runIdx);
+	});
+
+	it("LSA-X55: integration litellm example does not call fetch at module import time", () => {
+		const text = read("examples/integrations/litellm-openai-compatible.ts");
+		const runIdx = text.indexOf("runLiteLLMCompatibleExample");
+		expect(runIdx).toBeGreaterThan(-1);
+		expect(text.indexOf("fetchImpl(")).toBeGreaterThan(runIdx);
 	});
 });
