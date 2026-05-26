@@ -1,0 +1,38 @@
+[
+  {
+    "type": "message.start",
+    "id": "resp_rtool"
+  },
+  {
+    "type": "metadata",
+    "responseId": "resp_rtool"
+  },
+  {
+    "type": "tool_call.start",
+    "id": "call_rt",
+    "name": "get_weather",
+    "index": 0,
+    "choiceIndex": 0
+  },
+  {
+    "type": "tool_call.args.delta",
+    "id": "call_rt",
+    "delta": "{\"city\":\"Boston\"}",
+    "partial": {
+      "city": "Boston"
+    }
+  },
+  {
+    "type": "tool_call.done",
+    "id": "call_rt",
+    "name": "get_weather",
+    "args": {
+      "city": "Boston"
+    }
+  },
+  {
+    "type": "finish",
+    "reason": "stop",
+    "choiceIndex": 0
+  }
+]

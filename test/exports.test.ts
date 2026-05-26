@@ -17,6 +17,7 @@ const REQUIRED_EXPORTS = [
 	"openaiCompatibleAdapter",
 	"anthropicAdapter",
 	"openaiResponsesAdapter",
+	"geminiAdapter",
 ] as const;
 
 const TYPE_GUARD_EXPORTS = [

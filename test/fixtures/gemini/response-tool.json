@@ -1,0 +1,23 @@
+{
+  "responseId": "resp_rtool",
+  "candidates": [
+    {
+      "index": 0,
+      "content": {
+        "role": "model",
+        "parts": [
+          {
+            "functionCall": {
+              "name": "get_weather",
+              "id": "call_rt",
+              "args": {
+                "city": "Boston"
+              }
+            }
+          }
+        ]
+      },
+      "finishReason": "STOP"
+    }
+  ]
+}

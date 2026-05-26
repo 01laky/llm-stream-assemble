@@ -1,0 +1,4 @@
+data: {"responseId":"resp_nba","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"lookup","id":"call_nba"}}]}}]}
+
+data: {"candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"id":"call_nba","args":{"id":42}}}]}}],"finishReason":"STOP"}
+

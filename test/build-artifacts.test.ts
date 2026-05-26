@@ -21,6 +21,7 @@ const subpathEntries = [
 		path: "dist/adapters/openai-responses.js",
 		exportName: "openaiResponsesAdapter",
 	},
+	{ id: "LSA-P07", path: "dist/adapters/gemini.js", exportName: "geminiAdapter" },
 ] as const;
 
 const declarationArtifacts = [
@@ -34,6 +35,10 @@ const declarationArtifacts = [
 	"dist/adapters/openai-responses.d.cts",
 	"dist/adapters/openai-responses.js",
 	"dist/adapters/openai-responses.cjs",
+	"dist/adapters/gemini.d.ts",
+	"dist/adapters/gemini.d.cts",
+	"dist/adapters/gemini.js",
+	"dist/adapters/gemini.cjs",
 	"dist/index.js",
 	"dist/index.cjs",
 	"dist/core/index.js",

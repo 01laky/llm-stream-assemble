@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible, Anthropic Messages, and OpenAI Responses are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -78,6 +78,8 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
   the event stream.
 - Use `openaiResponsesAdapter()` as the reference pattern for event-name-driven
   parsing where provider payloads are not Chat-style choice deltas.
+- Use `geminiAdapter()` as the reference pattern for `candidates[].content.parts[]`
+  parsing (text, `functionCall`, `thought` parts) on Google AI GenerateContent SSE.
 
 ## Factory naming convention
 
@@ -87,7 +89,8 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 | OpenAI-compatible hosts | `openaiCompatibleAdapter()` |
 | Anthropic Messages      | `anthropicAdapter()`        |
 | OpenAI Responses        | `openaiResponsesAdapter()`  |
+| Google Gemini (Google AI) | `geminiAdapter()`         |
 
 ## Community adapters
 
-Third-party adapters (Gemini, Bedrock, etc.) can follow this guide in separate packages or PRs — core types (`StreamAdapter`, `RawChunk`, `StreamEvent`) are exported from `llm-stream-assemble/core`.
+Third-party adapters (Bedrock, etc.) can follow this guide in separate packages or PRs — core types (`StreamAdapter`, `RawChunk`, `StreamEvent`) are exported from `llm-stream-assemble/core`.

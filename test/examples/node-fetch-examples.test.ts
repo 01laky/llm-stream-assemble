@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { runAnthropicExample } from "../../examples/node-fetch/anthropic";
+import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
 import { runReplayFixtureExample } from "../../examples/node-fetch/replay-fixture";
@@ -11,6 +12,7 @@ import { fakeStreamingFetch, withEnv } from "./helpers";
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const openAISSE = readFileSync(join(rootDir, "test/fixtures/openai-chat/text-basic.sse"), "utf8");
 const anthropicSSE = readFileSync(join(rootDir, "test/fixtures/anthropic/text-basic.sse"), "utf8");
+const geminiSSE = readFileSync(join(rootDir, "test/fixtures/gemini/text-basic.sse"), "utf8");
 
 describe("node fetch examples", () => {
 	it("LSA-X01: OpenAI example exports function and does not run on import", () => {
@@ -83,6 +85,25 @@ describe("node fetch examples", () => {
 			write: (text) => output.push(text),
 		});
 		expect(output.join("")).toContain("Hello Claude");
+	});
+
+	it("LSA-X11: Gemini example exports function and does not run on import", () => {
+		expect(typeof runGeminiExample).toBe("function");
+	});
+
+	it("LSA-X12: Gemini example validates keys and uses injected fake fetch", async () => {
+		await withEnv({ GOOGLE_API_KEY: undefined, GEMINI_API_KEY: undefined }, async () => {
+			await expect(runGeminiExample({ fetchImpl: fakeStreamingFetch(geminiSSE) })).rejects.toThrow(
+				"GOOGLE_API_KEY or GEMINI_API_KEY is required",
+			);
+		});
+		const output: string[] = [];
+		await runGeminiExample({
+			apiKey: "key",
+			fetchImpl: fakeStreamingFetch(geminiSSE),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello Gemini");
 	});
 
 	it("LSA-X09: replay fixture example uses assembleFromFile and collectStream", async () => {

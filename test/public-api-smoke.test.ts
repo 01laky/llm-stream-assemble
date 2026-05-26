@@ -7,6 +7,7 @@ import {
 	assembleStream,
 	collectStream,
 	createAssemblyTransform,
+	geminiAdapter,
 	openaiChatAdapter,
 	openaiCompatibleAdapter,
 	openaiResponsesAdapter,
@@ -125,6 +126,10 @@ describe("public API smoke", () => {
 
 		it("LSA-ST14: openaiResponsesAdapter.parseChunk is implemented", () => {
 			expect(openaiResponsesAdapter().parseChunk("{}")).toEqual([]);
+		});
+
+		it("LSA-ST17: geminiAdapter.parseChunk is implemented", () => {
+			expect(geminiAdapter().parseChunk("{}")).toEqual([]);
 		});
 	});
 

@@ -4,15 +4,18 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { anthropicAdapter } from "../src/adapters/anthropic";
+import { geminiAdapter } from "../src/adapters/gemini";
 import { assembleFromFile } from "../src/core/assemble-from-file";
 import { collectAsync } from "./helpers/collect-events";
 import { normalizeEvents } from "./helpers/openai-fixtures";
 import { normalizeAnthropicEvents } from "./helpers/anthropic-fixtures";
+import { normalizeGeminiEvents } from "./helpers/gemini-fixtures";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const openAIStream = join(rootDir, "test/fixtures/openai-chat/text-basic.sse");
 const openAIResponse = join(rootDir, "test/fixtures/openai-chat/response-text.json");
 const anthropicStream = join(rootDir, "test/fixtures/anthropic/text-basic.sse");
+const geminiStream = join(rootDir, "test/fixtures/gemini/text-basic.sse");
 const transformsDir = join(rootDir, "test/fixtures/transforms");
 
 describe("assembleFromFile", () => {
@@ -36,6 +39,14 @@ describe("assembleFromFile", () => {
 			await collectAsync(assembleFromFile(anthropicStream, anthropicAdapter())),
 		);
 		expect(events).toContainEqual({ type: "text.done", text: "Hello Claude" });
+	});
+
+	it("LSA-T31b: replays gemini text-basic.sse with normalizeGeminiEvents", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(assembleFromFile(geminiStream, geminiAdapter())),
+		);
+		expect(events.at(-1)).toMatchObject({ type: "finish", reason: "stop" });
+		expect(events).toContainEqual({ type: "text.done", text: "Hello Gemini" });
 	});
 
 	it("LSA-T32: format sse overrides extension", async () => {

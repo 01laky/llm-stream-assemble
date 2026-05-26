@@ -9,6 +9,7 @@ fetch responses in CI; no live provider calls are made by default.
 - `examples/node-fetch/openai-chat.ts` — OpenAI Chat Completions streaming.
 - `examples/node-fetch/openai-compatible.ts` — OpenAI-compatible providers.
 - `examples/node-fetch/anthropic.ts` — Anthropic Messages streaming.
+- `examples/node-fetch/gemini.ts` — Google Gemini `streamGenerateContent` (SSE).
 - `examples/node-fetch/replay-fixture.ts` — local fixture replay with `assembleFromFile`.
 
 Required environment variables when running manually:
@@ -18,6 +19,7 @@ Required environment variables when running manually:
 - `OPENAI_COMPATIBLE_API_KEY`
 - `OPENAI_COMPATIBLE_MODEL`
 - `ANTHROPIC_API_KEY`
+- `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Gemini example accepts either)
 
 The examples accept injected `fetchImpl` and `write` callbacks so tests do not
 write to stdout or call the network. Environment variables are read inside exported

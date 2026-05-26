@@ -1,0 +1,37 @@
+[
+  {
+    "type": "message.start",
+    "id": "resp_nba"
+  },
+  {
+    "type": "metadata",
+    "responseId": "resp_nba"
+  },
+  {
+    "type": "tool_call.start",
+    "id": "call_nba",
+    "name": "lookup",
+    "index": 0,
+    "choiceIndex": 0
+  },
+  {
+    "type": "tool_call.args.delta",
+    "id": "call_nba",
+    "delta": "{\"id\":42}",
+    "partial": {
+      "id": 42
+    }
+  },
+  {
+    "type": "tool_call.done",
+    "id": "call_nba",
+    "name": "lookup",
+    "args": {
+      "id": 42
+    }
+  },
+  {
+    "type": "finish",
+    "reason": "incomplete"
+  }
+]

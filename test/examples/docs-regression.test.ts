@@ -16,6 +16,7 @@ describe("examples docs regression", () => {
 			"openai-chat",
 			"openai-compatible",
 			"anthropic",
+			"gemini",
 			"replay-fixture",
 			"proxy-safety",
 		]) {
@@ -42,6 +43,7 @@ describe("examples docs regression", () => {
 			"examples/node-fetch/openai-chat.ts",
 			"examples/node-fetch/openai-compatible.ts",
 			"examples/node-fetch/anthropic.ts",
+			"examples/node-fetch/gemini.ts",
 		];
 		for (const file of files) {
 			const text = read(file);
@@ -55,6 +57,7 @@ describe("examples docs regression", () => {
 			"examples/node-fetch/openai-chat.ts",
 			"examples/node-fetch/openai-compatible.ts",
 			"examples/node-fetch/anthropic.ts",
+			"examples/node-fetch/gemini.ts",
 			"examples/proxy-safety/web-standard-proxy.ts",
 		]
 			.map(read)

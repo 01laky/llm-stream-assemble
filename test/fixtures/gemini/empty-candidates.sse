@@ -1,0 +1,4 @@
+data: {"responseId":"resp_ec","candidates":[]}
+
+data: {"candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"after"}]}}],"finishReason":"STOP"}
+

@@ -169,13 +169,13 @@ export interface GeminiAdapterOptions {
 
 #### Deliverables checklist
 
-- [ ] `src/adapters/gemini.ts` + export in `src/adapters/index.ts`
-- [ ] Subpath export `./adapters/gemini` in `package.json` + `tsup.config.ts`
-- [ ] Fixtures: `test/fixtures/gemini/` (text, tool, json-mode, usage, error, incomplete)
-- [ ] Tests: `LSA-G01` … (golden stream, parseChunk unit, response parity, edge cases)
-- [ ] Example: `examples/node-fetch/gemini.ts`
-- [ ] Compatibility matrix row update
-- [ ] Optional live smoke script (gitignored)
+- [x] `src/adapters/gemini.ts` + export in `src/adapters/index.ts`
+- [x] Subpath export `./adapters/gemini` in `package.json` + `tsup.config.ts`
+- [x] Fixtures: `test/fixtures/gemini/` (text, tool, json-mode, usage, error, incomplete)
+- [x] Tests: `LSA-G01` … `LSA-G71` (golden stream, parseChunk unit, response parity, edge cases)
+- [x] Example: `examples/node-fetch/gemini.ts`
+- [x] Compatibility matrix row update
+- [x] Live smoke script: `scripts/live-smoke/gemini.ts` + `docs/live-smoke.md`
 
 #### Success criteria
 

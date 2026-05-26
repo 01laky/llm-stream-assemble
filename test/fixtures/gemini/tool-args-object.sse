@@ -1,0 +1,4 @@
+data: {"responseId":"resp_args","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"merge","id":"call_m","args":{"a":1}}}]}}]}
+
+data: {"candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"merge","id":"call_m","args":{"a":1,"b":2}}}]}}],"finishReason":"STOP"}
+

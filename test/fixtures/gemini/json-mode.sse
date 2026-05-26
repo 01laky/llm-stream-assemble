@@ -1,0 +1,2 @@
+data: {"responseId":"resp_json","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"{\"ok\":true}"}]}}],"finishReason":"STOP"}
+
