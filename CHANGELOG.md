@@ -30,6 +30,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 
 - `PRESET_OVERRIDES` supports per-preset `looseErrorShape`, `allowMissingMetadata`, and
   `useChoicePositionFallback`.
+- README landing page refresh with architecture, adapter overview, and transforms diagrams.
+- `pipeline.mmd` includes Google Gemini; new `adapters-overview.mmd` and `transforms.mmd` sources.
+- `pnpm diagrams:build` regenerates committed SVGs for npm-safe README rendering.
 
 ### Migration from 1.1.6 to 1.2.0
 

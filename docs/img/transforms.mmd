@@ -1,0 +1,28 @@
+flowchart LR
+	EVENTS(["StreamEvent stream"])
+
+	subgraph TRANSFORMS["Transforms & helpers"]
+		direction TB
+		COL["collectStream<br/>materialize output"]
+		TAP["tapEvents<br/>observe without changing"]
+		SSE["toSSE<br/>sanitizeErrors for browsers"]
+		FILE["assembleFromFile<br/>Node fixture replay"]
+	end
+
+	EVENTS --> COL
+	EVENTS --> TAP
+	EVENTS --> SSE
+	EVENTS --> FILE
+
+	COL --> OUT1["text · toolCalls · usage · finishReason"]
+	TAP --> OUT2["logs · metrics · debug"]
+	SSE --> OUT3["browser-safe SSE proxy"]
+	FILE --> OUT4["local .sse / .json replay"]
+
+	classDef io fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
+	classDef transform fill:#431407,stroke:#fb923c,stroke-width:2px,color:#ffedd5
+	classDef out fill:#172554,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
+
+	class EVENTS io
+	class COL,TAP,SSE,FILE transform
+	class OUT1,OUT2,OUT3,OUT4 out

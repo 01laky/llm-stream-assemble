@@ -102,4 +102,32 @@ describe("release readiness", () => {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}
 	});
+
+	it("LSA-REL17: release prep script is wired in package.json", () => {
+		const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
+		expect(pkg.scripts["release:prep"]).toBe("node scripts/release-prep.mjs");
+		expect(existsSync(join(rootDir, "scripts/release-prep.mjs"))).toBe(true);
+	});
+
+	it("LSA-REL18: README examples list covers primary node-fetch samples", () => {
+		const readme = read("README.md");
+		for (const sample of [
+			"examples/node-fetch/openai-chat.ts",
+			"examples/node-fetch/openai-compatible.ts",
+			"examples/node-fetch/azure-openai.ts",
+			"examples/node-fetch/perplexity.ts",
+			"examples/node-fetch/xai.ts",
+			"examples/node-fetch/gemini.ts",
+		]) {
+			expect(readme).toContain(sample);
+		}
+	});
+
+	it("LSA-REL19: README architecture diagrams include pipeline and adapters overview", () => {
+		const readme = read("README.md");
+		expect(readme).toContain("docs/img/pipeline.svg");
+		expect(readme).toContain("docs/img/adapters-overview.svg");
+		expect(readme).toContain("docs/img/transforms.svg");
+		expect(readme).toContain("geminiAdapter");
+	});
 });

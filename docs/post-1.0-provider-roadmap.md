@@ -132,8 +132,8 @@ or silently drop usage and safety metadata.
 | Vertex AI Gemini (future phase)    | `{region}-aiplatform.googleapis.com` …                        | yes       | yes           |
 
 **Proposal:** Implement **Google AI Gemini API** first in `1.1.0`. Defer Vertex-specific
-envelope/auth quirks to a later minor (`1.2.0` or Bedrock/Azure tranche) unless fixtures
-prove the stream payloads are byte-identical.
+envelope/auth quirks to a later minor (`1.3.0+`) unless fixtures prove the stream payloads
+are byte-identical.
 
 #### Event mapping (proposed)
 
@@ -291,7 +291,7 @@ Extend `openaiCompatibleAdapter({ provider: "deepseek" })` with dialect options 
 
 ### 5. AWS Bedrock (`bedrockAdapter`)
 
-**Target version:** `1.2.0` or `1.4.0`  
+**Target version:** `1.4.0`  
 **Priority:** High for AWS-native teams; **medium–high complexity**.
 
 #### Why a dedicated adapter
@@ -714,16 +714,20 @@ Document partial behavior in 1.x; link here from compatibility matrix footnotes.
 
 ## npm publish checklist
 
-Use when npm registry access is restored (currently blocked for maintainer — support ticket).
+**Registry state (2026-05-26):** latest published version is `1.0.1`; repo `main` is at
+`1.2.0` (includes Gemini `1.1.0`, compatible preset expansion `1.1.5`–`1.1.6`, Azure `1.2.0`).
+Run `node scripts/release-prep.mjs` before tagging.
 
-1. `pnpm verify` green on `main` at release tag.
-2. `npm pack --dry-run --json` — confirm `files` whitelist (`dist`, README, LICENSE).
-3. `pnpm smoke:package` — install tarball in temp project; import all subpaths.
-4. `npm login` + 2FA enabled on npm account.
-5. `npm publish` from clean tree matching git tag `vX.Y.Z`.
-6. GitHub Release notes from CHANGELOG section.
-7. Verify `npm view llm-stream-assemble version`.
-8. Optional: enable [npm provenance](https://docs.npmjs.com/generating-provenance-statements) for GitHub Actions later.
+1. `pnpm verify` green on `main` at release commit (or matching tag).
+2. `node scripts/release-prep.mjs` — version/docs/dist/npm drift checks.
+3. `npm pack --dry-run --json` — confirm `files` whitelist (`dist`, README, LICENSE).
+4. `pnpm smoke:package` — install tarball in temp project; import all subpaths.
+5. `npm login` + 2FA enabled on npm account.
+6. `git tag vX.Y.Z && git push origin vX.Y.Z` from the release commit.
+7. `npm publish` from clean tree matching git tag `vX.Y.Z`.
+8. GitHub Release notes from CHANGELOG (use `.local-playground/release-X.Y.Z.md` draft when present).
+9. Verify `npm view llm-stream-assemble version`.
+10. Optional: enable [npm provenance](https://docs.npmjs.com/generating-provenance-statements) for GitHub Actions later.
 
 ---
 
