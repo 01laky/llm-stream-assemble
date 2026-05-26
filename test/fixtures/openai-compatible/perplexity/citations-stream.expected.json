@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "pplx_cite"
+	},
+	{
+		"type": "metadata",
+		"model": "sonar-pro",
+		"responseId": "pplx_cite"
+	},
+	{
+		"type": "text.delta",
+		"text": "With sources"
+	},
+	{
+		"type": "text.done",
+		"text": "With sources"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

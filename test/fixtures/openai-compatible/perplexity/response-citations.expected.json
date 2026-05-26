@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "pplx_r1"
+	},
+	{
+		"type": "metadata",
+		"model": "sonar",
+		"responseId": "pplx_r1"
+	},
+	{
+		"type": "text.delta",
+		"text": "Grounded answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Grounded answer"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

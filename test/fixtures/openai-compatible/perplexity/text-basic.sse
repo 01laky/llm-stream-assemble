@@ -1,0 +1,4 @@
+data: {"id":"pplx_1","model":"sonar","choices":[{"index":0,"delta":{"content":"Answer from search"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

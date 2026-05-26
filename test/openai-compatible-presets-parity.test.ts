@@ -35,4 +35,25 @@ describe("openaiCompatibleAdapter cross-preset parity", () => {
 			openaiCompatibleAdapter({ provider: "openrouter" }).parseChunk(reasoningPayload),
 		).toEqual([]);
 	});
+
+	it("LSA-OC101: sparse metadata — generic, perplexity, and xai emit identical text-delta", () => {
+		const sparse = payload({ choices: [{ delta: { content: "same" } }] });
+		const expected = [{ kind: "text-delta", text: "same", choiceIndex: 0 }];
+		for (const provider of ["generic", "perplexity", "xai"] as const) {
+			expect(openaiCompatibleAdapter({ provider }).parseChunk(sparse)).toEqual(expected);
+		}
+	});
+
+	it("LSA-OC111: xai reasoning_content — generic and xai preset both emit reasoning-delta", () => {
+		const reasoningPayload = payload({
+			choices: [{ delta: { reasoning_content: "Thinking step" } }],
+		});
+		const expected = [{ kind: "reasoning-delta", text: "Thinking step", variant: "detail" }];
+		expect(openaiCompatibleAdapter({ provider: "generic" }).parseChunk(reasoningPayload)).toEqual(
+			expected,
+		);
+		expect(openaiCompatibleAdapter({ provider: "xai" }).parseChunk(reasoningPayload)).toEqual(
+			expected,
+		);
+	});
 });

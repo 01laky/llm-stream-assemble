@@ -107,6 +107,8 @@ describe("openaiCompatibleAdapter dialect options", () => {
 			"lmstudio",
 			"together",
 			"fireworks",
+			"perplexity",
+			"xai",
 		];
 		for (const provider of providers) {
 			expect(

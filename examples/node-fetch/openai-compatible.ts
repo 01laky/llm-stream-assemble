@@ -1,6 +1,8 @@
 import { assembleStream, openaiCompatibleAdapter } from "../../src/index";
 import type { OpenAICompatibleProvider } from "../../src/adapters/openai-compatible";
 
+/** Valid `OPENAI_COMPATIBLE_PROVIDER` values include `generic`, `openrouter`, `groq`, `deepseek`, `mistral`, `ollama`, `lmstudio`, `together`, `fireworks`, `perplexity`, `xai`. */
+
 export interface OpenAICompatibleExampleOptions {
 	baseUrl?: string;
 	apiKey?: string;

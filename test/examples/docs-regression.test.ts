@@ -17,6 +17,8 @@ describe("examples docs regression", () => {
 			"openai-compatible",
 			"anthropic",
 			"gemini",
+			"perplexity",
+			"xai",
 			"replay-fixture",
 			"proxy-safety",
 		]) {

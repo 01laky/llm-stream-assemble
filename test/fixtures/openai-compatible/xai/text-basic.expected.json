@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "xai_1"
+	},
+	{
+		"type": "metadata",
+		"model": "grok-3",
+		"responseId": "xai_1"
+	},
+	{
+		"type": "text.delta",
+		"text": "Grok says hi"
+	},
+	{
+		"type": "text.done",
+		"text": "Grok says hi"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

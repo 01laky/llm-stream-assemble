@@ -24,6 +24,20 @@ describe("openaiCompatibleAdapter host preset conformance", () => {
 			expect(events).toEqual(expectedHostCompatibleEvents(host, "text-basic"));
 		}
 	});
+
+	it("LSA-OC102: runAdapterGoldenStream parity for perplexity and xai text-basic", async () => {
+		for (const host of ["perplexity", "xai"] as const) {
+			const events = normalizeCompatibleEvents(
+				await runAdapterGoldenStream({
+					adapter: openaiCompatibleAdapter({ provider: host }),
+					fixtureSsePath: join(fixturesDir, host, "text-basic.sse"),
+					expectedEventsPath: join(fixturesDir, host, "text-basic.expected.json"),
+					adapterFactory: () => openaiCompatibleAdapter({ provider: host }),
+				}),
+			);
+			expect(events).toEqual(expectedHostCompatibleEvents(host, "text-basic"));
+		}
+	});
 });
 
 describe("openaiCompatibleAdapter host preset fixture drift", () => {

@@ -57,4 +57,28 @@ describe("openaiCompatibleAdapter host preset parseChunk", () => {
 			[],
 		);
 	});
+
+	it("LSA-OC95: perplexity preset parses standard text chunk", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "perplexity" }).parseChunk(
+				payload({ choices: [{ delta: { content: "Grounded" } }] }),
+			),
+		).toContainEqual({ kind: "text-delta", text: "Grounded", choiceIndex: 0 });
+	});
+
+	it("LSA-OC96: xai preset parses standard text chunk", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "xai" }).parseChunk(
+				payload({ choices: [{ delta: { content: "Grok" } }] }),
+			),
+		).toContainEqual({ kind: "text-delta", text: "Grok", choiceIndex: 0 });
+	});
+
+	it("LSA-OC97: xai preset tolerates missing id model created", () => {
+		expect(
+			openaiCompatibleAdapter({ provider: "xai" }).parseChunk(
+				payload({ choices: [{ delta: { content: "sparse" } }] }),
+			),
+		).toEqual([{ kind: "text-delta", text: "sparse", choiceIndex: 0 }]);
+	});
 });

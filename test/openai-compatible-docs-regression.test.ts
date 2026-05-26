@@ -30,6 +30,8 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"together/",
 			"fireworks/",
 			"openrouter/",
+			"perplexity/",
+			"xai/",
 		]) {
 			expect(readme).toContain(name);
 		}
@@ -85,6 +87,8 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			"together/",
 			"fireworks/",
 			"openrouter/",
+			"perplexity/",
+			"xai/",
 		]) {
 			expect(readme).toContain(folder);
 		}
@@ -121,10 +125,50 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("mistral");
 	});
 
-	it("LSA-OC84: package.json version is 1.1.5", () => {
+	it("LSA-OC84: package.json version is 1.1.6", () => {
 		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
 			version: string;
 		};
-		expect(pkg.version).toBe("1.1.5");
+		expect(pkg.version).toBe("1.1.6");
+	});
+
+	it("LSA-OC103: README preset table includes perplexity and xai with base URLs", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("`perplexity`");
+		expect(readme).toContain("`xai`");
+		expect(readme).toContain("api.perplexity.ai");
+		expect(readme).toContain("api.x.ai");
+	});
+
+	it("LSA-OC104: compatibility docs quirks rows cover Perplexity and xAI", () => {
+		const docs = readFileSync(join(rootDir, "docs/compatibility.md"), "utf8");
+		expect(docs).toContain("Perplexity");
+		expect(docs).toContain("xAI");
+	});
+
+	it("LSA-OC105: CHANGELOG documents 1.1.6 preset expansion", () => {
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.1.6]");
+		expect(changelog).toContain("perplexity");
+		expect(changelog).toContain("xai");
+	});
+
+	it("LSA-OC106: package.json version is 1.1.6", () => {
+		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
+			version: string;
+		};
+		expect(pkg.version).toBe("1.1.6");
+	});
+
+	it("LSA-OC107: README badges and stable status reference 1.1.6", () => {
+		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
+		expect(readme).toContain("1.1.6");
+		expect(readme).toContain("Stable `1.1.6`");
+	});
+
+	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity and xai preset keys", () => {
+		const dts = readFileSync(join(rootDir, "dist/adapters/openai-compatible.d.ts"), "utf8");
+		expect(dts).toContain('"perplexity"');
+		expect(dts).toContain('"xai"');
 	});
 });

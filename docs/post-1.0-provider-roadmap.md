@@ -95,11 +95,12 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.0.0  ✅  Stable baseline (shipped)
 1.1.0  ✅  Google Gemini adapter (first net-new provider)
 1.1.5  ✅  OpenAI-compatible preset expansion (Groq, Mistral, DeepSeek, Ollama, …)
+1.1.6  ✅  Perplexity + xAI Grok OpenAI-compatible presets
 1.2.0      AWS Bedrock adapter OR Azure OpenAI adapter (pick one enterprise path)
 1.4.0      Second enterprise / niche adapter (Bedrock or Azure, whichever missed 1.2)
 1.5.0      Cohere adapter (if demand exists)
-1.6.0      Perplexity / Cloudflare Workers AI presets (if fixtures confirm shape)
-1.x.x      xAI, AI21, watsonx / additional compatible dialects as patches or preset bundles
+1.6.0      Cloudflare Workers AI preset (if fixtures confirm shape)
+1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
 
 Parallel work is possible (e.g. presets while Gemini is in review), but **each
@@ -376,17 +377,23 @@ export interface BedrockAdapterOptions {
 
 ### 8. xAI Grok (`openaiCompatibleAdapter` preset)
 
-**Target version:** patch or `1.3.0` bundle  
+**Target version:** `1.1.6` (shipped)  
 **Priority:** Medium — typically OpenAI-compatible with minor drift.
 
 Same playbook as Groq/Together: fixtures first, preset second, dedicated adapter only if
 proven necessary.
 
+#### Deliverables checklist
+
+- [x] Preset `xai` with host golden fixtures (text, tools, reasoning, response)
+- [x] Tests **LSA-OC91**–**LSA-OC94**, **LSA-OC109**; parity **LSA-OC111**
+- [x] Example `examples/node-fetch/xai.ts`; live smoke `pnpm smoke:xai`
+
 ---
 
 ### 9. Perplexity (`openaiCompatibleAdapter` preset)
 
-**Target version:** `1.6.0` or patch bundle  
+**Target version:** `1.1.6` (shipped)  
 **Priority:** Medium — search-augmented answers; API often OpenAI-compatible with extra
 metadata and citation-like fields.
 
@@ -396,6 +403,12 @@ metadata and citation-like fields.
 - Map citation payloads to `metadata.raw` in 1.x unless a dedicated `citation.*` event
   type is approved as an additive `StreamEvent` extension.
 - Document that model list and response shape may change independently of this library.
+
+#### Deliverables checklist
+
+- [x] Preset `perplexity` with citations-stream, provider-error, and response fixtures
+- [x] Tests **LSA-OC87**–**LSA-OC90**, **LSA-OC99**, **LSA-RF20**; citations via `metadata.raw`
+- [x] Example `examples/node-fetch/perplexity.ts`; live smoke `pnpm smoke:perplexity`
 
 ---
 

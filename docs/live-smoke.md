@@ -91,10 +91,44 @@ Requires `DEEPSEEK_API_KEY`.
 
 Uses `openaiCompatibleAdapter({ provider: "deepseek" })`. Expect at least one `text.delta` event.
 
+## Perplexity (OpenAI-compatible preset)
+
+```bash
+pnpm build
+pnpm smoke:perplexity
+```
+
+Requires `PERPLEXITY_API_KEY`.
+
+| Variable              | Default                     | Purpose      |
+| --------------------- | --------------------------- | ------------ |
+| `PERPLEXITY_API_KEY`  | —                           | Bearer token |
+| `PERPLEXITY_BASE_URL` | `https://api.perplexity.ai` | API base     |
+| `PERPLEXITY_MODEL`    | `sonar`                     | Model id     |
+
+Uses `openaiCompatibleAdapter({ provider: "perplexity" })`. Expect at least one `text.delta` event.
+
+## xAI Grok (OpenAI-compatible preset)
+
+```bash
+pnpm build
+pnpm smoke:xai
+```
+
+Requires `XAI_API_KEY`.
+
+| Variable       | Default               | Purpose      |
+| -------------- | --------------------- | ------------ |
+| `XAI_API_KEY`  | —                     | Bearer token |
+| `XAI_BASE_URL` | `https://api.x.ai/v1` | API base     |
+| `XAI_MODEL`    | `grok-3`              | Model id     |
+
+Uses `openaiCompatibleAdapter({ provider: "xai" })`. Expect at least one `text.delta` event.
+
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).
-2. Host golden tests green (`LSA-OC47` … `LSA-OC66`).
-3. Optional: `pnpm smoke:ollama` and/or `pnpm smoke:deepseek` when hosts are available.
+2. Host golden tests green (`LSA-OC47` … `LSA-OC94`, `LSA-OC108` … `LSA-OC109`).
+3. Optional: `pnpm smoke:ollama`, `pnpm smoke:deepseek`, `pnpm smoke:perplexity`, and/or `pnpm smoke:xai` when hosts are available.
 4. Update `docs/compatibility.md` quirks if live behavior differs from fixtures.
 5. Bump `CHANGELOG.md` + `package.json` version together.
