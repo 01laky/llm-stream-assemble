@@ -2,15 +2,15 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.0.0` — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, OpenAI Responses, transforms, replay helpers, and examples are functional. Additional provider adapters (e.g. Gemini) remain planned; see [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md).
+**Current package status:** Stable `1.1.0` — core, OpenAI Chat Completions, OpenAI-compatible, Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
-| Provider / API          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
-| ----------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
-| OpenAI Chat Completions | `openaiChatAdapter`       | yes  | yes   | best-effort  | yes         | yes²         | yes¹         | partial³     | v0.2   |
-| OpenAI-compatible       | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | partial³     | v0.3   |
-| Anthropic Messages      | `anthropicAdapter`        | yes  | yes   | yes          | yes         | best-effort⁶ | yes          | —            | v0.4   |
-| OpenAI Responses        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | —            | v0.7   |
-| Gemini                  | TBD                       | —    | —     | —            | —           | —            | —            | —            | v0.2+  |
+| Provider / API          | Adapter                   | Text | Tools | Reasoning    | Refusal | JSON stream  | Usage | Multi-choice | Status |
+| ----------------------- | ------------------------- | ---- | ----- | ------------ | ------- | ------------ | ----- | ------------ | ------ |
+| OpenAI Chat Completions | `openaiChatAdapter`       | yes  | yes   | best-effort  | yes     | yes²         | yes¹  | partial³     | v0.2   |
+| OpenAI-compatible       | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | partial³ | v0.3   |
+| Anthropic Messages      | `anthropicAdapter`        | yes  | yes   | yes          | yes     | best-effort⁶ | yes   | —            | v0.4   |
+| OpenAI Responses        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes     | best-effort⁸ | best-effort | —            | v0.7   |
+| Google Gemini (Google AI) | `geminiAdapter`         | yes  | yes   | best-effort⁹ | —       | yes¹⁰        | yes   | partial³     | v1.1   |
 
 ¹ OpenAI usage in stream requires `stream_options: { include_usage: true }` on the request.
 ² JSON mode requires `openaiChatAdapter({ jsonMode: true })` because OpenAI streams JSON mode as normal content deltas.
@@ -20,16 +20,15 @@ Living document — update when adapters ship or provider quirks are discovered.
 ⁶ Anthropic structured JSON is supported through JSON mode text blocks or tool input streams; schema validation is out of scope.
 ⁷ OpenAI Responses reasoning support is limited to string summary/detail fields.
 ⁸ JSON mode requires `openaiResponsesAdapter({ jsonMode: true })`.
+⁹ Gemini `thought` parts map to `reasoning.*` detail events when present.
+¹⁰ JSON mode requires `geminiAdapter({ jsonMode: true })`.
 
 ## Legend
 
-- **planned** — not yet implemented
-- **best-effort** — depends on host API (OpenRouter, Groq, Ollama, etc.)
-- **—** — not applicable or not planned for that adapter
+- **best-effort** — depends on host API or model revision
+- **—** — not applicable or not mapped to dedicated unified events
 
 ## Known provider quirks
-
-Document host-specific deviations here as they are discovered during adapter implementation.
 
 | Host               | Quirk                                                         | Workaround                                                            |
 | ------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -45,14 +44,18 @@ Document host-specific deviations here as they are discovered during adapter imp
 | Anthropic Messages | Usage can arrive on message_start and message_delta           | Adapter emits usage chunks whenever token fields are present          |
 | OpenAI Responses   | Function call args stream as event-name payloads              | Adapter maps them to unified `tool_call.*` events                     |
 | OpenAI Responses   | Realtime/audio/multimodal binary output is not handled        | Out of scope for this adapter                                         |
+| Google Gemini      | Tool args may stream via `partialArgs` + `willContinue`         | Adapter emits incremental `tool_call.args.delta`; core assembles      |
+| Google Gemini      | Stream may end with `finishReason: STOP` before terminal tool chunk | Core flush completes open tools on stream end                    |
+| Google Gemini      | No `refusal.*` events — safety uses `promptFeedback` / finish | Map blocked prompts to `error` + `finish`; SAFETY → `content_filter` |
+| Google Gemini      | Vertex AI / Interactions API differ from Google AI SSE        | Deferred — adapter targets Google AI `streamGenerateContent` only     |
+| Google Gemini      | Multimodal `inlineData` / `fileData` parts ignored            | Out of scope for v1.1                                               |
 
 ## OpenAI-compatible limitations
 
 - Provider presets are best-effort; CI does not call live provider APIs.
 - Hosts can change OpenAI-compatible dialects without notice.
 - Non-string reasoning payloads are skipped.
-- Multi-choice terminal behavior is limited by the current core single terminal
-  finish event.
+- Multi-choice terminal behavior is limited by the current core single terminal finish event.
 
 ## Provider-agnostic transforms
 

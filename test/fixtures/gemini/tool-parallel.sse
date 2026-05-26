@@ -1,0 +1,2 @@
+data: {"responseId":"resp_par","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"search","id":"call_a","args":{"q":"a"}}},{"functionCall":{"name":"search","id":"call_b","args":{"q":"b"}}}]}}],"finishReason":"STOP"}
+

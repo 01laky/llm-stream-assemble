@@ -8,6 +8,7 @@ import { anthropicAdapter } from "../src/adapters/anthropic";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
+import { geminiAdapter } from "../src/adapters/gemini";
 import {
 	asNumber,
 	asString,
@@ -120,6 +121,17 @@ describe("maintenance adapter regressions", () => {
 		expect(() => openaiResponsesAdapter().parseChunk("{")).toThrow(
 			/openaiResponsesAdapter\.parseChunk/,
 		);
+		expect(() => geminiAdapter().parseChunk("{")).toThrow(/geminiAdapter\.parseChunk/);
+	});
+
+	it("LSA-MAINT11c: Gemini representative payload emits expected raw chunks", () => {
+		expect(
+			geminiAdapter().parseChunk(
+				JSON.stringify({
+					candidates: [{ content: { parts: [{ text: "hi" }] } }],
+				}),
+			),
+		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);
 	});
 });
 

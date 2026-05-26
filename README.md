@@ -1,15 +1,15 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.0.1-blue)
+![core](https://img.shields.io/badge/core-1.1.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-547%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-650%2B_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.0.1-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.1.0-brightgreen)
 
 A zero-dependency TypeScript library that normalizes LLM streaming responses — text, tool calls, reasoning, JSON, usage, errors, and non-streaming payloads — into unified events.
 
-**Status:** Stable `1.0.1`. Core, OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses adapters, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.1.0`. Core, OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, **Google Gemini**, transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 > A zero-dependency TypeScript layer for assembling OpenAI, Anthropic, and compatible LLM streams into unified events for text, tool calls, reasoning, JSON, usage, errors, and non-streaming responses - so you can stop hand-rolling provider parsers and keep one clean, typed event model across LLM apps, agents, proxies, and backends.
 
@@ -44,10 +44,11 @@ pnpm add llm-stream-assemble
 - [Post-1.0 provider roadmap (proposal)](./docs/post-1.0-provider-roadmap.md)
 - [Provider compatibility matrix](./docs/compatibility.md)
 - [Adapter author guide](./docs/adapter-guide.md)
+- [Live smoke checklist (maintainers)](./docs/live-smoke.md)
 
 ## Core Usage
 
-The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, and OpenAI Responses adapters:
+The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, and Google Gemini adapters:
 
 ```ts
 import { assembleFromPayloads, type StreamAdapter } from "llm-stream-assemble";
@@ -183,6 +184,37 @@ for await (const event of assembleStream(response.body!, openaiResponsesAdapter(
 
 Use `openaiResponsesAdapter({ jsonMode: true })` to map output text to `json.*` events. Reasoning support is best-effort for string summary/detail fields. Create a new adapter instance per stream.
 
+## Gemini Usage
+
+`geminiAdapter()` parses Google AI Gemini `GenerateContentResponse` payloads from `streamGenerateContent?alt=sse` and non-streaming `generateContent`. Create one adapter instance per request/stream.
+
+```ts
+import { assembleStream, geminiAdapter } from "llm-stream-assemble";
+
+const model = "gemini-2.5-flash";
+const apiKey = process.env.GOOGLE_API_KEY!;
+const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+
+const response = await fetch(url, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({
+		contents: [{ role: "user", parts: [{ text: "Hello" }] }],
+	}),
+});
+
+for await (const event of assembleStream(response.body!, geminiAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+	if (event.type === "tool_call.done") console.log(event.name, event.args);
+}
+```
+
+Use `geminiAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. Thinking models may emit `thought` parts mapped to `reasoning.*` (best-effort). Gemini does not expose OpenAI-style `refusal.*` events — blocked prompts use `promptFeedback` or safety finish reasons instead.
+
+Subpath import: `import { geminiAdapter } from "llm-stream-assemble/adapters/gemini"`.
+
+Vertex AI and the Interactions API are out of scope for this adapter; see [compatibility matrix](./docs/compatibility.md).
+
 ## Collecting a Stream
 
 `collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
@@ -240,6 +272,7 @@ for await (const event of assembleFromFile(
 - `examples/node-fetch/openai-chat.ts`
 - `examples/node-fetch/openai-compatible.ts`
 - `examples/node-fetch/anthropic.ts`
+- `examples/node-fetch/gemini.ts`
 - `examples/node-fetch/replay-fixture.ts`
 - `examples/proxy-safety/web-standard-proxy.ts`
 - `examples/proxy-safety/browser-client.ts`

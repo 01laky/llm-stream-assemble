@@ -1,0 +1,4 @@
+data: {"responseId":"resp_meta","modelVersion":"gemini-2.5-flash","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"Hi"}]}}]}
+
+data: {"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model","parts":[]}}]}
+

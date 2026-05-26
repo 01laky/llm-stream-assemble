@@ -1,0 +1,2 @@
+data: {"responseId":"resp_len","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"truncated"}]}}],"finishReason":"MAX_TOKENS"}
+

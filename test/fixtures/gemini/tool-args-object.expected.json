@@ -1,0 +1,55 @@
+[
+  {
+    "type": "message.start",
+    "id": "resp_args"
+  },
+  {
+    "type": "metadata",
+    "responseId": "resp_args"
+  },
+  {
+    "type": "tool_call.start",
+    "id": "call_m",
+    "name": "merge",
+    "index": 0,
+    "choiceIndex": 0
+  },
+  {
+    "type": "tool_call.args.delta",
+    "id": "call_m",
+    "delta": "{\"a\":1}",
+    "partial": {
+      "a": 1
+    }
+  },
+  {
+    "type": "tool_call.done",
+    "id": "call_m",
+    "name": "merge",
+    "args": {
+      "a": 1
+    }
+  },
+  {
+    "type": "tool_call.args.delta",
+    "id": "call_m",
+    "delta": "{\"a\":1,\"b\":2}",
+    "partial": {
+      "a": 1,
+      "b": 2
+    }
+  },
+  {
+    "type": "tool_call.done",
+    "id": "call_m",
+    "name": "unknown",
+    "args": {
+      "a": 1,
+      "b": 2
+    }
+  },
+  {
+    "type": "finish",
+    "reason": "incomplete"
+  }
+]

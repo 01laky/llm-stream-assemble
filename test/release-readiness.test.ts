@@ -82,4 +82,24 @@ describe("release readiness", () => {
 		const pkg = JSON.parse(read("package.json")) as { dependencies?: Record<string, string> };
 		expect(Object.keys(pkg.dependencies ?? {})).toEqual([]);
 	});
+
+	it("LSA-REL14: package exports Gemini subpath", () => {
+		const pkg = JSON.parse(read("package.json")) as { exports: Record<string, unknown> };
+		expect(pkg.exports["./adapters/gemini"]).toBeDefined();
+	});
+
+	it("LSA-REL15: tsup config builds Gemini subpath", () => {
+		expect(read("tsup.config.ts")).toContain('"adapters/gemini"');
+	});
+
+	it("LSA-REL16: dist Gemini artifacts exist", () => {
+		for (const file of [
+			"dist/adapters/gemini.d.ts",
+			"dist/adapters/gemini.d.cts",
+			"dist/adapters/gemini.js",
+			"dist/adapters/gemini.cjs",
+		]) {
+			expect(existsSync(join(rootDir, file))).toBe(true);
+		}
+	});
 });

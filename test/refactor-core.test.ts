@@ -155,11 +155,13 @@ describe("refactor: adapter errors", () => {
 		}
 	});
 
-	it("LSA-RF12: anthropic and responses adapters use shared provider error shape", () => {
+	it("LSA-RF12: anthropic, responses, and gemini paths share provider error finish shape", () => {
 		const anthropic = providerErrorChunksFromMessage("Anthropic provider error", false);
 		const responses = providerErrorChunksFromMessage("OpenAI Responses provider error", false);
+		const gemini = providerErrorChunksFromMessage("Gemini provider error", false);
 		expect(anthropic[1]).toEqual({ kind: "finish", reason: "error" });
 		expect(responses[1]).toEqual({ kind: "finish", reason: "error" });
+		expect(gemini[1]).toEqual({ kind: "finish", reason: "error" });
 	});
 });
 

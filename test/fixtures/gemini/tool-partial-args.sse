@@ -1,0 +1,4 @@
+data: {"responseId":"resp_part","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"controlLight","partialArgs":[{"jsonPath":"$.brightness","numberValue":50}],"willContinue":true}}]}}]}
+
+data: {"candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"controlLight","partialArgs":[{"jsonPath":"$.brightness","stringValue":"%"}],"willContinue":false}}]}}],"finishReason":"STOP"}
+

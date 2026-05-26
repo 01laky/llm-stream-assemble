@@ -1,0 +1,33 @@
+[
+  {
+    "type": "message.start",
+    "id": "resp_text"
+  },
+  {
+    "type": "metadata",
+    "responseId": "resp_text",
+    "model": "gemini-2.5-flash"
+  },
+  {
+    "type": "text.delta",
+    "text": "Hello"
+  },
+  {
+    "type": "text.delta",
+    "text": " Gemini"
+  },
+  {
+    "type": "usage",
+    "inputTokens": 5,
+    "outputTokens": 2
+  },
+  {
+    "type": "text.done",
+    "text": "Hello Gemini"
+  },
+  {
+    "type": "finish",
+    "reason": "stop",
+    "choiceIndex": 0
+  }
+]

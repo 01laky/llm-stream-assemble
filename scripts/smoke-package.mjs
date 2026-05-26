@@ -30,6 +30,7 @@ import { openaiChatAdapter } from "llm-stream-assemble/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "llm-stream-assemble/adapters/openai-compatible";
 import { anthropicAdapter } from "llm-stream-assemble/adapters/anthropic";
 import { openaiResponsesAdapter } from "llm-stream-assemble/adapters/openai-responses";
+import { geminiAdapter } from "llm-stream-assemble/adapters/gemini";
 
 if (typeof root.assembleStream !== "function") throw new Error("root ESM import failed");
 if (typeof core.assembleStream !== "function") throw new Error("core ESM import failed");
@@ -37,6 +38,7 @@ if (typeof openaiChatAdapter !== "function") throw new Error("openai-chat ESM im
 if (typeof openaiCompatibleAdapter !== "function") throw new Error("openai-compatible ESM import failed");
 if (typeof anthropicAdapter !== "function") throw new Error("anthropic ESM import failed");
 if (typeof openaiResponsesAdapter !== "function") throw new Error("openai-responses ESM import failed");
+if (typeof geminiAdapter !== "function") throw new Error("gemini ESM import failed");
 `,
 	);
 
@@ -49,6 +51,7 @@ const { openaiChatAdapter } = require("llm-stream-assemble/adapters/openai-chat"
 const { openaiCompatibleAdapter } = require("llm-stream-assemble/adapters/openai-compatible");
 const { anthropicAdapter } = require("llm-stream-assemble/adapters/anthropic");
 const { openaiResponsesAdapter } = require("llm-stream-assemble/adapters/openai-responses");
+const { geminiAdapter } = require("llm-stream-assemble/adapters/gemini");
 
 if (typeof root.assembleStream !== "function") throw new Error("root CJS import failed");
 if (typeof core.assembleStream !== "function") throw new Error("core CJS import failed");
@@ -56,6 +59,7 @@ if (typeof openaiChatAdapter !== "function") throw new Error("openai-chat CJS im
 if (typeof openaiCompatibleAdapter !== "function") throw new Error("openai-compatible CJS import failed");
 if (typeof anthropicAdapter !== "function") throw new Error("anthropic CJS import failed");
 if (typeof openaiResponsesAdapter !== "function") throw new Error("openai-responses CJS import failed");
+if (typeof geminiAdapter !== "function") throw new Error("gemini CJS import failed");
 `,
 	);
 

@@ -1,5 +1,6 @@
 import { assembleFromFile, collectStream, openaiChatAdapter } from "../../src/index";
 
+/** Replay any adapter fixture, e.g. `test/fixtures/gemini/text-basic.sse` with `geminiAdapter()`. */
 export interface ReplayFixtureExampleOptions {
 	path?: string;
 	write?: (text: string) => void;

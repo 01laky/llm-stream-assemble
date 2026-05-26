@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.0]
+
+### Added
+
+- **Google Gemini adapter** (`geminiAdapter`) for Google AI `streamGenerateContent?alt=sse` and
+  non-streaming `generateContent` — maps `candidates[].content.parts[]` to unified text, tool calls,
+  reasoning (`thought` parts), JSON mode, usage, finish, and error events.
+- Subpath export `llm-stream-assemble/adapters/gemini` with ESM/CJS build artifacts and smoke coverage.
+- Synthetic fixtures under `test/fixtures/gemini/` (text, tools, `partialArgs`, thinking, safety,
+  blocked prompts, incomplete streams) with golden tests **LSA-G01** through **LSA-G71**.
+- Internal adapter conformance helper `test/helpers/adapter-conformance.ts` for shared golden-stream checks.
+- Example `examples/node-fetch/gemini.ts`, maintainer live smoke `scripts/live-smoke/gemini.ts`,
+  `.env.example`, and [docs/live-smoke.md](./docs/live-smoke.md).
+- GitHub issue template `.github/ISSUE_TEMPLATE/new-adapter.md` for community adapter proposals.
+
+### Changed
+
+- README adds **Gemini Usage** section; compatibility matrix and adapter guide document Gemini support,
+  quirks (`partialArgs`, no `refusal.*`, Vertex deferred), and honest feature flags.
+- package.json keywords include `gemini` and `google`.
+
+### Migration from 1.0.x to 1.1.0
+
+- New optional subpath: `llm-stream-assemble/adapters/gemini`.
+- No changes required for existing OpenAI, Anthropic, or Responses integrations.
+
 ## [1.0.1]
 
 ### Added
