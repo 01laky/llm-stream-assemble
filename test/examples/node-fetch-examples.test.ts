@@ -8,6 +8,7 @@ import {
 	runCloudflareWorkersAIExample,
 	buildCloudflareWorkersAIChatCompletionsUrl,
 } from "../../examples/workers-ai/rest-chat-completions";
+import { runBedrockExample } from "../../examples/node-fetch/bedrock";
 import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
@@ -15,6 +16,7 @@ import { runPerplexityExample } from "../../examples/node-fetch/perplexity";
 import { runReplayFixtureExample } from "../../examples/node-fetch/replay-fixture";
 import { runXaiExample } from "../../examples/node-fetch/xai";
 import { fakeStreamingFetch, withEnv } from "./helpers";
+import { bedrockJsonlLines } from "../helpers/bedrock-fixtures";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const openAISSE = readFileSync(join(rootDir, "test/fixtures/openai-chat/text-basic.sse"), "utf8");
@@ -267,5 +269,14 @@ describe("node fetch examples", () => {
 		expect(source).toContain("stream_options");
 		expect(source).toContain("include_usage");
 		expect(source).toContain('provider: "cloudflare"');
+	});
+
+	it("LSA-X56: Bedrock example runs offline with fixture eventLines", async () => {
+		const output: string[] = [];
+		await runBedrockExample({
+			eventLines: bedrockJsonlLines("text-basic"),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello Bedrock");
 	});
 });

@@ -1,5 +1,6 @@
 flowchart LR
-	EVENTS(["StreamEvent stream"])
+	PAY(["assembleFromPayloads<br/>Bedrock decoded JSON"])
+	PAY --> EVENTS(["StreamEvent stream"])
 
 	subgraph TRANSFORMS["Transforms & helpers"]
 		direction TB
@@ -16,13 +17,15 @@ flowchart LR
 
 	COL --> OUT1["text · toolCalls · usage · finishReason"]
 	TAP --> OUT2["logs · metrics · debug"]
-	SSE --> OUT3["browser-safe SSE proxy"]
+	SSE --> OUT3["browser-safe SSE proxy<br/>Bedrock Worker proxy"]
 	FILE --> OUT4["local .sse / .json replay"]
 
 	classDef io fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
 	classDef transform fill:#431407,stroke:#fb923c,stroke-width:2px,color:#ffedd5
+	classDef bedrock fill:#312e81,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
 	classDef out fill:#172554,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
 
+	class PAY bedrock
 	class EVENTS io
 	class COL,TAP,SSE,FILE transform
 	class OUT1,OUT2,OUT3,OUT4 out

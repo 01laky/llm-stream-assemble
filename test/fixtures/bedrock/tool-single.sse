@@ -1,0 +1,12 @@
+data: {"messageStart":{"role":"assistant"}}
+
+data: {"contentBlockStart":{"contentBlockIndex":0,"start":{"toolUse":{"toolUseId":"tool_weather_1","name":"get_weather"}}}}
+
+data: {"contentBlockDelta":{"contentBlockIndex":0,"delta":{"toolUse":{"input":"{\"city\":\"Bo"}}}}
+
+data: {"contentBlockDelta":{"contentBlockIndex":0,"delta":{"toolUse":{"input":"{\"city\":\"Boston\",\"unit\":\"C\"}"}}}}
+
+data: {"contentBlockStop":{"contentBlockIndex":0}}
+
+data: {"messageStop":{"stopReason":"tool_use"}}
+

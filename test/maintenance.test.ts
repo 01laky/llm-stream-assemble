@@ -9,6 +9,7 @@ import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { geminiAdapter } from "../src/adapters/gemini";
+import { bedrockAdapter } from "../src/adapters/bedrock";
 import {
 	asNumber,
 	asString,
@@ -122,6 +123,7 @@ describe("maintenance adapter regressions", () => {
 			/openaiResponsesAdapter\.parseChunk/,
 		);
 		expect(() => geminiAdapter().parseChunk("{")).toThrow(/geminiAdapter\.parseChunk/);
+		expect(() => bedrockAdapter().parseChunk("{")).toThrow(/bedrockAdapter\.parseChunk/);
 	});
 
 	it("LSA-MAINT11c: Gemini representative payload emits expected raw chunks", () => {
@@ -129,6 +131,16 @@ describe("maintenance adapter regressions", () => {
 			geminiAdapter().parseChunk(
 				JSON.stringify({
 					candidates: [{ content: { parts: [{ text: "hi" }] } }],
+				}),
+			),
+		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);
+	});
+
+	it("LSA-MAINT18: Bedrock representative payload emits expected raw chunks", () => {
+		expect(
+			bedrockAdapter().parseChunk(
+				JSON.stringify({
+					contentBlockDelta: { contentBlockIndex: 0, delta: { text: "hi" } },
 				}),
 			),
 		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);

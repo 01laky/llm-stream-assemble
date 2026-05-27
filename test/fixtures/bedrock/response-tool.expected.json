@@ -1,0 +1,38 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_resp_1",
+		"name": "search",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_resp_1",
+		"delta": "{\"q\":\"bedrock\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_resp_1",
+		"name": "search",
+		"args": {
+			"q": "bedrock"
+		}
+	},
+	{
+		"type": "usage",
+		"inputTokens": 12,
+		"outputTokens": 6
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

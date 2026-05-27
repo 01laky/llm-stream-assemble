@@ -1,0 +1,27 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "blocked"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "blocked"
+	},
+	{
+		"type": "finish",
+		"reason": "content_filter",
+		"choiceIndex": 0
+	}
+]

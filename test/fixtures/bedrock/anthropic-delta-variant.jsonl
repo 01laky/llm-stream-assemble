@@ -1,0 +1,4 @@
+{"messageStart":{"role":"assistant"}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"reasoningContent":{"text":"Let me think"}}}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"Answer"}}}
+{"messageStop":{"stopReason":"end_turn"}}

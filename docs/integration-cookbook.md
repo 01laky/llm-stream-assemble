@@ -1,6 +1,6 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.3.6`
+**Status:** Active guide — `1.4.0` (initial cookbook shipped in `1.3.6`)
 
 Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 
@@ -16,18 +16,19 @@ Wire unified `StreamEvent`s into your application stack. This library is the **a
 
 ## Decision table
 
-| I use…                          | Start here                                                                                    | Also see                                                                               |
-| ------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Hono / Elysia / Web `Request`   | [`hono-proxy.ts`](../examples/integrations/hono-proxy.ts)                                     | [`web-standard-proxy.ts`](../examples/proxy-safety/web-standard-proxy.ts)              |
-| Express / Fastify (Node HTTP)   | [`express-proxy.ts`](../examples/integrations/express-proxy.ts)                               | proxy-safety README                                                                    |
-| Cloudflare Workers (edge proxy) | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)           | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client) |
-| LiteLLM / local OpenAI proxy    | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)       | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                        |
-| OpenRouter                      | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)    | not LiteLLM file                                                                       |
-| Vercel AI SDK                   | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts) | [comparison](./comparison.md)                                                          |
-| LangChain.js                    | [`langchain-callback-pattern.ts`](../examples/integrations/langchain-callback-pattern.ts)     | [comparison](./comparison.md)                                                          |
-| Next.js App Router              | [`nextjs-app-route.ts`](../examples/integrations/nextjs-app-route.ts)                         | Edge vs Node notes below                                                               |
-| Non-streaming JSON API          | [`collect-stream-handler.ts`](../examples/integrations/collect-stream-handler.ts)             | Node-only (`assembleFromFile`)                                                         |
-| TransformStream middleware      | [`assembly-transform-pipeline.ts`](../examples/integrations/assembly-transform-pipeline.ts)   | `createAssemblyTransform`                                                              |
+| I use…                            | Start here                                                                                    | Also see                                                                                                                              |
+| --------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Hono / Elysia / Web `Request`     | [`hono-proxy.ts`](../examples/integrations/hono-proxy.ts)                                     | [`web-standard-proxy.ts`](../examples/proxy-safety/web-standard-proxy.ts)                                                             |
+| Express / Fastify (Node HTTP)     | [`express-proxy.ts`](../examples/integrations/express-proxy.ts)                               | proxy-safety README                                                                                                                   |
+| Cloudflare Workers (edge proxy)   | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)           | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client)                                                |
+| AWS Bedrock on Cloudflare Workers | [`bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)                 | [`decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts) + [`node-fetch/bedrock.ts`](../examples/node-fetch/bedrock.ts) |
+| LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)       | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                                                                       |
+| OpenRouter                        | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)    | not LiteLLM file                                                                                                                      |
+| Vercel AI SDK                     | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts) | [comparison](./comparison.md)                                                                                                         |
+| LangChain.js                      | [`langchain-callback-pattern.ts`](../examples/integrations/langchain-callback-pattern.ts)     | [comparison](./comparison.md)                                                                                                         |
+| Next.js App Router                | [`nextjs-app-route.ts`](../examples/integrations/nextjs-app-route.ts)                         | Edge vs Node notes below                                                                                                              |
+| Non-streaming JSON API            | [`collect-stream-handler.ts`](../examples/integrations/collect-stream-handler.ts)             | Node-only (`assembleFromFile`)                                                                                                        |
+| TransformStream middleware        | [`assembly-transform-pipeline.ts`](../examples/integrations/assembly-transform-pipeline.ts)   | `createAssemblyTransform`                                                                                                             |
 
 ---
 
@@ -68,6 +69,14 @@ export default {
 ```
 
 Full example: [`examples/integrations/cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)
+
+---
+
+## AWS Bedrock on Cloudflare Workers
+
+Browser → your Worker → Bedrock Runtime **ConverseStream**. The upstream response is often binary EventStream — pipe bytes through [`decodedBedrockEventPayloads`](../examples/bedrock/decode-event-stream.ts) (or AWS SDK decode) to yield JSON strings, then `assembleFromPayloads(..., bedrockAdapter())` and `toSSE(..., { sanitizeErrors: true })` to the client. IAM and signing remain your Worker boundary; this library only parses decoded JSON.
+
+Full example: [`examples/integrations/bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)
 
 ---
 

@@ -312,4 +312,42 @@ describe("integration cookbook examples", () => {
 		});
 		expect(next.headers.get("Content-Type")).toBe("text/event-stream");
 	});
+
+	it("LSA-INT39: handleBedrockWorkerProxy returns text/event-stream with fixture bytes", async () => {
+		const { handleBedrockWorkerProxy } =
+			await import("../../examples/integrations/bedrock-worker-proxy");
+		const { readFileSync } = await import("node:fs");
+		const bytes = new Uint8Array(
+			readFileSync(join(rootDir, "test/fixtures/bedrock/event-stream-bytes.bin")),
+		);
+		const response = await handleBedrockWorkerProxy(
+			proxyRequest({ prompt: "hi", stream: true }),
+			{ AWS_REGION: "us-east-1", BEDROCK_MODEL_ID: "test-model" },
+			{
+				fetchImpl: async () =>
+					new Response(bytes, {
+						status: 200,
+						headers: { "Content-Type": "application/vnd.amazon.eventstream" },
+					}),
+			},
+		);
+		expect(response.headers.get("Content-Type")).toBe("text/event-stream");
+		const body = await response.text();
+		expect(body).toContain("data:");
+	});
+
+	it("LSA-INT40: bedrock-worker-proxy.ts does not import node:fs or @aws-sdk/*", () => {
+		const source = readFileSync(
+			join(rootDir, "examples/integrations/bedrock-worker-proxy.ts"),
+			"utf8",
+		);
+		expect(source).not.toMatch(/from ["']node:fs["']/);
+		expect(source).not.toContain("@aws-sdk/");
+	});
+
+	it("LSA-INT41: examples/integrations/README.md lists bedrock-worker-proxy.ts", () => {
+		expect(readFileSync(join(rootDir, "examples/integrations/README.md"), "utf8")).toContain(
+			"bedrock-worker-proxy.ts",
+		);
+	});
 });

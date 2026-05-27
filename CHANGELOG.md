@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.0]
+
+### Added
+
+- **`bedrockAdapter()`** — AWS Bedrock ConverseStream decoded JSON events → unified `StreamEvent`s; `BedrockAdapterOptions` with `modelFamily` (`anthropic` | `openai-like` | `nova` | `auto`) and `jsonMode`.
+- **`llm-stream-assemble/adapters/bedrock`** subpath export.
+- **`test/fixtures/bedrock/`** — synthetic ConverseStream jsonl/sse/bin/response fixtures; guardrail and EventStream bytes fixtures.
+- **`examples/bedrock/decode-event-stream.ts`** — minimal zero-dep EventStream decode helper (examples only); **`event-stream-bytes.bin`** fixture.
+- **`examples/integrations/bedrock-worker-proxy.ts`** — Cloudflare Worker + Bedrock ConverseStream proxy recipe.
+- **`examples/node-fetch/bedrock.ts`** and **`examples/bedrock/README.md`** — decode boundary documentation.
+- **`scripts/live-smoke/bedrock-converse.mjs`** + **`docs/live-smoke.md`** Bedrock section; `pnpm smoke:bedrock`.
+- README **Bedrock Usage**; integration cookbook + compatibility guardrail quirks.
+- Tests **LSA-B01**–**B81**, **LSA-DOC51**–**DOC59**, **LSA-INT39**–**INT41**, **LSA-P08**, **LSA-X56**/**X57**, **LSA-REL20**–**REL22**, **LSA-MAINT18**; dedicated **finish/usage**, **tools**, and **conformance** Bedrock suites mirroring Gemini depth.
+
+### Changed
+
+- **`docs/adapter-guide.md`** — Bedrock decode boundary; sixth dedicated reference adapter.
+- **`docs/img/adapters-overview`** — `bedrockAdapter` node; stable **1.4.0** label.
+- **`docs/img/`** — Bedrock decode branches in `pipeline`, `quick-decision`, `chunk-assembly`, `assembler-lifecycle`, and `transforms` diagrams (SVG regenerated).
+- Version labels **1.4.0** across docs; README test badge **1124**.
+- **`.env.example`** — `AWS_REGION`, `BEDROCK_MODEL_ID`, credential placeholders.
+- **`docs/integration-cookbook.md`** — Bedrock Worker decision row.
+
+### Notes
+
+- Binary AWS EventStream framing is **not** parsed by this library — decode before `parseChunk`.
+- IAM, signing, and retries remain application concerns.
+
 ## [1.3.6]
 
 ### Added

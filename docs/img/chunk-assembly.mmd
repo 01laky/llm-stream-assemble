@@ -1,15 +1,23 @@
 flowchart TB
-	subgraph IN["SSE byte stream"]
+	subgraph IN_SSE["SSE byte stream · OpenAI · Anthropic · Gemini · compatible"]
 		C1["TCP read may split mid-line"]
 		C2["data: payload strings"]
 	end
 
-	subgraph PARSE["parse-sse · line buffer"]
+	subgraph IN_BEDROCK["AWS Bedrock ConverseStream · decode boundary"]
+		ES["EventStream binary body"]
+		DEC["App / SDK / decode-event-stream.ts"]
+		JL["Decoded JSON string per event"]
+		ES --> DEC --> JL
+	end
+
+	subgraph PARSE["parseSSE · line buffer"]
 		LB["Accumulate until LF/CRLF"]
 	end
 
 	subgraph ADAPTER["Adapter · stateless per payload"]
 		PC["parseChunk → RawChunk[]"]
+		BA["bedrockAdapter.parseChunk"]
 	end
 
 	subgraph CORE["EventAssembler · stateful per stream"]
@@ -24,14 +32,18 @@ flowchart TB
 	C1 --> LB
 	C2 --> LB
 	LB --> PC
+	JL --> BA
 	PC --> BUF
+	BA --> BUF
 	BUF --> DONE
 	DONE --> EV
 
 	classDef in fill:#1e3a5f,stroke:#60a5fa,stroke-width:2px,color:#e0f2fe
+	classDef bedrock fill:#312e81,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
 	classDef mid fill:#4a1d96,stroke:#c084fc,stroke-width:2px,color:#f3e8ff
 	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
 
-	class IN,PARSE in
+	class IN_SSE,PARSE in
+	class IN_BEDROCK,ES,DEC,JL bedrock
 	class ADAPTER,CORE mid
 	class OUT out

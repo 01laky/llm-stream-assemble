@@ -17,6 +17,7 @@ describe("examples docs regression", () => {
 			"openai-compatible",
 			"anthropic",
 			"gemini",
+			"bedrock",
 			"perplexity",
 			"xai",
 			"azure-openai",
@@ -64,6 +65,9 @@ describe("examples docs regression", () => {
 			"examples/node-fetch/openai-compatible.ts",
 			"examples/node-fetch/anthropic.ts",
 			"examples/node-fetch/gemini.ts",
+			"examples/node-fetch/bedrock.ts",
+			"examples/bedrock/decode-event-stream.ts",
+			"examples/integrations/bedrock-worker-proxy.ts",
 			"examples/proxy-safety/web-standard-proxy.ts",
 			"examples/integrations/hono-proxy.ts",
 			"examples/integrations/express-proxy.ts",
@@ -80,6 +84,7 @@ describe("examples docs regression", () => {
 			.join("\n");
 		expect(all).not.toContain('from "openai"');
 		expect(all).not.toContain('from "@anthropic-ai');
+		expect(all).not.toContain("@aws-sdk/");
 	});
 
 	it("LSA-X27: no example adds runtime dependencies", () => {
@@ -121,6 +126,8 @@ describe("examples docs regression", () => {
 		expect(env).toContain("LITELLM_BASE_URL");
 		expect(env).toContain("LITELLM_API_KEY");
 		expect(env).toContain("LITELLM_MODEL");
+		expect(env).toContain("AWS_REGION");
+		expect(env).toContain("BEDROCK_MODEL_ID");
 	});
 
 	it("LSA-X42: README contains Why not just concatenate section", () => {
@@ -175,6 +182,11 @@ describe("examples docs regression", () => {
 	it("LSA-X49: package.json scripts include bench:smoke", () => {
 		const pkg = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
 		expect(pkg.scripts?.["bench:smoke"]).toContain("bench-smoke");
+	});
+
+	it("LSA-X57: package.json scripts documents smoke:bedrock", () => {
+		const pkg = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
+		expect(pkg.scripts?.["smoke:bedrock"]).toContain("bedrock-converse");
 	});
 
 	it("LSA-X50: bench-smoke script exists and performance doc documents how to run it", () => {

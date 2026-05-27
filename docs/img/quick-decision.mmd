@@ -9,7 +9,12 @@ flowchart TD
 	SHAPE -->|OpenAI Responses API| OAR["openaiResponsesAdapter()"]
 	SHAPE -->|Anthropic Messages| ANT["anthropicAdapter()"]
 	SHAPE -->|Google Gemini GenerateContent| GEM["geminiAdapter()"]
+	SHAPE -->|AWS Bedrock ConverseStream| BRD{EventStream binary?}
 	SHAPE -->|OpenAI-compatible host| COMP["openaiCompatibleAdapter({ provider })"]
+
+	BRD -->|Yes — decode first| DEC["SDK or decode-event-stream.ts<br/>→ JSON strings per event"]
+	BRD -->|Already decoded JSON| BR["bedrockAdapter()"]
+	DEC --> BR
 
 	COMP --> PRESET["Pick preset: ollama · groq · azure · cloudflare · generic · …"]
 
@@ -17,10 +22,11 @@ flowchart TD
 	OAR --> ASM
 	ANT --> ASM
 	GEM --> ASM
+	BR --> ASMP["assembleFromPayloads(lines, adapter)<br/>or assembleStream pseudo-SSE"]
 	PRESET --> ASM
-	RESP --> DONE(["Unified StreamEvent stream"])
-
+	ASMP --> DONE(["Unified StreamEvent stream"])
 	ASM --> DONE
+	RESP --> DONE
 
 	UI["Need React chat UI or agent framework?"]
 	UI --> SDK["Use AI SDK — see docs/comparison.md"]
@@ -30,7 +36,9 @@ flowchart TD
 	classDef pick fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ede9fe
 	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
 	classDef warn fill:#451a03,stroke:#fb923c,stroke-width:1px,color:#ffedd5
+	classDef decode fill:#312e81,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
 
-	class OAI,OAR,ANT,GEM,COMP,PRESET,ASM,RESP pick
+	class OAI,OAR,ANT,GEM,BR,COMP,PRESET,ASM,ASMP,RESP pick
+	class DEC decode
 	class DONE out
 	class SDK,TAG,NO warn

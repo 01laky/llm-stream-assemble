@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.3.6`), Anthropic Messages, OpenAI Responses, and **Google Gemini** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.4.0`), Anthropic Messages, OpenAI Responses, **Google Gemini**, and **AWS Bedrock** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -90,6 +90,24 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 | Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                                                                                                                         |
 | OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                                                                   |
 | Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                                                                            |
+| AWS Bedrock               | `bedrockAdapter()`                                                                                                                                                                                                                                                                                                                           |
+
+## Bedrock decode boundary
+
+Bedrock **ConverseStream** responses are often binary AWS EventStream. **`bedrockAdapter.parseChunk(raw)` accepts one decoded UTF-8 JSON string per ConverseStream event** — same contract as other adapters. Binary framing, IAM, and SigV4 signing stay outside the library.
+
+See also the roadmap [Input format matrix](./post-1.0-provider-roadmap.md#input-format-matrix-decode-boundary).
+
+| Transport                | Typical providers         | Decode owner                 | Adapter input                   |
+| ------------------------ | ------------------------- | ---------------------------- | ------------------------------- |
+| SSE (`data:` lines)      | OpenAI, Anthropic, Gemini | `parseSSE()` in core         | JSON string per `data:` payload |
+| NDJSON / JSONL           | Proxies, batch            | App or example helper        | One JSON object string per line |
+| AWS EventStream (binary) | Bedrock                   | App / AWS SDK / example util | Decoded JSON text per event     |
+| Non-streaming JSON body  | All providers             | HTTP client                  | `parseResponse(body)`           |
+
+**`modelFamily`** (`anthropic` | `openai-like` | `nova` | `auto`) hints which ConverseStream dialect to prefer when envelopes overlap. Default `"auto"` uses structural detection; set explicitly when you know the Bedrock model family.
+
+Use `bedrockAdapter()` as the reference pattern for event-name ConverseStream envelopes (`messageStart`, `contentBlockDelta`, `messageStop`, …) on **pre-decoded** JSON strings. Example decode helper: [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
 
 ## Azure preset vs generic
 

@@ -12,6 +12,7 @@ fetch responses in CI; no live provider calls are made by default.
 | Local Ollama or other compatible host                                 | `node-fetch/openai-compatible.ts` (`provider: "ollama"`, …)                                     |
 | Anthropic Messages                                                    | `node-fetch/anthropic.ts`                                                                       |
 | Google Gemini SSE                                                     | `node-fetch/gemini.ts`                                                                          |
+| AWS Bedrock ConverseStream (decoded JSON)                             | `node-fetch/bedrock.ts` + [`bedrock/README.md`](./bedrock/README.md)                            |
 | Azure / Cloudflare / Perplexity / xAI                                 | matching `node-fetch/*.ts` or `workers-ai/`                                                     |
 | Proxy unified SSE to a browser                                        | `proxy-safety/`                                                                                 |
 | Replay a checked-in fixture offline                                   | `node-fetch/replay-fixture.ts`                                                                  |
@@ -65,6 +66,7 @@ Required environment variables when running manually:
 - `OLLAMA_BASE_URL`, `OLLAMA_MODEL` (local Ollama smoke — see [docs/live-smoke.md](../docs/live-smoke.md))
 - `ANTHROPIC_API_KEY`
 - `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Gemini example accepts either)
+- `AWS_REGION`, `BEDROCK_MODEL_ID` (Bedrock example / smoke — plus standard AWS credential chain)
 
 The examples accept injected `fetchImpl` and `write` callbacks so tests do not
 write to stdout or call the network. Environment variables are read inside exported

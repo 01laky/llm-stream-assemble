@@ -9,6 +9,7 @@ export default defineConfig({
 		"adapters/anthropic": "src/adapters/anthropic.ts",
 		"adapters/openai-responses": "src/adapters/openai-responses.ts",
 		"adapters/gemini": "src/adapters/gemini.ts",
+		"adapters/bedrock": "src/adapters/bedrock.ts",
 	},
 	format: ["esm", "cjs"],
 	dts: true,

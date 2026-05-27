@@ -22,6 +22,7 @@ const subpathEntries = [
 		exportName: "openaiResponsesAdapter",
 	},
 	{ id: "LSA-P07", path: "dist/adapters/gemini.js", exportName: "geminiAdapter" },
+	{ id: "LSA-P08", path: "dist/adapters/bedrock.js", exportName: "bedrockAdapter" },
 ] as const;
 
 const declarationArtifacts = [
@@ -39,6 +40,10 @@ const declarationArtifacts = [
 	"dist/adapters/gemini.d.cts",
 	"dist/adapters/gemini.js",
 	"dist/adapters/gemini.cjs",
+	"dist/adapters/bedrock.d.ts",
+	"dist/adapters/bedrock.d.cts",
+	"dist/adapters/bedrock.js",
+	"dist/adapters/bedrock.cjs",
 	"dist/index.js",
 	"dist/index.cjs",
 	"dist/core/index.js",

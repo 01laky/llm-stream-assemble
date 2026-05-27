@@ -1,19 +1,19 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.3.6-blue)
+![core](https://img.shields.io/badge/core-1.4.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1019%2B_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1124_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.3.6-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.4.0-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
-> A zero-dependency TypeScript layer for assembling **OpenAI**, **Anthropic**, **Google Gemini**, and **OpenAI-compatible** LLM streams into unified events — so you can stop hand-rolling provider parsers and keep one clean, typed event model across chat UIs, agents, proxies, and backends.
+> A zero-dependency TypeScript layer between raw LLM provider bytes and your app: six built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Bedrock to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.3.6`. Five built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.4.0`. Six built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -138,13 +138,14 @@ Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Re
 
 ## Providers at a glance
 
-| Adapter                                 | Provider / API                                                                                                                                     | Import                                      |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                                            | `llm-stream-assemble`                       |
-| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, **Cloudflare Workers AI**, generic | `llm-stream-assemble`                       |
-| `anthropicAdapter()`                    | Anthropic Messages                                                                                                                                 | `llm-stream-assemble`                       |
-| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                       |
-| `geminiAdapter()`                       | Google AI Gemini                                                                                                                                   | `llm-stream-assemble` or `/adapters/gemini` |
+| Adapter                                 | Provider / API                                                                                                                                     | Import                                       |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                                            | `llm-stream-assemble`                        |
+| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, **Cloudflare Workers AI**, generic | `llm-stream-assemble`                        |
+| `anthropicAdapter()`                    | Anthropic Messages                                                                                                                                 | `llm-stream-assemble`                        |
+| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                        |
+| `geminiAdapter()`                       | Google AI Gemini                                                                                                                                   | `llm-stream-assemble` or `/adapters/gemini`  |
+| `bedrockAdapter()`                      | AWS Bedrock Converse / ConverseStream                                                                                                              | `llm-stream-assemble` or `/adapters/bedrock` |
 
 Full feature flags and quirks: [compatibility matrix](./docs/compatibility.md).
 
@@ -200,6 +201,7 @@ Pick an adapter in ~30 seconds:
 - **OpenAI Responses API** → `openaiResponsesAdapter()`
 - **Anthropic Messages** → `anthropicAdapter()`
 - **Google Gemini** → `geminiAdapter()`
+- **AWS Bedrock ConverseStream** → `bedrockAdapter()` (decoded JSON per event — see [Bedrock Usage](#bedrock-usage))
 - **Groq, Ollama, Azure, Cloudflare, OpenRouter, …** → `openaiCompatibleAdapter({ provider })`
 - **Non-streaming JSON body** → `assembleResponse(body, adapter)`
 - **React chat UI / full agent framework** → not this package — see [comparison](./docs/comparison.md)
@@ -271,6 +273,10 @@ for await (const event of assembleStream(response.body!, adapter)) {
 
 → [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts) · Usage: [Gemini](#gemini-usage)
 
+### AWS Bedrock
+
+→ [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts) · Usage: [Bedrock](#bedrock-usage) · Decode helper: [`examples/bedrock/README.md`](./examples/bedrock/README.md)
+
 ### Streaming JSON (structured output)
 
 ```ts
@@ -311,7 +317,7 @@ Wire unified events into **Hono**, **Express**, **Cloudflare Workers**, **LiteLL
 
 ### Core Usage
 
-The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, and Google Gemini adapters:
+The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, Google Gemini, and AWS Bedrock adapters:
 
 ```ts
 import { assembleFromPayloads, type StreamAdapter } from "llm-stream-assemble";
@@ -551,6 +557,54 @@ Subpath import: `import { geminiAdapter } from "llm-stream-assemble/adapters/gem
 
 Vertex AI and the Interactions API are out of scope for this adapter; see [compatibility matrix](./docs/compatibility.md).
 
+### Bedrock Usage
+
+`bedrockAdapter()` parses **decoded** AWS Bedrock **ConverseStream** JSON events — one ConverseStream envelope object per `parseChunk` call. Create one adapter instance per request/stream.
+
+Bedrock streaming responses are often `application/vnd.amazon.eventstream` (binary). **Decode EventStream bytes in your app, AWS SDK, or the example helper** before assembly — this library does not sign requests or parse binary framing.
+
+```
+Bedrock Runtime → EventStream bytes → [SDK or decode helper] → JSON strings
+  → bedrockAdapter().parseChunk / assembleFromPayloads / assembleStream → StreamEvent[]
+```
+
+**Recommended path:** use `@aws-sdk/client-bedrock-runtime` `ConverseStreamCommand`, iterate the async stream, `JSON.stringify` each event object, and feed lines to `assembleFromPayloads`. See [`examples/bedrock/README.md`](./examples/bedrock/README.md) and [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts).
+
+```ts
+import { assembleFromPayloads, bedrockAdapter } from "llm-stream-assemble";
+
+async function* decodedConverseEvents(sdkStream: AsyncIterable<Record<string, unknown>>) {
+	for await (const event of sdkStream) {
+		yield JSON.stringify(event);
+	}
+}
+
+for await (const event of assembleFromPayloads(
+	decodedConverseEvents(converseStream),
+	bedrockAdapter({ modelFamily: "auto" }),
+)) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+	if (event.type === "tool_call.done") console.log(event.name, event.args);
+}
+```
+
+**`modelFamily`** hints which ConverseStream dialect to prefer when envelopes overlap:
+
+| Value           | When to use                                                       |
+| --------------- | ----------------------------------------------------------------- |
+| `"auto"`        | Default — structural detection from payload shape                 |
+| `"anthropic"`   | Claude on Bedrock — reasoning deltas, Anthropic-style tool blocks |
+| `"nova"`        | Amazon Nova models                                                |
+| `"openai-like"` | Llama and other OpenAI-shaped delta fields                        |
+
+Use `bedrockAdapter({ jsonMode: true })` when structured JSON text blocks should map to `json.*` instead of `text.*`. Guardrail interventions map to `finish` with `content_filter`; trace details remain in `metadata.raw`.
+
+**Environment variables** for live smoke and examples: `AWS_REGION`, `BEDROCK_MODEL_ID`, plus standard AWS credential chain (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_PROFILE`, SSO). IAM and SigV4 signing stay outside this library.
+
+Subpath import: `import { bedrockAdapter } from "llm-stream-assemble/adapters/bedrock"`.
+
+Worker proxy recipe: [`examples/integrations/bedrock-worker-proxy.ts`](./examples/integrations/bedrock-worker-proxy.ts). EventStream decode helper (examples only): [`examples/bedrock/decode-event-stream.ts`](./examples/bedrock/decode-event-stream.ts).
+
 ---
 
 ## Transforms & replay
@@ -623,6 +677,7 @@ for await (const event of assembleFromFile(
 | [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                                     | xAI Grok streaming                               |
 | [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                         | Anthropic Messages                               |
 | [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                               | Google Gemini SSE                                |
+| [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts)                             | AWS Bedrock ConverseStream (decoded JSON)        |
 | [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)               | Local fixture replay                             |
 | [`examples/proxy-safety/`](./examples/proxy-safety/)                                             | Proxy + browser client patterns                  |
 

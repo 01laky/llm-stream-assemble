@@ -1,0 +1,42 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_weather_1",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_weather_1",
+		"delta": "{\"city\":\"Bo"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_weather_1",
+		"delta": "ston\",\"unit\":\"C\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_weather_1",
+		"name": "get_weather",
+		"args": {
+			"city": "Boston",
+			"unit": "C"
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

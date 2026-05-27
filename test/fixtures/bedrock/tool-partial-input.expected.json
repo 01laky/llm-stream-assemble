@@ -1,0 +1,41 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_partial",
+		"name": "lookup",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_partial",
+		"delta": "{\"id\":"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_partial",
+		"delta": "42}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_partial",
+		"name": "lookup",
+		"args": {
+			"id": 42
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

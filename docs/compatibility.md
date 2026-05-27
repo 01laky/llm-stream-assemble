@@ -2,15 +2,16 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.3.6` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
+**Current package status:** Stable `1.4.0` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, **AWS Bedrock (Converse / ConverseStream)**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
-| Provider / API            | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
-| ------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
-| OpenAI Chat Completions   | `openaiChatAdapter`       | yes  | yes   | best-effort  | yes         | yes²         | yes¹         | partial³     | v0.2   |
-| OpenAI-compatible         | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | partial³     | v0.3   |
-| Anthropic Messages        | `anthropicAdapter`        | yes  | yes   | yes          | yes         | best-effort⁶ | yes          | —            | v0.4   |
-| OpenAI Responses          | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | —            | v0.7   |
-| Google Gemini (Google AI) | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | partial³     | v1.1   |
+| Provider / API                          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
+| --------------------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
+| OpenAI Chat Completions                 | `openaiChatAdapter`       | yes  | yes   | best-effort  | yes         | yes²         | yes¹         | partial³     | v0.2   |
+| OpenAI-compatible                       | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | partial³     | v0.3   |
+| Anthropic Messages                      | `anthropicAdapter`        | yes  | yes   | yes          | yes         | best-effort⁶ | yes          | —            | v0.4   |
+| OpenAI Responses                        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | —            | v0.7   |
+| Google Gemini (Google AI)               | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | partial³     | v1.1   |
+| AWS Bedrock (Converse / ConverseStream) | `bedrockAdapter`          | yes  | yes   | best-effort  | —           | partial¹¹    | yes          | partial³     | v1.4   |
 
 ¹ OpenAI usage in stream requires `stream_options: { include_usage: true }` on the request.
 ² JSON mode requires `openaiChatAdapter({ jsonMode: true })` because OpenAI streams JSON mode as normal content deltas.
@@ -22,6 +23,8 @@ Living document — update when adapters ship or provider quirks are discovered.
 ⁸ JSON mode requires `openaiResponsesAdapter({ jsonMode: true })`.
 ⁹ Gemini `thought` parts map to `reasoning.*` detail events when present.
 ¹⁰ JSON mode requires `geminiAdapter({ jsonMode: true })`.
+¹¹ JSON mode requires `bedrockAdapter({ jsonMode: true })`; ConverseStream text blocks stream as deltas like other providers.
+¹² Binary AWS EventStream must be decoded **before** `parseChunk` — adapter accepts decoded UTF-8 JSON strings only; see [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
 
 ## Legend
 
@@ -69,6 +72,11 @@ Living document — update when adapters ship or provider quirks are discovered.
 | Google Gemini         | No `refusal.*` events — safety uses `promptFeedback` / finish       | Map blocked prompts to `error` + `finish`; SAFETY → `content_filter`                  |
 | Google Gemini         | Vertex AI / Interactions API differ from Google AI SSE              | Deferred — adapter targets Google AI `streamGenerateContent` only                     |
 | Google Gemini         | Multimodal `inlineData` / `fileData` parts ignored                  | Out of scope for v1.1                                                                 |
+| AWS Bedrock           | Binary EventStream response body                                    | Decode in app, AWS SDK, or `examples/bedrock/decode-event-stream.ts` before adapter   |
+| AWS Bedrock           | Guardrails intervene on stream                                      | `guardrail_intervened` → `content_filter` finish; trace in `metadata.raw`             |
+| AWS Bedrock           | Tool input streams as string fragments                              | `tool-args-delta` + core assembly until `tool_call.done`                              |
+| AWS Bedrock           | Nova vs Claude field shapes differ on ConverseStream                | Use `modelFamily` option — fixture-driven, not guessed at runtime                     |
+| AWS Bedrock           | No IAM, SigV4 signing, or retries in library                        | Application boundary — use AWS SDK or your proxy for auth                             |
 
 ## OpenAI-compatible limitations
 

@@ -19,3 +19,4 @@ export {
 export { anthropicAdapter } from "./anthropic";
 export { openaiResponsesAdapter, type OpenAIResponsesAdapterOptions } from "./openai-responses";
 export { geminiAdapter, type GeminiAdapterOptions } from "./gemini";
+export { bedrockAdapter, type BedrockAdapterOptions, type BedrockModelFamily } from "./bedrock";

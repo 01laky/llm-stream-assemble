@@ -1,0 +1,5 @@
+{"messageStart":{"role":"assistant"}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"Hello"}}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":" Bedrock"}}}
+{"metadata":{"usage":{"inputTokens":10,"outputTokens":5,"totalTokens":15}}}
+{"messageStop":{"stopReason":"end_turn"}}

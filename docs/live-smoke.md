@@ -165,6 +165,41 @@ Uses `openaiCompatibleAdapter({ provider: "cloudflare" })` against
 The smoke request sets `stream_options: { include_usage: true }` so usage events may appear.
 Expect at least one `text.delta` event.
 
+## Bedrock Converse (ConverseStream)
+
+Requires AWS credentials (env, profile, or SSO) and a model enabled in your account.
+
+```bash
+pnpm build
+pnpm smoke:bedrock
+```
+
+Optional env:
+
+| Variable           | Default     | Purpose                                                     |
+| ------------------ | ----------- | ----------------------------------------------------------- |
+| `AWS_REGION`       | `us-east-1` | Bedrock Runtime region                                      |
+| `BEDROCK_MODEL_ID` | —           | Model id (e.g. `anthropic.claude-3-5-sonnet-20241022-v2:0`) |
+
+Standard AWS credential chain applies: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_PROFILE`, SSO session, etc.
+
+Uses `@aws-sdk/client-bedrock-runtime` **inside the smoke script only** (devDependency — not a library runtime dep). The script decodes SDK stream events and assembles with `bedrockAdapter` from `dist/`.
+
+### Expected event types (short text prompt)
+
+- `text.delta` (one or more) and/or `finish`
+- Optional `usage` when metadata events include token fields
+
+### Failure modes
+
+| Symptom           | Likely cause                                        |
+| ----------------- | --------------------------------------------------- |
+| Missing model id  | Set `BEDROCK_MODEL_ID`                              |
+| Access denied     | IAM policy or model access not enabled in account   |
+| SDK not installed | Add `@aws-sdk/client-bedrock-runtime` devDependency |
+
+**Not run in CI** — no AWS credentials in the repository. Fixture golden tests (**LSA-B01**–**B37**) are the release gate.
+
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).

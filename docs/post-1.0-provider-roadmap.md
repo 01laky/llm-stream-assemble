@@ -98,7 +98,7 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.1.6  ✅  Perplexity + xAI Grok OpenAI-compatible presets
 1.2.0  ✅  Azure OpenAI Chat Completions compatible preset (`azure`)
 1.3.0  ✅  Cloudflare Workers AI OpenAI-compatible preset (`cloudflare`)
-1.4.0      AWS Bedrock adapter (enterprise path deferred from 1.2)
+1.4.0  ✅  AWS Bedrock adapter (ConverseStream — decoded JSON boundary)
 1.5.0      Cohere adapter (if demand exists)
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
@@ -291,7 +291,7 @@ Extend `openaiCompatibleAdapter({ provider: "deepseek" })` with dialect options 
 
 ### 5. AWS Bedrock (`bedrockAdapter`)
 
-**Target version:** `1.4.0`  
+**Target version:** `1.4.0` (shipped)  
 **Priority:** High for AWS-native teams; **medium–high complexity**.
 
 #### Why a dedicated adapter
@@ -329,8 +329,10 @@ export interface BedrockAdapterOptions {
 
 #### Deliverables
 
-- `src/adapters/bedrock.ts`, fixtures, `LSA-B*` tests, compatibility row, example with
-  pseudo-upstream decode step.
+- [x] `src/adapters/bedrock.ts`, fixtures, `LSA-B*` tests, compatibility row, examples with decode boundary docs
+- [x] `examples/bedrock/decode-event-stream.ts`, `examples/node-fetch/bedrock.ts`, `examples/integrations/bedrock-worker-proxy.ts`
+- [x] Live smoke `pnpm smoke:bedrock` (maintainer-only, not CI)
+- [x] Subpath export `llm-stream-assemble/adapters/bedrock`
 
 ---
 

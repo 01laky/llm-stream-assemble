@@ -1,0 +1,4 @@
+{"messageStart":{"role":"assistant"}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"blocked"}}}
+{"metadata":{"trace":{"guardrail":{"actionReason":"blocked","policy":"content-filter"}}}}
+{"messageStop":{"stopReason":"guardrail_intervened"}}

@@ -1,0 +1,26 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello from Converse"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 8,
+		"outputTokens": 4
+	},
+	{
+		"type": "text.done",
+		"text": "Hello from Converse"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

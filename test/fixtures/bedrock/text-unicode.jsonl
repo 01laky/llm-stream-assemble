@@ -1,0 +1,3 @@
+{"messageStart":{"role":"assistant"}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"こんにちは 🌍"}}}
+{"messageStop":{"stopReason":"end_turn"}}

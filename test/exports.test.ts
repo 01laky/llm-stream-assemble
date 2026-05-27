@@ -18,6 +18,7 @@ const REQUIRED_EXPORTS = [
 	"anthropicAdapter",
 	"openaiResponsesAdapter",
 	"geminiAdapter",
+	"bedrockAdapter",
 ] as const;
 
 const TYPE_GUARD_EXPORTS = [

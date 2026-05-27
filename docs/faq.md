@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.3.6`
+**Status:** Active guide — `1.4.0`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -82,6 +82,14 @@ Replicates **LSA-C52** (10k SSE payloads). See [performance](./performance.md).
 ## How do I integrate with Hono, Express, Cloudflare Workers, or the Vercel AI SDK?
 
 → [docs/integration-cookbook.md](./integration-cookbook.md) — copy-paste recipes under `examples/integrations/` (Hono, Express, Workers, LiteLLM, Next.js, AI SDK mapping, LangChain callbacks). No official framework plugin — zero runtime dependencies.
+
+---
+
+## Does this library handle AWS signing or EventStream decoding for Bedrock?
+
+**No.** `bedrockAdapter()` accepts **decoded ConverseStream JSON strings** — one envelope object per `parseChunk` call. Binary AWS EventStream framing, IAM credentials, and SigV4 request signing stay in your application, AWS SDK (`ConverseStreamCommand` async iterator), or the educational helper in [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
+
+Feed decoded lines to `assembleFromPayloads` or frame them as pseudo-SSE for `assembleStream`. See README [Bedrock Usage](../README.md#bedrock-usage) and [`examples/bedrock/README.md`](../examples/bedrock/README.md).
 
 ---
 

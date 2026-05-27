@@ -1,0 +1,22 @@
+{
+	"output": {
+		"message": {
+			"role": "assistant",
+			"content": [
+				{
+					"toolUse": {
+						"toolUseId": "tool_resp_1",
+						"name": "search",
+						"input": { "q": "bedrock" }
+					}
+				}
+			]
+		}
+	},
+	"stopReason": "tool_use",
+	"usage": {
+		"inputTokens": 12,
+		"outputTokens": 6,
+		"totalTokens": 18
+	}
+}

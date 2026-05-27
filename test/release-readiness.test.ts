@@ -118,6 +118,7 @@ describe("release readiness", () => {
 			"examples/node-fetch/perplexity.ts",
 			"examples/node-fetch/xai.ts",
 			"examples/node-fetch/gemini.ts",
+			"examples/node-fetch/bedrock.ts",
 			"examples/workers-ai/rest-chat-completions.ts",
 		]) {
 			expect(readme).toContain(sample);
@@ -130,5 +131,26 @@ describe("release readiness", () => {
 		expect(readme).toContain("docs/img/adapters-overview.svg");
 		expect(readme).toContain("docs/img/transforms.svg");
 		expect(readme).toContain("geminiAdapter");
+		expect(readme).toContain("bedrockAdapter");
+	});
+
+	it("LSA-REL20: package exports Bedrock subpath", () => {
+		const pkg = JSON.parse(read("package.json")) as { exports: Record<string, unknown> };
+		expect(pkg.exports["./adapters/bedrock"]).toBeDefined();
+	});
+
+	it("LSA-REL21: tsup config builds Bedrock subpath", () => {
+		expect(read("tsup.config.ts")).toContain('"adapters/bedrock"');
+	});
+
+	it("LSA-REL22: dist Bedrock artifacts exist", () => {
+		for (const file of [
+			"dist/adapters/bedrock.d.ts",
+			"dist/adapters/bedrock.d.cts",
+			"dist/adapters/bedrock.js",
+			"dist/adapters/bedrock.cjs",
+		]) {
+			expect(existsSync(join(rootDir, file))).toBe(true);
+		}
 	});
 });
