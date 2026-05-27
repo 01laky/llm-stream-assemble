@@ -119,6 +119,7 @@ describe("release readiness", () => {
 			"examples/node-fetch/xai.ts",
 			"examples/node-fetch/gemini.ts",
 			"examples/node-fetch/bedrock.ts",
+			"examples/node-fetch/cohere.ts",
 			"examples/workers-ai/rest-chat-completions.ts",
 		]) {
 			expect(readme).toContain(sample);
@@ -132,6 +133,7 @@ describe("release readiness", () => {
 		expect(readme).toContain("docs/img/transforms.svg");
 		expect(readme).toContain("geminiAdapter");
 		expect(readme).toContain("bedrockAdapter");
+		expect(readme).toContain("cohereAdapter");
 	});
 
 	it("LSA-REL20: package exports Bedrock subpath", () => {
@@ -149,6 +151,26 @@ describe("release readiness", () => {
 			"dist/adapters/bedrock.d.cts",
 			"dist/adapters/bedrock.js",
 			"dist/adapters/bedrock.cjs",
+		]) {
+			expect(existsSync(join(rootDir, file))).toBe(true);
+		}
+	});
+
+	it("LSA-REL23: package exports Cohere subpath", () => {
+		const pkg = JSON.parse(read("package.json")) as { exports: Record<string, unknown> };
+		expect(pkg.exports["./adapters/cohere"]).toBeDefined();
+	});
+
+	it("LSA-REL24: tsup config builds Cohere subpath", () => {
+		expect(read("tsup.config.ts")).toContain('"adapters/cohere"');
+	});
+
+	it("LSA-REL25: dist Cohere artifacts exist", () => {
+		for (const file of [
+			"dist/adapters/cohere.d.ts",
+			"dist/adapters/cohere.d.cts",
+			"dist/adapters/cohere.js",
+			"dist/adapters/cohere.cjs",
 		]) {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}

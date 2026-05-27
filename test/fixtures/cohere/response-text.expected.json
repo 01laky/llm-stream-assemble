@@ -1,0 +1,30 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp-text-1"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello from Cohere v2"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 8,
+		"outputTokens": 4
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello from Cohere v2"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

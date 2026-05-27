@@ -1,6 +1,6 @@
 flowchart LR
 	subgraph IN["Input"]
-		BYTES["Raw bytes<br/>SSE · pseudo-SSE"]
+		BYTES["Raw bytes<br/>SSE · pseudo-SSE<br/>Cohere v2 · OpenAI · Anthropic"]
 		BRIN["Bedrock EventStream bytes<br/>→ decode → JSON strings"]
 		JSONL["Decoded JSON payloads<br/>assembleFromPayloads"]
 	end

@@ -9,6 +9,7 @@ import {
 	buildCloudflareWorkersAIChatCompletionsUrl,
 } from "../../examples/workers-ai/rest-chat-completions";
 import { runBedrockExample } from "../../examples/node-fetch/bedrock";
+import { runCohereExample } from "../../examples/node-fetch/cohere";
 import { runGeminiExample } from "../../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../../examples/node-fetch/openai-chat";
 import { runOpenAICompatibleExample } from "../../examples/node-fetch/openai-compatible";
@@ -17,6 +18,7 @@ import { runReplayFixtureExample } from "../../examples/node-fetch/replay-fixtur
 import { runXaiExample } from "../../examples/node-fetch/xai";
 import { fakeStreamingFetch, withEnv } from "./helpers";
 import { bedrockJsonlLines } from "../helpers/bedrock-fixtures";
+import { cohereJsonlLines } from "../helpers/cohere-fixtures";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const openAISSE = readFileSync(join(rootDir, "test/fixtures/openai-chat/text-basic.sse"), "utf8");
@@ -278,5 +280,26 @@ describe("node fetch examples", () => {
 			write: (text) => output.push(text),
 		});
 		expect(output.join("")).toContain("Hello Bedrock");
+	});
+
+	it("LSA-INT42: cohere example runs offline with fixture eventLines", async () => {
+		const output: string[] = [];
+		await runCohereExample({
+			eventLines: cohereJsonlLines("text-basic"),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello Cohere");
+	});
+
+	it("LSA-INT43: cohere.ts does not import cohere SDK packages", () => {
+		const source = readFileSync(join(rootDir, "examples/node-fetch/cohere.ts"), "utf8");
+		expect(source).not.toMatch(/from ["']cohere["']/);
+		expect(source).toContain("cohereAdapter");
+	});
+
+	it("LSA-INT44: examples README lists cohere node-fetch example", () => {
+		expect(readFileSync(join(rootDir, "examples/README.md"), "utf8")).toContain(
+			"node-fetch/cohere.ts",
+		);
 	});
 });

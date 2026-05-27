@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.4.1`
+**Status:** Active guide — `1.5.0`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -90,6 +90,18 @@ Replicates **LSA-C52** (10k SSE payloads). See [performance](./performance.md).
 **No.** `bedrockAdapter()` accepts **decoded ConverseStream JSON strings** — one envelope object per `parseChunk` call. Binary AWS EventStream framing, IAM credentials, and SigV4 request signing stay in your application, AWS SDK (`ConverseStreamCommand` async iterator), or the educational helper in [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
 
 Feed decoded lines to `assembleFromPayloads` or frame them as pseudo-SSE for `assembleStream`. See README [Bedrock Usage](../README.md#bedrock-usage) and [`examples/bedrock/README.md`](../examples/bedrock/README.md).
+
+---
+
+## Is Cohere OpenAI-compatible?
+
+**No — Cohere is not OpenAI-compatible.** Cohere Chat **v2** uses its own SSE event types (`message-start`, `content-delta`, `tool-plan-delta`, `tool-call-*`, `citation-start`, `message-end`). Use **`cohereAdapter()`** with **`assembleStream(response.body, cohereAdapter())`** — core `parseSSE()` handles SSE line framing.
+
+Do **not** point `openaiCompatibleAdapter()` at Cohere — you will miss tool-plan reasoning, citations, and finish/usage mapping. See README [Cohere Usage](../README.md#cohere-usage) and [`examples/node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts).
+
+**Tool plan:** `tool-plan-delta` maps to `reasoning.*` with `variant: "detail"` (model planning text before tool calls).
+
+**Citations:** `citation-start` payloads are preserved in **`metadata.raw`** — there are no dedicated `citation.*` unified events in 1.x.
 
 ---
 

@@ -10,6 +10,7 @@ export default defineConfig({
 		"adapters/openai-responses": "src/adapters/openai-responses.ts",
 		"adapters/gemini": "src/adapters/gemini.ts",
 		"adapters/bedrock": "src/adapters/bedrock.ts",
+		"adapters/cohere": "src/adapters/cohere.ts",
 	},
 	format: ["esm", "cjs"],
 	dts: true,

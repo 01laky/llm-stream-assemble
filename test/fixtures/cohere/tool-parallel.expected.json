@@ -1,0 +1,62 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-parallel"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_a",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_b",
+		"name": "get_time",
+		"index": 1,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_a",
+		"delta": "{\"city\":\"A\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_a",
+		"name": "get_weather",
+		"args": {
+			"city": "A"
+		}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_b",
+		"delta": "{\"tz\":\"UTC\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_b",
+		"name": "get_time",
+		"args": {
+			"tz": "UTC"
+		}
+	},
+	{
+		"type": "usage",
+		"inputTokens": 50,
+		"outputTokens": 40
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

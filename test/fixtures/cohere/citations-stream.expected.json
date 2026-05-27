@@ -1,0 +1,37 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-cite"
+	},
+	{
+		"type": "text.delta",
+		"text": "Benefits include "
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": " and more."
+	},
+	{
+		"type": "usage",
+		"inputTokens": 20,
+		"outputTokens": 12
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Benefits include  and more."
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

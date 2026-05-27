@@ -1,7 +1,7 @@
 {
 	"name": "llm-stream-assemble",
-	"version": "1.4.1",
-	"description": "Zero-dependency TypeScript stream assembly for OpenAI, Anthropic, Gemini, AWS Bedrock, and OpenAI-compatible LLM APIs — unified StreamEvent model for text, tools, reasoning, JSON, usage, and non-streaming responses.",
+	"version": "1.5.0",
+	"description": "Zero-dependency TypeScript stream assembly for OpenAI, Anthropic, Gemini, AWS Bedrock, Cohere, and OpenAI-compatible LLM APIs — unified StreamEvent model for text, tools, reasoning, JSON, usage, and non-streaming responses.",
 	"license": "MIT",
 	"author": "Ladislav Kostolny <01laky@gmail.com>",
 	"type": "module",
@@ -57,6 +57,11 @@
 			"types": "./dist/adapters/bedrock.d.ts",
 			"import": "./dist/adapters/bedrock.js",
 			"require": "./dist/adapters/bedrock.cjs"
+		},
+		"./adapters/cohere": {
+			"types": "./dist/adapters/cohere.d.ts",
+			"import": "./dist/adapters/cohere.js",
+			"require": "./dist/adapters/cohere.cjs"
 		}
 	},
 	"scripts": {
@@ -81,6 +86,7 @@
 		"smoke:azure": "node scripts/live-smoke/azure-openai-compatible.mjs",
 		"smoke:cloudflare": "node scripts/live-smoke/cloudflare-workers-ai-compatible.mjs",
 		"smoke:bedrock": "node scripts/live-smoke/bedrock-converse.mjs",
+		"smoke:cohere": "node scripts/live-smoke/cohere-chat.mjs",
 		"release:prep": "node scripts/release-prep.mjs",
 		"diagrams:build": "node scripts/build-diagrams.mjs",
 		"bench:smoke": "node scripts/bench-smoke.mjs"
@@ -97,6 +103,7 @@
 		"google",
 		"bedrock",
 		"aws-bedrock",
+		"cohere",
 		"ollama",
 		"groq",
 		"structured-output",

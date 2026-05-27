@@ -1,0 +1,2 @@
+{"type":"message-start","id":"msg-usage","delta":{"message":{"role":"assistant"}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE","usage":{"billed_units":{"input_tokens":100,"output_tokens":0},"tokens":{"input_tokens":500,"output_tokens":0}}}}

@@ -1,0 +1,5 @@
+{"type":"message-start","id":"msg-cite-mix","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"See "}}}}
+{"type":"citation-start","index":0,"delta":{"message":{"citations":{"start":4,"end":8,"text":"docs","sources":[{"type":"document","id":"doc:2"}]}}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":" for details."}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE","usage":{"billed_units":{"input_tokens":8,"output_tokens":6}}}}

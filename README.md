@@ -1,19 +1,19 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.4.1-blue)
+![core](https://img.shields.io/badge/core-1.5.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1183_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1316_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.4.1-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.5.0-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
-> A zero-dependency TypeScript layer between raw LLM provider bytes and your app: six built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Bedrock to Cloudflare Workers AI.
+> A zero-dependency TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Bedrock to Cohere to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.4.1`. Six built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.5.0`. Seven built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -146,6 +146,7 @@ Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Re
 | `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                        |
 | `geminiAdapter()`                       | Google AI Gemini                                                                                                                                   | `llm-stream-assemble` or `/adapters/gemini`  |
 | `bedrockAdapter()`                      | AWS Bedrock Converse / ConverseStream                                                                                                              | `llm-stream-assemble` or `/adapters/bedrock` |
+| `cohereAdapter()`                       | Cohere Chat v2 (`api.cohere.com/v2/chat`)                                                                                                          | `llm-stream-assemble` or `/adapters/cohere`  |
 
 Full feature flags and quirks: [compatibility matrix](./docs/compatibility.md).
 
@@ -202,6 +203,7 @@ Pick an adapter in ~30 seconds:
 - **Anthropic Messages** → `anthropicAdapter()`
 - **Google Gemini** → `geminiAdapter()`
 - **AWS Bedrock ConverseStream** → `bedrockAdapter()` (decoded JSON per event — see [Bedrock Usage](#bedrock-usage))
+- **Cohere Chat v2 SSE** → `cohereAdapter()` (not OpenAI-compatible — see [Cohere Usage](#cohere-usage))
 - **Groq, Ollama, Azure, Cloudflare, OpenRouter, …** → `openaiCompatibleAdapter({ provider })`
 - **Non-streaming JSON body** → `assembleResponse(body, adapter)`
 - **React chat UI / full agent framework** → not this package — see [comparison](./docs/comparison.md)
@@ -277,6 +279,10 @@ for await (const event of assembleStream(response.body!, adapter)) {
 
 → [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts) · Usage: [Bedrock](#bedrock-usage) · Decode helper: [`examples/bedrock/README.md`](./examples/bedrock/README.md)
 
+### Cohere Chat v2
+
+→ [`examples/node-fetch/cohere.ts`](./examples/node-fetch/cohere.ts) · Usage: [Cohere](#cohere-usage)
+
 ### Streaming JSON (structured output)
 
 ```ts
@@ -317,7 +323,7 @@ Wire unified events into **Hono**, **Express**, **Cloudflare Workers**, **LiteLL
 
 ### Core Usage
 
-The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, Google Gemini, and AWS Bedrock adapters:
+The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, Google Gemini, AWS Bedrock, and Cohere adapters:
 
 ```ts
 import { assembleFromPayloads, type StreamAdapter } from "llm-stream-assemble";
@@ -604,6 +610,41 @@ Use `bedrockAdapter({ jsonMode: true })` when structured JSON text blocks should
 Subpath import: `import { bedrockAdapter } from "llm-stream-assemble/adapters/bedrock"`.
 
 Worker proxy recipe: [`examples/integrations/bedrock-worker-proxy.ts`](./examples/integrations/bedrock-worker-proxy.ts). EventStream decode helper (examples only): [`examples/bedrock/decode-event-stream.ts`](./examples/bedrock/decode-event-stream.ts).
+
+### Cohere Usage
+
+`cohereAdapter()` parses Cohere Chat **v2** SSE events from `https://api.cohere.com/v2/chat` and non-streaming v2 response bodies. Create one adapter instance per request/stream. Cohere is **not** OpenAI-compatible — use `cohereAdapter()`, not `openaiCompatibleAdapter()`.
+
+Core `parseSSE()` frames the HTTP body; `assembleStream` yields one JSON payload string per `data:` line to `cohereAdapter().parseChunk`.
+
+```ts
+import { assembleStream, cohereAdapter } from "llm-stream-assemble";
+
+const response = await fetch("https://api.cohere.com/v2/chat", {
+	method: "POST",
+	headers: {
+		Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		model: "command-r-plus-08-2024",
+		messages: [{ role: "user", content: "Hello" }],
+		stream: true,
+	}),
+});
+
+for await (const event of assembleStream(response.body!, cohereAdapter())) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+	if (event.type === "reasoning.delta") process.stdout.write(event.text);
+	if (event.type === "tool_call.done") console.log(event.name, event.args);
+}
+```
+
+Use `cohereAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. **`tool-plan-delta`** events map to `reasoning.*` with `variant: "detail"`. **`citation-start`** payloads are preserved in `metadata.raw` — there are no dedicated `citation.*` unified events in 1.x. Legacy Cohere v1 endpoints are out of scope.
+
+Subpath import: `import { cohereAdapter } from "llm-stream-assemble/adapters/cohere"`.
+
+Live smoke: `pnpm smoke:cohere` — see [`docs/live-smoke.md`](./docs/live-smoke.md) for `COHERE_API_KEY`, `COHERE_MODEL`, and `COHERE_SMOKE_TOOLS`.
 
 ---
 

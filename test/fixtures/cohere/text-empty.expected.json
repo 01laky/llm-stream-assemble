@@ -1,0 +1,22 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-empty"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 2,
+		"outputTokens": 0
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

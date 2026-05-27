@@ -255,6 +255,8 @@ describe("integration cookbook examples", () => {
 			"hono-proxy.ts",
 			"express-proxy.ts",
 			"cloudflare-worker-proxy.ts",
+			"bedrock-worker-proxy.ts",
+			"cohere-proxy.ts",
 			"litellm-openai-compatible.ts",
 			"stream-event-to-ai-sdk-parts.ts",
 			"langchain-callback-pattern.ts",
@@ -348,6 +350,37 @@ describe("integration cookbook examples", () => {
 	it("LSA-INT41: examples/integrations/README.md lists bedrock-worker-proxy.ts", () => {
 		expect(readFileSync(join(rootDir, "examples/integrations/README.md"), "utf8")).toContain(
 			"bedrock-worker-proxy.ts",
+		);
+	});
+
+	it("LSA-INT45: handleCohereWorkerProxy returns text/event-stream with fixture sse", async () => {
+		const { handleCohereWorkerProxy } = await import("../../examples/integrations/cohere-proxy");
+		const sse = readFileSync(join(rootDir, "test/fixtures/cohere/text-basic.sse"), "utf8");
+		const response = await handleCohereWorkerProxy(
+			proxyRequest({ prompt: "hi", stream: true }),
+			{ COHERE_API_KEY: "test-key", COHERE_MODEL: "command-r-plus-08-2024" },
+			{
+				fetchImpl: async () =>
+					new Response(sse, {
+						status: 200,
+						headers: { "Content-Type": "text/event-stream" },
+					}),
+			},
+		);
+		expect(response.headers.get("Content-Type")).toBe("text/event-stream");
+		const body = await response.text();
+		expect(body).toContain("data:");
+	});
+
+	it("LSA-INT46: cohere-proxy.ts does not import cohere SDK packages", () => {
+		const source = readFileSync(join(rootDir, "examples/integrations/cohere-proxy.ts"), "utf8");
+		expect(source).not.toMatch(/from ["']cohere["']/);
+		expect(source).toContain("cohereAdapter");
+	});
+
+	it("LSA-INT47: examples/integrations/README.md lists cohere-proxy.ts", () => {
+		expect(readFileSync(join(rootDir, "examples/integrations/README.md"), "utf8")).toContain(
+			"cohere-proxy.ts",
 		);
 	});
 });

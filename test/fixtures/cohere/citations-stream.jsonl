@@ -1,0 +1,6 @@
+{"type":"message-start","id":"msg-cite","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"Benefits include "}}}}
+{"type":"citation-start","index":0,"delta":{"message":{"citations":{"start":18,"end":33,"text":"gym memberships","sources":[{"type":"document","id":"doc:1","document":{"id":"doc:1","text":"Wellness benefits include gym memberships."}}]}}}}
+{"type":"citation-end","index":0}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":" and more."}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE","usage":{"billed_units":{"input_tokens":20,"output_tokens":12}}}}

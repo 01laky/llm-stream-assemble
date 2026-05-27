@@ -200,6 +200,50 @@ Uses `@aws-sdk/client-bedrock-runtime` **inside the smoke script only** (devDepe
 
 **Not run in CI** — no AWS credentials in the repository. Fixture golden tests (**LSA-B01**–**B37**) are the release gate.
 
+## Cohere v2 Chat
+
+Requires `COHERE_API_KEY` and a v2-capable model.
+
+```bash
+pnpm build
+pnpm smoke:cohere
+```
+
+Optional env:
+
+| Variable             | Default                  | Purpose                                       |
+| -------------------- | ------------------------ | --------------------------------------------- |
+| `COHERE_API_KEY`     | —                        | Bearer token for `api.cohere.com/v2/chat`     |
+| `COHERE_MODEL`       | `command-r-plus-08-2024` | Model id for smoke request                    |
+| `COHERE_SMOKE_TOOLS` | unset                    | Set to `1` to run optional single-tool prompt |
+
+### Fixture capture workflow
+
+When updating fixtures against live API shapes:
+
+```bash
+pnpm build
+COHERE_API_KEY=... pnpm smoke:cohere --capture > test/fixtures/cohere/capture.jsonl
+```
+
+Review and redact before committing. Prefer docs-shaped synthetic fixtures for CI; use capture to validate drift.
+
+### Expected event types (short text prompt)
+
+- `text.delta` (one or more) and/or `finish`
+- Optional `reasoning.delta` when model emits `tool-plan-delta`
+- With `COHERE_SMOKE_TOOLS=1`: `tool_call.start`, `tool_call.args.delta`, `tool_call.done`
+
+### Failure modes
+
+| Symptom         | Likely cause                        |
+| --------------- | ----------------------------------- |
+| Missing API key | Set `COHERE_API_KEY`                |
+| HTTP 401/403    | Invalid or expired API key          |
+| No text events  | Model id unsupported on v2 endpoint |
+
+**Not run in CI** — no Cohere API keys in the repository. Fixture golden tests (**LSA-CO01**–**LSA-CO83**) are the release gate.
+
 ## Checklist before tagging a compatible preset patch
 
 1. `pnpm verify` green (includes `fixtures:check-compatible`).

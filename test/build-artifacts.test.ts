@@ -23,6 +23,7 @@ const subpathEntries = [
 	},
 	{ id: "LSA-P07", path: "dist/adapters/gemini.js", exportName: "geminiAdapter" },
 	{ id: "LSA-P08", path: "dist/adapters/bedrock.js", exportName: "bedrockAdapter" },
+	{ id: "LSA-P09", path: "dist/adapters/cohere.js", exportName: "cohereAdapter" },
 ] as const;
 
 const declarationArtifacts = [
@@ -44,6 +45,10 @@ const declarationArtifacts = [
 	"dist/adapters/bedrock.d.cts",
 	"dist/adapters/bedrock.js",
 	"dist/adapters/bedrock.cjs",
+	"dist/adapters/cohere.d.ts",
+	"dist/adapters/cohere.d.cts",
+	"dist/adapters/cohere.js",
+	"dist/adapters/cohere.cjs",
 	"dist/index.js",
 	"dist/index.cjs",
 	"dist/core/index.js",

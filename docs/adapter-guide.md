@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.4.1`), Anthropic Messages, OpenAI Responses, **Google Gemini**, and **AWS Bedrock** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.5.0`), Anthropic Messages, OpenAI Responses, **Google Gemini**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -106,6 +106,7 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 | OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                                                                   |
 | Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                                                                            |
 | AWS Bedrock               | `bedrockAdapter()`                                                                                                                                                                                                                                                                                                                           |
+| Cohere Chat v2            | `cohereAdapter()`                                                                                                                                                                                                                                                                                                                            |
 
 ## Bedrock decode boundary
 
@@ -113,16 +114,38 @@ Bedrock **ConverseStream** responses are often binary AWS EventStream. **`bedroc
 
 See also the roadmap [Input format matrix](./post-1.0-provider-roadmap.md#input-format-matrix-decode-boundary).
 
-| Transport                | Typical providers         | Decode owner                 | Adapter input                   |
-| ------------------------ | ------------------------- | ---------------------------- | ------------------------------- |
-| SSE (`data:` lines)      | OpenAI, Anthropic, Gemini | `parseSSE()` in core         | JSON string per `data:` payload |
-| NDJSON / JSONL           | Proxies, batch            | App or example helper        | One JSON object string per line |
-| AWS EventStream (binary) | Bedrock                   | App / AWS SDK / example util | Decoded JSON text per event     |
-| Non-streaming JSON body  | All providers             | HTTP client                  | `parseResponse(body)`           |
+| Transport                | Typical providers                    | Decode owner                 | Adapter input                   |
+| ------------------------ | ------------------------------------ | ---------------------------- | ------------------------------- |
+| SSE (`data:` lines)      | OpenAI, Anthropic, Gemini, Cohere v2 | `parseSSE()` in core         | JSON string per `data:` payload |
+| NDJSON / JSONL           | Proxies, batch                       | App or example helper        | One JSON object string per line |
+| AWS EventStream (binary) | Bedrock                              | App / AWS SDK / example util | Decoded JSON text per event     |
+| Non-streaming JSON body  | All providers                        | HTTP client                  | `parseResponse(body)`           |
 
 **`modelFamily`** (`anthropic` | `openai-like` | `nova` | `auto`) hints which ConverseStream dialect to prefer when envelopes overlap. Default `"auto"` uses structural detection; set explicitly when you know the Bedrock model family.
 
 Use `bedrockAdapter()` as the reference pattern for event-name ConverseStream envelopes (`messageStart`, `contentBlockDelta`, `messageStop`, …) on **pre-decoded** JSON strings. Example decode helper: [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
+
+## Cohere v2 SSE events
+
+Cohere Chat **v2** streams JSON objects over standard SSE (`data: {...}\n`). **`cohereAdapter.parseChunk(raw)` accepts one decoded JSON object string per event** — same contract as OpenAI Chat and Anthropic. Use `assembleStream(response.body, cohereAdapter())` so core `parseSSE()` handles line buffering.
+
+**Not OpenAI-compatible:** do not reuse `openaiCompatibleAdapter()` for Cohere — v2 event names and nested `delta.message` shapes require a dedicated parser.
+
+| Cohere v2 event   | Unified mapping                                             |
+| ----------------- | ----------------------------------------------------------- |
+| `message-start`   | `message.start`, optional `metadata` (id, role)             |
+| `content-delta`   | `text.delta` / `text.done` (or `json.*` when `jsonMode`)    |
+| `tool-plan-delta` | `reasoning.delta` / `reasoning.done` (`variant: "detail"`)  |
+| `tool-call-start` | `tool_call.start`                                           |
+| `tool-call-delta` | `tool_call.args.delta` (incremental JSON via shared helper) |
+| `tool-call-end`   | `tool_call.done`                                            |
+| `citation-start`  | `metadata.raw` citation payload (no `citation.*` in 1.x)    |
+| `message-end`     | `usage`, `finish`, optional finish metadata                 |
+| `type: "error"`   | `error` chunks via shared provider-error helpers            |
+
+**Late tool id:** Cohere may emit `tool-call-start` before a stable tool `id` is known. The adapter synthesizes `cohere:tool:{index}` on `tool_call.start` and reconciles to the real id when it arrives on `tool-call-delta`. Downstream consumers should key on the reconciled id from args/done events. At stream end the assembler may emit an extra `tool_call.done` for the placeholder id (empty args) when closing stale state — see `test/fixtures/cohere/tool-late-id.jsonl` (**LSA-CO77**, **LSA-CO78**).
+
+Use `cohereAdapter()` as the reference pattern for nested `delta.message` v2 envelopes on SSE. Fixtures: `test/fixtures/cohere/`. Example: [`examples/node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts). Worker proxy: [`examples/integrations/cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts).
 
 ## Azure preset vs generic
 

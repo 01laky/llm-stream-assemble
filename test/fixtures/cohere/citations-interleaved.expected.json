@@ -1,0 +1,37 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-cite-mix"
+	},
+	{
+		"type": "text.delta",
+		"text": "See "
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": " for details."
+	},
+	{
+		"type": "usage",
+		"inputTokens": 8,
+		"outputTokens": 6
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "See  for details."
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

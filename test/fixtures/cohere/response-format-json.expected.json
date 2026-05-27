@@ -1,0 +1,30 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp-rf-1"
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"status\":\"ok\"}",
+		"partial": {
+			"status": "ok"
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"status": "ok"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

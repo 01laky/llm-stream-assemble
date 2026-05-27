@@ -1,0 +1,45 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp-tool-1"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "I will call weather",
+		"variant": "detail"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "get_weather_resp",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.done",
+		"id": "get_weather_resp",
+		"name": "get_weather",
+		"args": ""
+	},
+	{
+		"type": "usage",
+		"inputTokens": 30,
+		"outputTokens": 20
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "I will call weather",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

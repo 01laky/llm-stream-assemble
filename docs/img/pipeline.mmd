@@ -7,6 +7,7 @@ flowchart TB
 		PR["OpenAI Responses"]
 		PG["Google Gemini"]
 		PB["AWS Bedrock<br/>ConverseStream"]
+		PCO["Cohere Chat v2"]
 	end
 
 	subgraph ADAPTERS["Adapters · parseChunk / parseResponse"]
@@ -17,6 +18,7 @@ flowchart TB
 		AR["openaiResponsesAdapter"]
 		AG["geminiAdapter"]
 		AB["bedrockAdapter"]
+		ACO["cohereAdapter"]
 	end
 
 	subgraph DECODE["Bedrock decode boundary · app / SDK"]
@@ -63,11 +65,13 @@ flowchart TB
 	PG --> AG
 	PB --> ES
 	DEC --> AB
+	PCO --> ACO
 	PARSE --> AC
 	PARSE --> AA
 	PARSE --> AO
 	PARSE --> AR
 	PARSE --> AG
+	PARSE --> ACO
 	PAYLOADS --> AB
 	AC --> RAW
 	AA --> RAW
@@ -75,12 +79,14 @@ flowchart TB
 	AR --> RAW
 	AG --> RAW
 	AB --> RAW
+	ACO --> RAW
 	JSON --> AC
 	JSON --> AA
 	JSON --> AO
 	JSON --> AR
 	JSON --> AG
 	JSON --> AB
+	JSON --> ACO
 	EVENTS --> COL
 	EVENTS --> TAP
 	EVENTS --> SSEOUT
@@ -98,8 +104,8 @@ flowchart TB
 	classDef transform fill:#431407,stroke:#fb923c,stroke-width:2px,color:#ffedd5
 	classDef app fill:#172554,stroke:#60a5fa,stroke-width:2px,color:#dbeafe
 
-	class PC,PA,PO,PR,PG,PB provider
-	class AC,AA,AO,AR,AG,AB adapter
+	class PC,PA,PO,PR,PG,PB,PCO provider
+	class AC,AA,AO,AR,AG,AB,ACO adapter
 	class ES,DEC decode
 	class PARSE,RAW,ASM core
 	class STREAM,JSON,PAYLOADS,EVENTS io

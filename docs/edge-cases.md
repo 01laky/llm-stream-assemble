@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.4.1`
+**Status:** Active guide — `1.5.0`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -108,13 +108,16 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 
 ## G) Fixture and test provenance
 
-| Topic                        | Fixture / test                                                                  |
-| ---------------------------- | ------------------------------------------------------------------------------- |
-| SSE mid-line split           | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                         |
-| Tool JSON partials           | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`  |
-| Anthropic partial tool input | `test/fixtures/anthropic/tool-use.sse`                                          |
-| JSON mode                    | `test/fixtures/openai-chat/json-mode.sse`                                       |
-| O(n) assembly smoke          | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke` |
+| Topic                        | Fixture / test                                                                                                                                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SSE mid-line split           | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                                                                                                                                            |
+| Tool JSON partials           | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`                                                                                                                     |
+| Anthropic partial tool input | `test/fixtures/anthropic/tool-use.sse`                                                                                                                                                             |
+| JSON mode                    | `test/fixtures/openai-chat/json-mode.sse`                                                                                                                                                          |
+| O(n) assembly smoke          | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke`                                                                                                                    |
+| Cohere tool-plan reasoning   | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                                                                                                                |
+| Cohere citation metadata     | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**                                                                                                                        |
+| Cohere late tool id          | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78** — placeholder `cohere:tool:{index}` on start; real id on delta; possible closing `tool_call.done` for placeholder at finish |
 
 ---
 

@@ -1,0 +1,5 @@
+{
+	"type": "error",
+	"message": "Invalid API key",
+	"id": "err-resp-1"
+}

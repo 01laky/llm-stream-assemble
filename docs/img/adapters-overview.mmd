@@ -1,5 +1,5 @@
 flowchart TB
-	subgraph BUILTIN["Built-in adapters · stable 1.4.1"]
+	subgraph BUILTIN["Built-in adapters · stable 1.5.0"]
 		direction TB
 
 		subgraph DEDICATED["Dedicated parsers"]
@@ -9,6 +9,7 @@ flowchart TB
 			AR["openaiResponsesAdapter<br/><i>OpenAI Responses API</i>"]
 			AG["geminiAdapter<br/><i>Google AI Gemini</i>"]
 			AB["bedrockAdapter<br/><i>AWS Bedrock ConverseStream</i>"]
+			ACO["cohereAdapter<br/><i>Cohere Chat v2 SSE</i>"]
 		end
 
 		subgraph COMPAT["openaiCompatibleAdapter"]
@@ -29,7 +30,7 @@ flowchart TB
 	classDef presets fill:#4338ca,stroke:#c7d2fe,stroke-width:1px,color:#e0e7ff
 	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
 
-	class AC,AA,AR,AG,AB dedicated
+	class AC,AA,AR,AG,AB,ACO dedicated
 	class AO compat
 	class PRESETS presets
 	class UNIFIED out

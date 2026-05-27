@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.0]
+
+### Added
+
+- **`cohereAdapter()`** — Cohere Chat **v2** SSE event types (`message-start`, `content-delta`, `tool-plan-delta`, `tool-call-*`, `citation-start`, `message-end`) → unified `StreamEvent`s; `CohereAdapterOptions` with `jsonMode`.
+- **`llm-stream-assemble/adapters/cohere`** subpath export.
+- **`test/fixtures/cohere/`** — docs-shaped synthetic v2 `.jsonl` / `.sse` / `.json` fixtures (text, tools, tool-plan, citations, json-mode, errors, usage, incomplete, non-stream responses).
+- **`examples/node-fetch/cohere.ts`** — `https://api.cohere.com/v2/chat` streaming via `assembleStream` + `cohereAdapter`.
+- **`examples/integrations/cohere-proxy.ts`** — Cloudflare Worker / edge proxy for Cohere Chat v2 SSE (not OpenAI-compatible).
+- **`scripts/live-smoke/cohere-chat.mjs`** + **`docs/live-smoke.md`** Cohere v2 section; `pnpm smoke:cohere` with optional `--capture` fixture bootstrap and `COHERE_SMOKE_TOOLS=1`.
+- README **Cohere Usage** (seventh built-in adapter); compatibility matrix, FAQ, adapter guide, edge-case provenance, examples index, architecture diagrams.
+- Tests **LSA-CO01**–**LSA-CO98**, **LSA-DOC65**–**LSA-DOC74**, **LSA-INT42**–**LSA-INT47**, **LSA-P09**, **LSA-REL23**–**LSA-REL25**, **LSA-MAINT20**, **LSA-ST19**, **LSA-X63**; dedicated **finish/usage**, **tools**, **conformance**, **edge cases**, and **docs regression** Cohere suites mirroring Bedrock depth.
+
+### Changed
+
+- **Seventh built-in adapter** — `cohereAdapter()` joins OpenAI Chat, compatible, Anthropic, Responses, Gemini, and Bedrock; not OpenAI-compatible (dedicated parser required).
+- **`docs/adapter-guide.md`** — Cohere v2 SSE event mapping; factory table row; distinction from `openaiCompatibleAdapter`.
+- **`docs/img/`** — `cohereAdapter` nodes in `adapters-overview`, `pipeline`, `quick-decision`, `chunk-assembly`, `assembler-lifecycle`, and `transforms` (SVG regenerated); stable label **1.5.0**.
+- **`docs/post-1.0-provider-roadmap.md`** — Cohere **1.5.0** marked shipped.
+- Version labels **1.5.0** across docs; README test badge **1316**.
+
+### Notes
+
+- Cohere v2 only — legacy v1 chat endpoints are out of scope.
+- **`tool-plan-delta`** maps to `reasoning.*` with `variant: "detail"`; citations map to **`metadata.raw`** (no dedicated `citation.*` events in 1.x).
+- **Late tool id:** when `tool-call-start` omits `id`, adapter emits `tool_call.start` with placeholder `cohere:tool:{index}`; reconciles to the real id on `tool-call-delta`. Assembler may emit a closing `tool_call.done` for the placeholder id at stream end — see `test/fixtures/cohere/tool-late-id.jsonl` (**LSA-CO77**, **LSA-CO78**).
+- Use **`assembleStream(response.body, cohereAdapter())`** — core `parseSSE()` handles SSE framing; do not use `openaiCompatibleAdapter` for Cohere.
+
 ## [1.4.1]
 
 ### Added

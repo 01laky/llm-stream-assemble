@@ -1,6 +1,6 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.4.1` (initial cookbook shipped in `1.3.6`)
+**Status:** Active guide — `1.5.0` (initial cookbook shipped in `1.3.6`)
 
 Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 
@@ -22,6 +22,7 @@ Wire unified `StreamEvent`s into your application stack. This library is the **a
 | Express / Fastify (Node HTTP)     | [`express-proxy.ts`](../examples/integrations/express-proxy.ts)                               | proxy-safety README                                                                                                                   |
 | Cloudflare Workers (edge proxy)   | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)           | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client)                                                |
 | AWS Bedrock on Cloudflare Workers | [`bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)                 | [`decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts) + [`node-fetch/bedrock.ts`](../examples/node-fetch/bedrock.ts) |
+| Cohere Chat v2 on Workers / edge  | [`cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)                                 | [`node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts) — SSE via `cohereAdapter()` (not OpenAI-compatible)                        |
 | LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)       | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                                                                       |
 | OpenRouter                        | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)    | not LiteLLM file                                                                                                                      |
 | Vercel AI SDK                     | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts) | [comparison](./comparison.md)                                                                                                         |
@@ -77,6 +78,14 @@ Full example: [`examples/integrations/cloudflare-worker-proxy.ts`](../examples/i
 Browser → your Worker → Bedrock Runtime **ConverseStream**. The upstream response is often binary EventStream — pipe bytes through [`decodedBedrockEventPayloads`](../examples/bedrock/decode-event-stream.ts) (or AWS SDK decode) to yield JSON strings, then `assembleFromPayloads(..., bedrockAdapter())` and `toSSE(..., { sanitizeErrors: true })` to the client. IAM and signing remain your Worker boundary; this library only parses decoded JSON.
 
 Full example: [`examples/integrations/bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)
+
+---
+
+## Cohere Chat v2 on Workers / edge
+
+Browser → your Worker → `https://api.cohere.com/v2/chat` with `stream: true`. The upstream response is **SSE** — pass `response.body` to `assembleStream(..., cohereAdapter())` and re-emit with `toSSE(..., { sanitizeErrors: true })`. Do **not** use `openaiCompatibleAdapter()` for Cohere.
+
+Full example: [`examples/integrations/cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)
 
 ---
 

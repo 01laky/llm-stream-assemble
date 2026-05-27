@@ -1,0 +1,21 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-inc"
+	},
+	{
+		"type": "text.delta",
+		"text": "Truncated"
+	},
+	{
+		"type": "text.done",
+		"text": "Truncated"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]

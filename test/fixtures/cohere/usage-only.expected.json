@@ -1,0 +1,22 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-usage"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 100,
+		"outputTokens": 0
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

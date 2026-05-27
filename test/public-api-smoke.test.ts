@@ -8,6 +8,7 @@ import {
 	collectStream,
 	createAssemblyTransform,
 	geminiAdapter,
+	cohereAdapter,
 	bedrockAdapter,
 	openaiChatAdapter,
 	openaiCompatibleAdapter,
@@ -135,6 +136,10 @@ describe("public API smoke", () => {
 
 		it("LSA-ST18: bedrockAdapter.parseChunk is implemented", () => {
 			expect(bedrockAdapter().parseChunk("{}")).toEqual([]);
+		});
+
+		it("LSA-ST19: cohereAdapter.parseChunk is implemented", () => {
+			expect(cohereAdapter().parseChunk("{}")).toEqual([]);
 		});
 	});
 

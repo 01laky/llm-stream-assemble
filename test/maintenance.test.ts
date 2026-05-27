@@ -10,6 +10,7 @@ import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { geminiAdapter } from "../src/adapters/gemini";
 import { bedrockAdapter } from "../src/adapters/bedrock";
+import { cohereAdapter } from "../src/adapters/cohere";
 import {
 	asNumber,
 	asString,
@@ -157,6 +158,18 @@ describe("maintenance adapter regressions", () => {
 		]) {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}
+	});
+
+	it("LSA-MAINT20: Cohere representative payload emits expected raw chunks", () => {
+		expect(
+			cohereAdapter().parseChunk(
+				JSON.stringify({
+					type: "content-delta",
+					index: 0,
+					delta: { message: { content: { text: "hi" } } },
+				}),
+			),
+		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);
 	});
 });
 

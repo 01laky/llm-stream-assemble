@@ -1,0 +1,4 @@
+{"type":"message-start","id":"msg-json","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"{\"answer\":"}}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"42}"}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE"}}

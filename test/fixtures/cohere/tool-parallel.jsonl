@@ -1,0 +1,7 @@
+{"type":"message-start","id":"msg-parallel","delta":{"message":{"role":"assistant"}}}
+{"type":"tool-call-start","index":0,"delta":{"message":{"tool_calls":[{"id":"tool_a","type":"function","function":{"name":"get_weather","arguments":""}},{"id":"tool_b","type":"function","function":{"name":"get_time","arguments":""}}]}}}
+{"type":"tool-call-delta","index":0,"delta":{"message":{"tool_calls":{"id":"tool_a","function":{"arguments":"{\"city\":\"A\"}"}}}}}
+{"type":"tool-call-end","index":0,"delta":{"message":{"tool_calls":{"id":"tool_a"}}}}
+{"type":"tool-call-delta","index":1,"delta":{"message":{"tool_calls":{"id":"tool_b","function":{"arguments":"{\"tz\":\"UTC\"}"}}}}}
+{"type":"tool-call-end","index":1,"delta":{"message":{"tool_calls":{"id":"tool_b"}}}}
+{"type":"message-end","delta":{"finish_reason":"TOOL_CALL","usage":{"billed_units":{"input_tokens":50,"output_tokens":40}}}}

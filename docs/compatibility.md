@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.4.1` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, **AWS Bedrock (Converse / ConverseStream)**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
+**Current package status:** Stable `1.5.0` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI)**, **AWS Bedrock (Converse / ConverseStream)**, **Cohere Chat v2**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
 | Provider / API                          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | --------------------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
@@ -12,6 +12,7 @@ Living document — update when adapters ship or provider quirks are discovered.
 | OpenAI Responses                        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | —            | v0.7   |
 | Google Gemini (Google AI)               | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | partial³     | v1.1   |
 | AWS Bedrock (Converse / ConverseStream) | `bedrockAdapter`          | yes  | yes   | best-effort  | —           | partial¹¹    | yes          | partial³     | v1.4   |
+| Cohere Chat v2                          | `cohereAdapter`           | yes  | yes   | yes¹³        | —           | yes¹⁴        | yes          | partial³     | 1.5.0  |
 
 ¹ OpenAI usage in stream requires `stream_options: { include_usage: true }` on the request.
 ² JSON mode requires `openaiChatAdapter({ jsonMode: true })` because OpenAI streams JSON mode as normal content deltas.
@@ -25,6 +26,8 @@ Living document — update when adapters ship or provider quirks are discovered.
 ¹⁰ JSON mode requires `geminiAdapter({ jsonMode: true })`.
 ¹¹ JSON mode requires `bedrockAdapter({ jsonMode: true })`; ConverseStream text blocks stream as deltas like other providers.
 ¹² Binary AWS EventStream must be decoded **before** `parseChunk` — adapter accepts decoded UTF-8 JSON strings only; see [`examples/bedrock/decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts).
+¹³ Cohere `tool-plan-delta` maps to `reasoning.*` with `variant: "detail"`.
+¹⁴ JSON mode requires `cohereAdapter({ jsonMode: true })`.
 
 ## Legend
 
@@ -77,6 +80,10 @@ Living document — update when adapters ship or provider quirks are discovered.
 | AWS Bedrock           | Tool input streams as string fragments                              | `tool-args-delta` + core assembly until `tool_call.done`                              |
 | AWS Bedrock           | Nova vs Claude field shapes differ on ConverseStream                | Use `modelFamily` option — fixture-driven, not guessed at runtime                     |
 | AWS Bedrock           | No IAM, SigV4 signing, or retries in library                        | Application boundary — use AWS SDK or your proxy for auth                             |
+| Cohere Chat v2        | Not OpenAI-compatible — distinct SSE event types                    | Use `cohereAdapter()` + `assembleStream`; not `openaiCompatibleAdapter`               |
+| Cohere Chat v2        | Citations on `citation-start`                                       | Preserved in `metadata.raw`; no dedicated `citation.*` events in 1.x                  |
+| Cohere Chat v2        | Tool ids may arrive late on `tool-call-delta`                       | Adapter reconciles index → id; synthesizes `cohere:tool:{index}` when id missing      |
+| Cohere Chat v2        | Legacy v1 chat endpoints differ                                     | Adapter targets v2 only (`api.cohere.com/v2/chat`)                                    |
 
 ## OpenAI-compatible limitations
 

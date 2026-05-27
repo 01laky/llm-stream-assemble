@@ -3,6 +3,7 @@ import { anthropicAdapter } from "../src/adapters/anthropic";
 import { bedrockAdapter } from "../src/adapters/bedrock";
 import { geminiAdapter } from "../src/adapters/gemini";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
+import { cohereAdapter } from "../src/adapters/cohere";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
 import { collectAsync } from "./helpers/collect-events";
@@ -81,6 +82,32 @@ describe("cross-adapter assembler edge cases", () => {
 					id: "cmpl",
 					object: "chat.completion.chunk",
 					choices: [{ index: 0, delta: { content: "late" }, finish_reason: null }],
+				});
+			},
+		],
+		[
+			"LSA-X63",
+			"cohere",
+			cohereAdapter(),
+			async function* () {
+				yield payload({
+					type: "message-start",
+					id: "m1",
+					delta: { message: { role: "assistant" } },
+				});
+				yield payload({
+					type: "content-delta",
+					index: 0,
+					delta: { message: { content: { text: "a" } } },
+				});
+				yield payload({
+					type: "message-end",
+					delta: { finish_reason: "COMPLETE" },
+				});
+				yield payload({
+					type: "citation-start",
+					index: 0,
+					delta: { message: { citations: { text: "late" } } },
 				});
 			},
 		],

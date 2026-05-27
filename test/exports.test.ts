@@ -19,6 +19,7 @@ const REQUIRED_EXPORTS = [
 	"openaiResponsesAdapter",
 	"geminiAdapter",
 	"bedrockAdapter",
+	"cohereAdapter",
 ] as const;
 
 const TYPE_GUARD_EXPORTS = [

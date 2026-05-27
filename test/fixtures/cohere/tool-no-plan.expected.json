@@ -1,0 +1,37 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-no-plan"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "direct_tool",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "direct_tool",
+		"delta": "{\"city\":\"Paris\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "direct_tool",
+		"name": "get_weather",
+		"args": {
+			"city": "Paris"
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

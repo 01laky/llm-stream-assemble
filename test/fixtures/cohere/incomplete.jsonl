@@ -1,0 +1,2 @@
+{"type":"message-start","id":"msg-inc","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"Truncated"}}}}

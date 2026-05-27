@@ -1,0 +1,4 @@
+{"type":"message-start","id":"msg-rf","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"{\"status\":"}}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"\"ok\"}"}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE"}}

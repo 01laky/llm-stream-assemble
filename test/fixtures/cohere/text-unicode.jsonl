@@ -1,0 +1,4 @@
+{"type":"message-start","id":"msg-unicode","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"Ahoj 🌍"}}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":" — 日本語"}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE","usage":{"billed_units":{"input_tokens":4,"output_tokens":6}}}}

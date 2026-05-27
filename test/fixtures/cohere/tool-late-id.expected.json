@@ -1,0 +1,43 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-late-id"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "cohere:tool:0",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "get_weather_late",
+		"delta": "{\"city\":\"Tokyo\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "get_weather_late",
+		"name": "unknown",
+		"args": {
+			"city": "Tokyo"
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "cohere:tool:0",
+		"name": "get_weather",
+		"args": ""
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

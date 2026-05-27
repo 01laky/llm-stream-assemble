@@ -13,6 +13,7 @@ fetch responses in CI; no live provider calls are made by default.
 | Anthropic Messages                                                    | `node-fetch/anthropic.ts`                                                                       |
 | Google Gemini SSE                                                     | `node-fetch/gemini.ts`                                                                          |
 | AWS Bedrock ConverseStream (decoded JSON)                             | `node-fetch/bedrock.ts` + [`bedrock/README.md`](./bedrock/README.md)                            |
+| Cohere Chat v2 SSE                                                    | `node-fetch/cohere.ts`                                                                          |
 | Azure / Cloudflare / Perplexity / xAI                                 | matching `node-fetch/*.ts` or `workers-ai/`                                                     |
 | Proxy unified SSE to a browser                                        | `proxy-safety/`                                                                                 |
 | Replay a checked-in fixture offline                                   | `node-fetch/replay-fixture.ts`                                                                  |
@@ -35,6 +36,14 @@ Full README index: [Examples](../README.md#examples).
 ## Google Gemini
 
 - `examples/node-fetch/gemini.ts` — Google Gemini `streamGenerateContent` (SSE).
+
+## AWS Bedrock
+
+- `examples/node-fetch/bedrock.ts` — AWS Bedrock ConverseStream (decoded JSON per event).
+
+## Cohere Chat v2
+
+- `examples/node-fetch/cohere.ts` — Cohere v2 `api.cohere.com/v2/chat` SSE via `assembleStream` + `cohereAdapter`.
 
 ## Other compatible hosts
 
@@ -67,6 +76,7 @@ Required environment variables when running manually:
 - `ANTHROPIC_API_KEY`
 - `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Gemini example accepts either)
 - `AWS_REGION`, `BEDROCK_MODEL_ID` (Bedrock example / smoke — plus standard AWS credential chain)
+- `COHERE_API_KEY`, `COHERE_MODEL`, `COHERE_SMOKE_TOOLS` (Cohere v2 example / smoke)
 
 The examples accept injected `fetchImpl` and `write` callbacks so tests do not
 write to stdout or call the network. Environment variables are read inside exported

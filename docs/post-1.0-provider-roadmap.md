@@ -99,7 +99,7 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.2.0  ✅  Azure OpenAI Chat Completions compatible preset (`azure`)
 1.3.0  ✅  Cloudflare Workers AI OpenAI-compatible preset (`cloudflare`)
 1.4.0  ✅  AWS Bedrock adapter (ConverseStream — decoded JSON boundary)
-1.5.0      Cohere adapter (if demand exists)
+1.5.0  ✅  Cohere adapter (Chat v2 SSE)
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
 
@@ -364,7 +364,7 @@ export interface BedrockAdapterOptions {
 
 ### 7. Cohere (`cohereAdapter`)
 
-**Target version:** `1.5.0`  
+**Target version:** `1.5.0` ✅ **shipped**  
 **Priority:** Medium — smaller ecosystem but distinct streaming format.
 
 #### Mapping notes
@@ -379,6 +379,16 @@ export interface BedrockAdapterOptions {
 - Text streaming
 - Tool calls (if supported in chosen API version)
 - Usage / finish / error
+
+#### Deliverables checklist
+
+- [x] `src/adapters/cohere.ts` + export in `src/adapters/index.ts`
+- [x] Subpath export `./adapters/cohere` in `package.json` + `tsup.config.ts`
+- [x] Fixtures: `test/fixtures/cohere/` (text, tools, tool-plan, citations, json-mode, errors, usage, incomplete, responses)
+- [x] Tests: `LSA-CO01` … `LSA-CO83`, `LSA-DOC65` … `LSA-DOC72`
+- [x] Example: `examples/node-fetch/cohere.ts`
+- [x] Compatibility matrix row update
+- [x] Live smoke script: `scripts/live-smoke/cohere-chat.mjs` + `docs/live-smoke.md`
 
 ---
 

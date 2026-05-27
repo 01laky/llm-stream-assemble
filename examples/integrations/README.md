@@ -8,6 +8,7 @@ Stack-specific recipes that wire `assembleStream`, `toSSE`, and unified `StreamE
 | `express-proxy.ts`                | Express-style Node HTTP           | `createExpressProxyHandler`           |
 | `cloudflare-worker-proxy.ts`      | Workers edge proxy                | `handleWorkerLLMProxy`                |
 | `bedrock-worker-proxy.ts`         | Bedrock ConverseStream on Workers | `handleBedrockWorkerProxy`            |
+| `cohere-proxy.ts`                 | Cohere Chat v2 SSE on Workers     | `handleCohereWorkerProxy`             |
 | `litellm-openai-compatible.ts`    | LiteLLM OpenAI-compatible proxy   | `runLiteLLMCompatibleExample`         |
 | `stream-event-to-ai-sdk-parts.ts` | Vercel AI SDK (manual map)        | `mapStreamEventToAISDKPart`           |
 | `langchain-callback-pattern.ts`   | LangChain-style callbacks         | `createLangChainHandlerAdapter`       |

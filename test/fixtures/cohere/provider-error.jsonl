@@ -1,0 +1,4 @@
+{"type":"message-start","id":"msg-err","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"Partial"}}}}
+{"type":"error","message":"Internal generation failure","id":"err-1"}
+{"type":"message-end","delta":{"finish_reason":"ERROR"}}

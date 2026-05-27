@@ -1,5 +1,5 @@
 flowchart TB
-	subgraph IN_SSE["SSE byte stream · OpenAI · Anthropic · Gemini · compatible"]
+	subgraph IN_SSE["SSE byte stream · OpenAI · Anthropic · Gemini · Cohere v2 · compatible"]
 		C1["TCP read may split mid-line"]
 		C2["data: payload strings"]
 	end
@@ -18,23 +18,26 @@ flowchart TB
 	subgraph ADAPTER["Adapter · stateless per payload"]
 		PC["parseChunk → RawChunk[]"]
 		BA["bedrockAdapter.parseChunk"]
+		CA["cohereAdapter.parseChunk"]
 	end
 
 	subgraph CORE["EventAssembler · stateful per stream"]
-		BUF["Buffers text · tools · json"]
+		BUF["Buffers text · tools · json · reasoning"]
 		DONE["Emits .done + finish"]
 	end
 
 	subgraph OUT["StreamEvent stream"]
-		EV["text.done · tool_call.done · json.done"]
+		EV["text.done · tool_call.done · json.done · reasoning.done"]
 	end
 
 	C1 --> LB
 	C2 --> LB
 	LB --> PC
+	LB --> CA
 	JL --> BA
 	PC --> BUF
 	BA --> BUF
+	CA --> BUF
 	BUF --> DONE
 	DONE --> EV
 

@@ -87,6 +87,8 @@ const distFiles = [
 	"dist/index.js",
 	"dist/index.d.ts",
 	"dist/adapters/gemini.js",
+	"dist/adapters/bedrock.js",
+	"dist/adapters/cohere.js",
 	"dist/adapters/openai-compatible.js",
 ];
 for (const file of distFiles) {
