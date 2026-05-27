@@ -1,0 +1,2 @@
+{"responseId":"resp_think","candidates":[{"index":0,"content":{"role":"model","parts":[{"thought":true,"text":"Let me think"}]}}]}
+{"candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"Answer"}]}}],"finishReason":"STOP"}

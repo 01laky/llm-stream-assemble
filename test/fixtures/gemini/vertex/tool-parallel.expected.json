@@ -1,0 +1,60 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_par"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_par"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_a",
+		"name": "search",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_a",
+		"delta": "{\"q\":\"a\"}",
+		"partial": {
+			"q": "a"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_a",
+		"name": "search",
+		"args": {
+			"q": "a"
+		}
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_b",
+		"name": "search",
+		"index": 1,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_b",
+		"delta": "{\"q\":\"b\"}",
+		"partial": {
+			"q": "b"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_b",
+		"name": "search",
+		"args": {
+			"q": "b"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]

@@ -1,0 +1,36 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_flush"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_flush"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_f",
+		"name": "save",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_f",
+		"delta": "{\"ok\":true",
+		"partial": {
+			"ok": true
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_f",
+		"name": "save",
+		"args": "{\"ok\":true"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

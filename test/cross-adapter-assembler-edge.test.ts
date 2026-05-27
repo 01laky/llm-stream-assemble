@@ -111,6 +111,21 @@ describe("cross-adapter assembler edge cases", () => {
 				});
 			},
 		],
+		[
+			"LSA-X64",
+			"gemini-vertex",
+			geminiAdapter({ apiSurface: "vertex" }),
+			async function* () {
+				yield payload({
+					responseId: "v1",
+					candidates: [{ index: 0, content: { role: "model", parts: [{ text: "a" }] } }],
+				});
+				yield payload({
+					candidates: [{ index: 0, finishReason: "STOP", content: { role: "model", parts: [] } }],
+				});
+				yield payload({ usageMetadata: { promptTokenCount: 1, candidatesTokenCount: 1 } });
+			},
+		],
 	])(
 		"%s: %s drops post-finish adapter chunks during assembly",
 		async (_id, _name, adapter, payloads) => {

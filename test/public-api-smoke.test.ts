@@ -141,6 +141,10 @@ describe("public API smoke", () => {
 		it("LSA-ST19: cohereAdapter.parseChunk is implemented", () => {
 			expect(cohereAdapter().parseChunk("{}")).toEqual([]);
 		});
+
+		it("LSA-ST20: geminiAdapter vertex apiSurface parseChunk is implemented", () => {
+			expect(geminiAdapter({ apiSurface: "vertex" }).parseChunk("{}")).toEqual([]);
+		});
 	});
 
 	it("LSA-ST15: error messages include llm-stream-assemble prefix", () => {

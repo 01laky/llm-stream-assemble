@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.5.0`), Anthropic Messages, OpenAI Responses, **Google Gemini**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.5.5`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -96,17 +96,41 @@ Add or update the row in [`compatibility.md`](./compatibility.md) with accurate 
 - Use `geminiAdapter()` as the reference pattern for `candidates[].content.parts[]`
   parsing (text, `functionCall`, `thought` parts) on Google AI GenerateContent SSE.
 
+## Gemini Vertex decode boundary
+
+Vertex AI **`streamGenerateContent`** often returns **newline-delimited JSON** or a **JSON array streamed as concatenated objects** — not `data:` SSE lines. **`geminiAdapter.parseChunk(raw)` accepts one decoded JSON object string per chunk** after your app splits the HTTP body.
+
+1. Read bytes from `response.body`.
+2. Yield one complete JSON object string per line or brace-balanced object (see [`examples/vertex/read-chunk-stream.ts`](../examples/vertex/read-chunk-stream.ts): `readVertexJsonlStrings`, `readVertexChunkStrings`).
+3. Call `assembleFromPayloads(lines(), geminiAdapter({ apiSurface: "vertex", jsonMode }))`.
+
+**`apiSurface`:** `"google-ai"` (default) for `generativelanguage.googleapis.com` SSE payloads; `"vertex"` for Vertex hosts (`{region}-aiplatform.googleapis.com`).
+
+**`normalizeVertexChunk(payload)`** (exported) strips common Vertex / gateway envelopes before mapping:
+
+| Envelope shape                                                    | Normalized to                                     |
+| ----------------------------------------------------------------- | ------------------------------------------------- |
+| `{ response: { … } }`                                             | `response` object                                 |
+| `{ result: { … } }`                                               | `result` object                                   |
+| `{ predictions: [ { … } ] }`                                      | first prediction object                           |
+| Already GenerateContent-shaped (`candidates`, `usageMetadata`, …) | payload as-is                                     |
+| Unknown trace / status only                                       | `null` → `metadata.raw` forward compat in adapter |
+
+Auth, project id, location, and URL construction stay outside the library — see [`examples/vertex/build-vertex-url.ts`](../examples/vertex/build-vertex-url.ts) and [`examples/node-fetch/vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts).
+
+Fixtures: `test/fixtures/gemini/vertex/`. Regenerate goldens: `pnpm fixtures:generate-gemini` (check: `pnpm fixtures:check-gemini`).
+
 ## Factory naming convention
 
-| Provider                  | Export                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OpenAI Chat               | `openaiChatAdapter()`                                                                                                                                                                                                                                                                                                                        |
-| OpenAI-compatible hosts   | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0`; preset SSOT and manifest-driven tests since `1.3.1`; maintainer fixture docs aligned since `1.3.2` |
-| Anthropic Messages        | `anthropicAdapter()`                                                                                                                                                                                                                                                                                                                         |
-| OpenAI Responses          | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                                                                   |
-| Google Gemini (Google AI) | `geminiAdapter()`                                                                                                                                                                                                                                                                                                                            |
-| AWS Bedrock               | `bedrockAdapter()`                                                                                                                                                                                                                                                                                                                           |
-| Cohere Chat v2            | `cohereAdapter()`                                                                                                                                                                                                                                                                                                                            |
+| Provider                           | Export                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI Chat                        | `openaiChatAdapter()`                                                                                                                                                                                                                                                                                                                        |
+| OpenAI-compatible hosts            | `openaiCompatibleAdapter({ provider })` — presets include `deepseek`, `mistral`, `groq`, `ollama`, `lmstudio`, `together`, `fireworks`, `openrouter`, `perplexity`, `xai`, `azure`, `cloudflare` with host golden fixtures since `1.3.0`; preset SSOT and manifest-driven tests since `1.3.1`; maintainer fixture docs aligned since `1.3.2` |
+| Anthropic Messages                 | `anthropicAdapter()`                                                                                                                                                                                                                                                                                                                         |
+| OpenAI Responses                   | `openaiResponsesAdapter()`                                                                                                                                                                                                                                                                                                                   |
+| Google Gemini (Google AI + Vertex) | `geminiAdapter({ apiSurface?: "google-ai" or "vertex", jsonMode? })`                                                                                                                                                                                                                                                                         |
+| AWS Bedrock                        | `bedrockAdapter()`                                                                                                                                                                                                                                                                                                                           |
+| Cohere Chat v2                     | `cohereAdapter()`                                                                                                                                                                                                                                                                                                                            |
 
 ## Bedrock decode boundary
 
@@ -114,12 +138,12 @@ Bedrock **ConverseStream** responses are often binary AWS EventStream. **`bedroc
 
 See also the roadmap [Input format matrix](./post-1.0-provider-roadmap.md#input-format-matrix-decode-boundary).
 
-| Transport                | Typical providers                    | Decode owner                 | Adapter input                   |
-| ------------------------ | ------------------------------------ | ---------------------------- | ------------------------------- |
-| SSE (`data:` lines)      | OpenAI, Anthropic, Gemini, Cohere v2 | `parseSSE()` in core         | JSON string per `data:` payload |
-| NDJSON / JSONL           | Proxies, batch                       | App or example helper        | One JSON object string per line |
-| AWS EventStream (binary) | Bedrock                              | App / AWS SDK / example util | Decoded JSON text per event     |
-| Non-streaming JSON body  | All providers                        | HTTP client                  | `parseResponse(body)`           |
+| Transport                | Typical providers                                | Decode owner                 | Adapter input                   |
+| ------------------------ | ------------------------------------------------ | ---------------------------- | ------------------------------- |
+| SSE (`data:` lines)      | OpenAI, Anthropic, Gemini (Google AI), Cohere v2 | `parseSSE()` in core         | JSON string per `data:` payload |
+| NDJSON / JSONL           | Vertex Gemini, proxies, batch                    | App or example helper        | One JSON object string per line |
+| AWS EventStream (binary) | Bedrock                                          | App / AWS SDK / example util | Decoded JSON text per event     |
+| Non-streaming JSON body  | All providers                                    | HTTP client                  | `parseResponse(body)`           |
 
 **`modelFamily`** (`anthropic` | `openai-like` | `nova` | `auto`) hints which ConverseStream dialect to prefer when envelopes overlap. Default `"auto"` uses structural detection; set explicitly when you know the Bedrock model family.
 

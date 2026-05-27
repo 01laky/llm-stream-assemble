@@ -100,6 +100,7 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.3.0  ✅  Cloudflare Workers AI OpenAI-compatible preset (`cloudflare`)
 1.4.0  ✅  AWS Bedrock adapter (ConverseStream — decoded JSON boundary)
 1.5.0  ✅  Cohere adapter (Chat v2 SSE)
+1.5.5  ✅  Vertex AI Gemini extension (`geminiAdapter` `apiSurface: "vertex"`)
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
 
@@ -126,14 +127,12 @@ or silently drop usage and safety metadata.
 
 #### API surfaces to support (initial scope)
 
-| Surface                            | Endpoint (typical)                                            | Streaming | Non-streaming |
-| ---------------------------------- | ------------------------------------------------------------- | --------- | ------------- |
-| Gemini API (AI Studio / Google AI) | `generativelanguage.googleapis.com` … `streamGenerateContent` | yes       | yes           |
-| Vertex AI Gemini (future phase)    | `{region}-aiplatform.googleapis.com` …                        | yes       | yes           |
+| Surface                            | Endpoint (typical)                                             | Streaming | Non-streaming |
+| ---------------------------------- | -------------------------------------------------------------- | --------- | ------------- |
+| Gemini API (AI Studio / Google AI) | `generativelanguage.googleapis.com` … `streamGenerateContent`  | yes       | yes           |
+| Vertex AI Gemini                   | `{region}-aiplatform.googleapis.com` … `streamGenerateContent` | yes       | yes           |
 
-**Proposal:** Implement **Google AI Gemini API** first in `1.1.0`. Defer Vertex-specific
-envelope/auth quirks to a later minor (`1.3.0+`) unless fixtures prove the stream payloads
-are byte-identical.
+**Shipped:** Google AI in `1.1.0`; Vertex AI in **`1.5.5`** via `geminiAdapter({ apiSurface: "vertex" })` + `normalizeVertexChunk()`. JSONL / envelope decode stays in examples (`read-chunk-stream.ts`).
 
 #### Event mapping (proposed)
 
@@ -815,7 +814,7 @@ requirements change materially:
 
 ## Open questions (to resolve before each minor)
 
-1. **Gemini Vertex vs Google AI** — one adapter with option flag, or two modules?
+1. **Gemini Vertex vs Google AI** — ✅ resolved in `1.5.5`: one adapter, `apiSurface` flag + `normalizeVertexChunk`.
 2. **Bedrock EventStream** — document helper in examples vs optional tiny internal utility (still zero dep)?
 3. **Citation / grounding events** — extend `StreamEvent` in 1.x or stash for 2.0?
 4. **Compatible preset explosion** — keep one enum vs split `presets/` directory for maintainability?

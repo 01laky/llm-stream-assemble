@@ -1,0 +1,1 @@
+{"candidates":[{"index":0,"groundingMetadata":{"groundingSupports":[{"segment":{"startIndex":0,"endIndex":4,"text":"Ground"}}]},"content":{"role":"model","parts":[{"text":"Ground"}]},"finishReason":"STOP"}]}

@@ -1,0 +1,1 @@
+{"responseId":"resp_ground","candidates":[{"index":0,"groundingMetadata":{"webSearchQueries":["weather Boston"],"groundingChunks":[{"web":{"uri":"https://example.com","title":"Example"}}]},"content":{"role":"model","parts":[{"text":"Grounded answer"}]},"finishReason":"STOP"}]}

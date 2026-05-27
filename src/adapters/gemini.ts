@@ -10,9 +10,16 @@ import { textOrJsonDelta } from "./shared/text-delta";
 import { buildUsageChunk } from "./shared/usage";
 import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
 
+export type GeminiApiSurface = "google-ai" | "vertex";
+
 export interface GeminiAdapterOptions {
 	/** Map text parts to json-delta instead of text-delta. */
 	jsonMode?: boolean;
+	/**
+	 * Which Gemini HTTP API produced the chunk JSON.
+	 * @default "google-ai"
+	 */
+	apiSurface?: GeminiApiSurface;
 }
 
 interface ToolState {
@@ -42,8 +49,22 @@ class GeminiStreamParser {
 	constructor(private readonly options: GeminiAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		const payload = parseAdapterObjectPayload(raw, "geminiAdapter.parseChunk");
+		let payload = parseAdapterObjectPayload(raw, "geminiAdapter.parseChunk");
 		if (!payload) return [];
+
+		if (this.options.apiSurface === "vertex") {
+			const normalized = normalizeVertexChunk(payload);
+			if (!normalized) {
+				if (Object.keys(payload).length === 0) return [];
+				return [
+					optionalRawChunk({
+						kind: "metadata",
+						raw: payload,
+					}),
+				].filter((chunk): chunk is RawChunk => chunk !== undefined);
+			}
+			payload = normalized;
+		}
 
 		if (isRecord(payload.error)) {
 			return providerErrorChunksFromPayload(
@@ -290,25 +311,31 @@ function parseResponse(body: unknown, options: GeminiAdapterOptions): RawChunk[]
 		throw libraryError("geminiAdapter.parseResponse expected a GenerateContentResponse object");
 	}
 
+	let record = body;
+	if (options.apiSurface === "vertex") {
+		const normalized = normalizeVertexChunk(body);
+		if (normalized) record = normalized;
+	}
+
 	const parser = new GeminiStreamParser(options);
 	const chunks: RawChunk[] = [];
 
-	if (isRecord(body.error)) {
+	if (isRecord(record.error)) {
 		return providerErrorChunksFromPayload(
-			body.error,
+			record.error,
 			"geminiAdapter.parseResponse",
 			false,
 			"Gemini provider error",
 		);
 	}
 
-	const feedback = isRecord(body.promptFeedback) ? body.promptFeedback : undefined;
+	const feedback = isRecord(record.promptFeedback) ? record.promptFeedback : undefined;
 	const blockReason = feedback ? asString(feedback.blockReason) : undefined;
 	if (blockReason) {
 		return providerErrorChunksFromMessage(`Gemini prompt blocked: ${blockReason}`, false);
 	}
 
-	chunks.push(...parser.parseChunk(JSON.stringify(body)));
+	chunks.push(...parser.parseChunk(JSON.stringify(record)));
 
 	const hasFinish = chunks.some((chunk) => chunk.kind === "finish");
 	if (!hasFinish) {
@@ -349,4 +376,30 @@ function mapFinishReason(value: string): FinishReason {
 		default:
 			return "error";
 	}
+}
+
+/** Strip Vertex / gateway wrappers before mapping GenerateContentResponse fields. */
+export function normalizeVertexChunk(
+	payload: Record<string, unknown>,
+): Record<string, unknown> | null {
+	if (isRecord(payload.response)) {
+		return payload.response;
+	}
+	if (isRecord(payload.result)) {
+		return payload.result;
+	}
+	if (Array.isArray(payload.predictions)) {
+		const first = payload.predictions[0];
+		if (isRecord(first)) return first;
+	}
+	if (
+		payload.candidates !== undefined ||
+		payload.usageMetadata !== undefined ||
+		payload.promptFeedback !== undefined ||
+		payload.responseId !== undefined ||
+		isRecord(payload.error)
+	) {
+		return payload;
+	}
+	return null;
 }

@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.5.0`
+**Status:** Active guide — `1.5.5`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -50,7 +50,24 @@ AI SDKs bundle **HTTP, React hooks, agents, and provider integrations**. This li
 
 **No.** JSON mode maps provider content to `json.delta` / `json.done` events with string payloads. Parse `json.done` when you need an object, or use `collectStream()` to materialize the full stream (memory cost).
 
-Use `openaiChatAdapter({ jsonMode: true })`, `openaiCompatibleAdapter({ jsonMode: true })`, or `geminiAdapter({ jsonMode: true })` depending on provider.
+Use `openaiChatAdapter({ jsonMode: true })`, `openaiCompatibleAdapter({ jsonMode: true })`, or `geminiAdapter({ jsonMode: true })` depending on provider. On Vertex, combine with `apiSurface: "vertex"`.
+
+---
+
+## Google AI Gemini vs Vertex AI — same adapter?
+
+**Yes — one `geminiAdapter()` with `apiSurface`.** Default **`"google-ai"`** expects `GenerateContentResponse` JSON inside Google AI SSE `data:` lines (`assembleStream` + `parseSSE`). **`"vertex"`** runs **`normalizeVertexChunk()`** first to unwrap `{ response }`, `{ result }`, or `{ predictions[0] }`, then maps the same candidate / tool / usage fields.
+
+**Differences that stay in your app:**
+
+| Topic        | Google AI                           | Vertex AI                                                                     |
+| ------------ | ----------------------------------- | ----------------------------------------------------------------------------- |
+| Host         | `generativelanguage.googleapis.com` | `{region}-aiplatform.googleapis.com`                                          |
+| Auth         | API key query param or header       | Bearer token (ADC) — not `GOOGLE_API_KEY` on Vertex URL                       |
+| Stream bytes | SSE `data:` lines                   | Often JSONL or streamed JSON array — split before `parseChunk`                |
+| Assembly API | `assembleStream(response.body, …)`  | `assembleFromPayloads(lineIterator, geminiAdapter({ apiSurface: "vertex" }))` |
+
+Examples: [`examples/node-fetch/gemini.ts`](../examples/node-fetch/gemini.ts), [`examples/node-fetch/vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts). Live smoke: `pnpm smoke:vertex` — [live-smoke](./live-smoke.md).
 
 ---
 

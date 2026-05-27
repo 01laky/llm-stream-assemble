@@ -302,4 +302,27 @@ describe("node fetch examples", () => {
 			"node-fetch/cohere.ts",
 		);
 	});
+
+	it("LSA-INT48: vertex-gemini example runs offline with fixture eventLines", async () => {
+		const { runVertexGeminiExample } = await import("../../examples/node-fetch/vertex-gemini");
+		const { vertexJsonlLines } = await import("../helpers/gemini-fixtures");
+		const output: string[] = [];
+		await runVertexGeminiExample({
+			eventLines: vertexJsonlLines("text-basic"),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("")).toContain("Hello");
+	});
+
+	it("LSA-INT49: vertex-gemini.ts does not import @google-cloud packages", () => {
+		const source = readFileSync(join(rootDir, "examples/node-fetch/vertex-gemini.ts"), "utf8");
+		expect(source).not.toContain("@google-cloud/");
+		expect(source).toContain('apiSurface: "vertex"');
+	});
+
+	it("LSA-INT50: examples README lists vertex-gemini node-fetch example", () => {
+		expect(readFileSync(join(rootDir, "examples/README.md"), "utf8")).toContain(
+			"node-fetch/vertex-gemini.ts",
+		);
+	});
 });

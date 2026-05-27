@@ -11,7 +11,8 @@ fetch responses in CI; no live provider calls are made by default.
 | OpenAI Chat Completions streaming                                     | `node-fetch/openai-chat.ts`                                                                     |
 | Local Ollama or other compatible host                                 | `node-fetch/openai-compatible.ts` (`provider: "ollama"`, …)                                     |
 | Anthropic Messages                                                    | `node-fetch/anthropic.ts`                                                                       |
-| Google Gemini SSE                                                     | `node-fetch/gemini.ts`                                                                          |
+| Google AI Gemini SSE                                                  | `node-fetch/gemini.ts`                                                                          |
+| Vertex AI Gemini JSONL stream                                         | `node-fetch/vertex-gemini.ts` + `vertex/read-chunk-stream.ts`                                   |
 | AWS Bedrock ConverseStream (decoded JSON)                             | `node-fetch/bedrock.ts` + [`bedrock/README.md`](./bedrock/README.md)                            |
 | Cohere Chat v2 SSE                                                    | `node-fetch/cohere.ts`                                                                          |
 | Azure / Cloudflare / Perplexity / xAI                                 | matching `node-fetch/*.ts` or `workers-ai/`                                                     |
@@ -35,7 +36,10 @@ Full README index: [Examples](../README.md#examples).
 
 ## Google Gemini
 
-- `examples/node-fetch/gemini.ts` — Google Gemini `streamGenerateContent` (SSE).
+- `examples/node-fetch/gemini.ts` — Google AI `streamGenerateContent?alt=sse` (SSE).
+- `examples/node-fetch/vertex-gemini.ts` — Vertex AI `streamGenerateContent` (JSONL) with `apiSurface: "vertex"`.
+- `examples/vertex/build-vertex-url.ts` — Vertex regional URL builder (examples only).
+- `examples/vertex/read-chunk-stream.ts` — JSONL / brace-balanced chunk splitters (examples only).
 
 ## AWS Bedrock
 
@@ -74,7 +78,8 @@ Required environment variables when running manually:
 - `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL` (Cloudflare Workers AI example / smoke)
 - `OLLAMA_BASE_URL`, `OLLAMA_MODEL` (local Ollama smoke — see [docs/live-smoke.md](../docs/live-smoke.md))
 - `ANTHROPIC_API_KEY`
-- `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Gemini example accepts either)
+- `GOOGLE_API_KEY` or `GEMINI_API_KEY` (Google AI Gemini example accepts either)
+- `GOOGLE_CLOUD_PROJECT`, `VERTEX_LOCATION`, `VERTEX_MODEL`, `VERTEX_ACCESS_TOKEN` (Vertex example / `pnpm smoke:vertex`)
 - `AWS_REGION`, `BEDROCK_MODEL_ID` (Bedrock example / smoke — plus standard AWS credential chain)
 - `COHERE_API_KEY`, `COHERE_MODEL`, `COHERE_SMOKE_TOOLS` (Cohere v2 example / smoke)
 

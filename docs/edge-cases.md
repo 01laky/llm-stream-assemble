@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.5.0`
+**Status:** Active guide — `1.5.5`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -118,6 +118,12 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 | Cohere tool-plan reasoning   | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                                                                                                                |
 | Cohere citation metadata     | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**                                                                                                                        |
 | Cohere late tool id          | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78** — placeholder `cohere:tool:{index}` on start; real id on delta; possible closing `tool_call.done` for placeholder at finish |
+| Vertex envelope wrappers     | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98** — `{ response: GenerateContentResponse }` before mapping                                                         |
+| Vertex tuned endpoint shape  | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                                                                                                         |
+| Vertex unknown envelope      | `test/fixtures/gemini/vertex/unknown-envelope.jsonl` — **LSA-GV05**, **LSA-GV06**, **LSA-GV49** — forward compat via `metadata.raw`                                                                |
+| Vertex grounding metadata    | `test/fixtures/gemini/vertex/grounding-metadata.jsonl` — **LSA-GV99** — no `citation.*` events; raw on `metadata`                                                                                  |
+| Google AI vs Vertex parity   | `test/fixtures/gemini/text-basic.sse` vs `vertex/text-basic.jsonl` — **LSA-GV97**–**LSA-GV97e**                                                                                                    |
+| Vertex JSONL line split      | `examples/vertex/read-chunk-stream.ts` — TCP may split mid-line; buffer until `\n` or brace-balanced object                                                                                        |
 
 ---
 

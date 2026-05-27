@@ -1,0 +1,2 @@
+{"responseId":"resp_empty","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":""},{"text":"   "},{"text":"ok"}]}}]}
+{"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model","parts":[]}}]}

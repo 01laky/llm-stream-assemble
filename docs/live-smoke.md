@@ -41,10 +41,62 @@ Optional env:
 ## Checklist before tagging a Gemini minor
 
 1. `pnpm verify` green on `main`.
-2. Fixture golden tests green (`LSA-G36` … `LSA-G52`).
+2. Fixture golden tests green (`LSA-G36` … `LSA-G52`, Vertex **`LSA-GV01`** … **`LSA-GV104`**).
 3. Optional: run `scripts/live-smoke/gemini.ts` and confirm event **types** match expectations.
 4. Update `docs/compatibility.md` if live behavior differs from fixtures.
 5. Bump `CHANGELOG.md` + `package.json` version together.
+
+## Vertex AI Gemini
+
+Requires GCP project access and a short-lived ADC bearer token (not `GOOGLE_API_KEY` on the Vertex URL).
+
+```bash
+pnpm build
+export GOOGLE_CLOUD_PROJECT=your-project
+export VERTEX_LOCATION=us-central1
+export VERTEX_MODEL=gemini-2.5-flash
+export VERTEX_ACCESS_TOKEN="$(gcloud auth application-default print-access-token)"
+pnpm smoke:vertex
+```
+
+Optional env:
+
+| Variable               | Default            | Purpose                                       |
+| ---------------------- | ------------------ | --------------------------------------------- |
+| `GOOGLE_CLOUD_PROJECT` | —                  | GCP project id in URL path                    |
+| `VERTEX_LOCATION`      | `us-central1`      | Regional Vertex endpoint                      |
+| `VERTEX_MODEL`         | `gemini-2.5-flash` | Model id or `publishers/google/models/…` path |
+| `VERTEX_ACCESS_TOKEN`  | —                  | Bearer token from ADC (required)              |
+
+Uses `geminiAdapter({ apiSurface: "vertex" })` with [`examples/vertex/read-chunk-stream.ts`](../examples/vertex/read-chunk-stream.ts) to split JSONL lines before assembly.
+
+### Expected event types (short text prompt)
+
+- `text.delta` (one or more) and/or `finish`
+- Optional `usage` when `usageMetadata` appears on chunks
+- Optional `metadata` on early chunks
+
+### Fixture capture workflow
+
+When validating live Vertex stream shapes against fixtures:
+
+```bash
+pnpm build
+GOOGLE_CLOUD_PROJECT=... VERTEX_ACCESS_TOKEN=... pnpm smoke:vertex --capture > test/fixtures/gemini/vertex/capture.jsonl
+```
+
+Review and redact before committing. Prefer docs-shaped synthetic fixtures under `test/fixtures/gemini/vertex/` for CI; use capture to detect envelope drift.
+
+### Failure modes
+
+| Symptom         | Likely cause                                             |
+| --------------- | -------------------------------------------------------- |
+| Missing project | Set `GOOGLE_CLOUD_PROJECT`                               |
+| 401 / 403       | Expired token or IAM — refresh `VERTEX_ACCESS_TOKEN`     |
+| Empty stream    | Model not enabled in region or wrong `VERTEX_LOCATION`   |
+| Parse errors    | Stream not split into complete JSON lines before adapter |
+
+**Not run in CI** — no GCP credentials in the repository. Fixture golden tests (**LSA-GV26**–**LSA-GV49**, parity **LSA-GV97**–**LSA-GV99c**) are the release gate.
 
 ## Security
 

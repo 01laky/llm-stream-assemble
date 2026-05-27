@@ -175,4 +175,14 @@ describe("release readiness", () => {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}
 	});
+
+	it("LSA-REL26: README examples list includes vertex-gemini.ts", () => {
+		expect(read("README.md")).toContain("examples/node-fetch/vertex-gemini.ts");
+	});
+
+	it("LSA-REL27: package.json scripts include smoke:vertex and fixtures:check-gemini", () => {
+		const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
+		expect(pkg.scripts["smoke:vertex"]).toBe("node scripts/live-smoke/vertex-gemini.mjs");
+		expect(pkg.scripts["fixtures:check-gemini"]).toBeDefined();
+	});
 });

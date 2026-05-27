@@ -1,6 +1,6 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.5.0` (initial cookbook shipped in `1.3.6`)
+**Status:** Active guide — `1.5.5` (initial cookbook shipped in `1.3.6`)
 
 Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 
@@ -16,20 +16,21 @@ Wire unified `StreamEvent`s into your application stack. This library is the **a
 
 ## Decision table
 
-| I use…                            | Start here                                                                                    | Also see                                                                                                                              |
-| --------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Hono / Elysia / Web `Request`     | [`hono-proxy.ts`](../examples/integrations/hono-proxy.ts)                                     | [`web-standard-proxy.ts`](../examples/proxy-safety/web-standard-proxy.ts)                                                             |
-| Express / Fastify (Node HTTP)     | [`express-proxy.ts`](../examples/integrations/express-proxy.ts)                               | proxy-safety README                                                                                                                   |
-| Cloudflare Workers (edge proxy)   | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)           | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client)                                                |
-| AWS Bedrock on Cloudflare Workers | [`bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)                 | [`decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts) + [`node-fetch/bedrock.ts`](../examples/node-fetch/bedrock.ts) |
-| Cohere Chat v2 on Workers / edge  | [`cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)                                 | [`node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts) — SSE via `cohereAdapter()` (not OpenAI-compatible)                        |
-| LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)       | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                                                                       |
-| OpenRouter                        | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)    | not LiteLLM file                                                                                                                      |
-| Vercel AI SDK                     | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts) | [comparison](./comparison.md)                                                                                                         |
-| LangChain.js                      | [`langchain-callback-pattern.ts`](../examples/integrations/langchain-callback-pattern.ts)     | [comparison](./comparison.md)                                                                                                         |
-| Next.js App Router                | [`nextjs-app-route.ts`](../examples/integrations/nextjs-app-route.ts)                         | Edge vs Node notes below                                                                                                              |
-| Non-streaming JSON API            | [`collect-stream-handler.ts`](../examples/integrations/collect-stream-handler.ts)             | Node-only (`assembleFromFile`)                                                                                                        |
-| TransformStream middleware        | [`assembly-transform-pipeline.ts`](../examples/integrations/assembly-transform-pipeline.ts)   | `createAssemblyTransform`                                                                                                             |
+| I use…                            | Start here                                                                                                                        | Also see                                                                                                                              |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Hono / Elysia / Web `Request`     | [`hono-proxy.ts`](../examples/integrations/hono-proxy.ts)                                                                         | [`web-standard-proxy.ts`](../examples/proxy-safety/web-standard-proxy.ts)                                                             |
+| Express / Fastify (Node HTTP)     | [`express-proxy.ts`](../examples/integrations/express-proxy.ts)                                                                   | proxy-safety README                                                                                                                   |
+| Cloudflare Workers (edge proxy)   | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)                                               | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client)                                                |
+| AWS Bedrock on Cloudflare Workers | [`bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)                                                     | [`decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts) + [`node-fetch/bedrock.ts`](../examples/node-fetch/bedrock.ts) |
+| Cohere Chat v2 on Workers / edge  | [`cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)                                                                     | [`node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts) — SSE via `cohereAdapter()` (not OpenAI-compatible)                        |
+| Vertex AI Gemini (Node server)    | [`vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts) + [`read-chunk-stream.ts`](../examples/vertex/read-chunk-stream.ts) | README [Vertex AI Gemini Usage](../README.md#vertex-ai-gemini) — JSONL boundary, ADC bearer auth                                      |
+| LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)                                           | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                                                                       |
+| OpenRouter                        | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)                                        | not LiteLLM file                                                                                                                      |
+| Vercel AI SDK                     | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts)                                     | [comparison](./comparison.md)                                                                                                         |
+| LangChain.js                      | [`langchain-callback-pattern.ts`](../examples/integrations/langchain-callback-pattern.ts)                                         | [comparison](./comparison.md)                                                                                                         |
+| Next.js App Router                | [`nextjs-app-route.ts`](../examples/integrations/nextjs-app-route.ts)                                                             | Edge vs Node notes below                                                                                                              |
+| Non-streaming JSON API            | [`collect-stream-handler.ts`](../examples/integrations/collect-stream-handler.ts)                                                 | Node-only (`assembleFromFile`)                                                                                                        |
+| TransformStream middleware        | [`assembly-transform-pipeline.ts`](../examples/integrations/assembly-transform-pipeline.ts)                                       | `createAssemblyTransform`                                                                                                             |
 
 ---
 
@@ -86,6 +87,19 @@ Full example: [`examples/integrations/bedrock-worker-proxy.ts`](../examples/inte
 Browser → your Worker → `https://api.cohere.com/v2/chat` with `stream: true`. The upstream response is **SSE** — pass `response.body` to `assembleStream(..., cohereAdapter())` and re-emit with `toSSE(..., { sanitizeErrors: true })`. Do **not** use `openaiCompatibleAdapter()` for Cohere.
 
 Full example: [`examples/integrations/cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)
+
+---
+
+## Vertex AI Gemini (Node)
+
+Server → Vertex `streamGenerateContent` → split JSONL (or brace-balanced chunks) → `assembleFromPayloads` → optional `toSSE` to browser.
+
+1. Build URL with [`buildVertexStreamUrl`](../examples/vertex/build-vertex-url.ts) (`GOOGLE_CLOUD_PROJECT`, `VERTEX_LOCATION`, model id).
+2. `fetch` with `Authorization: Bearer <adc-token>` — obtain token server-side (`gcloud auth application-default print-access-token` or your metadata service).
+3. Pipe `response.body` through [`readVertexJsonlStrings`](../examples/vertex/read-chunk-stream.ts) (or `readVertexChunkStrings` when the API returns a streamed JSON array).
+4. `assembleFromPayloads(lines, geminiAdapter({ apiSurface: "vertex" }))` then forward unified events (proxy-safety applies if the client is a browser).
+
+Full example: [`examples/node-fetch/vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts). Do **not** reuse Google AI `?alt=sse` + `GOOGLE_API_KEY` against the Vertex host.
 
 ---
 

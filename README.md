@@ -1,11 +1,11 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.5.0-blue)
+![core](https://img.shields.io/badge/core-1.5.5-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1316_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1477_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.5.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.5.5-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
@@ -13,7 +13,7 @@
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.5.0`. Seven built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.5.5`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -144,7 +144,7 @@ Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Re
 | `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, **Cloudflare Workers AI**, generic | `llm-stream-assemble`                        |
 | `anthropicAdapter()`                    | Anthropic Messages                                                                                                                                 | `llm-stream-assemble`                        |
 | `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                        |
-| `geminiAdapter()`                       | Google AI Gemini                                                                                                                                   | `llm-stream-assemble` or `/adapters/gemini`  |
+| `geminiAdapter()`                       | Google AI Gemini + Vertex AI (`apiSurface`)                                                                                                        | `llm-stream-assemble` or `/adapters/gemini`  |
 | `bedrockAdapter()`                      | AWS Bedrock Converse / ConverseStream                                                                                                              | `llm-stream-assemble` or `/adapters/bedrock` |
 | `cohereAdapter()`                       | Cohere Chat v2 (`api.cohere.com/v2/chat`)                                                                                                          | `llm-stream-assemble` or `/adapters/cohere`  |
 
@@ -561,7 +561,43 @@ Use `geminiAdapter({ jsonMode: true })` when structured JSON output should map t
 
 Subpath import: `import { geminiAdapter } from "llm-stream-assemble/adapters/gemini"`.
 
-Vertex AI and the Interactions API are out of scope for this adapter; see [compatibility matrix](./docs/compatibility.md).
+#### Vertex AI Gemini
+
+Vertex uses the same `geminiAdapter()` with **`apiSurface: "vertex"`**. The adapter strips Vertex / gateway envelopes (`response`, `result`, `predictions[0]`) via **`normalizeVertexChunk()`** before mapping `candidates` and tools. Vertex HTTP streams are often **JSONL or concatenated JSON objects**, not Google AI `data:` SSE — split complete JSON strings in your app, then pass each line to `assembleFromPayloads` (see [`examples/vertex/read-chunk-stream.ts`](./examples/vertex/read-chunk-stream.ts)).
+
+```ts
+import { assembleFromPayloads, geminiAdapter } from "llm-stream-assemble";
+import { buildVertexStreamUrl } from "./examples/vertex/build-vertex-url";
+import { readVertexJsonlStrings } from "./examples/vertex/read-chunk-stream";
+
+const projectId = process.env.GOOGLE_CLOUD_PROJECT!;
+const location = process.env.VERTEX_LOCATION ?? "us-central1";
+const model = process.env.VERTEX_MODEL ?? "gemini-2.5-flash";
+const accessToken = process.env.VERTEX_ACCESS_TOKEN!; // ADC — not GOOGLE_API_KEY
+
+const response = await fetch(buildVertexStreamUrl({ projectId, location, model }), {
+	method: "POST",
+	headers: {
+		Authorization: `Bearer ${accessToken}`,
+		"Content-Type": "application/json",
+	},
+	body: JSON.stringify({
+		contents: [{ role: "user", parts: [{ text: "Hello" }] }],
+	}),
+});
+
+async function* lines() {
+	for await (const line of readVertexJsonlStrings(response.body!)) yield line;
+}
+
+for await (const event of assembleFromPayloads(lines(), geminiAdapter({ apiSurface: "vertex" }))) {
+	if (event.type === "text.delta") process.stdout.write(event.text);
+}
+```
+
+Obtain a short-lived bearer token with Application Default Credentials, e.g. `gcloud auth application-default print-access-token`, and set `VERTEX_ACCESS_TOKEN` (or pass `accessToken` in your own wrapper). Full runnable example: [`examples/node-fetch/vertex-gemini.ts`](./examples/node-fetch/vertex-gemini.ts). Live smoke: `pnpm smoke:vertex` — see [live-smoke](./docs/live-smoke.md).
+
+The Gemini **Interactions API** remains deferred; see [compatibility matrix](./docs/compatibility.md).
 
 ### Bedrock Usage
 
@@ -717,7 +753,8 @@ for await (const event of assembleFromFile(
 | [`examples/node-fetch/perplexity.ts`](./examples/node-fetch/perplexity.ts)                       | Perplexity streaming                             |
 | [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                                     | xAI Grok streaming                               |
 | [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                         | Anthropic Messages                               |
-| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                               | Google Gemini SSE                                |
+| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                               | Google AI Gemini SSE                             |
+| [`examples/node-fetch/vertex-gemini.ts`](./examples/node-fetch/vertex-gemini.ts)                 | Vertex AI Gemini JSONL stream                    |
 | [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts)                             | AWS Bedrock ConverseStream (decoded JSON)        |
 | [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)               | Local fixture replay                             |
 | [`examples/proxy-safety/`](./examples/proxy-safety/)                                             | Proxy + browser client patterns                  |

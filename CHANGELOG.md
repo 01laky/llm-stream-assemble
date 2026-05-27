@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.5]
+
+### Added
+
+- **`geminiAdapter({ apiSurface: "vertex" })`** — Vertex AI Gemini on the same adapter as Google AI; **`normalizeVertexChunk()`** strips `response` / `result` / `predictions[0]` wrappers before mapping `GenerateContentResponse` fields; unknown envelopes forward to **`metadata.raw`** for forward compatibility.
+- **`GeminiApiSurface`** — `"google-ai"` (default) | `"vertex"` on `GeminiAdapterOptions`.
+- **`test/fixtures/gemini/vertex/`** — docs-shaped synthetic `.jsonl` / `.json` / `.expected.json` fixtures (text, tools, thinking, json-mode, envelopes, grounding, errors, usage, non-stream responses); parity with Google AI SSE goldens where payloads align.
+- **`examples/node-fetch/vertex-gemini.ts`** — Vertex `streamGenerateContent` via `assembleFromPayloads` + `apiSurface: "vertex"`.
+- **`examples/vertex/build-vertex-url.ts`** and **`examples/vertex/read-chunk-stream.ts`** — zero-dep URL builder and JSONL / brace-balanced chunk splitters (examples/tests only; not library exports).
+- **`scripts/generate-gemini-fixtures.mjs`** + **`pnpm fixtures:generate-gemini`** / **`pnpm fixtures:check-gemini`** — regenerate or verify Google AI and Vertex golden `expected.json` files.
+- **`scripts/live-smoke/vertex-gemini.mjs`** + **`docs/live-smoke.md`** Vertex section; **`pnpm smoke:vertex`** with optional **`--capture`** fixture bootstrap.
+- README **Vertex AI Gemini Usage** under Gemini; compatibility matrix, FAQ, adapter guide JSONL boundary, edge-case provenance, integration cookbook Node row, examples index, `.env.example` Vertex vars.
+- Tests **LSA-GV01**–**LSA-GV128**, **LSA-GV102b**–**GV102c**, **LSA-DOC75**–**LSA-DOC88**, **LSA-INT48**–**LSA-INT51**, **LSA-REL26**–**LSA-REL27**, **LSA-MAINT21**, **LSA-ST20**, **LSA-X64**; dedicated **vertex golden**, **parseChunk**, **extended edge**, **conformance**, and **google-ai parity** suites.
+
+### Changed
+
+- **`geminiAdapter()`** — `parseChunk` and `parseResponse` honor **`apiSurface: "vertex"`** before candidate/tool mapping; default remains Google AI SSE payloads.
+- **`docs/compatibility.md`** — Gemini row covers Vertex via `apiSurface`; Vertex JSONL / envelope quirk documented (no longer deferred).
+- **`docs/adapter-guide.md`** — Vertex decode boundary, `normalizeVertexChunk`, NDJSON/JSONL transport row.
+- **`docs/post-1.0-provider-roadmap.md`** — Vertex AI Gemini **1.5.5** marked shipped in release sequence; Gemini tier notes updated.
+- **`pnpm verify`** — includes **`fixtures:check-gemini`** after unit tests.
+- Version labels **1.5.5** across docs; README test badge **1477**.
+
+### Notes
+
+- **Extended Vertex edge cases (GV105–GV128):** mirror Google AI G59–G67 on `apiSurface: "vertex"` — grounding/citation metadata, skipped code parts, malformed tool finish, non-zero choice index, post-finish assembler drops, google-ai vs vertex wrapper isolation, tool id reconciliation, jsonMode assembly, envelope forward-compat.
+- **Google AI vs Vertex:** same unified mapping once envelopes are stripped; Vertex HTTP streams are often **JSONL or concatenated JSON objects**, not `data:` SSE — split lines in your app (see `examples/vertex/read-chunk-stream.ts`) then feed one JSON string per `parseChunk`.
+- **Auth:** Vertex uses **ADC bearer tokens** (`VERTEX_ACCESS_TOKEN` / `gcloud auth print-access-token`), not `GOOGLE_API_KEY` on the Vertex host.
+- **Deferred:** Gemini **Interactions API**; multimodal `inlineData` / `fileData` parts; dedicated **`citation.*`** / grounding unified events (grounding fields remain in **`metadata.raw`** in 1.x).
+- **Fixture capture:** `pnpm smoke:vertex --capture` writes jsonl lines for maintainer review — redact before commit; prefer synthetic fixtures for CI.
+
 ## [1.5.0]
 
 ### Added

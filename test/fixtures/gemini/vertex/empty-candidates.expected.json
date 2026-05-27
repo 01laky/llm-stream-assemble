@@ -1,0 +1,22 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ec"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ec"
+	},
+	{
+		"type": "text.delta",
+		"text": "after"
+	},
+	{
+		"type": "text.done",
+		"text": "after"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]

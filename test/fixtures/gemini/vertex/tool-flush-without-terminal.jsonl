@@ -1,0 +1,2 @@
+{"responseId":"resp_flush","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"save","id":"call_f","partialArgs":[{"jsonPath":"$.payload","stringValue":"{\"ok\":true"}],"willContinue":true}}]}}]}
+{"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model","parts":[]}}]}

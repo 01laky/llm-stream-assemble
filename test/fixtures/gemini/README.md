@@ -31,4 +31,6 @@ private prompts, account ids, or live request ids.
 
 **API surface:** Google AI `generativelanguage.googleapis.com` GenerateContent / streamGenerateContent (`?alt=sse`).
 
+Vertex AI JSONL fixtures: [`vertex/README.md`](./vertex/README.md).
+
 **Redaction:** All payloads are hand-authored; no live captures.

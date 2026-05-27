@@ -383,4 +383,10 @@ describe("integration cookbook examples", () => {
 			"cohere-proxy.ts",
 		);
 	});
+
+	it("LSA-INT51: integration-cookbook.md references vertex-gemini.ts and read-chunk-stream", () => {
+		const doc = readFileSync(join(rootDir, "docs/integration-cookbook.md"), "utf8");
+		expect(doc).toContain("vertex-gemini.ts");
+		expect(doc).toContain("read-chunk-stream");
+	});
 });

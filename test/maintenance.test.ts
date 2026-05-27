@@ -11,6 +11,7 @@ import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { geminiAdapter } from "../src/adapters/gemini";
 import { bedrockAdapter } from "../src/adapters/bedrock";
 import { cohereAdapter } from "../src/adapters/cohere";
+import { geminiAdapter } from "../src/adapters/gemini";
 import {
 	asNumber,
 	asString,
@@ -170,6 +171,16 @@ describe("maintenance adapter regressions", () => {
 				}),
 			),
 		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);
+	});
+
+	it("LSA-MAINT21: Vertex representative payload emits expected raw chunks", () => {
+		const chunks = geminiAdapter({ apiSurface: "vertex" }).parseChunk(
+			JSON.stringify({
+				responseId: "v-maint",
+				candidates: [{ index: 0, content: { role: "model", parts: [{ text: "vertex" }] } }],
+			}),
+		);
+		expect(chunks).toContainEqual({ kind: "text-delta", text: "vertex", choiceIndex: 0 });
 	});
 });
 

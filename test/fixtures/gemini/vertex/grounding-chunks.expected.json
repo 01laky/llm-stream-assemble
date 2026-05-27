@@ -1,0 +1,18 @@
+[
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "Ground"
+	},
+	{
+		"type": "text.done",
+		"text": "Ground"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

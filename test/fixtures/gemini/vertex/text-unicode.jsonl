@@ -1,0 +1,2 @@
+{"responseId":"resp_uni","modelVersion":"gemini-2.5-flash","candidates":[{"index":0,"content":{"role":"model","parts":[{"text":"Hello 🌍 你好"}]}}]}
+{"candidates":[{"index":0,"finishReason":"STOP","content":{"role":"model","parts":[]}}]}

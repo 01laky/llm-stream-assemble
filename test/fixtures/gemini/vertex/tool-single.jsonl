@@ -1,0 +1,3 @@
+{"responseId":"resp_tool","candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"get_weather","id":"call_1"}}]}}]}
+{"candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"get_weather","id":"call_1","args":{"city":"Bo"}}}]}}]}
+{"candidates":[{"index":0,"content":{"role":"model","parts":[{"functionCall":{"name":"get_weather","id":"call_1","args":{"city":"Boston","unit":"C"}}}]}}],"finishReason":"STOP"}

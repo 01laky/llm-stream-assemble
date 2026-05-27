@@ -1,0 +1,7 @@
+{
+	"error": {
+		"code": 403,
+		"message": "Forbidden",
+		"status": "PERMISSION_DENIED"
+	}
+}
