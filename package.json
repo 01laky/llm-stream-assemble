@@ -1,6 +1,6 @@
 {
 	"name": "llm-stream-assemble",
-	"version": "1.6.0",
+	"version": "1.7.0",
 	"description": "Composable TypeScript stream assembly for OpenAI, Anthropic, Gemini (Google AI + Vertex AI), AWS Bedrock, Cohere, and OpenAI-compatible LLM APIs — unified StreamEvent model for text, tools, reasoning, JSON, usage, and non-streaming responses.",
 	"license": "MIT",
 	"author": "Ladislav Kostolny <01laky@gmail.com>",
@@ -90,6 +90,7 @@
 		"smoke:bedrock": "node scripts/live-smoke/bedrock-converse.mjs",
 		"smoke:cohere": "node scripts/live-smoke/cohere-chat.mjs",
 		"smoke:gemini": "node scripts/live-smoke/gemini.mjs",
+		"smoke:openai-logprobs": "node scripts/live-smoke/openai-chat-logprobs.mjs",
 		"smoke:vertex": "node scripts/live-smoke/vertex-gemini.mjs",
 		"release:prep": "node scripts/release-prep.mjs",
 		"diagrams:build": "node scripts/build-diagrams.mjs",

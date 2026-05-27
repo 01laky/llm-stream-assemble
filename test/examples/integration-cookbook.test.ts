@@ -389,4 +389,30 @@ describe("integration cookbook examples", () => {
 		expect(doc).toContain("vertex-gemini.ts");
 		expect(doc).toContain("read-chunk-stream");
 	});
+
+	it("LSA-INT52: replay mapper logprobs-stream yields token-logprob parts", async () => {
+		const parts = await mapFixtureEventsToAISDKParts({
+			fixturePath: "test/fixtures/openai-chat/logprobs-stream.sse",
+		});
+		expect(parts.some((part) => (part as { type?: string }).type === "token-logprob")).toBe(true);
+		expect(parts.some((part) => (part as { type?: string }).type === "text-delta")).toBe(true);
+	});
+
+	it("LSA-INT53: replay mapper preserves logprob-before-text part order", async () => {
+		const parts = await mapFixtureEventsToAISDKParts({
+			fixturePath: "test/fixtures/openai-chat/logprobs-stream.sse",
+		});
+		const logprobIndex = parts.findIndex(
+			(part) => (part as { type?: string }).type === "token-logprob",
+		);
+		const textIndex = parts.findIndex((part) => (part as { type?: string }).type === "text-delta");
+		expect(logprobIndex).toBeGreaterThanOrEqual(0);
+		expect(textIndex).toBeGreaterThan(logprobIndex);
+	});
+
+	it("LSA-INT54: integration-cookbook cites replay-integration-mapper for logprobs", () => {
+		const doc = readFileSync(join(rootDir, "docs/integration-cookbook.md"), "utf8");
+		expect(doc).toMatch(/replay-integration-mapper|Offline logprob replay/i);
+		expect(doc).toMatch(/INT52|logprobs-stream/i);
+	});
 });

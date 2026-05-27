@@ -1,0 +1,51 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl_lp_mc"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_lp_mc",
+		"created": 1710000003
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "A",
+		"logprob": -0.2,
+		"bytes": [65],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "A"
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "B",
+		"logprob": -0.3,
+		"bytes": [66],
+		"choiceIndex": 1,
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "B",
+		"choiceIndex": 1
+	},
+	{
+		"type": "text.done",
+		"text": "A"
+	},
+	{
+		"type": "text.done",
+		"text": "B",
+		"choiceIndex": 1
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

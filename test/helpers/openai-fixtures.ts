@@ -34,6 +34,10 @@ export function normalizeEvents(events: StreamEvent[]): unknown[] {
 			>;
 			return rest;
 		}
+		if (event.type === "citation" || event.type === "grounding" || event.type === "logprob") {
+			const { raw: _raw, ...rest } = withoutDefaultChoice as StreamEvent;
+			return rest;
+		}
 		if (event.type === "error") {
 			return {
 				type: "error",

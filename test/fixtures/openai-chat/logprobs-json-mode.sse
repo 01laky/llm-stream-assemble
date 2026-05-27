@@ -1,0 +1,5 @@
+data: {"id":"chatcmpl_lp_json","object":"chat.completion.chunk","created":1710000006,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"{\"a\":"},"logprobs":{"content":[{"token":"{\"a\":","logprob":-0.08,"bytes":[123,34,97,34,58],"top_logprobs":[]}]},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_lp_json","object":"chat.completion.chunk","created":1710000006,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"1}"},"logprobs":{"content":[{"token":"1}","logprob":-0.02,"bytes":[49,125],"top_logprobs":[]}]},"finish_reason":"stop"}]}
+
+data: [DONE]

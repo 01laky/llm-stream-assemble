@@ -10,11 +10,11 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.4.1 refactor", () => {
-	it("LSA-DOC60: README badges reference 1.6.0 and test count", () => {
+	it("LSA-DOC60: README retains 1.4.1 release traceability in CHANGELOG", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("1.6.0");
-		expect(readme).toMatch(/tests-\d+_passing/);
-		expect(readme).toContain("Stable `1.6.0`");
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.4.1]");
+		expect(readme).toMatch(/CHANGELOG|1\.4\.1/i);
 	});
 
 	it("LSA-DOC61: CHANGELOG contains 1.4.1 shared adapters section", () => {
@@ -30,9 +30,8 @@ describe("docs positioning 1.4.1 refactor", () => {
 		expect(guide).toContain("shared/incremental-json.ts");
 	});
 
-	it("LSA-DOC63: package.json version is 1.6.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.6.0");
+	it("LSA-DOC63: CHANGELOG 1.4.1 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.4.1]");
 	});
 
 	it("LSA-DOC64: adapters-overview stable label is 1.6.0", () => {

@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.7.0]
+
+### Added
+
+- **`logprob` `StreamEvent` type** — first-class unified events for OpenAI Chat Completions `choices[].logprobs` when the request enables logprobs; atomic per-token events (no delta/done lifecycle) with `channel` (`content` | `refusal`), `token`, `logprob`, optional `bytes`, `topLogprobs`, `choiceIndex`, and monotonic `position` per choice/channel; **LSA-LP01**–**LP24**.
+- **Shared `src/adapters/shared/logprobs.ts`** — `logprobChunksFromChoiceLogprobs`, position state for streaming increments, `normalizeTopLogprobs`; reused by OpenAI Chat and OpenAI-compatible base parser.
+- **`isLogprob` type guard**, **`matchEvent` handler**, and **`collectStream` → `logprobs` array** on `CollectedStream`.
+- **`logprobConfidence()`** helper — maps logprob to approximate probability and top-token margin (**LSA-LPA01**–**LPA06**).
+- **`alignLogprobsWithText()`** helper — aligns token logprobs to assembled assistant text offsets (**LSA-LPA07**–**LPA12**).
+- **Fixtures** — `test/fixtures/openai-chat/logprobs-*.sse|json` (stream, multichoice, refusal, tool, json-mode, response) and `test/fixtures/openai-compatible/logprobs-stream.sse` + `groq/logprobs-stream.sse`; maintainer generator `scripts/generate-openai-logprob-fixtures.mjs` (**LSA-LF01**–**LF08**).
+- **Golden / edge coverage** — OpenAI Chat logprob streams and non-stream parity **LSA-OC296**–**OC318**; compatible preset **LSA-OC306**–**OC308**; cross-adapter ordering and null semantics **LSA-LPH01**–**LPH08**, **LSA-X86**–**X98**; extended parser/helper matrix **LSA-LP30**–**LP75**; alignment **LSA-LPA06**–**LPA12**.
+- **`pnpm smoke:openai-logprobs`** — live OpenAI Chat Completions smoke with `logprobs: true`; skips when `OPENAI_API_KEY` unset; optional `--capture` to `.local-playground/openai-logprobs-capture/`.
+- **`test/docs-positioning-1.7.0.test.ts`** — **LSA-DOC127**–**DOC140** release metadata regressions.
+- **Docs / diagrams** — README, compatibility, adapter-guide, faq, edge-cases, integration-cookbook, proposal, roadmap; `stream-event.mmd` + SVG includes Logprob under Provenance.
+
+### Changed
+
+- **OpenAI Chat + compatible parsers** — `choices[].logprobs.content` / `.refusal` arrays emit typed `logprob` events before sibling text/refusal deltas on the same chunk; `logprobs: null` emits nothing (**LSA-LP10**, **LSA-LPH03**).
+- **Fixture normalizers** — strip `raw` from `logprob` goldens (OpenAI + compatible maintainers).
+- Version labels **1.7.0** across docs; README test badge **1966**.
+
+### Notes
+
+- **OpenAI Responses API** logprobs remain deferred — Chat Completions + compatible presets only in **1.7.0**.
+- Still deferred: Interactions API, AI21/watsonx presets, npm publish automation.
+
 ## [1.6.0]
 
 ### Added

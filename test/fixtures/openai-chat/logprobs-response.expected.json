@@ -1,0 +1,45 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl_lp_resp"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_lp_resp",
+		"created": 1710000002
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "Hello",
+		"logprob": -0.12,
+		"bytes": [72, 101, 108, 108, 111],
+		"position": 0
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "!",
+		"logprob": -0.006,
+		"bytes": [33],
+		"position": 1
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello!"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 5,
+		"outputTokens": 2
+	},
+	{
+		"type": "text.done",
+		"text": "Hello!"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -19,6 +19,7 @@ import {
 	usageChunk,
 	withChoiceIndex,
 } from "./chunks";
+import { logprobChunksFromChoiceLogprobs } from "../../shared/logprobs";
 import type { RequiredOpenAIChatLikeParserOptions } from "./types";
 
 export function parseResponse(
@@ -67,6 +68,8 @@ function responseChoiceChunks(
 	const choiceIndex = choiceIndexFor(choice, position, options);
 	const message = isRecord(choice.message) ? choice.message : undefined;
 	const chunks: RawChunk[] = [];
+
+	chunks.push(...logprobChunksFromChoiceLogprobs(choice.logprobs, choiceIndex));
 
 	if (message) {
 		const content = asString(message.content);

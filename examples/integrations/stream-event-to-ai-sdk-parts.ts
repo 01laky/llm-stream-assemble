@@ -6,6 +6,7 @@ export type AISDKStylePart =
 	| { type: "tool-call"; toolCallId: string; toolName: string; args: unknown }
 	| { type: "citation"; urls?: string[]; sources?: unknown[] }
 	| { type: "grounding"; queries?: string[]; chunks?: unknown[] }
+	| { type: "token-logprob"; token: string; logprob: number; topLogprobs?: unknown[] }
 	| { type: "finish"; finishReason: string }
 	| { type: "error"; message: string };
 
@@ -33,6 +34,13 @@ export function mapStreamEventToAISDKPart(
 				type: "grounding",
 				queries: event.queries,
 				chunks: event.chunks,
+			};
+		case "logprob":
+			return {
+				type: "token-logprob",
+				token: event.token,
+				logprob: event.logprob,
+				topLogprobs: event.topLogprobs,
 			};
 		case "finish":
 			return { type: "finish", finishReason: event.reason };

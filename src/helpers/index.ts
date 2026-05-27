@@ -1,6 +1,14 @@
 export { matchEvent } from "./match-event";
 export { citationSpanAnchor } from "./citation-span-anchor";
 export type { CitationSpanAnchorInput, CitationSpanAnchorResult } from "./citation-span-anchor";
+export { logprobConfidence } from "./logprob-confidence";
+export type { LogprobConfidenceInput, LogprobConfidenceResult } from "./logprob-confidence";
+export { alignLogprobsWithText } from "./align-logprobs-with-text";
+export type {
+	LogprobTextAlignmentInput,
+	LogprobTextAlignmentEntry,
+	LogprobTextAlignmentResult,
+} from "./align-logprobs-with-text";
 export {
 	isMessageStart,
 	isMetadata,
@@ -17,6 +25,7 @@ export {
 	isToolCallDone,
 	isCitation,
 	isGrounding,
+	isLogprob,
 	isUsage,
 	isFinish,
 	isError,

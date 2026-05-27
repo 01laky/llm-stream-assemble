@@ -1,0 +1,39 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl_lp_ref"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_lp_ref",
+		"created": 1710000004
+	},
+	{
+		"type": "logprob",
+		"channel": "refusal",
+		"token": "No",
+		"logprob": -0.05,
+		"bytes": [78, 111],
+		"topLogprobs": [
+			{
+				"token": "No",
+				"logprob": -0.05,
+				"bytes": [78, 111]
+			}
+		],
+		"position": 0
+	},
+	{
+		"type": "refusal.delta",
+		"text": "No."
+	},
+	{
+		"type": "refusal.done",
+		"text": "No."
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

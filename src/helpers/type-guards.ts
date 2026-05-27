@@ -90,6 +90,10 @@ export function isGrounding(
 	return event.type === "grounding";
 }
 
+export function isLogprob(event: StreamEvent): event is Extract<StreamEvent, { type: "logprob" }> {
+	return event.type === "logprob";
+}
+
 export function isUsage(event: StreamEvent): event is Extract<StreamEvent, { type: "usage" }> {
 	return event.type === "usage";
 }

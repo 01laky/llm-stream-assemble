@@ -59,6 +59,8 @@ export class EventAssembler {
 				return [this.citationEvent(chunk)];
 			case "grounding":
 				return [this.groundingEvent(chunk)];
+			case "logprob":
+				return [this.logprobEvent(chunk)];
 			case "metadata": {
 				const { kind: _kind, ...metadata } = chunk;
 				return [optionalEvent({ type: "metadata", ...metadata })];
@@ -318,6 +320,11 @@ export class EventAssembler {
 	private groundingEvent(chunk: Extract<RawChunk, { kind: "grounding" }>): StreamEvent {
 		const { kind: _kind, ...rest } = chunk;
 		return optionalEvent({ type: "grounding", ...rest });
+	}
+
+	private logprobEvent(chunk: Extract<RawChunk, { kind: "logprob" }>): StreamEvent {
+		const { kind: _kind, ...rest } = chunk;
+		return optionalEvent({ type: "logprob", ...rest });
 	}
 
 	private errorEvent(error: unknown, recoverable: boolean | undefined): StreamEvent {

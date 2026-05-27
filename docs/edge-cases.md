@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.6.0`
+**Status:** Active guide — `1.7.0`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -155,6 +155,12 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 | Citation conformance                                  | **LSA-CF01**–**LSA-CF05** — `test/citation-grounding-conformance.test.ts`                                                     |
 | Compatible citation presets                           | **LSA-OC276**–**OC295** — `test/openai-compatible-citations.test.ts`                                                          |
 | Cross-adapter citation/grounding drops                | **LSA-X77**–**X85** — `test/cross-adapter-assembler-edge.test.ts`                                                             |
+| Cross-adapter logprob ordering / post-finish drops    | **LSA-X86**–**X98** — `test/cross-adapter-assembler-edge.test.ts`                                                             |
+| OpenAI Chat logprob stream + response                 | `test/fixtures/openai-chat/logprobs-*.sse` — **LSA-LP01**–**LP75**, **LSA-OC296**–**OC318**                                   |
+| OpenAI-compatible logprob preset                      | `test/fixtures/openai-compatible/logprobs-stream.sse`, `groq/` — **LSA-OC306**–**OC308**                                      |
+| Logprob ordering / null semantics                     | **LSA-LPH01**–**LPH08** — logprob before text on same chunk; `logprobs: null` → no events                                     |
+| Logprob helpers (confidence + text alignment)         | **LSA-LPA01**–**LPA12** — `logprobConfidence()`, `alignLogprobsWithText()`                                                    |
+| Logprob fixture maintainer                            | **LSA-LF01**–**LF08** — `scripts/generate-openai-logprob-fixtures.mjs`                                                        |
 | Cohere late tool id                                   | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78**                                                        |
 | Vertex envelope wrappers                              | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98**                                             |
 | Vertex tuned endpoint shape                           | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                                    |

@@ -15,6 +15,7 @@ All commands require **`pnpm build`** first. None run in CI.
 | Script                                                                | Provider / surface         | Key env vars                                        | Optional flags                      |
 | --------------------------------------------------------------------- | -------------------------- | --------------------------------------------------- | ----------------------------------- |
 | [`smoke:gemini`](#gemini-google-ai)                                   | Google AI Gemini SSE       | `GOOGLE_API_KEY` / `GEMINI_API_KEY`, `GEMINI_MODEL` | `--capture`, `GEMINI_SMOKE_TOOLS=1` |
+| [`smoke:openai-logprobs`](#openai-chat-logprobs)                      | OpenAI Chat logprobs       | `OPENAI_API_KEY`, `OPENAI_LOGPROBS_MODEL`           | `--capture`; skips if no key        |
 | [`smoke:vertex`](#vertex-ai-gemini)                                   | Vertex AI Gemini JSONL     | `GOOGLE_CLOUD_PROJECT`, `VERTEX_ACCESS_TOKEN`, …    | `--capture`                         |
 | [`smoke:cohere`](#cohere-v2-chat)                                     | Cohere Chat v2             | `COHERE_API_KEY`, `COHERE_MODEL`                    | `--capture`, `COHERE_SMOKE_TOOLS=1` |
 | [`smoke:bedrock`](#bedrock-converse-conversestream)                   | AWS Bedrock ConverseStream | AWS credential chain, `BEDROCK_MODEL_ID`            | —                                   |
@@ -66,6 +67,48 @@ Optional env:
 | 429                | Quota / rate limit                                     |
 | Empty stream       | Model or region restriction                            |
 | Tool smoke skipped | Set `GEMINI_SMOKE_TOOLS=1` to run optional tool prompt |
+
+## OpenAI Chat logprobs
+
+Requires an OpenAI API key with Chat Completions access. Skips gracefully (exit 0) when `OPENAI_API_KEY` is unset.
+
+```bash
+pnpm build
+pnpm smoke:openai-logprobs
+```
+
+Optional capture for fixture drift detection:
+
+```bash
+pnpm build
+OPENAI_API_KEY=... pnpm smoke:openai-logprobs --capture
+```
+
+Writes redacted provider payloads to `.local-playground/openai-logprobs-capture/capture-<timestamp>.txt` (gitignored). Review and compare to `test/fixtures/openai-chat/logprobs-*` before committing fixture updates.
+
+Optional env:
+
+| Variable                | Default       | Purpose                                         |
+| ----------------------- | ------------- | ----------------------------------------------- |
+| `OPENAI_API_KEY`        | —             | API auth; script skips when unset               |
+| `OPENAI_LOGPROBS_MODEL` | `gpt-4o-mini` | Model id for smoke prompt with `logprobs: true` |
+
+### Expected event types (short text prompt with logprobs)
+
+- `message.start` or `metadata` (early)
+- `logprob` (one or more, before matching `text.delta` on each chunk)
+- `text.delta` (one or more)
+- `text.done`
+- `finish` with `reason: "stop"`
+
+### Failure modes
+
+| Symptom             | Likely cause                                       |
+| ------------------- | -------------------------------------------------- |
+| Skipped immediately | `OPENAI_API_KEY` not set — expected locally        |
+| 401 / 403           | Invalid or missing API key                         |
+| 429                 | Quota / rate limit                                 |
+| No `logprob` events | Model or endpoint omitted logprobs despite request |
 
 ## Checklist before tagging a Gemini patch
 

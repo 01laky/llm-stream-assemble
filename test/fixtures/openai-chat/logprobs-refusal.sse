@@ -1,0 +1,3 @@
+data: {"id":"chatcmpl_lp_ref","object":"chat.completion.chunk","created":1710000004,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"refusal":"No."},"logprobs":{"refusal":[{"token":"No","logprob":-0.05,"bytes":[78,111],"top_logprobs":[{"token":"No","logprob":-0.05,"bytes":[78,111]}]}]},"finish_reason":"stop"}]}
+
+data: [DONE]

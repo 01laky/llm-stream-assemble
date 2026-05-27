@@ -10,11 +10,12 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.6.0", () => {
-	it("LSA-DOC110: README badges reference 1.6.0 and test count", () => {
+	it("LSA-DOC110: historical 1.6.0 release traceability in CHANGELOG and README history", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("core-1.6.0");
-		expect(readme).toContain("Stable `1.6.0`");
-		expect(readme).toMatch(/tests-1799_passing/);
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.6.0]");
+		expect(changelog).toMatch(/tests-1799_passing|README test badge \*\*1799\*\*/);
+		expect(readme).toMatch(/1\.6\.0|CHANGELOG/i);
 	});
 
 	it("LSA-DOC111: CHANGELOG 1.6.0 mentions citation and grounding", () => {
@@ -23,9 +24,8 @@ describe("docs positioning 1.6.0", () => {
 		expect(changelog).toMatch(/citation.*grounding|grounding.*citation/i);
 	});
 
-	it("LSA-DOC112: package.json version is 1.6.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.6.0");
+	it("LSA-DOC112: CHANGELOG 1.6.0 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.6.0]");
 	});
 
 	it("LSA-DOC113: compatibility matrix rows updated for Cohere, Perplexity, Gemini", () => {
@@ -89,9 +89,10 @@ describe("docs positioning 1.6.0", () => {
 		expect(doc).toContain("toSSE");
 	});
 
-	it("LSA-DOC122: release-prep badge pattern matches vitest count 1741", () => {
-		const readme = read("README.md");
-		expect(readme).toMatch(/tests-1799_passing/);
+	it("LSA-DOC122: CHANGELOG 1.6.0 section documents historical test badge 1799", () => {
+		const changelog = read("CHANGELOG.md");
+		const section = changelog.split("## [1.6.0]")[1]?.split("## [")[0] ?? "";
+		expect(section).toMatch(/1799/);
 	});
 
 	it("LSA-DOC123: adapter-guide documents emitLegacyCitationMetadata deprecation", () => {

@@ -54,27 +54,32 @@ Options:
 	return args;
 }
 
+function stripDefaultChoiceIndex(event) {
+	if ("choiceIndex" in event && event.choiceIndex === 0) {
+		const { choiceIndex, ...rest } = event;
+		void choiceIndex;
+		return rest;
+	}
+	return event;
+}
+
 function normalize(events) {
 	return events.map((event) => {
 		if (
 			event.type === "metadata" ||
 			event.type === "usage" ||
 			event.type === "citation" ||
-			event.type === "grounding"
+			event.type === "grounding" ||
+			event.type === "logprob"
 		) {
 			const { raw, ...rest } = event;
 			void raw;
-			return rest;
+			return stripDefaultChoiceIndex(rest);
 		}
 		if (event.type === "error") {
 			return { type: "error", recoverable: event.recoverable };
 		}
-		if ("choiceIndex" in event && event.choiceIndex === 0) {
-			const { choiceIndex, ...rest } = event;
-			void choiceIndex;
-			return rest;
-		}
-		return event;
+		return stripDefaultChoiceIndex(event);
 	});
 }
 

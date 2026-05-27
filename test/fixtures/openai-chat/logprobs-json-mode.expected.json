@@ -1,0 +1,50 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl_lp_json"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_lp_json",
+		"created": 1710000006
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "{\"a\":",
+		"logprob": -0.08,
+		"bytes": [123, 34, 97, 34, 58],
+		"position": 0
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"a\":",
+		"partial": {}
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "1}",
+		"logprob": -0.02,
+		"bytes": [49, 125],
+		"position": 1
+	},
+	{
+		"type": "json.delta",
+		"delta": "1}",
+		"partial": {
+			"a": 1
+		}
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"a": 1
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

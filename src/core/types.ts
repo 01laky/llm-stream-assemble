@@ -40,6 +40,17 @@ export type StreamEvent =
 			raw?: unknown;
 	  }
 	| {
+			type: "logprob";
+			channel: "content" | "refusal";
+			token: string;
+			logprob: number;
+			bytes?: number[];
+			topLogprobs?: Array<{ token: string; logprob: number; bytes?: number[] }>;
+			choiceIndex?: number;
+			position?: number;
+			raw?: unknown;
+	  }
+	| {
 			type: "usage";
 			inputTokens?: number;
 			outputTokens?: number;
@@ -82,6 +93,17 @@ export type RawChunk =
 			raw?: unknown;
 	  }
 	| {
+			kind: "logprob";
+			channel: "content" | "refusal";
+			token: string;
+			logprob: number;
+			bytes?: number[];
+			topLogprobs?: Array<{ token: string; logprob: number; bytes?: number[] }>;
+			choiceIndex?: number;
+			position?: number;
+			raw?: unknown;
+	  }
+	| {
 			kind: "usage";
 			inputTokens?: number;
 			outputTokens?: number;
@@ -112,6 +134,7 @@ export interface CollectedStream {
 	toolCalls: Array<{ id: string; name: string; args: unknown }>;
 	citations: Array<Extract<StreamEvent, { type: "citation" }>>;
 	grounding: Array<Extract<StreamEvent, { type: "grounding" }>>;
+	logprobs: Array<Extract<StreamEvent, { type: "logprob" }>>;
 	usage?: Extract<StreamEvent, { type: "usage" }>;
 	finishReason?: Extract<StreamEvent, { type: "finish" }>;
 }

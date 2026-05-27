@@ -32,6 +32,8 @@ export function matchEvent<R>(event: StreamEvent, handlers: StreamEventHandlers<
 			return handlers.citation?.(event);
 		case "grounding":
 			return handlers.grounding?.(event);
+		case "logprob":
+			return handlers.logprob?.(event);
 		case "usage":
 			return handlers.usage?.(event);
 		case "finish":

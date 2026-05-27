@@ -231,11 +231,15 @@ describe("maintenance build and bundle regressions", () => {
 		}
 	});
 
-	it("LSA-MAINT23: dist index.d.ts exports StreamEvent includes citation and grounding", () => {
+	it("LSA-MAINT23: dist index.d.ts exports StreamEvent includes citation, grounding, and logprob", () => {
 		const dts = readFileSync(join(rootDir, "dist/index.d.ts"), "utf8");
 		expect(dts).toMatch(/type:\s*"citation"/);
 		expect(dts).toMatch(/type:\s*"grounding"/);
+		expect(dts).toMatch(/type:\s*"logprob"/);
 		expect(dts).toContain("citationSpanAnchor");
+		expect(dts).toContain("logprobConfidence");
+		expect(dts).toContain("alignLogprobsWithText");
+		expect(dts).toContain("isLogprob");
 	});
 
 	it("LSA-MAINT24: bundle size remains within MAINT17 limits after citation helpers", () => {

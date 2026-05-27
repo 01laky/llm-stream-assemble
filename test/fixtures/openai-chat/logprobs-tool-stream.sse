@@ -1,0 +1,11 @@
+data: {"id":"chatcmpl_lp_tool","object":"chat.completion.chunk","created":1710000005,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant"},"logprobs":null,"finish_reason":null}]}
+
+data: {"id":"chatcmpl_lp_tool","object":"chat.completion.chunk","created":1710000005,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"Call"},"logprobs":{"content":[{"token":"Call","logprob":-0.4,"bytes":[67,97,108,108],"top_logprobs":[]}]},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_lp_tool","object":"chat.completion.chunk","created":1710000005,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_lp","type":"function","function":{"name":"get_weather","arguments":""}}]},"logprobs":null,"finish_reason":null}]}
+
+data: {"id":"chatcmpl_lp_tool","object":"chat.completion.chunk","created":1710000005,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\"city\":\"Prague\"}"}}]},"logprobs":null,"finish_reason":null}]}
+
+data: {"id":"chatcmpl_lp_tool","object":"chat.completion.chunk","created":1710000005,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}
+
+data: [DONE]

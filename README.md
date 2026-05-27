@@ -1,19 +1,19 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.6.0-blue)
+![core](https://img.shields.io/badge/core-1.7.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1799_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1966_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.6.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.7.0-brightgreen)
 
-**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, citations, grounding, errors, and non-streaming responses.
+**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, citations, grounding, logprobs, errors, and non-streaming responses.
 
 > A composable TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Vertex AI to Bedrock to Cohere to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.6.0`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.7.0`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -118,6 +118,8 @@ Raw provider bytes enter through a **thin adapter**, get assembled into **typed 
 Every adapter maps provider-specific fragments into the same **`StreamEvent`** union:
 
 ![StreamEvent mindmap](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/stream-event.svg)
+
+**Provenance events** include **`citation`**, **`grounding`**, and **`logprob`** (OpenAI Chat / compatible when `logprobs: true` on the request). Logprob events are atomic per token — use **`logprobConfidence()`** for probability/margin and **`alignLogprobsWithText()`** to map tokens onto assembled assistant text.
 
 **Design constraints:** adapters never accumulate cross-chunk state beyond id/index reconciliation; assembly, buffering, and `.done` emission live in core. No HTTP client, no tool execution, no UI — just the stream layer.
 
@@ -701,7 +703,7 @@ Live smoke: `pnpm smoke:cohere` — see [`docs/live-smoke.md`](./docs/live-smoke
 
 ### Collecting a Stream
 
-`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
+`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, citations, grounding, logprobs, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
 
 ```ts
 import { collectStream } from "llm-stream-assemble";

@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.5.7`
+**Status:** Active guide — `1.7.0`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -119,6 +119,18 @@ Do **not** point `openaiCompatibleAdapter()` at Cohere — you will miss tool-pl
 **Tool plan:** `tool-plan-delta` maps to `reasoning.*` with `variant: "detail"` (model planning text before tool calls).
 
 **Citations:** `citation-start` maps to typed **`citation`** events (span, sources, index). Perplexity root `citations` / `search_results` and Gemini `citationMetadata` / `groundingMetadata` map to **`citation`** and **`grounding`** respectively. Use **`citationSpanAnchor()`** to align Cohere span offsets with assembled assistant text. Set **`emitLegacyCitationMetadata: true`** during migration to dual-emit legacy `metadata.raw` blobs alongside typed events.
+
+---
+
+## How do I consume logprobs from OpenAI Chat streams?
+
+1. **Request logprobs upstream** — set `logprobs: true` and optionally `top_logprobs: N` on the Chat Completions body. Without this, providers omit `choices[].logprobs` and the adapter emits no `logprob` events.
+2. **Assemble with `openaiChatAdapter()`** (or `openaiCompatibleAdapter()` for Groq and other OpenAI-shaped hosts).
+3. **Handle `logprob` events** — each event is one token with `channel` (`content` | `refusal`), `token`, `logprob`, optional `topLogprobs`, and `position`. They arrive **before** the matching text/refusal delta on the same chunk.
+4. **Collect or map** — `collectStream(events).logprobs` accumulates all tokens; use **`logprobConfidence({ logprob, topLogprobs })`** for approximate probability and runner-up margin; use **`alignLogprobsWithText({ assistantText, logprobs })`** to attach character offsets for UI highlighting.
+5. **Proxy safely** — `toSSE()` serializes `logprob` events like any other unified type; forward with `sanitizeErrors: true` when exposing streams to browsers.
+
+Live smoke: `pnpm smoke:openai-logprobs` (requires `OPENAI_API_KEY`). Fixtures: `test/fixtures/openai-chat/logprobs-stream.sse`. OpenAI **Responses API** logprobs are not mapped in **1.7.0**.
 
 ---
 

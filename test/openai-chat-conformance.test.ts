@@ -42,4 +42,15 @@ describe("openaiChatAdapter shared conformance harness", () => {
 		);
 		expect(events).toEqual(expectedOpenAIEvents("json-mode"));
 	});
+
+	it("LSA-OC256: runAdapterGoldenStream parity for logprobs-stream.sse", async () => {
+		const events = normalizeEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiChatAdapter(),
+				fixtureSsePath: join(fixturesDir, "logprobs-stream.sse"),
+				expectedEventsPath: join(fixturesDir, "logprobs-stream.expected.json"),
+			}),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("logprobs-stream"));
+	});
 });

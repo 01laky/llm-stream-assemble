@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	isCitation,
 	isGrounding,
+	isLogprob,
 	isError,
 	isFinish,
 	isJsonDelta,
@@ -157,5 +158,18 @@ describe("type-guards.test.ts", () => {
 		expect(isGrounding({ type: "grounding", queries: ["q"] })).toBe(true);
 		expect(isGrounding({ type: "citation", urls: [] })).toBe(false);
 		expect(isGrounding({ type: "metadata" })).toBe(false);
+	});
+
+	it("LSA-G118: isLogprob guard discriminates logprob events", () => {
+		expect(
+			isLogprob({
+				type: "logprob",
+				channel: "content",
+				token: "a",
+				logprob: -0.1,
+			}),
+		).toBe(true);
+		expect(isLogprob({ type: "text.delta", text: "x" })).toBe(false);
+		expect(isLogprob({ type: "citation", urls: [] })).toBe(false);
 	});
 });

@@ -9,6 +9,7 @@ export async function collectStream(events: AsyncIterable<StreamEvent>): Promise
 		toolCalls: [],
 		citations: [],
 		grounding: [],
+		logprobs: [],
 	};
 	const iterator = events[Symbol.asyncIterator]();
 
@@ -56,6 +57,9 @@ function collectEvent(result: CollectedStream, event: StreamEvent): void {
 			break;
 		case "grounding":
 			result.grounding.push(event);
+			break;
+		case "logprob":
+			result.logprobs.push(event);
 			break;
 		case "usage":
 			result.usage = event;

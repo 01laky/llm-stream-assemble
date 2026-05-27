@@ -172,6 +172,32 @@ Node replay: [`collect-stream-handler.ts`](../examples/integrations/collect-stre
 
 Since **1.6.0**, `collectStream` also accumulates **`citations`** and **`grounding`** arrays from typed events — useful for RAG UIs that render source lists alongside final text.
 
+Since **1.7.0**, `collectStream` also accumulates **`logprobs`** — pair with `result.text` and **`alignLogprobsWithText()`** for per-token confidence UI.
+
+---
+
+## Token confidence from logprobs
+
+When upstream requests include `logprobs: true`, assemble and derive confidence metrics without re-parsing provider JSON:
+
+```ts
+import { alignLogprobsWithText, collectStream, logprobConfidence } from "llm-stream-assemble";
+
+const collected = await collectStream(events);
+for (const entry of alignLogprobsWithText({
+	assistantText: collected.text,
+	logprobs: collected.logprobs,
+}).entries) {
+	const { probability, margin } = logprobConfidence({
+		logprob: entry.logprob,
+		topLogprobs: collected.logprobs.find((lp) => lp.token === entry.token)?.topLogprobs,
+	});
+	highlightSpan(entry.start, entry.end, probability, margin);
+}
+```
+
+Fixture replay: `test/fixtures/openai-chat/logprobs-stream.sse` (**LSA-LP01**, **LSA-LPA01**–**LPA12**).
+
 ---
 
 ## Citation and grounding in proxy SSE
@@ -188,6 +214,29 @@ matchEvent(event, {
 For Cohere span alignment against assembled assistant text, use **`citationSpanAnchor({ assistantText, span })`** (**LSA-CSA01**–**CSA04**). Example mapper: [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts).
 
 Round-trip: assemble provider stream → `toSSE` → client parses `data:` lines — citation types survive unchanged in JSON (**LSA-CT24**, **LSA-DOC125**).
+
+Since **1.7.0**, **`logprob`** events round-trip the same way — proxy unified SSE to browsers and parse `{"type":"logprob",…}` on the client for token-level confidence UI (**LSA-LP20**, **LSA-DOC132**).
+
+---
+
+## Offline replay — logprobs
+
+Prove logprob mapping without live API keys:
+
+```ts
+import { assembleFromFile, openaiChatAdapter } from "llm-stream-assemble";
+
+const events = [];
+for await (const event of assembleFromFile(
+	"test/fixtures/openai-chat/logprobs-stream.sse",
+	openaiChatAdapter(),
+)) {
+	events.push(event);
+}
+// expect logprob events before text.delta on each chunk
+```
+
+Regenerate goldens after adapter changes: `node scripts/generate-openai-logprob-fixtures.mjs`. Live capture: `pnpm smoke:openai-logprobs --capture` → `.local-playground/openai-logprobs-capture/`.
 
 ---
 

@@ -103,25 +103,30 @@ export function hostFixtureAdapterOptions(
 	return manifest[name]?.adapterOptions ?? (name === "json-mode" ? { jsonMode: true } : {});
 }
 
+function stripDefaultChoiceIndex<T extends Record<string, unknown>>(event: T): T {
+	if ("choiceIndex" in event && event.choiceIndex === 0) {
+		const { choiceIndex: _choiceIndex, ...rest } = event;
+		return rest as T;
+	}
+	return event;
+}
+
 export function normalizeCompatibleEvents(events: StreamEvent[]): unknown[] {
 	return events.map((event) => {
 		if (
 			event.type === "metadata" ||
 			event.type === "usage" ||
 			event.type === "citation" ||
-			event.type === "grounding"
+			event.type === "grounding" ||
+			event.type === "logprob"
 		) {
 			const { raw: _raw, ...rest } = event;
-			return rest;
+			return stripDefaultChoiceIndex(rest);
 		}
 		if (event.type === "error") {
 			return { type: "error", recoverable: event.recoverable };
 		}
-		if ("choiceIndex" in event && event.choiceIndex === 0) {
-			const { choiceIndex: _choiceIndex, ...rest } = event;
-			return rest;
-		}
-		return event;
+		return stripDefaultChoiceIndex(event as Record<string, unknown>);
 	});
 }
 
@@ -131,7 +136,8 @@ export function normalizeCompatibleRawChunks(chunks: RawChunk[]): unknown[] {
 			chunk.kind === "metadata" ||
 			chunk.kind === "usage" ||
 			chunk.kind === "citation" ||
-			chunk.kind === "grounding"
+			chunk.kind === "grounding" ||
+			chunk.kind === "logprob"
 		) {
 			const { raw: _raw, ...rest } = chunk;
 			return rest;

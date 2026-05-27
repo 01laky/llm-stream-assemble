@@ -20,12 +20,18 @@ import {
 	usageChunk,
 	withChoiceIndex,
 } from "./chunks";
+import {
+	createLogprobPositionState,
+	logprobChunksFromChoiceLogprobs,
+	type LogprobPositionState,
+} from "../../shared/logprobs";
 import type { RequiredOpenAIChatLikeParserOptions, ToolState } from "./types";
 
 export class OpenAIChatLikeParser {
 	private metadataEmitted = false;
 	private readonly tools = new Map<string, ToolState>();
 	private readonly legacyStarted = new Set<string>();
+	private readonly logprobPositions: LogprobPositionState = createLogprobPositionState();
 
 	constructor(private readonly options: RequiredOpenAIChatLikeParserOptions) {}
 
@@ -81,6 +87,10 @@ export class OpenAIChatLikeParser {
 		const choiceIndex = choiceIndexFor(choice, position, this.options);
 		const chunks: RawChunk[] = [];
 		const delta = isRecord(choice.delta) ? choice.delta : undefined;
+
+		chunks.push(
+			...logprobChunksFromChoiceLogprobs(choice.logprobs, choiceIndex, this.logprobPositions),
+		);
 
 		if (delta) {
 			chunks.push(...this.deltaChunks(delta, choiceIndex, position));

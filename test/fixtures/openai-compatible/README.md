@@ -7,18 +7,19 @@ organization ids, or live request ids.
 
 Used by **LSA-OC31**–**LSA-OC40** with default `openaiCompatibleAdapter()` (generic preset).
 
-| Fixture                  | Source    | Provider shape                                         |
-| ------------------------ | --------- | ------------------------------------------------------ |
-| `generic-text.*`         | synthetic | Generic OpenAI-compatible text stream                  |
-| `missing-metadata.*`     | synthetic | Ollama/LM Studio-like local host with sparse metadata  |
-| `missing-choice-index.*` | synthetic | Host omits `choices[].index`                           |
-| `missing-tool-id.*`      | synthetic | Host omits `tool_calls[].id`                           |
-| `loose-error-string.*`   | synthetic | Nonstandard string error shape                         |
-| `reasoning-alias.*`      | synthetic | Host emits `thinking` reasoning alias (generic preset) |
-| `usage-alias.*`          | synthetic | Host emits `input_tokens` / `output_tokens`            |
-| `json-mode.*`            | synthetic | JSON mode content mapped via adapter option            |
-| `response-generic.*`     | synthetic | Non-stream generic response                            |
-| `response-loose-error.*` | synthetic | Non-stream loose provider error                        |
+| Fixture                  | Source    | Provider shape                                             |
+| ------------------------ | --------- | ---------------------------------------------------------- |
+| `generic-text.*`         | synthetic | Generic OpenAI-compatible text stream                      |
+| `missing-metadata.*`     | synthetic | Ollama/LM Studio-like local host with sparse metadata      |
+| `missing-choice-index.*` | synthetic | Host omits `choices[].index`                               |
+| `missing-tool-id.*`      | synthetic | Host omits `tool_calls[].id`                               |
+| `loose-error-string.*`   | synthetic | Nonstandard string error shape                             |
+| `reasoning-alias.*`      | synthetic | Host emits `thinking` reasoning alias (generic preset)     |
+| `usage-alias.*`          | synthetic | Host emits `input_tokens` / `output_tokens`                |
+| `json-mode.*`            | synthetic | JSON mode content mapped via adapter option                |
+| `logprobs-stream.*`      | synthetic | OpenAI-shaped streaming logprobs (**LSA-OC306**–**OC308**) |
+| `response-generic.*`     | synthetic | Non-stream generic response                                |
+| `response-loose-error.*` | synthetic | Non-stream loose provider error                            |
 
 ## Host subfolders (preset-specific)
 
@@ -37,7 +38,7 @@ Cross-preset guards:
 
 | Folder        | Preset key   | Notes                                                                                                                          |
 | ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `groq/`       | `groq`       | Sparse metadata, tools, non-stream response                                                                                    |
+| `groq/`       | `groq`       | Sparse metadata, tools, non-stream response; `logprobs-stream` golden                                                          |
 | `deepseek/`   | `deepseek`   | `reasoning_content`, tools, provider error, response                                                                           |
 | `mistral/`    | `mistral`    | Text, parallel tools, sparse metadata                                                                                          |
 | `ollama/`     | `ollama`     | Local sparse metadata and missing tool ids                                                                                     |

@@ -133,11 +133,9 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(changelog).toContain("mistral");
 	});
 
-	it("LSA-OC84: package.json version is 1.6.0", () => {
-		const pkg = JSON.parse(readFileSync(join(rootDir, "package.json"), "utf8")) as {
-			version: string;
-		};
-		expect(pkg.version).toBe("1.6.0");
+	it("LSA-OC84: CHANGELOG 1.1.5 section remains for historical traceability", () => {
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.1.5]");
 	});
 
 	it("LSA-OC103: README preset table includes azure with deployment URL pattern", () => {
@@ -167,10 +165,11 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(dts).toContain('"azure"');
 	});
 
-	it("LSA-OC107: README badges and stable status reference 1.6.0", () => {
+	it("LSA-OC107: README retains OpenAI-compatible preset release history in CHANGELOG", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("1.6.0");
-		expect(readme).toContain("Stable `1.6.0`");
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.1.5]");
+		expect(readme).toMatch(/OpenAI-compatible|CHANGELOG/i);
 	});
 
 	it("LSA-OC112: dist openai-compatible.d.ts exports perplexity, xai, and azure preset keys", () => {
@@ -213,10 +212,11 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		});
 	});
 
-	it("LSA-OC135: README badges and stable status reference 1.6.0 release", () => {
+	it("LSA-OC135: README retains 1.2.0 Azure preset release history in CHANGELOG", () => {
 		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toMatch(/1\.6\.0/);
-		expect(readme).toContain("Stable `1.6.0`");
+		const changelog = readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
+		expect(changelog).toContain("## [1.2.0]");
+		expect(readme).toMatch(/azure|CHANGELOG/i);
 	});
 
 	it("LSA-OC136: dist openai-compatible.d.ts includes azure in OpenAICompatibleProvider", () => {

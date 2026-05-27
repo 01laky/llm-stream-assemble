@@ -3,9 +3,11 @@ import { anthropicAdapter } from "../src/adapters/anthropic";
 import { bedrockAdapter } from "../src/adapters/bedrock";
 import { geminiAdapter } from "../src/adapters/gemini";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
+import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { cohereAdapter } from "../src/adapters/cohere";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
+import { collectStream } from "../src/transforms/collect-stream";
 import { tapEvents } from "../src/transforms/tap-events";
 import { collectAsync } from "./helpers/collect-events";
 
@@ -581,5 +583,235 @@ describe("cross-adapter assembler edge cases", () => {
 		const jsonIndex = events.findIndex((event) => event.type === "json.delta");
 		expect(groundingIndex).toBeGreaterThanOrEqual(0);
 		expect(jsonIndex).toBeGreaterThan(groundingIndex);
+	});
+
+	it("LSA-X86: OpenAI Chat post-finish logprob dropped", async () => {
+		async function* payloads() {
+			yield payload({
+				choices: [{ delta: { content: "done" }, finish_reason: "stop" }],
+			});
+			yield payload({
+				choices: [
+					{
+						delta: {},
+						logprobs: { content: [{ token: "late", logprob: -0.1 }] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiChatAdapter()));
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-X87: compatible generic post-finish logprob dropped", async () => {
+		const { openaiCompatibleAdapter } = await import("../src/adapters/openai-compatible");
+		async function* payloads() {
+			yield payload({
+				choices: [{ delta: { content: "done" }, finish_reason: "stop" }],
+			});
+			yield payload({
+				choices: [
+					{
+						delta: {},
+						logprobs: { content: [{ token: "late", logprob: -0.1 }] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiCompatibleAdapter()));
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-X88: strictToolArgs with logprob events still validates tool JSON", async () => {
+		const { assembleFromFile } = await import("../src/core/assemble-from-file");
+		const events = await collectAsync(
+			assembleFromFile("test/fixtures/openai-chat/logprobs-tool-stream.sse", openaiChatAdapter(), {
+				strictToolArgs: true,
+			}),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(true);
+		expect(events.some((event) => event.type === "tool_call.done")).toBe(true);
+	});
+
+	it("LSA-X89: jsonMode logprob interleave via logprobs-json-mode fixture", async () => {
+		const { assembleFromFile } = await import("../src/core/assemble-from-file");
+		const events = await collectAsync(
+			assembleFromFile(
+				"test/fixtures/openai-chat/logprobs-json-mode.sse",
+				openaiChatAdapter({ jsonMode: true }),
+			),
+		);
+		const logprobIndex = events.findIndex((event) => event.type === "logprob");
+		const jsonIndex = events.findIndex((event) => event.type === "json.delta");
+		expect(logprobIndex).toBeGreaterThanOrEqual(0);
+		expect(jsonIndex).toBeGreaterThan(logprobIndex);
+	});
+
+	it("LSA-X90: mock adapter logprob RawChunk passthrough", async () => {
+		const { sequenceMockAdapter } = await import("./helpers/mock-adapter");
+		const adapter = sequenceMockAdapter([
+			[{ kind: "logprob", channel: "content", token: "m", logprob: -0.1 }],
+			[{ kind: "text-delta", text: "m", choiceIndex: 0 }],
+			[{ kind: "finish", reason: "stop" }],
+		]);
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield "{}";
+					yield "{}";
+					yield "{}";
+				})(),
+				adapter,
+			),
+		);
+		expect(events).toContainEqual({
+			type: "logprob",
+			channel: "content",
+			token: "m",
+			logprob: -0.1,
+		});
+	});
+
+	it("LSA-X91: tapEvents preserves logprob before text.delta ordering", async () => {
+		async function* source() {
+			yield {
+				type: "logprob" as const,
+				channel: "content" as const,
+				token: "a",
+				logprob: -0.1,
+			};
+			yield { type: "text.delta" as const, text: "a" };
+		}
+		const events = await collectAsync(tapEvents(source(), () => undefined));
+		expect(events.map((event) => event.type)).toEqual(["logprob", "text.delta"]);
+	});
+
+	it("LSA-X92: multichoice mock logprob choiceIndex passthrough", async () => {
+		const { sequenceMockAdapter } = await import("./helpers/mock-adapter");
+		const adapter = sequenceMockAdapter([
+			[
+				{
+					kind: "logprob",
+					channel: "content",
+					token: "b",
+					logprob: -0.2,
+					choiceIndex: 1,
+				},
+			],
+			[{ kind: "finish", reason: "stop" }],
+		]);
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield "{}";
+					yield "{}";
+				})(),
+				adapter,
+			),
+		);
+		expect(events).toContainEqual({
+			type: "logprob",
+			channel: "content",
+			token: "b",
+			logprob: -0.2,
+			choiceIndex: 1,
+		});
+	});
+
+	it("LSA-X93: openrouter preset logprob before text on same chunk", () => {
+		const chunks = openaiCompatibleAdapter({ provider: "openrouter" }).parseChunk(
+			JSON.stringify({
+				choices: [
+					{
+						delta: { content: "r" },
+						logprobs: { content: [{ token: "r", logprob: -0.1 }] },
+					},
+				],
+			}),
+		);
+		expect(chunks.map((chunk) => chunk.kind)).toEqual(["logprob", "text-delta"]);
+	});
+
+	it("LSA-X94: lmstudio preset logprobs null with content delta emits no logprob", () => {
+		const chunks = openaiCompatibleAdapter({ provider: "lmstudio" }).parseChunk(
+			JSON.stringify({
+				choices: [{ delta: { content: "m" }, logprobs: null }],
+			}),
+		);
+		expect(chunks.some((chunk) => chunk.kind === "logprob")).toBe(false);
+		expect(chunks.some((chunk) => chunk.kind === "text-delta")).toBe(true);
+	});
+
+	it("LSA-X95: deepseek reasoning_content and logprobs same chunk ordering", () => {
+		const chunks = openaiCompatibleAdapter({ provider: "deepseek" }).parseChunk(
+			JSON.stringify({
+				choices: [
+					{
+						delta: { reasoning_content: "think", content: "out" },
+						logprobs: { content: [{ token: "out", logprob: -0.1 }] },
+					},
+				],
+			}),
+		);
+		expect(chunks.map((chunk) => chunk.kind)).toEqual(["logprob", "text-delta", "reasoning-delta"]);
+	});
+
+	it("LSA-X96: mock adapter post-finish logprob dropped in assembleFromPayloads", async () => {
+		const { sequenceMockAdapter } = await import("./helpers/mock-adapter");
+		const adapter = sequenceMockAdapter([
+			[{ kind: "finish", reason: "stop" }],
+			[{ kind: "logprob", channel: "content", token: "late", logprob: -0.1 }],
+		]);
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield "{}";
+					yield "{}";
+				})(),
+				adapter,
+			),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-X97: collectStream accumulates logprobs across mock adapter sequence", async () => {
+		const { sequenceMockAdapter } = await import("./helpers/mock-adapter");
+		const adapter = sequenceMockAdapter([
+			[{ kind: "logprob", channel: "content", token: "a", logprob: -0.1 }],
+			[{ kind: "text-delta", text: "a" }],
+			[{ kind: "logprob", channel: "content", token: "b", logprob: -0.2 }],
+			[{ kind: "text-delta", text: "b" }],
+			[{ kind: "finish", reason: "stop" }],
+		]);
+		async function* stream() {
+			for await (const event of assembleFromPayloads(
+				(async function* () {
+					for (let index = 0; index < 5; index += 1) yield "{}";
+				})(),
+				adapter,
+			)) {
+				yield event;
+			}
+		}
+		const collected = await collectStream(stream());
+		expect(collected.logprobs.map((event) => event.token)).toEqual(["a", "b"]);
+		expect(collected.text).toBe("ab");
+	});
+
+	it("LSA-X98: groq preset multichoice logprob choiceIndex passthrough smoke", () => {
+		const chunks = openaiCompatibleAdapter({ provider: "groq" }).parseChunk(
+			JSON.stringify({
+				choices: [
+					{
+						index: 1,
+						delta: { content: "g" },
+						logprobs: { content: [{ token: "g", logprob: -0.1 }] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({ kind: "logprob", token: "g", choiceIndex: 1 }),
+		);
 	});
 });

@@ -1,0 +1,30 @@
+{
+	"id": "chatcmpl_lp_resp",
+	"object": "chat.completion",
+	"created": 1710000002,
+	"model": "gpt-4o-mini",
+	"choices": [
+		{
+			"index": 0,
+			"message": { "role": "assistant", "content": "Hello!" },
+			"logprobs": {
+				"content": [
+					{
+						"token": "Hello",
+						"logprob": -0.12,
+						"bytes": [72, 101, 108, 108, 111],
+						"top_logprobs": []
+					},
+					{
+						"token": "!",
+						"logprob": -0.006,
+						"bytes": [33],
+						"top_logprobs": []
+					}
+				]
+			},
+			"finish_reason": "stop"
+		}
+	],
+	"usage": { "prompt_tokens": 5, "completion_tokens": 2, "total_tokens": 7 }
+}

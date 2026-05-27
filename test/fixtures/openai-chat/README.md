@@ -20,3 +20,9 @@ private prompts, account ids, organization ids, or live request ids.
 | `response-refusal.*`              | synthetic             | Non-streaming refusal response                 |
 | `response-json-mode.*`            | synthetic             | Non-streaming JSON mode response               |
 | `response-provider-error.*`       | synthetic/docs-shaped | Non-streaming provider error body              |
+| `logprobs-stream.*`               | synthetic/docs-shaped | Streaming logprobs with top_logprobs           |
+| `logprobs-multichoice.*`          | synthetic             | Multi-choice logprob + text on same chunk      |
+| `logprobs-refusal.*`              | synthetic             | Refusal channel logprobs                       |
+| `logprobs-tool-stream.*`          | synthetic/docs-shaped | Logprobs interleaved with streamed tool_calls  |
+| `logprobs-json-mode.*`            | synthetic             | JSON mode content with logprobs                |
+| `logprobs-response.*`             | synthetic             | Non-streaming response with message.logprobs   |
