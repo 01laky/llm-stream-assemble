@@ -271,4 +271,156 @@ describe("openaiResponsesAdapter edge cases", () => {
 			),
 		).toContainEqual({ kind: "json-delta", delta: '{"k":1}' });
 	});
+
+	it("LSA-R59: jsonMode assembler drops post-finish json delta", async () => {
+		async function* payloads() {
+			yield payload({ type: "response.output_text.delta", delta: '{"a":1}' });
+			yield payload({ type: "response.completed", response: {} });
+			yield payload({ type: "response.output_text.delta", delta: '{"late":true}' });
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), openaiResponsesAdapter({ jsonMode: true })),
+		);
+		expect(
+			events.some((event) => event.type === "json.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-R60: assembler drops post-finish refusal delta", async () => {
+		async function* payloads() {
+			yield payload({ type: "response.output_text.delta", delta: "ok" });
+			yield payload({ type: "response.completed", response: {} });
+			yield payload({ type: "response.refusal.delta", delta: "late refusal" });
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiResponsesAdapter()));
+		expect(events.filter((event) => event.type === "refusal.delta")).toHaveLength(0);
+	});
+
+	it("LSA-R61: assembler drops post-finish function_call_arguments delta", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "response.output_item.added",
+				output_index: 0,
+				item: { type: "function_call", id: "call_late", name: "fn", call_id: "call_late" },
+			});
+			yield payload({ type: "response.completed", response: {} });
+			yield payload({
+				type: "response.function_call_arguments.delta",
+				output_index: 0,
+				call_id: "call_late",
+				delta: '{"late":true}',
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiResponsesAdapter()));
+		expect(events.filter((event) => event.type === "tool_call.args.delta")).toHaveLength(0);
+	});
+
+	it("LSA-R62: empty output_text.delta is skipped", () => {
+		expect(
+			openaiResponsesAdapter().parseChunk(
+				payload({ type: "response.output_text.delta", delta: "" }),
+			),
+		).toEqual([]);
+	});
+
+	it("LSA-R63: incomplete golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("incomplete", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("incomplete"));
+	});
+
+	it("LSA-R64: json-mode golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("json-mode", "sse")),
+					openaiResponsesAdapter({ jsonMode: true }),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("json-mode"));
+	});
+
+	it("LSA-R65: refusal golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("refusal", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("refusal"));
+	});
+
+	it("LSA-R66: parallel-function-call golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("parallel-function-call", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("parallel-function-call"));
+	});
+
+	it("LSA-R67: function-call golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("function-call", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("function-call"));
+	});
+
+	it("LSA-R68: args-before-item golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("args-before-item", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("args-before-item"));
+	});
+
+	it("LSA-R69: response.completed with usage emits usage before finish closes stream", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				strings(
+					payload({ type: "response.output_text.delta", delta: "x" }),
+					payload({
+						type: "response.completed",
+						response: { usage: { input_tokens: 2, output_tokens: 1 } },
+					}),
+				),
+				openaiResponsesAdapter(),
+			),
+		);
+		expect(events.some((event) => event.type === "usage")).toBe(true);
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+	});
+
+	it("LSA-R70: text-basic golden stream matches expected events", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("text-basic", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("text-basic"));
+	});
 });

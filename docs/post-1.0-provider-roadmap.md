@@ -101,6 +101,8 @@ This is the suggested order of implementation. Dates are intentionally omitted.
 1.4.0  ✅  AWS Bedrock adapter (ConverseStream — decoded JSON boundary)
 1.5.0  ✅  Cohere adapter (Chat v2 SSE)
 1.5.5  ✅  Vertex AI Gemini extension (`geminiAdapter` `apiSurface: "vertex"`)
+1.5.6  ✅  Composable positioning + deep per-adapter edge suites
+1.5.7  ✅  Docs provenance, `smoke:gemini`, OpenAI Chat conformance, LSA-ID hygiene
 1.x.x      AI21, watsonx / additional compatible dialects as patches or preset bundles
 ```
 
@@ -172,10 +174,10 @@ export interface GeminiAdapterOptions {
 - [x] `src/adapters/gemini.ts` + export in `src/adapters/index.ts`
 - [x] Subpath export `./adapters/gemini` in `package.json` + `tsup.config.ts`
 - [x] Fixtures: `test/fixtures/gemini/` (text, tool, json-mode, usage, error, incomplete)
-- [x] Tests: `LSA-G01` … `LSA-G71` (golden stream, parseChunk unit, response parity, edge cases)
+- [x] Tests: conformance **LSA-G71**; docs-regression **LSA-G64**–**G70**; edge **LSA-G59**–**G85** + renumbered **G86**–**G90**; Vertex **LSA-GV01**+
 - [x] Example: `examples/node-fetch/gemini.ts`
 - [x] Compatibility matrix row update
-- [x] Live smoke script: `scripts/live-smoke/gemini.ts` + `docs/live-smoke.md`
+- [x] Live smoke script: `scripts/live-smoke/gemini.mjs` + `pnpm smoke:gemini` + `docs/live-smoke.md`
 
 #### Success criteria
 

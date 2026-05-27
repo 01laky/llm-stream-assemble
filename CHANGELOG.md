@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.7]
+
+### Added
+
+- **`pnpm smoke:gemini`** — Google AI Gemini live smoke (`scripts/live-smoke/gemini.mjs`) with **`--capture`** to `.local-playground/gemini-capture/`; unified smoke command index in `docs/live-smoke.md` and `examples/README.md`; **LSA-REL28** / **LSA-DOC98** / **LSA-DOC105** / **LSA-DOC106**.
+- **`test/openai-chat-conformance.test.ts`** — shared `runAdapterGoldenStream` parity (**LSA-OC253** text+tool, **OC254** refusal, **OC255** json-mode).
+- **`test/docs-positioning-1.5.7.test.ts`** — **LSA-DOC97**–**DOC109** release metadata regressions.
+- Cross-adapter jsonMode post-finish drops **LSA-X65**–**X70**; **`strictToolArgs`** cross-adapter **LSA-X71**–**X76**.
+- **`LSA-MAINT22`** — repo-wide duplicate LSA test ID detector via `test/helpers/lsa-id-audit.ts`.
+- **`release-prep.mjs`** — fails when README `tests-N_passing` badge ≠ vitest pass count (**LSA-REL30** / **LSA-DOC109**).
+
+### Changed
+
+- **`docs/edge-cases.md`** — §G version stamp + full provenance for 1.5.6 edge suites and 1.5.7 cross-adapter matrix (**X65**–**X72**, **G89**, **OC256**+); §H post-finish ID list expanded.
+- **`docs/proposal.md`**, **`docs/post-1.0-provider-roadmap.md`** — Gemini shipped row; release sequence **1.5.6** / **1.5.7** ✅; Gemini test ranges broken down (conformance, docs-regression, edge, Vertex).
+- README **Runtimes** subsection linking to roadmap runtime matrix (**LSA-DOC100**).
+- Version labels **1.5.7** across docs; README test badge **1637**.
+- Gemini edge ID cleanup: **G64**–**G67**, **G70**, **G71** → **G86**–**G90** (redundant thought edge test removed); §H cites **G89** for post-finish usage.
+- OpenAI compatible exhaustive IDs **OC232**–**OC241** → **OC256**–**OC265** (OpenAI Chat edge **OC230**–**OC252** unchanged; conformance **OC253**–**OC255**).
+- Live smoke migrated from `gemini.ts` to **`gemini.mjs`** (dist + `assembleStream` pattern).
+- **Adapter edge-case depth parity** — Bedrock **LSA-B79**–**B92**, OpenAI Responses **LSA-R59**–**R70**, OpenAI Chat **LSA-OC266**–**OC275**, Gemini **LSA-G91**–**G98**, Anthropic **LSA-A56**–**A63** (post-finish drops, finish matrices, golden regressions, strictToolArgs cross-adapter **X73**–**X76**).
+
+### Notes
+
+- Still deferred: dedicated citation/grounding `StreamEvent` types, Interactions API, AI21/watsonx presets, npm publish automation.
+
 ## [1.5.6]
 
 ### Added

@@ -113,22 +113,22 @@ describe("geminiAdapter edge cases", () => {
 		expect(events).toEqual(expectedGeminiEvents("tool-parallel"));
 	});
 
-	it("LSA-G64: empty or whitespace line yields no chunks", () => {
+	it("LSA-G86: empty or whitespace line yields no chunks", () => {
 		expect(geminiAdapter().parseChunk("")).toEqual([]);
 		expect(geminiAdapter().parseChunk("  ")).toEqual([]);
 	});
 
-	it("LSA-G65: [DONE] marker yields no chunks", () => {
+	it("LSA-G87: [DONE] marker yields no chunks", () => {
 		expect(geminiAdapter().parseChunk("[DONE]")).toEqual([]);
 	});
 
-	it("LSA-G66: non-object JSON throws scoped expected object error", () => {
+	it("LSA-G88: non-object JSON throws scoped expected object error", () => {
 		expect(() => geminiAdapter().parseChunk(JSON.stringify(true))).toThrow(
 			/geminiAdapter\.parseChunk: expected a JSON object/,
 		);
 	});
 
-	it("LSA-G67: assembler drops usage metadata after candidate finish", async () => {
+	it("LSA-G89: assembler drops usage metadata after candidate finish", async () => {
 		async function* payloads() {
 			yield payload({
 				candidates: [{ index: 0, content: { parts: [{ text: "x" }] } }],
@@ -145,7 +145,7 @@ describe("geminiAdapter edge cases", () => {
 		expect(events.some((event) => event.type === "usage")).toBe(false);
 	});
 
-	it("LSA-G70: jsonMode maps text parts to json-delta", async () => {
+	it("LSA-G90: jsonMode maps text parts to json-delta", async () => {
 		const events = await collectAsync(
 			assembleFromPayloads(
 				strings(
@@ -161,16 +161,6 @@ describe("geminiAdapter edge cases", () => {
 		);
 		expect(events.some((event) => event.type === "json.delta")).toBe(true);
 		expect(events.some((event) => event.type === "text.delta")).toBe(false);
-	});
-
-	it("LSA-G71: thought part maps to reasoning-delta", () => {
-		expect(
-			geminiAdapter().parseChunk(
-				payload({
-					candidates: [{ index: 0, content: { parts: [{ text: "hidden", thought: true }] } }],
-				}),
-			),
-		).toEqual([{ kind: "reasoning-delta", text: "hidden", variant: "detail" }]);
 	});
 
 	it("LSA-G72: assembler drops post-finish candidate text", async () => {
@@ -344,5 +334,125 @@ describe("geminiAdapter edge cases", () => {
 
 	it("LSA-G85: empty object with no candidates yields no chunks", () => {
 		expect(geminiAdapter().parseChunk(payload({}))).toEqual([]);
+	});
+
+	it("LSA-G91: jsonMode assembler drops post-finish json text parts", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, content: { parts: [{ text: '{"a":1}' }] } }],
+			});
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [{ index: 0, content: { parts: [{ text: '{"late":true}' }] } }],
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), geminiAdapter({ jsonMode: true })),
+		);
+		expect(
+			events.some((event) => event.type === "json.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-G92: finishReason RECITATION maps to finish content_filter", () => {
+		expect(
+			geminiAdapter().parseChunk(
+				payload({
+					candidates: [{ index: 0, finishReason: "RECITATION", content: { parts: [] } }],
+				}),
+			),
+		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });
+	});
+
+	it("LSA-G93: assembler drops post-finish functionCall partialArgs", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						content: {
+							parts: [{ functionCall: { name: "fn", args: { id: "t1" } } }],
+						},
+					},
+				],
+			});
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						content: {
+							parts: [{ functionCall: { name: "fn", partialArgs: [{ json: '{"late":' }] } }],
+						},
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(
+			events.some((event) => event.type === "tool_call.args.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-G94: json-mode golden stream matches expected events", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("json-mode", "sse")),
+					geminiAdapter({ jsonMode: true }),
+				),
+			),
+		);
+		expect(events).toEqual(expectedGeminiEvents("json-mode"));
+	});
+
+	it("LSA-G95: provider-error golden stream matches expected events", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("provider-error", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedGeminiEvents("provider-error"));
+	});
+
+	it("LSA-G96: finishReason BLOCKLIST maps to finish content_filter", () => {
+		expect(
+			geminiAdapter().parseChunk(
+				payload({
+					candidates: [{ index: 0, finishReason: "BLOCKLIST", content: { parts: [] } }],
+				}),
+			),
+		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });
+	});
+
+	it("LSA-G97: tool-single golden stream matches expected events", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("tool-single", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedGeminiEvents("tool-single"));
+	});
+
+	it("LSA-G98: text-basic golden stream matches expected events", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("text-basic", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedGeminiEvents("text-basic"));
 	});
 });

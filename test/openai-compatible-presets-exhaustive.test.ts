@@ -136,7 +136,7 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 		).toContainEqual({ kind: "text-delta", text: "no index" });
 	});
 
-	it("LSA-OC232: generic jsonMode maps json-mode fixture root stream to json deltas", async () => {
+	it("LSA-OC256: generic jsonMode maps json-mode fixture root stream to json deltas", async () => {
 		const sse = readFileSync(join(fixturesDir, "json-mode.sse"), "utf8");
 		const events = normalizeCompatibleEvents(
 			await collectAsync(
@@ -148,7 +148,7 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 		);
 	});
 
-	it("LSA-OC233: groq/tool-single.sse matches expected golden events", async () => {
+	it("LSA-OC257: groq/tool-single.sse matches expected golden events", async () => {
 		const events = normalizeCompatibleEvents(
 			await collectAsync(
 				assembleStream(
@@ -160,21 +160,21 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 		expect(events).toEqual(expectedHostCompatibleEvents("groq", "tool-single"));
 	});
 
-	it("LSA-OC234: every loose host ignores unknown delta keys", () => {
+	it("LSA-OC258: every loose host ignores unknown delta keys", () => {
 		for (const provider of LOOSE_HOST_PRESETS) {
 			assertUnknownDeltaKeysIgnored(provider);
 		}
 	});
 
-	it("LSA-OC235: resolveCompatibleAdapterConfig returns strict azure defaults", () => {
+	it("LSA-OC259: resolveCompatibleAdapterConfig returns strict azure defaults", () => {
 		assertResolvedStrictPreset("azure");
 	});
 
-	it("LSA-OC236: resolveCompatibleAdapterConfig returns loose defaults for groq", () => {
+	it("LSA-OC260: resolveCompatibleAdapterConfig returns loose defaults for groq", () => {
 		assertResolvedLooseDefault("groq");
 	});
 
-	it("LSA-OC237: explicit options override preset allowMissingMetadata", () => {
+	it("LSA-OC261: explicit options override preset allowMissingMetadata", () => {
 		const resolved = resolveCompatibleAdapterConfig({
 			provider: "groq",
 			allowMissingMetadata: false,
@@ -182,13 +182,13 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 		expect(resolved.rejectUnrecognizedPayloads).toBe(true);
 	});
 
-	it("LSA-OC238: metadata-only payload with id emits message-start", () => {
+	it("LSA-OC262: metadata-only payload with id emits message-start", () => {
 		expect(
 			openaiCompatibleAdapter().parseChunk(payload({ id: "meta-only", model: "m", choices: [] })),
 		).toContainEqual({ kind: "message-start", id: "meta-only" });
 	});
 
-	it("LSA-OC239: usage-only chunk with prompt and completion token aliases", () => {
+	it("LSA-OC263: usage-only chunk with prompt and completion token aliases", () => {
 		expect(
 			normalizeCompatibleRawChunks(
 				openaiCompatibleAdapter().parseChunk(
@@ -198,7 +198,7 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 		).toEqual([{ kind: "usage", inputTokens: 2, outputTokens: 3 }]);
 	});
 
-	it("LSA-OC240: all finish reasons stop length content_filter tool_calls map on compatible", () => {
+	it("LSA-OC264: all finish reasons stop length content_filter tool_calls map on compatible", () => {
 		for (const [reason, mapped] of [
 			["stop", "stop"],
 			["length", "length"],
@@ -213,7 +213,7 @@ describe("openaiCompatibleAdapter exhaustive edge coverage", () => {
 });
 
 describe("openaiCompatibleAdapter resolveCompatibleAdapterConfig SSOT", () => {
-	it("LSA-OC241: every provider preset resolves without throw", () => {
+	it("LSA-OC265: every provider preset resolves without throw", () => {
 		for (const provider of OPENAI_COMPATIBLE_PROVIDERS) {
 			expect(() => resolveCompatibleAdapterConfig({ provider })).not.toThrow();
 		}

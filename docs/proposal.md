@@ -494,13 +494,13 @@ Defer from v0.1 unless time allows.
 
 Living document at `docs/compatibility.md`, summarized in README:
 
-| Provider / API          | Adapter                   | Text | Tools | Reasoning | Refusal | JSON stream | Usage | Multi-choice | Notes                                          |
-| ----------------------- | ------------------------- | ---- | ----- | --------- | ------- | ----------- | ----- | ------------ | ---------------------------------------------- |
-| OpenAI Chat Completions | `openaiChatAdapter`       | ✅   | ✅    | ✅        | ✅      | ✅          | ✅¹   | ✅           | ¹needs `stream_options.include_usage`          |
-| OpenAI-compatible       | `openaiCompatibleAdapter` | ✅   | ✅    | ⚠️        | ⚠️      | ⚠️          | ⚠️    | ⚠️           | Provider-dependent; quirks documented per host |
-| Anthropic Messages      | `anthropicAdapter`        | ✅   | ✅    | ✅        | ✅      | ✅          | ✅    | —            | `eager_input_streaming` recommended            |
-| OpenAI Responses        | `openaiResponsesAdapter`  | —    | ✅    | —         | —       | —           | —     | —            | v0.2                                           |
-| Gemini                  | TBD                       | —    | —     | —         | —       | —           | —     | —            | v0.2+                                          |
+| Provider / API          | Adapter                   | Text | Tools | Reasoning | Refusal | JSON stream | Usage | Multi-choice | Notes                                                                              |
+| ----------------------- | ------------------------- | ---- | ----- | --------- | ------- | ----------- | ----- | ------------ | ---------------------------------------------------------------------------------- |
+| OpenAI Chat Completions | `openaiChatAdapter`       | ✅   | ✅    | ✅        | ✅      | ✅          | ✅¹   | ✅           | ¹needs `stream_options.include_usage`                                              |
+| OpenAI-compatible       | `openaiCompatibleAdapter` | ✅   | ✅    | ⚠️        | ⚠️      | ⚠️          | ⚠️    | ⚠️           | Provider-dependent; quirks documented per host                                     |
+| Anthropic Messages      | `anthropicAdapter`        | ✅   | ✅    | ✅        | ✅      | ✅          | ✅    | —            | `eager_input_streaming` recommended                                                |
+| OpenAI Responses        | `openaiResponsesAdapter`  | —    | ✅    | —         | —       | —           | —     | —            | v0.2                                                                               |
+| Gemini                  | `geminiAdapter`           | ✅   | ✅    | ✅        | ✅      | ✅          | ✅    | partial      | Google AI **1.1.0**; Vertex **1.5.5**; edge depth **1.5.6** / ID hygiene **1.5.7** |
 
 Legend: ✅ supported · ⚠️ best-effort / provider-dependent · — not applicable or not yet implemented
 

@@ -1,6 +1,6 @@
 # Performance & runtime behavior
 
-**Status:** Active guide — `1.5.6`
+**Status:** Active guide — `1.5.7`
 
 How `llm-stream-assemble` handles streaming work: design properties, memory, and an informal smoke benchmark. This is not a formal benchmark suite or SLA.
 
@@ -18,7 +18,7 @@ How `llm-stream-assemble` handles streaming work: design properties, memory, and
 | **No provider SDK**                         | Tree-shakeable subpath exports; you bring your own `fetch`.                                                                                                       |
 | **`collectStream` materializes everything** | Use only when you intend to buffer the full assembled output in memory. See README Transforms section.                                                            |
 
-Strict JSON at tool completion: use `strictToolArgs: true` on `EventAssembler` options (via `assembleStream` / `assembleFromPayloads` options). There is no runtime `zod` peer dependency.
+Strict JSON at tool completion: use `strictToolArgs: true` on `EventAssembler` options (via `assembleStream` / `assembleFromPayloads` options). Cross-adapter regressions: **LSA-X71**–**X76**. There is no runtime `zod` peer dependency.
 
 ---
 

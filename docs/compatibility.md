@@ -2,7 +2,7 @@
 
 Living document — update when adapters ship or provider quirks are discovered.
 
-**Current package status:** Stable `1.5.6` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock (Converse / ConverseStream)**, **Cohere Chat v2**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
+**Current package status:** Stable `1.5.7` — core, OpenAI Chat Completions, OpenAI-compatible (host presets), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock (Converse / ConverseStream)**, **Cohere Chat v2**, transforms, replay helpers, and examples are functional. Architecture diagrams: [`docs/img/README.md`](./img/README.md). See [`post-1.0-provider-roadmap.md`](./post-1.0-provider-roadmap.md) for planned providers.
 
 | Provider / API                          | Adapter                   | Text | Tools | Reasoning    | Refusal     | JSON stream  | Usage        | Multi-choice | Status |
 | --------------------------------------- | ------------------------- | ---- | ----- | ------------ | ----------- | ------------ | ------------ | ------------ | ------ |
@@ -10,7 +10,7 @@ Living document — update when adapters ship or provider quirks are discovered.
 | OpenAI-compatible                       | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | partial³     | v0.3   |
 | Anthropic Messages                      | `anthropicAdapter`        | yes  | yes   | yes          | yes         | best-effort⁶ | yes          | —            | v0.4   |
 | OpenAI Responses                        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | —            | v0.7   |
-| Google Gemini (Google AI + Vertex AI)   | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | partial³     | 1.5.6  |
+| Google Gemini (Google AI + Vertex AI)   | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | partial³     | 1.5.7  |
 | AWS Bedrock (Converse / ConverseStream) | `bedrockAdapter`          | yes  | yes   | best-effort  | —           | partial¹¹    | yes          | partial³     | v1.4   |
 | Cohere Chat v2                          | `cohereAdapter`           | yes  | yes   | yes¹³        | —           | yes¹⁴        | yes          | partial³     | 1.5.0  |
 

@@ -8,11 +8,40 @@ Manual confidence checks beyond fixture-based CI. **Never required in CI** — n
 2. Set `GOOGLE_API_KEY` or `GEMINI_API_KEY` with billing enabled on Google AI.
 3. Build the package: `pnpm build`.
 
-## Gemini
+## Smoke command index
+
+All commands require **`pnpm build`** first. None run in CI.
+
+| Script                                                                | Provider / surface         | Key env vars                                        | Optional flags                      |
+| --------------------------------------------------------------------- | -------------------------- | --------------------------------------------------- | ----------------------------------- |
+| [`smoke:gemini`](#gemini-google-ai)                                   | Google AI Gemini SSE       | `GOOGLE_API_KEY` / `GEMINI_API_KEY`, `GEMINI_MODEL` | `--capture`, `GEMINI_SMOKE_TOOLS=1` |
+| [`smoke:vertex`](#vertex-ai-gemini)                                   | Vertex AI Gemini JSONL     | `GOOGLE_CLOUD_PROJECT`, `VERTEX_ACCESS_TOKEN`, …    | `--capture`                         |
+| [`smoke:cohere`](#cohere-v2-chat)                                     | Cohere Chat v2             | `COHERE_API_KEY`, `COHERE_MODEL`                    | `--capture`, `COHERE_SMOKE_TOOLS=1` |
+| [`smoke:bedrock`](#bedrock-converse-conversestream)                   | AWS Bedrock ConverseStream | AWS credential chain, `BEDROCK_MODEL_ID`            | —                                   |
+| [`smoke:ollama`](#ollama-openai-compatible-preset)                    | Ollama compatible          | `OLLAMA_BASE_URL`, `OLLAMA_MODEL`                   | skips if unreachable                |
+| [`smoke:deepseek`](#deepseek-openai-compatible-preset)                | DeepSeek compatible        | `DEEPSEEK_API_KEY`                                  | —                                   |
+| [`smoke:perplexity`](#perplexity-openai-compatible-preset)            | Perplexity compatible      | `PERPLEXITY_API_KEY`                                | —                                   |
+| [`smoke:xai`](#xai-grok-openai-compatible-preset)                     | xAI compatible             | `XAI_API_KEY`                                       | —                                   |
+| [`smoke:azure`](#azure-openai-openai-compatible-preset)               | Azure OpenAI compatible    | `AZURE_OPENAI_*`                                    | —                                   |
+| [`smoke:cloudflare`](#cloudflare-workers-ai-openai-compatible-preset) | Cloudflare Workers AI      | `CLOUDFLARE_*`                                      | —                                   |
+
+See also [`examples/README.md`](../examples/README.md#live-smoke-commands) for example file mapping.
+
+## Gemini (Google AI)
 
 ```bash
-pnpm exec tsx scripts/live-smoke/gemini.ts
+pnpm build
+pnpm smoke:gemini
 ```
+
+Optional capture for fixture drift detection:
+
+```bash
+pnpm build
+GOOGLE_API_KEY=... pnpm smoke:gemini --capture
+```
+
+Writes redacted provider payloads to `.local-playground/gemini-capture/capture-<timestamp>.txt` (gitignored). Review and compare to `test/fixtures/gemini/` before committing fixture updates.
 
 Optional env:
 
@@ -38,11 +67,11 @@ Optional env:
 | Empty stream       | Model or region restriction                            |
 | Tool smoke skipped | Set `GEMINI_SMOKE_TOOLS=1` to run optional tool prompt |
 
-## Checklist before tagging a Gemini minor
+## Checklist before tagging a Gemini patch
 
 1. `pnpm verify` green on `main`.
-2. Fixture golden tests green (`LSA-G36` … `LSA-G52`, Vertex **`LSA-GV01`** … **`LSA-GV104`**).
-3. Optional: run `scripts/live-smoke/gemini.ts` and confirm event **types** match expectations.
+2. Fixture golden tests green (`LSA-G71` conformance, **`LSA-GV01`** … **`LSA-GV104`**, edge **LSA-G86**–**G90**).
+3. Run `pnpm smoke:gemini` (and optionally `--capture`) and confirm event **types** match expectations.
 4. Update `docs/compatibility.md` if live behavior differs from fixtures.
 5. Bump `CHANGELOG.md` + `package.json` version together.
 

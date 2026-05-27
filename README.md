@@ -1,11 +1,11 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.5.6-blue)
+![core](https://img.shields.io/badge/core-1.5.7-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1555_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1637_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.5.6-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.5.7-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
@@ -13,7 +13,7 @@
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.5.6`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.5.7`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -160,6 +160,17 @@ pnpm add llm-stream-assemble
 ```
 
 **Requirements:** Node.js 18+
+
+## Runtimes
+
+| Runtime                | Support | Notes                                                                                      |
+| ---------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| **Node.js 18+**        | Primary | CI on LTS 18, 20, 22 — [compatibility matrix](./docs/compatibility.md)                     |
+| **Bun**                | Smoke   | `ReadableStream` + npm package import                                                      |
+| **Deno**               | Smoke   | `npm:llm-stream-assemble` specifiers                                                       |
+| **Cloudflare Workers** | Smoke   | `TransformStream` proxy patterns in [integration cookbook](./docs/integration-cookbook.md) |
+
+Full matrix and caveats: [post-1.0 provider roadmap — Runtime support](./docs/post-1.0-provider-roadmap.md#runtime-support-matrix).
 
 ---
 

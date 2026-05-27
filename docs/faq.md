@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.5.6`
+**Status:** Active guide — `1.5.7`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -67,7 +67,7 @@ Use `openaiChatAdapter({ jsonMode: true })`, `openaiCompatibleAdapter({ jsonMode
 | Stream bytes | SSE `data:` lines                   | Often JSONL or streamed JSON array — split before `parseChunk`                |
 | Assembly API | `assembleStream(response.body, …)`  | `assembleFromPayloads(lineIterator, geminiAdapter({ apiSurface: "vertex" }))` |
 
-Examples: [`examples/node-fetch/gemini.ts`](../examples/node-fetch/gemini.ts), [`examples/node-fetch/vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts). Live smoke: `pnpm smoke:vertex` — [live-smoke](./live-smoke.md).
+Examples: [`examples/node-fetch/gemini.ts`](../examples/node-fetch/gemini.ts), [`examples/node-fetch/vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts). Live smoke: `pnpm smoke:gemini` (Google AI), `pnpm smoke:vertex` (Vertex) — [live-smoke](./live-smoke.md).
 
 ---
 

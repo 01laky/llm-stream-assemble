@@ -389,4 +389,160 @@ describe("openaiChatAdapter edge cases", () => {
 			),
 		).toContainEqual({ kind: "finish", reason: "tool_calls", choiceIndex: 0 });
 	});
+
+	it("LSA-OC266: jsonMode assembler drops post-finish json delta", async () => {
+		async function* payloads() {
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { content: '{"a":1}' }, finish_reason: null }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { content: '{"late":true}' }, finish_reason: null }],
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), openaiChatAdapter({ jsonMode: true })),
+		);
+		expect(
+			events.some((event) => event.type === "json.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-OC267: assembler drops post-finish reasoning delta", async () => {
+		async function* payloads() {
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { content: "ok" }, finish_reason: null }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { reasoning: "late" }, finish_reason: null }],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiChatAdapter()));
+		expect(events.filter((event) => event.type === "reasoning.delta")).toHaveLength(0);
+	});
+
+	it("LSA-OC268: assembler drops post-finish refusal delta", async () => {
+		async function* payloads() {
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { content: "ok" }, finish_reason: null }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+			});
+			yield payload({
+				id: "cmpl",
+				object: "chat.completion.chunk",
+				choices: [{ index: 0, delta: { refusal: "nope" }, finish_reason: null }],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), openaiChatAdapter()));
+		expect(events.filter((event) => event.type === "refusal.delta")).toHaveLength(0);
+	});
+
+	it("LSA-OC269: empty choices array emits message-start but no text-delta", () => {
+		const chunks = openaiChatAdapter().parseChunk(
+			payload({ id: "cmpl", object: "chat.completion.chunk", choices: [] }),
+		);
+		expect(chunks.some((chunk) => chunk.kind === "text-delta")).toBe(false);
+		expect(chunks.some((chunk) => chunk.kind === "message-start")).toBe(true);
+	});
+
+	it("LSA-OC270: system_fingerprint metadata forwarded on early chunk", () => {
+		expect(
+			openaiChatAdapter().parseChunk(
+				payload({
+					id: "cmpl",
+					object: "chat.completion.chunk",
+					system_fingerprint: "fp_abc",
+					choices: [{ index: 0, delta: { content: "hi" }, finish_reason: null }],
+				}),
+			),
+		).toContainEqual(
+			expect.objectContaining({
+				kind: "metadata",
+				raw: expect.objectContaining({ system_fingerprint: "fp_abc" }),
+			}),
+		);
+	});
+
+	it("LSA-OC271: json-mode golden stream matches expected events", async () => {
+		const events = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(openAITextFixture("json-mode", "sse")),
+					openaiChatAdapter({ jsonMode: true }),
+				),
+			),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("json-mode"));
+	});
+
+	it("LSA-OC272: multichoice golden stream matches expected events", async () => {
+		const events = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(openAITextFixture("multichoice", "sse")),
+					openaiChatAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("multichoice"));
+	});
+
+	it("LSA-OC273: legacy-function-call golden stream matches expected events", async () => {
+		const events = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(openAITextFixture("legacy-function-call", "sse")),
+					openaiChatAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("legacy-function-call"));
+	});
+
+	it("LSA-OC274: usage golden stream matches expected events", async () => {
+		const events = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(openAITextFixture("usage", "sse")),
+					openaiChatAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("usage"));
+	});
+
+	it("LSA-OC275: tool-parallel golden stream matches expected events", async () => {
+		const events = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(openAITextFixture("tool-parallel", "sse")),
+					openaiChatAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("tool-parallel"));
+	});
 });

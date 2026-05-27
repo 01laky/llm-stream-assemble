@@ -11,7 +11,7 @@ import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { geminiAdapter } from "../src/adapters/gemini";
 import { bedrockAdapter } from "../src/adapters/bedrock";
 import { cohereAdapter } from "../src/adapters/cohere";
-import { geminiAdapter } from "../src/adapters/gemini";
+import { findDuplicateLsaIds } from "./helpers/lsa-id-audit";
 import {
 	asNumber,
 	asString,
@@ -228,5 +228,10 @@ describe("maintenance build and bundle regressions", () => {
 		for (const [file, limit] of limits) {
 			expect(statSync(join(rootDir, file)).size).toBeLessThan(limit);
 		}
+	});
+
+	it("LSA-MAINT22: no duplicate LSA test IDs across test/**/*.test.ts", () => {
+		const duplicates = findDuplicateLsaIds(join(rootDir, "test"));
+		expect(duplicates).toEqual([]);
 	});
 });

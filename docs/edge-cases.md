@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.5.6`
+**Status:** Active guide — `1.5.7`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -40,6 +40,8 @@ tool_call.done → args: { "city": "Paris" }
 
 **Anthropic variant:** fine-grained `input_json_delta` may be invalid JSON until the block ends — fixture `test/fixtures/anthropic/tool-use.sse`, tests **LSA-A\***.
 
+**Strict mode:** pass `{ strictToolArgs: true }` to `assembleStream` / `assembleFromPayloads` to throw on invalid JSON at completion — cross-adapter **LSA-X71**–**X76**.
+
 ---
 
 ## C) JSON mode streaming
@@ -57,6 +59,8 @@ json.done → "{\"name\":\"John\"}"  (parse in your app)
 **Fixture:** `test/fixtures/openai-chat/json-mode.sse`
 
 Use `openaiChatAdapter({ jsonMode: true })` or the matching option on other adapters.
+
+Post-finish json deltas are dropped by the shared assembler — **LSA-X65**–**X70**.
 
 ---
 
@@ -108,22 +112,52 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 
 ## G) Fixture and test provenance
 
-| Topic                        | Fixture / test                                                                                                                                                                                     |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SSE mid-line split           | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                                                                                                                                            |
-| Tool JSON partials           | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`                                                                                                                     |
-| Anthropic partial tool input | `test/fixtures/anthropic/tool-use.sse`                                                                                                                                                             |
-| JSON mode                    | `test/fixtures/openai-chat/json-mode.sse`                                                                                                                                                          |
-| O(n) assembly smoke          | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke`                                                                                                                    |
-| Cohere tool-plan reasoning   | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                                                                                                                |
-| Cohere citation metadata     | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**                                                                                                                        |
-| Cohere late tool id          | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78** — placeholder `cohere:tool:{index}` on start; real id on delta; possible closing `tool_call.done` for placeholder at finish |
-| Vertex envelope wrappers     | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98** — `{ response: GenerateContentResponse }` before mapping                                                         |
-| Vertex tuned endpoint shape  | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                                                                                                         |
-| Vertex unknown envelope      | `test/fixtures/gemini/vertex/unknown-envelope.jsonl` — **LSA-GV05**, **LSA-GV06**, **LSA-GV49** — forward compat via `metadata.raw`                                                                |
-| Vertex grounding metadata    | `test/fixtures/gemini/vertex/grounding-metadata.jsonl` — **LSA-GV99** — no `citation.*` events; raw on `metadata`                                                                                  |
-| Google AI vs Vertex parity   | `test/fixtures/gemini/text-basic.sse` vs `vertex/text-basic.jsonl` — **LSA-GV97**–**LSA-GV97e**                                                                                                    |
-| Vertex JSONL line split      | `examples/vertex/read-chunk-stream.ts` — TCP may split mid-line; buffer until `\n` or brace-balanced object                                                                                        |
+> **Edge suite expansion:** OpenAI Chat / Responses / Anthropic / Gemini / Bedrock deep edge
+> cases landed in **1.5.6** (**LSA-OC234**–**OC252**, **LSA-R45**–**R58**, **LSA-A42**–**A55**,
+> **LSA-G72**–**G85**, **LSA-B72**–**B78**). Gemini IDs **G64**–**G67**, **G70**, **G71** were
+> renumbered to **G86**–**G90** in **1.5.7** to resolve cross-file collisions with
+> docs-regression and conformance suites. OpenAI-compatible exhaustive **OC232**–**OC241** were
+> renumbered to **OC256**–**OC265** (**OC253**–**OC255** reserved for OpenAI Chat conformance).
+> **1.5.7** adds post-finish / golden parity across thin adapters: **LSA-B79**–**B92**,
+> **LSA-R59**–**R70**, **LSA-OC266**–**OC275**, **LSA-G91**–**G98**, **LSA-A56**–**A63**,
+> **LSA-X73**–**X76** (strictToolArgs for Bedrock, Cohere, Gemini, Responses).
+
+| Topic                                                 | Fixture / test                                                                                              |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| SSE mid-line split                                    | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                                                     |
+| Tool JSON partials                                    | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`                              |
+| Anthropic partial tool input                          | `test/fixtures/anthropic/tool-use.sse`                                                                      |
+| JSON mode                                             | `test/fixtures/openai-chat/json-mode.sse` — **LSA-OC255** conformance                                       |
+| OpenAI Chat shared conformance                        | **LSA-OC253**–**OC255** — `test/openai-chat-conformance.test.ts`                                            |
+| OpenAI Chat finish matrix                             | **LSA-OC236**, **OC242**–**OC244**, **OC252**, **OC266**–**OC275** — `test/openai-chat-edge-cases.test.ts`  |
+| OpenAI Chat jsonMode / refusal / tools                | **LSA-OC234**, **OC235**, **OC237**, **OC267**, **OC268**                                                   |
+| OpenAI Chat post-finish usage drop                    | **LSA-OC238**, **OC250**, **OC266**, **OC269**                                                              |
+| OpenAI Chat unicode / legacy function                 | **LSA-OC248**, **OC249**, **OC274**, **OC275**                                                              |
+| OpenAI Responses function args stream                 | **LSA-R51**, **R52**, **R59**, **R60**                                                                      |
+| OpenAI Responses post-finish reasoning drop           | **LSA-R53**, **R61**, **R62**                                                                               |
+| OpenAI Responses duplicate terminal events            | **LSA-R49**, **R56**, **R63**, **R64**–**R70**                                                              |
+| Anthropic stop-reason matrix                          | **LSA-A45**–**A49**, **A56**, **A57**                                                                       |
+| Anthropic refusal + tool block lifecycle              | **LSA-A50**, **A51**, **A55**, **A58**, **A59**–**A63**                                                     |
+| Gemini Google AI finish / partialArgs                 | **LSA-G76**–**G78**, **G84**, **G91**, **G92**, **G93**                                                     |
+| Gemini Google AI SSE / post-finish (renumbered 1.5.7) | **LSA-G86**–**G90**, **G94**–**G98** — `test/gemini-edge-cases.test.ts`                                     |
+| Bedrock max_tokens + tool input incremental           | **LSA-B74**, **B77**, **B79**–**B92** — `test/bedrock-edge-cases.test.ts`                                   |
+| Vertex post-finish usage (cross-adapter)              | **LSA-X64**                                                                                                 |
+| Cross-adapter jsonMode post-finish                    | **LSA-X65**–**X70** — `test/cross-adapter-assembler-edge.test.ts`                                           |
+| Cross-adapter strictToolArgs                          | **LSA-X71**–**X76** — same file                                                                             |
+| OpenAI-compatible exhaustive (renumbered IDs)         | **LSA-OC256**–**OC265** — `test/openai-compatible-presets-exhaustive.test.ts`                               |
+| O(n) assembly smoke                                   | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke`                             |
+| Cohere tool-plan reasoning                            | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                         |
+| Cohere citation metadata                              | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**                                 |
+| Cohere late tool id                                   | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78**                                      |
+| Vertex envelope wrappers                              | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98**                           |
+| Vertex tuned endpoint shape                           | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                  |
+| Vertex unknown envelope                               | `test/fixtures/gemini/vertex/unknown-envelope.jsonl` — **LSA-GV05**, **LSA-GV06**, **LSA-GV49**             |
+| Vertex grounding metadata                             | `test/fixtures/gemini/vertex/grounding-metadata.jsonl` — **LSA-GV99**                                       |
+| Google AI vs Vertex parity                            | `test/fixtures/gemini/text-basic.sse` vs `vertex/text-basic.jsonl` — **LSA-GV97**–**LSA-GV97e**             |
+| Vertex JSONL line split                               | `examples/vertex/read-chunk-stream.ts` — TCP may split mid-line; buffer until `\n` or brace-balanced object |
+| Repo-wide LSA-ID uniqueness                           | **LSA-MAINT22** — `test/maintenance.test.ts`                                                                |
+
+Per-adapter edge files are the authoritative deep suites; cross-adapter tests guard shared `EventAssembler` policy.
 
 ---
 
@@ -137,7 +171,18 @@ text.delta → finish (stop) → metadata { trace }  ← dropped at assembly lay
 
 **What we do:** `EventAssembler` ignores adapter output after the first terminal `finish` per stream.
 
-**Proven in tests:** **LSA-B71**, **LSA-A41**, **LSA-G67**, **LSA-R40**, **LSA-X58**–**X62** — `test/cross-adapter-assembler-edge.test.ts` and per-adapter edge-case suites.
+**Proven in tests:**
+
+```text
+LSA-X58–X64 (cross-adapter-assembler-edge.test.ts)
+LSA-X65–X70 (cross-adapter jsonMode post-finish — 1.5.7)
+LSA-OC233, OC238 (openai-chat)
+LSA-R40, R53 (openai-responses)
+LSA-A41, A42, A55 (anthropic)
+LSA-G89, G72 (gemini google-ai)
+LSA-B71, B72 (bedrock)
+LSA-CO76, CO89, CO96 (cohere)
+```
 
 ---
 

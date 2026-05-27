@@ -10,11 +10,11 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.4.1 refactor", () => {
-	it("LSA-DOC60: README badges reference 1.5.6 and test count", () => {
+	it("LSA-DOC60: README badges reference 1.5.7 and test count", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("1.5.6");
+		expect(readme).toContain("1.5.7");
 		expect(readme).toMatch(/tests-\d+_passing/);
-		expect(readme).toContain("Stable `1.5.6`");
+		expect(readme).toContain("Stable `1.5.7`");
 	});
 
 	it("LSA-DOC61: CHANGELOG contains 1.4.1 shared adapters section", () => {
@@ -30,13 +30,13 @@ describe("docs positioning 1.4.1 refactor", () => {
 		expect(guide).toContain("shared/incremental-json.ts");
 	});
 
-	it("LSA-DOC63: package.json version is 1.5.6", () => {
+	it("LSA-DOC63: package.json version is 1.5.7", () => {
 		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.6");
+		expect(pkg.version).toBe("1.5.7");
 	});
 
-	it("LSA-DOC64: adapters-overview stable label is 1.5.6", () => {
-		expect(read("docs/img/adapters-overview.mmd")).toContain("1.5.6");
+	it("LSA-DOC64: adapters-overview stable label is 1.5.7", () => {
+		expect(read("docs/img/adapters-overview.mmd")).toContain("1.5.7");
 		expect(existsSync(join(rootDir, "docs/img/adapters-overview.svg"))).toBe(true);
 	});
 });

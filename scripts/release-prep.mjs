@@ -115,6 +115,41 @@ if (npmVersion === null) {
 	ok(`npm latest is ${npmVersion}; local is ${version}`);
 }
 
+function readmeTestsBadgeCount() {
+	const match = readme.match(/tests-(\d+)_passing/);
+	return match ? Number(match[1]) : null;
+}
+
+function vitestPassedCount() {
+	try {
+		const output = execFileSync("npm", ["test"], {
+			cwd: rootDir,
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+		});
+		const match = output.match(/Tests\s+(\d+)\s+passed/);
+		return match ? Number(match[1]) : null;
+	} catch (error) {
+		const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
+		const match = output.match(/Tests\s+(\d+)\s+passed/);
+		return match ? Number(match[1]) : null;
+	}
+}
+
+const badgeCount = readmeTestsBadgeCount();
+const passedCount = vitestPassedCount();
+if (badgeCount === null) {
+	errors.push("README.md missing tests-N_passing badge");
+} else if (passedCount === null) {
+	warn("could not parse vitest passed count from npm test output");
+} else if (badgeCount !== passedCount) {
+	errors.push(
+		`README tests badge (${badgeCount}) does not match vitest passed count (${passedCount})`,
+	);
+} else {
+	ok(`README tests badge matches vitest count (${passedCount})`);
+}
+
 const dirty = gitStatusPorcelain();
 if (dirty) {
 	warn(

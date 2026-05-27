@@ -48,30 +48,20 @@ describe("docs positioning 1.5.6", () => {
 		expect(changelog).toMatch(/composable|edge-case/i);
 	});
 
-	it("LSA-DOC93: package.json version is 1.5.6", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.6");
+	it("LSA-DOC93: CHANGELOG 1.5.6 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
 	});
 
-	it("LSA-DOC94: README badges and stable status reference 1.5.6", () => {
+	it("LSA-DOC94: README and CHANGELOG still reference 1.5.6 release history", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("core-1.5.6");
-		expect(readme).toContain("Stable `1.5.6`");
-		expect(readme).toMatch(/tests-\d+_passing/);
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.5.6]");
+		expect(readme).toContain("CHANGELOG.md");
 	});
 
-	it("LSA-DOC95: active docs status labels reference 1.5.6", () => {
-		for (const path of [
-			"docs/compatibility.md",
-			"docs/adapter-guide.md",
-			"docs/faq.md",
-			"docs/edge-cases.md",
-			"docs/integration-cookbook.md",
-			"docs/performance.md",
-			"docs/comparison.md",
-		]) {
-			expect(read(path)).toContain("1.5.6");
-		}
+	it("LSA-DOC95: active docs retain 1.5.6 traceability in edge-cases or CHANGELOG", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
+		expect(read("docs/edge-cases.md")).toMatch(/1\.5\.6/);
 	});
 
 	it("LSA-DOC96: comparison.md positioning uses composable language", () => {

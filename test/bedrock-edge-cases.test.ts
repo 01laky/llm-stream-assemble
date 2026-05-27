@@ -325,4 +325,205 @@ describe("bedrockAdapter edge cases", () => {
 		);
 		expect(events).toEqual(expectedBedrockEvents("provider-error"));
 	});
+
+	it("LSA-B79: assembler drops post-finish text contentBlockDelta", async () => {
+		async function* payloads() {
+			yield payload({ messageStart: { role: "assistant" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: "ok" } },
+			});
+			yield payload({ messageStop: { stopReason: "end_turn" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: "late" } },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), bedrockAdapter()));
+		expect(events.filter((event) => event.type === "text.delta")).toHaveLength(1);
+	});
+
+	it("LSA-B80: assembler drops post-finish reasoningContent delta", async () => {
+		async function* payloads() {
+			yield payload({ messageStart: { role: "assistant" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: "ok" } },
+			});
+			yield payload({ messageStop: { stopReason: "end_turn" } });
+			yield payload({
+				contentBlockDelta: {
+					contentBlockIndex: 0,
+					delta: { reasoningContent: "late thought" },
+				},
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), bedrockAdapter()));
+		expect(events.filter((event) => event.type === "reasoning.delta")).toHaveLength(0);
+	});
+
+	it("LSA-B81: jsonMode assembler drops post-finish json text delta", async () => {
+		async function* payloads() {
+			yield payload({ messageStart: { role: "assistant" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: '{"a":1}' } },
+			});
+			yield payload({ messageStop: { stopReason: "end_turn" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: '{"late":true}' } },
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), bedrockAdapter({ jsonMode: true })),
+		);
+		expect(
+			events.some((event) => event.type === "json.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-B82: messageStop guardrail_intervened maps to finish content_filter", () => {
+		expect(
+			bedrockAdapter().parseChunk(payload({ messageStop: { stopReason: "guardrail_intervened" } })),
+		).toContainEqual({ kind: "finish", reason: "content_filter", choiceIndex: 0 });
+	});
+
+	it("LSA-B83: messageStop tool_use maps to finish tool_calls", () => {
+		expect(
+			bedrockAdapter().parseChunk(payload({ messageStop: { stopReason: "tool_use" } })),
+		).toContainEqual({ kind: "finish", reason: "tool_calls", choiceIndex: 0 });
+	});
+
+	it("LSA-B84: duplicate messageStop after finish is dropped by assembler", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				strings(
+					payload({ messageStart: { role: "assistant" } }),
+					payload({
+						contentBlockDelta: { contentBlockIndex: 0, delta: { text: "x" } },
+					}),
+					payload({ messageStop: { stopReason: "end_turn" } }),
+					payload({ messageStop: { stopReason: "end_turn" } }),
+				),
+				bedrockAdapter(),
+			),
+		);
+		expect(events.filter((event) => event.type === "finish")).toHaveLength(1);
+	});
+
+	it("LSA-B85: guardrail-intervened golden stream matches expected events", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("guardrail-intervened")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("guardrail-intervened"));
+	});
+
+	it("LSA-B86: incomplete golden stream matches expected events", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("incomplete")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("incomplete"));
+	});
+
+	it("LSA-B87: nova modelFamily text-basic golden matches expected events", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("nova-text-basic")) yield line;
+					})(),
+					bedrockAdapter({ modelFamily: "nova" }),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("nova-text-basic"));
+	});
+
+	it("LSA-B88: usage-metadata golden stream emits usage event", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("usage-metadata")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("usage-metadata"));
+		expect(events.some((event) => (event as { type?: string }).type === "usage")).toBe(true);
+	});
+
+	it("LSA-B89: text-unicode golden stream preserves UTF-8 text", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("text-unicode")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("text-unicode"));
+	});
+
+	it("LSA-B90: tool-partial-input golden stream matches expected events", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("tool-partial-input")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("tool-partial-input"));
+	});
+
+	it("LSA-B91: contentBlockStart preserves block index on tool-start", () => {
+		expect(
+			bedrockAdapter().parseChunk(
+				payload({
+					contentBlockStart: {
+						contentBlockIndex: 2,
+						start: { toolUse: { toolUseId: "t2", name: "search" } },
+					},
+				}),
+			),
+		).toContainEqual(
+			expect.objectContaining({ kind: "tool-start", id: "t2", name: "search", index: 2 }),
+		);
+	});
+
+	it("LSA-B92: metadata usage before messageStop is emitted during open stream", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				strings(
+					payload({ messageStart: { role: "assistant" } }),
+					payload({
+						contentBlockDelta: { contentBlockIndex: 0, delta: { text: "hi" } },
+					}),
+					payload({
+						metadata: { usage: { inputTokens: 4, outputTokens: 2, totalTokens: 6 } },
+					}),
+					payload({ messageStop: { stopReason: "end_turn" } }),
+				),
+				bedrockAdapter(),
+			),
+		);
+		expect(events.some((event) => event.type === "usage")).toBe(true);
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+	});
 });

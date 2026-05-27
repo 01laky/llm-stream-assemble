@@ -32,9 +32,9 @@ describe("bedrock docs regression", () => {
 		expect(changelog.toLowerCase()).toContain("bedrock");
 	});
 
-	it("LSA-B31: package.json version is 1.5.6", () => {
+	it("LSA-B31: package.json version is 1.5.7", () => {
 		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.6");
+		expect(pkg.version).toBe("1.5.7");
 	});
 
 	it("LSA-B32: examples/bedrock/README.md exists and mentions decode", () => {

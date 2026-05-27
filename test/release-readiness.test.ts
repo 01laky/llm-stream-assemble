@@ -185,4 +185,19 @@ describe("release readiness", () => {
 		expect(pkg.scripts["smoke:vertex"]).toBe("node scripts/live-smoke/vertex-gemini.mjs");
 		expect(pkg.scripts["fixtures:check-gemini"]).toBeDefined();
 	});
+
+	it("LSA-REL28: package.json scripts include smoke:gemini", () => {
+		const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
+		expect(pkg.scripts["smoke:gemini"]).toBe("node scripts/live-smoke/gemini.mjs");
+	});
+
+	it("LSA-REL29: gemini live smoke uses gemini.mjs not gemini.ts", () => {
+		expect(existsSync(join(rootDir, "scripts/live-smoke/gemini.mjs"))).toBe(true);
+		expect(read("docs/live-smoke.md")).toContain("pnpm smoke:gemini");
+		expect(read("docs/live-smoke.md")).not.toContain("pnpm exec tsx scripts/live-smoke/gemini.ts");
+	});
+
+	it("LSA-REL30: release-prep.mjs validates README tests badge against vitest count", () => {
+		expect(read("scripts/release-prep.mjs")).toMatch(/tests-\(\d+\)_passing|tests badge/i);
+	});
 });

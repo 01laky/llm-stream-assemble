@@ -309,4 +309,112 @@ describe("anthropicAdapter edge cases and docs", () => {
 		const events = await collectAsync(assembleFromPayloads(payloads(), anthropicAdapter()));
 		expect(events.filter((event) => event.type === "tool_call.args.delta")).toHaveLength(0);
 	});
+
+	it("LSA-A56: jsonMode assembler drops post-finish json text block delta", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "content_block_delta",
+				index: 0,
+				delta: { type: "text_delta", text: '{"a":1}' },
+			});
+			yield payload({ type: "message_delta", delta: { stop_reason: "end_turn" } });
+			yield payload({
+				type: "content_block_delta",
+				index: 0,
+				delta: { type: "text_delta", text: '{"late":true}' },
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), anthropicAdapter({ jsonMode: true })),
+		);
+		expect(
+			events.some((event) => event.type === "json.delta" && event.delta.includes("late")),
+		).toBe(false);
+	});
+
+	it("LSA-A57: assembler drops post-finish text deltas after end_turn", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "content_block_delta",
+				index: 0,
+				delta: { type: "text_delta", text: "ok" },
+			});
+			yield payload({ type: "message_delta", delta: { stop_reason: "end_turn" } });
+			yield payload({
+				type: "content_block_delta",
+				index: 0,
+				delta: { type: "text_delta", text: "late" },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), anthropicAdapter()));
+		expect(events.filter((event) => event.type === "text.delta")).toHaveLength(1);
+	});
+
+	it("LSA-A58: message_start with id emits message-start metadata", () => {
+		expect(
+			anthropicAdapter().parseChunk(
+				payload({ type: "message_start", message: { id: "msg_abc", type: "message" } }),
+			),
+		).toContainEqual({ kind: "message-start", id: "msg_abc" });
+	});
+
+	it("LSA-A59: thinking golden stream matches expected events", async () => {
+		const events = normalizeAnthropicEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(anthropicTextFixture("thinking", "sse")),
+					anthropicAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedAnthropicEvents("thinking"));
+	});
+
+	it("LSA-A60: tool-use golden stream matches expected events", async () => {
+		const events = normalizeAnthropicEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(anthropicTextFixture("tool-use", "sse")),
+					anthropicAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedAnthropicEvents("tool-use"));
+	});
+
+	it("LSA-A61: text-basic golden stream matches expected events", async () => {
+		const events = normalizeAnthropicEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(anthropicTextFixture("text-basic", "sse")),
+					anthropicAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedAnthropicEvents("text-basic"));
+	});
+
+	it("LSA-A62: empty text_delta is skipped", () => {
+		expect(
+			anthropicAdapter().parseChunk(
+				payload({
+					type: "content_block_delta",
+					index: 0,
+					delta: { type: "text_delta", text: "" },
+				}),
+			),
+		).toEqual([]);
+	});
+
+	it("LSA-A63: provider-error golden stream matches expected events", async () => {
+		const events = normalizeAnthropicEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(anthropicTextFixture("provider-error", "sse")),
+					anthropicAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedAnthropicEvents("provider-error"));
+	});
 });

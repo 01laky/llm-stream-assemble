@@ -22,6 +22,18 @@ fetch responses in CI; no live provider calls are made by default.
 
 Full README index: [Examples](../README.md#examples).
 
+## Live smoke commands
+
+Maintainer-only — requires `pnpm build` and API keys. See [`docs/live-smoke.md`](../docs/live-smoke.md).
+
+| Example file                      | Matching smoke command               | Notes                                     |
+| --------------------------------- | ------------------------------------ | ----------------------------------------- |
+| `node-fetch/gemini.ts`            | `pnpm smoke:gemini`                  | Google AI key; optional `--capture`       |
+| `node-fetch/vertex-gemini.ts`     | `pnpm smoke:vertex`                  | ADC bearer token, not Google AI key       |
+| `node-fetch/cohere.ts`            | `pnpm smoke:cohere`                  | Optional `--capture`                      |
+| `node-fetch/bedrock.ts`           | `pnpm smoke:bedrock`                 | AWS credential chain                      |
+| `node-fetch/openai-compatible.ts` | `pnpm smoke:ollama` / `deepseek` / … | Match `OPENAI_COMPATIBLE_PROVIDER` preset |
+
 ## OpenAI
 
 - `examples/node-fetch/openai-chat.ts` — OpenAI Chat Completions streaming.
