@@ -1,7 +1,8 @@
 flowchart LR
 	subgraph IN["Input"]
-		BYTES["Raw bytes<br/>SSE · pseudo-SSE<br/>Cohere v2 · OpenAI · Anthropic"]
+		BYTES["Raw bytes<br/>SSE · pseudo-SSE<br/>Google AI Gemini · Cohere v2 · OpenAI · Anthropic"]
 		BRIN["Bedrock EventStream bytes<br/>→ decode → JSON strings"]
+		VXIN["Vertex JSONL / JSON array<br/>→ read-chunk-stream.ts"]
 		JSONL["Decoded JSON payloads<br/>assembleFromPayloads"]
 	end
 
@@ -34,6 +35,7 @@ flowchart LR
 
 	BYTES --> PC
 	BRIN --> PC
+	VXIN --> PC
 	JSONL --> PC
 	FIN --> EV
 	EV --> TAP
@@ -49,5 +51,5 @@ flowchart LR
 
 	class ADAPTER,XFORM stateless
 	class CORE,BUF,TOOLS,FIN stateful
-	class BRIN,JSONL bedrock
+	class BRIN,VXIN,JSONL bedrock
 	class NOTE note

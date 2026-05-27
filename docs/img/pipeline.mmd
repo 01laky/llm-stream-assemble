@@ -5,7 +5,7 @@ flowchart TB
 		PA["Anthropic Messages"]
 		PO["OpenAI-compatible<br/>Groq · Azure · Cloudflare · OpenRouter · …"]
 		PR["OpenAI Responses"]
-		PG["Google Gemini"]
+		PG["Google Gemini<br/>Google AI · Vertex AI"]
 		PB["AWS Bedrock<br/>ConverseStream"]
 		PCO["Cohere Chat v2"]
 	end
@@ -21,11 +21,14 @@ flowchart TB
 		ACO["cohereAdapter"]
 	end
 
-	subgraph DECODE["Bedrock decode boundary · app / SDK"]
+	subgraph DECODE["Transport decode boundary · app / examples"]
 		direction TB
-		ES["EventStream bytes"]
+		ES["Bedrock EventStream bytes"]
+		VX["Vertex JSONL / JSON array body"]
 		DEC["Decode → JSON strings"]
+		VSPLIT["read-chunk-stream.ts<br/>→ one object per line"]
 		ES --> DEC
+		VX --> VSPLIT
 	end
 
 	subgraph CORE["Core assembly · provider-agnostic"]
@@ -63,8 +66,10 @@ flowchart TB
 	PO --> AO
 	PR --> AR
 	PG --> AG
+	PG --> VX
 	PB --> ES
 	DEC --> AB
+	VSPLIT --> PAYLOADS
 	PCO --> ACO
 	PARSE --> AC
 	PARSE --> AA
@@ -106,7 +111,7 @@ flowchart TB
 
 	class PC,PA,PO,PR,PG,PB,PCO provider
 	class AC,AA,AO,AR,AG,AB,ACO adapter
-	class ES,DEC decode
+	class ES,DEC,VSPLIT decode
 	class PARSE,RAW,ASM core
 	class STREAM,JSON,PAYLOADS,EVENTS io
 	class COL,TAP,SSEOUT,REPLAY transform

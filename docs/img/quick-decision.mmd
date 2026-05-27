@@ -8,7 +8,9 @@ flowchart TD
 	SHAPE -->|OpenAI Chat Completions| OAI["openaiChatAdapter()"]
 	SHAPE -->|OpenAI Responses API| OAR["openaiResponsesAdapter()"]
 	SHAPE -->|Anthropic Messages| ANT["anthropicAdapter()"]
-	SHAPE -->|Google Gemini GenerateContent| GEM["geminiAdapter()"]
+	SHAPE -->|Google Gemini GenerateContent| GEM{Google AI or Vertex?}
+	GEM -->|Google AI SSE| GEMS["geminiAdapter()"]
+	GEM -->|Vertex JSONL| GEMV["read-chunk-stream.ts<br/>→ assembleFromPayloads<br/>apiSurface: vertex"]
 	SHAPE -->|Cohere Chat v2 SSE| COH["cohereAdapter()"]
 	SHAPE -->|AWS Bedrock ConverseStream| BRD{EventStream binary?}
 	SHAPE -->|OpenAI-compatible host| COMP["openaiCompatibleAdapter({ provider })"]
@@ -22,7 +24,8 @@ flowchart TD
 	OAI --> ASM["assembleStream(response.body, adapter)"]
 	OAR --> ASM
 	ANT --> ASM
-	GEM --> ASM
+	GEMS --> ASM
+	GEMV --> ASMP
 	COH --> ASM
 	BR --> ASMP["assembleFromPayloads(lines, adapter)<br/>or assembleStream pseudo-SSE"]
 	PRESET --> ASM
@@ -40,7 +43,7 @@ flowchart TD
 	classDef warn fill:#451a03,stroke:#fb923c,stroke-width:1px,color:#ffedd5
 	classDef decode fill:#312e81,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
 
-	class OAI,OAR,ANT,GEM,COH,BR,COMP,PRESET,ASM,ASMP,RESP pick
+	class OAI,OAR,ANT,GEMS,GEMV,COH,BR,COMP,PRESET,ASM,ASMP,RESP pick
 	class DEC decode
 	class DONE out
 	class SDK,TAG,NO warn

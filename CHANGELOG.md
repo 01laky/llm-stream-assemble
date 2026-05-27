@@ -24,6 +24,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 - **`docs/adapter-guide.md`** — Vertex decode boundary, `normalizeVertexChunk`, NDJSON/JSONL transport row.
 - **`docs/post-1.0-provider-roadmap.md`** — Vertex AI Gemini **1.5.5** marked shipped in release sequence; Gemini tier notes updated.
 - **`pnpm verify`** — includes **`fixtures:check-gemini`** after unit tests.
+- **Architecture diagrams** — `pipeline`, `quick-decision`, `chunk-assembly`, `assembler-lifecycle`, and `transforms` mermaid/SVG sources now show Vertex JSONL decode (`read-chunk-stream.ts`) and `apiSurface: "vertex"` alongside Bedrock EventStream; `docs/img/README.md`, **`docs/performance.md`**, and **`docs/comparison.md`** status labels aligned to **1.5.5**.
 - Version labels **1.5.5** across docs; README test badge **1477**.
 
 ### Notes

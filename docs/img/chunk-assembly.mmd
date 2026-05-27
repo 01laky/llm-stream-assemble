@@ -1,5 +1,12 @@
 flowchart TB
-	subgraph IN_SSE["SSE byte stream · OpenAI · Anthropic · Gemini · Cohere v2 · compatible"]
+	subgraph IN_VERTEX["Vertex AI Gemini · JSONL decode boundary"]
+		VX["HTTP body · NDJSON or JSON array"]
+		VSPLIT["read-chunk-stream.ts"]
+		VLINE["One JSON object string per chunk"]
+		VX --> VSPLIT --> VLINE
+	end
+
+	subgraph IN_SSE["SSE byte stream · OpenAI · Anthropic · Google AI Gemini · Cohere v2 · compatible"]
 		C1["TCP read may split mid-line"]
 		C2["data: payload strings"]
 	end
@@ -19,6 +26,7 @@ flowchart TB
 		PC["parseChunk → RawChunk[]"]
 		BA["bedrockAdapter.parseChunk"]
 		CA["cohereAdapter.parseChunk"]
+		GEM["geminiAdapter.parseChunk<br/>apiSurface: vertex"]
 	end
 
 	subgraph CORE["EventAssembler · stateful per stream"]
@@ -35,18 +43,22 @@ flowchart TB
 	LB --> PC
 	LB --> CA
 	JL --> BA
+	VLINE --> GEM
 	PC --> BUF
 	BA --> BUF
 	CA --> BUF
+	GEM --> BUF
 	BUF --> DONE
 	DONE --> EV
 
 	classDef in fill:#1e3a5f,stroke:#60a5fa,stroke-width:2px,color:#e0f2fe
 	classDef bedrock fill:#312e81,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
+	classDef vertex fill:#1e3a5f,stroke:#38bdf8,stroke-width:2px,color:#e0f2fe
 	classDef mid fill:#4a1d96,stroke:#c084fc,stroke-width:2px,color:#f3e8ff
 	classDef out fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#ccfbf1
 
 	class IN_SSE,PARSE in
 	class IN_BEDROCK,ES,DEC,JL bedrock
+	class IN_VERTEX,VX,VSPLIT,VLINE vertex
 	class ADAPTER,CORE mid
 	class OUT out

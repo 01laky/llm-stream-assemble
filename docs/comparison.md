@@ -1,6 +1,6 @@
 # How this compares
 
-**Status:** Active guide — `1.5.0`
+**Status:** Active guide — `1.5.5`
 
 Where `llm-stream-assemble` fits relative to common alternatives. Comparisons are **best-effort** — other packages evolve independently; verify before choosing.
 
@@ -17,7 +17,7 @@ Where `llm-stream-assemble` fits relative to common alternatives. Comparisons ar
 | Category                       | Examples                                                                           | What they optimize for                                           | `llm-stream-assemble`                                                                                         |
 | ------------------------------ | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | **Full-stack AI SDKs**         | [Vercel AI SDK](https://sdk.vercel.ai/), LangChain.js                              | End-to-end apps: hooks, agents, tool execution, provider clients | **Lower level** — you keep fetch, auth, UI, and agent loop                                                    |
-| **Provider SDKs**              | `openai`, `@anthropic-ai/sdk`                                                      | Vendor-native types and RPC                                      | **Unified `StreamEvent`** across OpenAI, Anthropic, Gemini, compatible hosts                                  |
+| **Provider SDKs**              | `openai`, `@anthropic-ai/sdk`, `@google-cloud/vertexai`                            | Vendor-native types and RPC                                      | **Unified `StreamEvent`** across OpenAI, Anthropic, Gemini (Google AI + Vertex), compatible hosts             |
 | **Schema stream parsers**      | [`zod-stream`](https://www.npmjs.com/package/zod-stream) (Zod on streams)          | Validated structured output while streaming                      | **Event normalization first**; use `json.*` events + your validator, or `strictToolArgs` at completion        |
 | **Generic LLM stream parsers** | [`llm-stream-parser`](https://www.npmjs.com/package/llm-stream-parser) and similar | Parsing provider-specific stream shapes                          | **Typed adapters + golden fixtures** per provider dialect; explicit preset options                            |
 | **Tag / XML stream parsers**   | Various markdown/XML tag parsers                                                   | Extract tagged regions from model text                           | **Out of scope** — we normalize provider protocol events, not arbitrary tags in content                       |

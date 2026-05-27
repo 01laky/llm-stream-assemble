@@ -1,6 +1,6 @@
 flowchart LR
-	PAY(["assembleFromPayloads<br/>Bedrock decoded JSON"])
-	SSEIN(["assembleStream<br/>Cohere v2 · OpenAI · Anthropic SSE"])
+	PAY(["assembleFromPayloads<br/>Bedrock · Vertex JSONL decoded JSON"])
+	SSEIN(["assembleStream<br/>Google AI Gemini · Cohere v2 · OpenAI · Anthropic SSE"])
 	PAY --> EVENTS(["StreamEvent stream"])
 	SSEIN --> EVENTS
 
@@ -19,7 +19,7 @@ flowchart LR
 
 	COL --> OUT1["text · toolCalls · usage · finishReason"]
 	TAP --> OUT2["logs · metrics · debug"]
-	SSE --> OUT3["browser-safe SSE proxy<br/>Bedrock Worker · Cohere proxy"]
+	SSE --> OUT3["browser-safe SSE proxy<br/>Bedrock Worker · Cohere · Vertex proxy"]
 	FILE --> OUT4["local .sse / .jsonl replay"]
 
 	classDef io fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
