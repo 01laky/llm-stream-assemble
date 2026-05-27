@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.8.1]
+
+### Changed
+
+- Version labels **1.8.1** across docs; README test badge **2136**; README `core-1.8.1-brightgreen` + `status-stable_1.8.1-brightgreen`; `adapters-overview` diagram stable **1.8.1** (SVG regenerated); **`release:prep`** stable badge gates unchanged; **DOC174**–**DOC181**; historical **1.8.0** doc pins in `docs-positioning-1.8.0.test.ts`.
+
+### Notes
+
+- Patch after **1.8.0** npm publish — no adapter or public API changes; semver-safe upgrade from **1.8.0**.
+
 ## [1.8.0]
 
 ### Added

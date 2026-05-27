@@ -9,12 +9,12 @@ function read(path: string): string {
 	return readFileSync(join(rootDir, path), "utf8");
 }
 
-describe("docs positioning 1.8.0", () => {
-	it("LSA-DOC151: README badges reference 1.8.0 and test count badge", () => {
-		const readme = read("README.md");
-		expect(readme).toContain("core-1.8.0-brightgreen");
-		expect(readme).toMatch(/Stable `1\.8\.0`/);
-		expect(readme).toMatch(/tests-(?:TBD|\d+)_passing/);
+describe("docs positioning 1.8.0 (historical)", () => {
+	it("LSA-DOC151: historical 1.8.0 release traceability in CHANGELOG", () => {
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.8.0]");
+		expect(changelog).toMatch(/Responses.*logprob|logprob.*Responses/i);
+		expect(changelog).toMatch(/2128|README test badge \*\*2128\*\*/);
 	});
 
 	it("LSA-DOC152: CHANGELOG 1.8.0 mentions Responses logprobs", () => {
@@ -23,9 +23,8 @@ describe("docs positioning 1.8.0", () => {
 		expect(changelog).toMatch(/Responses.*logprob|logprob.*Responses/i);
 	});
 
-	it("LSA-DOC153: package.json version is 1.8.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.8.0");
+	it("LSA-DOC153: CHANGELOG 1.8.0 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.8.0]");
 	});
 
 	it("LSA-DOC154: compatibility.md Responses row documents logprobs include", () => {
@@ -111,9 +110,9 @@ describe("docs positioning 1.8.0", () => {
 		expect(historical).not.toMatch(/pkg\.version.*1\.7\.0/);
 	});
 
-	it("LSA-DOC170: active package.json version is 1.8.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.8.0");
+	it("LSA-DOC170: historical 1.8.0 stable green badges documented in CHANGELOG", () => {
+		const section = read("CHANGELOG.md").split("## [1.8.0]")[1]?.split("## [1.7.0]")[0] ?? "";
+		expect(section).toMatch(/core-1\.8\.0-brightgreen|stable green/i);
 	});
 
 	it("LSA-DOC171: live-smoke.md documents capture promotion workflow", () => {
@@ -129,11 +128,9 @@ describe("docs positioning 1.8.0", () => {
 		expect(doc).toContain("logprobs: true");
 	});
 
-	it("LSA-DOC173: README status badge is stable green 1.8.0 not beta", () => {
-		const readme = read("README.md");
-		expect(readme).toContain("status-stable_1.8.0-brightgreen");
-		expect(readme).toContain("core-1.8.0-brightgreen");
-		expect(readme).not.toMatch(/status-beta_|status-pre_|_rc-orange|_beta-yellow/i);
-		expect(readme).not.toContain("core-1.8.0-blue");
+	it("LSA-DOC173: historical 1.8.0 shipped Responses logprobs documented in CHANGELOG", () => {
+		const section = read("CHANGELOG.md").split("## [1.8.0]")[1]?.split("## [1.7.0]")[0] ?? "";
+		expect(section).toMatch(/Responses.*logprob/i);
+		expect(section).toMatch(/2128/);
 	});
 });

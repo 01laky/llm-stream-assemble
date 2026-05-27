@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.8.0`
+**Status:** Active guide — `1.8.1`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
