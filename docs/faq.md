@@ -1,6 +1,6 @@
 # FAQ
 
-**Status:** Active guide — `1.7.0`
+**Status:** Active guide — `1.8.0`
 
 Common questions about streaming assembly, lifecycle, and positioning.
 
@@ -130,7 +130,21 @@ Do **not** point `openaiCompatibleAdapter()` at Cohere — you will miss tool-pl
 4. **Collect or map** — `collectStream(events).logprobs` accumulates all tokens; use **`logprobConfidence({ logprob, topLogprobs })`** for approximate probability and runner-up margin; use **`alignLogprobsWithText({ assistantText, logprobs })`** to attach character offsets for UI highlighting.
 5. **Proxy safely** — `toSSE()` serializes `logprob` events like any other unified type; forward with `sanitizeErrors: true` when exposing streams to browsers.
 
-Live smoke: `pnpm smoke:openai-logprobs` (requires `OPENAI_API_KEY`). Fixtures: `test/fixtures/openai-chat/logprobs-stream.sse`. OpenAI **Responses API** logprobs are not mapped in **1.7.0**.
+Live smoke: `pnpm smoke:openai-logprobs` (requires `OPENAI_API_KEY`). Fixtures: `test/fixtures/openai-chat/logprobs-stream.sse`.
+
+**OpenAI Responses API?** → [How do I consume logprobs from OpenAI Responses streams?](#how-do-i-consume-logprobs-from-openai-responses-streams) — different request opt-in (`include`) and event shapes; same unified `logprob` events after assembly.
+
+---
+
+## How do I consume logprobs from OpenAI Responses streams?
+
+1. **Request logprobs upstream** — set `include: ["message.output_text.logprobs"]` and optionally `top_logprobs: N` on the Responses body. Without `include`, the provider omits `logprobs[]` arrays and the adapter emits no `logprob` events.
+2. **Assemble with `openaiResponsesAdapter()`** — logprobs arrive on `response.output_text.delta` / `.done`, `response.refusal.delta`, and content parts; mapped via shared `logprobChunksFromResponsesLogprobs`.
+3. **Handle `logprob` events** — same unified shape as Chat Completions: `channel`, `token`, `logprob`, optional `topLogprobs`, `position`, optional `choiceIndex` from `output_index`. Logprob events arrive **before** sibling text/refusal/json deltas on the same payload.
+4. **Done-batch policy** — when text streamed via deltas first, logprobs on `response.output_text.done` are skipped to avoid duplicates (**LSA-RL12**). Done-only streams emit the full batch before text (**LSA-RL13**).
+5. **Collect or map** — same helpers as Chat: `collectStream`, **`logprobConfidence()`**, **`alignLogprobsWithText()`**.
+
+Live smoke: `pnpm smoke:openai-responses-logprobs` (requires `OPENAI_API_KEY`). Fixtures: `test/fixtures/openai-responses/logprobs-stream.sse`. Chat Completions setup → [previous section](#how-do-i-consume-logprobs-from-openai-chat-streams). Mapping details → [adapter-guide § Logprob events](./adapter-guide.md#logprob-events-170-chat-180-responses).
 
 ---
 

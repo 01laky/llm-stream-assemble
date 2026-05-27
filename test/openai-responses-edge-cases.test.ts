@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
+import { assembleResponse } from "../src/core/assemble-response";
 import { assembleStream } from "../src/core/assemble-stream";
 import { byteStreamFromStrings, collectAsync, strings } from "./helpers/collect-events";
 import {
 	expectedResponsesEvents,
 	normalizeResponsesEvents,
+	responsesJSONFixture,
 	responsesTextFixture,
 } from "./helpers/responses-fixtures";
 
@@ -422,5 +424,151 @@ describe("openaiResponsesAdapter edge cases", () => {
 			),
 		);
 		expect(events).toEqual(expectedResponsesEvents("text-basic"));
+	});
+
+	it("LSA-R74: logprobs-failed-stream stops logprobs after terminal error", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-failed-stream", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-failed-stream"));
+	});
+
+	it("LSA-R75: done-batch stream emits logprobs only when no prior deltas", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-done-batch", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events.filter((event) => event.type === "logprob")).toHaveLength(2);
+	});
+
+	it("LSA-R76: logprobs-stream interleaves logprob before each text.delta", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-stream", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		const types = events.map((event) => event.type);
+		const firstText = types.indexOf("text.delta");
+		const firstLogprob = types.indexOf("logprob");
+		expect(firstLogprob).toBeLessThan(firstText);
+	});
+
+	it("LSA-R77: logprobs-tool-stream has exactly one content logprob event", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-tool-stream", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events.filter((event) => event.type === "logprob")).toHaveLength(1);
+	});
+
+	it("LSA-R78: logprobs-refusal-stream golden matches expected", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-refusal", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-refusal"));
+	});
+
+	it("LSA-R79: parseResponse logprobs-refusal-response golden parity", () => {
+		const events = normalizeResponsesEvents(
+			assembleResponse(responsesJSONFixture("logprobs-refusal-response"), openaiResponsesAdapter()),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-refusal-response"));
+	});
+
+	it("LSA-R80: text-basic stream still has zero logprob events after mapping shipped", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("text-basic", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-R81: logprobs-json-mode stream golden under jsonMode option", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-json-mode", "sse")),
+					openaiResponsesAdapter({ jsonMode: true }),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-json-mode"));
+	});
+
+	it("LSA-R82: logprobs-content-part-added golden parity", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-content-part-added", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-content-part-added"));
+	});
+
+	it("LSA-R83: logprobs-response non-stream golden parity", () => {
+		const events = normalizeResponsesEvents(
+			assembleResponse(responsesJSONFixture("logprobs-response"), openaiResponsesAdapter()),
+		);
+		expect(events).toEqual(expectedResponsesEvents("logprobs-response"));
+	});
+
+	it("LSA-R84: consecutive adapter instances do not share textSeen for done-batch", async () => {
+		await collectAsync(
+			assembleStream(
+				byteStreamFromStrings(responsesTextFixture("logprobs-stream", "sse")),
+				openaiResponsesAdapter(),
+			),
+		);
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-done-batch", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		expect(events.filter((event) => event.type === "logprob")).toHaveLength(2);
+	});
+
+	it("LSA-R85: logprobs-failed-stream has logprobs strictly before error event", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(responsesTextFixture("logprobs-failed-stream", "sse")),
+					openaiResponsesAdapter(),
+				),
+			),
+		);
+		const lastLogprob = events.map((event) => event.type).lastIndexOf("logprob");
+		const errorIndex = events.findIndex((event) => event.type === "error");
+		expect(lastLogprob).toBeGreaterThanOrEqual(0);
+		expect(errorIndex).toBeGreaterThan(lastLogprob);
 	});
 });

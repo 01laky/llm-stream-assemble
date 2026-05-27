@@ -19,27 +19,31 @@ export function expectedResponsesEvents(name: string): unknown {
 
 export function normalizeResponsesEvents(events: StreamEvent[]): unknown[] {
 	return events.map((event) => {
-		if (event.type === "metadata") {
+		if (event.type === "metadata" || event.type === "usage" || event.type === "logprob") {
 			const { raw: _raw, ...rest } = event;
-			return rest;
-		}
-		if (event.type === "usage") {
-			const { raw: _raw, ...rest } = event;
+			if ("choiceIndex" in rest && rest.choiceIndex === 0) {
+				const { choiceIndex: _choiceIndex, ...withoutChoice } = rest;
+				return withoutChoice;
+			}
 			return rest;
 		}
 		if (event.type === "error") return { type: "error", recoverable: event.recoverable };
+		if ("choiceIndex" in event && event.choiceIndex === 0) {
+			const { choiceIndex: _choiceIndex, ...rest } = event;
+			return rest;
+		}
 		return event;
 	});
 }
 
 export function normalizeResponsesRawChunks(chunks: RawChunk[]): unknown[] {
 	return chunks.map((chunk) => {
-		if (chunk.kind === "metadata") {
+		if (chunk.kind === "metadata" || chunk.kind === "usage" || chunk.kind === "logprob") {
 			const { raw: _raw, ...rest } = chunk;
-			return rest;
-		}
-		if (chunk.kind === "usage") {
-			const { raw: _raw, ...rest } = chunk;
+			if ("choiceIndex" in rest && rest.choiceIndex === 0) {
+				const { choiceIndex: _choiceIndex, ...withoutChoice } = rest;
+				return withoutChoice;
+			}
 			return rest;
 		}
 		if (chunk.kind === "provider-error")

@@ -1,0 +1,23 @@
+{
+	"id": "resp_lp_static",
+	"model": "gpt-4.1-mini",
+	"created_at": 1710000210,
+	"status": "completed",
+	"output": [
+		{
+			"type": "message",
+			"role": "assistant",
+			"content": [
+				{
+					"type": "output_text",
+					"text": "Hello!",
+					"logprobs": [
+						{ "token": "Hello", "logprob": -0.1, "bytes": [72, 101, 108, 108, 111] },
+						{ "token": "!", "logprob": -0.01, "bytes": [33] }
+					]
+				}
+			]
+		}
+	],
+	"usage": { "input_tokens": 3, "output_tokens": 2 }
+}

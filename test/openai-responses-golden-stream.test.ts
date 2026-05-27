@@ -66,4 +66,34 @@ describe("openaiResponsesAdapter golden streams", () => {
 			expectedResponsesEvents("parallel-function-call"),
 		);
 	});
+
+	it("LSA-R86: logprobs-stream.sse matches expected events", async () => {
+		await expect(streamFixture("logprobs-stream")).resolves.toEqual(
+			expectedResponsesEvents("logprobs-stream"),
+		);
+	});
+
+	it("LSA-R87: logprobs-multi-output.sse matches expected events", async () => {
+		await expect(streamFixture("logprobs-multi-output")).resolves.toEqual(
+			expectedResponsesEvents("logprobs-multi-output"),
+		);
+	});
+
+	it("LSA-R88: logprobs-content-part-added.sse matches expected events", async () => {
+		await expect(streamFixture("logprobs-content-part-added")).resolves.toEqual(
+			expectedResponsesEvents("logprobs-content-part-added"),
+		);
+	});
+
+	it("LSA-R89: logprobs-done-batch.sse matches expected events", async () => {
+		await expect(streamFixture("logprobs-done-batch")).resolves.toEqual(
+			expectedResponsesEvents("logprobs-done-batch"),
+		);
+	});
+
+	it("LSA-R90: logprobs-refusal.sse matches expected events", async () => {
+		await expect(streamFixture("logprobs-refusal")).resolves.toEqual(
+			expectedResponsesEvents("logprobs-refusal"),
+		);
+	});
 });

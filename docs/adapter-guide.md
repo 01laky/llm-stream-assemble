@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.7.0`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.7.0`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters. Responses logprobs since **1.8.0**.
 
 Every dedicated built-in adapter has a shared conformance harness under `test/*-conformance.test.ts` (OpenAI Chat: **LSA-OC253**–**OC255**).
 
@@ -19,15 +19,15 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 
 Since **1.4.1**, reference adapters share internal utilities (not public API):
 
-| Module                       | Purpose                                                   |
-| ---------------------------- | --------------------------------------------------------- |
-| `shared/parse-payload.ts`    | Trim, skip `[DONE]`, parse JSON object, scoped errors     |
-| `shared/incremental-json.ts` | Prefix-diff streaming tool argument strings               |
-| `shared/stop-reasons.ts`     | `mapAnthropicLikeStopReason` for Anthropic + Bedrock      |
-| `shared/usage.ts`            | `buildUsageChunk` with cross-provider token field aliases |
-| `shared/text-delta.ts`       | `textOrJsonDelta` for jsonMode text routing               |
-| `shared/anthropic-blocks.ts` | Shared Anthropic content block → `RawChunk[]` mapping     |
-| `shared/logprobs.ts`         | OpenAI-shaped `choices[].logprobs` → `logprob` RawChunks  |
+| Module                       | Purpose                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------- |
+| `shared/parse-payload.ts`    | Trim, skip `[DONE]`, parse JSON object, scoped errors                      |
+| `shared/incremental-json.ts` | Prefix-diff streaming tool argument strings                                |
+| `shared/stop-reasons.ts`     | `mapAnthropicLikeStopReason` for Anthropic + Bedrock                       |
+| `shared/usage.ts`            | `buildUsageChunk` with cross-provider token field aliases                  |
+| `shared/text-delta.ts`       | `textOrJsonDelta` for jsonMode text routing                                |
+| `shared/anthropic-blocks.ts` | Shared Anthropic content block → `RawChunk[]` mapping                      |
+| `shared/logprobs.ts`         | Chat `choices[].logprobs` and Responses `logprobs[]` → `logprob` RawChunks |
 
 New adapters should reuse these helpers instead of copying parse guards or usage builders. Extend shared modules when two or more adapters need the same behavior.
 
@@ -221,9 +221,11 @@ Since **1.6.0**, provenance payloads map to first-class **`citation`** and **`gr
 
 **Conformance:** every built-in adapter with citation fixtures has golden parity coverage — **LSA-CF01** (Cohere), **CF02** (Perplexity), **CF03** (Vertex grounding), **CF04** (Google AI grounding SSE). See `test/citation-grounding-conformance.test.ts`.
 
-## Logprob events (1.7.0+)
+## Logprob events (1.7.0+ Chat, 1.8.0+ Responses)
 
-Since **1.7.0**, OpenAI Chat Completions and OpenAI-compatible presets map `choices[].logprobs` to first-class **`logprob`** `StreamEvent` types when the upstream request enables logprobs. Events are **atomic per token** — no delta/done lifecycle.
+Since **1.7.0**, OpenAI Chat Completions and OpenAI-compatible presets map `choices[].logprobs` to first-class **`logprob`** `StreamEvent` types when the upstream request enables logprobs. Since **1.8.0**, **`openaiResponsesAdapter()`** maps Responses API `logprobs[]` arrays the same way. Events are **atomic per token** — no delta/done lifecycle.
+
+### OpenAI Chat Completions
 
 | Provider field                           | Unified mapping                                                                 |
 | ---------------------------------------- | ------------------------------------------------------------------------------- |
@@ -232,17 +234,45 @@ Since **1.7.0**, OpenAI Chat Completions and OpenAI-compatible presets map `choi
 | `choices[].logprobs: null`               | no events (provider omitted logprobs for this chunk)                            |
 | Non-stream `message.logprobs` (response) | same mapping via `parseResponse` / `assembleResponse`                           |
 
-**Request prerequisites:** the caller must set `logprobs: true` on the Chat Completions request (and optionally `top_logprobs: N`). Adapters do not infer logprobs from response shape alone — absent or `null` logprobs emit nothing.
-
-**Ordering:** on each chunk, logprob events for newly arrived tokens are emitted **before** sibling `text.delta`, `refusal.delta`, or `json.delta` events from the same choice. Streaming uses monotonic `position` per `(choiceIndex, channel)` via adapter position state (**LSA-LPH01**–**LPH04**).
-
-**Multi-choice:** `choiceIndex` is preserved when the provider sends multiple choices in one chunk (**LSA-LP15**, fixture `logprobs-multichoice`).
-
-**Helpers:** `isLogprob`, `matchEvent` handlers, `collectStream` → `logprobs` array, **`logprobConfidence()`** (probability + margin from `topLogprobs`), **`alignLogprobsWithText()`** (token offsets vs assembled text).
-
-**Not mapped in 1.7.0:** OpenAI **Responses API** logprobs — deferred until a dedicated Responses mapping lands.
+**Request prerequisites:** set `logprobs: true` on the Chat Completions body (and optionally `top_logprobs: N`). Adapters do not infer logprobs from response shape alone — absent or `null` logprobs emit nothing.
 
 Fixtures: `test/fixtures/openai-chat/logprobs-*`, `test/fixtures/openai-compatible/logprobs-stream.sse`. Regenerate: `node scripts/generate-openai-logprob-fixtures.mjs`.
+
+### OpenAI Responses API (1.8.0+)
+
+| Provider field                                              | Unified mapping                                                             |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `response.output_text.delta` → `logprobs[]`                 | `logprob` with `channel: "content"`, before sibling text/json delta         |
+| `response.output_text.done` → `logprobs[]`                  | content channel when no prior text deltas (**done-batch** — see comparison) |
+| `response.refusal.delta` → `logprobs[]`                     | `logprob` with `channel: "refusal"`, before `refusal.delta`                 |
+| `response.content_part.*` / output item → `part.logprobs[]` | content or refusal channel by part `type`                                   |
+| Non-stream `output[].content[]` parts                       | same mapping via `parseResponse` / `assembleResponse`                       |
+| Missing / empty `logprobs`                                  | no events                                                                   |
+
+**Request prerequisites:** set `include: ["message.output_text.logprobs"]` on the Responses request (and optionally `top_logprobs: N`). Without `include`, the provider omits logprob arrays and the adapter emits nothing.
+
+Fixtures: `test/fixtures/openai-responses/logprobs-*`. Regenerate: `node scripts/generate-openai-responses-logprob-fixtures.mjs` (check: `--check`).
+
+### Chat Completions vs Responses — logprob mapping
+
+| Topic                 | Chat Completions (`openaiChatAdapter`)                                     | Responses API (`openaiResponsesAdapter`)                                                                                                      |
+| --------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Request opt-in**    | `logprobs: true` (+ optional `top_logprobs`)                               | `include: ["message.output_text.logprobs"]` (+ optional `top_logprobs`)                                                                       |
+| **Streaming source**  | `choices[].logprobs.content[]` / `.refusal[]` per delta chunk              | Top-level `logprobs[]` on `response.output_text.delta` / `.done`, `response.refusal.delta`, content parts                                     |
+| **Refusal**           | `choices[].logprobs.refusal[]`                                             | `logprobs[]` on `response.refusal.delta` → `channel: "refusal"`                                                                               |
+| **Non-stream**        | `choices[].message.logprobs`                                               | `output[].content[].logprobs` on `output_text` / `refusal` parts                                                                              |
+| **Index mapping**     | `choices[].index` → `choiceIndex`                                          | `output_index` → `choiceIndex` (`0` omitted in goldens after normalize)                                                                       |
+| **Done-batch policy** | Per delta only; no separate done logprob batch                             | **`textSeen` guard** — logprobs on `output_text.done` only when no prior text deltas; avoids duplicates after streaming deltas (**LSA-RL12**) |
+| **Unified output**    | Same `logprob` `StreamEvent` shape                                         | Same `logprob` `StreamEvent` shape                                                                                                            |
+| **Helpers**           | `logprobConfidence`, `alignLogprobsWithText`, `isLogprob`, `collectStream` | Same — provider-agnostic after assembly                                                                                                       |
+
+**Ordering (both surfaces):** on each payload, logprob events for newly arrived tokens are emitted **before** sibling `text.delta`, `refusal.delta`, or `json.delta` events. Streaming uses monotonic `position` per `(choiceIndex, channel)` via shared adapter position state (**LSA-LPH01**–**LPH04**, **LSA-RL01**–**RL03**).
+
+**Multi-output:** Responses `output_index` maps to `choiceIndex` when non-zero (**LSA-RL19**); Chat multi-choice via `choices[].index` (**LSA-LP15**).
+
+**Helpers:** `isLogprob`, `matchEvent` handlers, `collectStream` → `logprobs` array, **`logprobConfidence()`**, **`alignLogprobsWithText()`**.
+
+Live smoke: `pnpm smoke:openai-logprobs` (Chat), `pnpm smoke:openai-responses-logprobs` (Responses) — [live-smoke](./live-smoke.md).
 
 ## Community adapters
 

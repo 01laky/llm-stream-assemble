@@ -18,6 +18,7 @@ import { runLiteLLMCompatibleExample } from "../../examples/integrations/litellm
 import { handleNextAppRoutePost } from "../../examples/integrations/nextjs-app-route";
 import { mapFixtureEventsToAISDKParts } from "../../examples/integrations/replay-integration-mapper";
 import { mapStreamEventToAISDKPart } from "../../examples/integrations/stream-event-to-ai-sdk-parts";
+import { openaiResponsesAdapter } from "../../src/adapters/openai-responses";
 import { fakeStreamingFetch, parseUnifiedSSE, readResponseText, withEnv } from "./helpers";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -414,5 +415,39 @@ describe("integration cookbook examples", () => {
 		const doc = readFileSync(join(rootDir, "docs/integration-cookbook.md"), "utf8");
 		expect(doc).toMatch(/replay-integration-mapper|Offline logprob replay/i);
 		expect(doc).toMatch(/INT52|logprobs-stream/i);
+	});
+
+	it("LSA-INT55: replay mapper on Responses logprobs-stream yields token-logprob parts", async () => {
+		const parts = await mapFixtureEventsToAISDKParts({
+			fixturePath: "test/fixtures/openai-responses/logprobs-stream.sse",
+			adapter: openaiResponsesAdapter(),
+		});
+		expect(parts.some((part) => (part as { type?: string }).type === "token-logprob")).toBe(true);
+	});
+
+	it("LSA-INT56: Responses replay preserves logprob-before-text order", async () => {
+		const parts = await mapFixtureEventsToAISDKParts({
+			fixturePath: "test/fixtures/openai-responses/logprobs-stream.sse",
+			adapter: openaiResponsesAdapter(),
+		});
+		const logprobIndex = parts.findIndex(
+			(part) => (part as { type?: string }).type === "token-logprob",
+		);
+		const textIndex = parts.findIndex((part) => (part as { type?: string }).type === "text-delta");
+		expect(logprobIndex).toBeLessThan(textIndex);
+	});
+
+	it("LSA-INT57: cookbook cites Responses logprob replay path", () => {
+		const doc = readFileSync(join(rootDir, "docs/integration-cookbook.md"), "utf8");
+		expect(doc).toMatch(/Responses.*logprob|logprob.*Responses/i);
+		expect(doc).toMatch(/INT55|openai-responses\/logprobs-stream/i);
+	});
+
+	it("LSA-INT58: replay mapper maps refusal channel logprob to token-logprob", async () => {
+		const parts = await mapFixtureEventsToAISDKParts({
+			fixturePath: "test/fixtures/openai-responses/logprobs-refusal.sse",
+			adapter: openaiResponsesAdapter(),
+		});
+		expect(parts.some((part) => (part as { type?: string }).type === "token-logprob")).toBe(true);
 	});
 });

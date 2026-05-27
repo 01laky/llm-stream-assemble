@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.7.0`
+**Status:** Active guide — `1.8.0`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -122,53 +122,59 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 > **LSA-R59**–**R70**, **LSA-OC266**–**OC275**, **LSA-G91**–**G98**, **LSA-A56**–**A63**,
 > **LSA-X73**–**X76** (strictToolArgs for Bedrock, Cohere, Gemini, Responses).
 
-| Topic                                                 | Fixture / test                                                                                                                |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| SSE mid-line split                                    | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                                                                       |
-| Tool JSON partials                                    | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`                                                |
-| Anthropic partial tool input                          | `test/fixtures/anthropic/tool-use.sse`                                                                                        |
-| JSON mode                                             | `test/fixtures/openai-chat/json-mode.sse` — **LSA-OC255** conformance                                                         |
-| OpenAI Chat shared conformance                        | **LSA-OC253**–**OC255** — `test/openai-chat-conformance.test.ts`                                                              |
-| OpenAI Chat finish matrix                             | **LSA-OC236**, **OC242**–**OC244**, **OC252**, **OC266**–**OC275** — `test/openai-chat-edge-cases.test.ts`                    |
-| OpenAI Chat jsonMode / refusal / tools                | **LSA-OC234**, **OC235**, **OC237**, **OC267**, **OC268**                                                                     |
-| OpenAI Chat post-finish usage drop                    | **LSA-OC238**, **OC250**, **OC266**, **OC269**                                                                                |
-| OpenAI Chat unicode / legacy function                 | **LSA-OC248**, **OC249**, **OC274**, **OC275**                                                                                |
-| OpenAI Responses function args stream                 | **LSA-R51**, **R52**, **R59**, **R60**                                                                                        |
-| OpenAI Responses post-finish reasoning drop           | **LSA-R53**, **R61**, **R62**                                                                                                 |
-| OpenAI Responses duplicate terminal events            | **LSA-R49**, **R56**, **R63**, **R64**–**R70**                                                                                |
-| Anthropic stop-reason matrix                          | **LSA-A45**–**A49**, **A56**, **A57**                                                                                         |
-| Anthropic refusal + tool block lifecycle              | **LSA-A50**, **A51**, **A55**, **A58**, **A59**–**A63**                                                                       |
-| Gemini Google AI finish / partialArgs                 | **LSA-G76**–**G78**, **G84**, **G91**, **G92**, **G93**                                                                       |
-| Gemini Google AI SSE / post-finish (renumbered 1.5.7) | **LSA-G86**–**G90**, **G94**–**G98** — `test/gemini-edge-cases.test.ts`                                                       |
-| Bedrock max_tokens + tool input incremental           | **LSA-B74**, **B77**, **B79**–**B92** — `test/bedrock-edge-cases.test.ts`                                                     |
-| Vertex post-finish usage (cross-adapter)              | **LSA-X64**                                                                                                                   |
-| Cross-adapter jsonMode post-finish                    | **LSA-X65**–**X70** — `test/cross-adapter-assembler-edge.test.ts`                                                             |
-| Cross-adapter strictToolArgs                          | **LSA-X71**–**X76** — same file                                                                                               |
-| OpenAI-compatible exhaustive (renumbered IDs)         | **LSA-OC256**–**OC265** — `test/openai-compatible-presets-exhaustive.test.ts`                                                 |
-| O(n) assembly smoke                                   | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke`                                               |
-| Cohere tool-plan reasoning                            | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                                           |
-| Cohere citation events                                | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**, **LSA-CO99**–**CO113**, conformance **LSA-CF01** |
-| Perplexity citation events                            | `test/fixtures/openai-compatible/perplexity/` — **LSA-OC276**–**OC289**, conformance **LSA-CF02**                             |
-| Gemini / Vertex grounding                             | **LSA-G100**–**G110**, **LSA-GV133**–**GV136**, conformance **LSA-CF03**–**LSA-CF04**                                         |
-| Citation core / transform / toSSE pipeline            | **LSA-CT01**–**CT55** — `test/citation-grounding-core.test.ts`, `test/citation-grounding-edge.test.ts`                        |
-| Citation span helper                                  | **LSA-CSA01**–**CSA12** — `citationSpanAnchor()`                                                                              |
-| Citation conformance                                  | **LSA-CF01**–**LSA-CF05** — `test/citation-grounding-conformance.test.ts`                                                     |
-| Compatible citation presets                           | **LSA-OC276**–**OC295** — `test/openai-compatible-citations.test.ts`                                                          |
-| Cross-adapter citation/grounding drops                | **LSA-X77**–**X85** — `test/cross-adapter-assembler-edge.test.ts`                                                             |
-| Cross-adapter logprob ordering / post-finish drops    | **LSA-X86**–**X98** — `test/cross-adapter-assembler-edge.test.ts`                                                             |
-| OpenAI Chat logprob stream + response                 | `test/fixtures/openai-chat/logprobs-*.sse` — **LSA-LP01**–**LP75**, **LSA-OC296**–**OC318**                                   |
-| OpenAI-compatible logprob preset                      | `test/fixtures/openai-compatible/logprobs-stream.sse`, `groq/` — **LSA-OC306**–**OC308**                                      |
-| Logprob ordering / null semantics                     | **LSA-LPH01**–**LPH08** — logprob before text on same chunk; `logprobs: null` → no events                                     |
-| Logprob helpers (confidence + text alignment)         | **LSA-LPA01**–**LPA12** — `logprobConfidence()`, `alignLogprobsWithText()`                                                    |
-| Logprob fixture maintainer                            | **LSA-LF01**–**LF08** — `scripts/generate-openai-logprob-fixtures.mjs`                                                        |
-| Cohere late tool id                                   | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78**                                                        |
-| Vertex envelope wrappers                              | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98**                                             |
-| Vertex tuned endpoint shape                           | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                                    |
-| Vertex unknown envelope                               | `test/fixtures/gemini/vertex/unknown-envelope.jsonl` — **LSA-GV05**, **LSA-GV06**, **LSA-GV49**                               |
-| Vertex grounding metadata                             | `test/fixtures/gemini/vertex/grounding-metadata.jsonl` — **LSA-GV99**                                                         |
-| Google AI vs Vertex parity                            | `test/fixtures/gemini/text-basic.sse` vs `vertex/text-basic.jsonl` — **LSA-GV97**–**LSA-GV97e**                               |
-| Vertex JSONL line split                               | `examples/vertex/read-chunk-stream.ts` — TCP may split mid-line; buffer until `\n` or brace-balanced object                   |
-| Repo-wide LSA-ID uniqueness                           | **LSA-MAINT22** — `test/maintenance.test.ts`                                                                                  |
+| Topic                                                 | Fixture / test                                                                                                                                                                   |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SSE mid-line split                                    | **LSA-C04**, **LSA-C-EXT21** — `test/parse-sse.test.ts`                                                                                                                          |
+| Tool JSON partials                                    | `test/fixtures/openai-chat/tool-single.sse` — `test/openai-chat-tools.test.ts`                                                                                                   |
+| Anthropic partial tool input                          | `test/fixtures/anthropic/tool-use.sse`                                                                                                                                           |
+| JSON mode                                             | `test/fixtures/openai-chat/json-mode.sse` — **LSA-OC255** conformance                                                                                                            |
+| OpenAI Chat shared conformance                        | **LSA-OC253**–**OC255** — `test/openai-chat-conformance.test.ts`                                                                                                                 |
+| OpenAI Chat finish matrix                             | **LSA-OC236**, **OC242**–**OC244**, **OC252**, **OC266**–**OC275** — `test/openai-chat-edge-cases.test.ts`                                                                       |
+| OpenAI Chat jsonMode / refusal / tools                | **LSA-OC234**, **OC235**, **OC237**, **OC267**, **OC268**                                                                                                                        |
+| OpenAI Chat post-finish usage drop                    | **LSA-OC238**, **OC250**, **OC266**, **OC269**                                                                                                                                   |
+| OpenAI Chat unicode / legacy function                 | **LSA-OC248**, **OC249**, **OC274**, **OC275**                                                                                                                                   |
+| OpenAI Responses function args stream                 | **LSA-R51**, **R52**, **R59**, **R60**                                                                                                                                           |
+| OpenAI Responses post-finish reasoning drop           | **LSA-R53**, **R61**, **R62**                                                                                                                                                    |
+| OpenAI Responses duplicate terminal events            | **LSA-R49**, **R56**, **R63**, **R64**–**R70**                                                                                                                                   |
+| Anthropic stop-reason matrix                          | **LSA-A45**–**A49**, **A56**, **A57**                                                                                                                                            |
+| Anthropic refusal + tool block lifecycle              | **LSA-A50**, **A51**, **A55**, **A58**, **A59**–**A63**                                                                                                                          |
+| Gemini Google AI finish / partialArgs                 | **LSA-G76**–**G78**, **G84**, **G91**, **G92**, **G93**                                                                                                                          |
+| Gemini Google AI SSE / post-finish (renumbered 1.5.7) | **LSA-G86**–**G90**, **G94**–**G98** — `test/gemini-edge-cases.test.ts`                                                                                                          |
+| Bedrock max_tokens + tool input incremental           | **LSA-B74**, **B77**, **B79**–**B92** — `test/bedrock-edge-cases.test.ts`                                                                                                        |
+| Vertex post-finish usage (cross-adapter)              | **LSA-X64**                                                                                                                                                                      |
+| Cross-adapter jsonMode post-finish                    | **LSA-X65**–**X70** — `test/cross-adapter-assembler-edge.test.ts`                                                                                                                |
+| Cross-adapter strictToolArgs                          | **LSA-X71**–**X76** — same file                                                                                                                                                  |
+| OpenAI-compatible exhaustive (renumbered IDs)         | **LSA-OC256**–**OC265** — `test/openai-compatible-presets-exhaustive.test.ts`                                                                                                    |
+| O(n) assembly smoke                                   | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke`                                                                                                  |
+| Cohere tool-plan reasoning                            | `test/fixtures/cohere/tool-plan.jsonl` — **LSA-CO20**, **LSA-CO03**                                                                                                              |
+| Cohere citation events                                | `test/fixtures/cohere/citations-stream.jsonl` — **LSA-CO20b**, **LSA-CO07**, **LSA-CO99**–**CO113**, conformance **LSA-CF01**                                                    |
+| Perplexity citation events                            | `test/fixtures/openai-compatible/perplexity/` — **LSA-OC276**–**OC289**, conformance **LSA-CF02**                                                                                |
+| Gemini / Vertex grounding                             | **LSA-G100**–**G110**, **LSA-GV133**–**GV136**, conformance **LSA-CF03**–**LSA-CF04**                                                                                            |
+| Citation core / transform / toSSE pipeline            | **LSA-CT01**–**CT55** — `test/citation-grounding-core.test.ts`, `test/citation-grounding-edge.test.ts`                                                                           |
+| Citation span helper                                  | **LSA-CSA01**–**CSA12** — `citationSpanAnchor()`                                                                                                                                 |
+| Citation conformance                                  | **LSA-CF01**–**LSA-CF05** — `test/citation-grounding-conformance.test.ts`                                                                                                        |
+| Compatible citation presets                           | **LSA-OC276**–**OC295** — `test/openai-compatible-citations.test.ts`                                                                                                             |
+| Cross-adapter citation/grounding drops                | **LSA-X77**–**X85** — `test/cross-adapter-assembler-edge.test.ts`                                                                                                                |
+| Cross-adapter logprob ordering / post-finish drops    | **LSA-X86**–**X98** — `test/cross-adapter-assembler-edge.test.ts`                                                                                                                |
+| OpenAI Chat logprob stream + response                 | `test/fixtures/openai-chat/logprobs-*.sse` — **LSA-LP01**–**LP75**, **LSA-OC296**–**OC318**                                                                                      |
+| OpenAI-compatible logprob preset                      | `test/fixtures/openai-compatible/logprobs-stream.sse`, `groq/` — **LSA-OC306**–**OC308**                                                                                         |
+| Logprob ordering / null semantics                     | **LSA-LPH01**–**LPH08** — logprob before text on same chunk; `logprobs: null` → no events                                                                                        |
+| Logprob helpers (confidence + text alignment)         | **LSA-LPA01**–**LPA12** — `logprobConfidence()`, `alignLogprobsWithText()`                                                                                                       |
+| Logprob fixture maintainer                            | **LSA-LF01**–**LF05** — Chat + compatible conformance in `test/logprobs-conformance.test.ts`                                                                                     |
+| Logprob fixture maintainer (extended)                 | **LSA-LF01**–**LF08** — `scripts/generate-openai-logprob-fixtures.mjs`                                                                                                           |
+| OpenAI Responses logprobs core mapping                | **LSA-RL01**–**RL25** — `test/responses-logprobs-core.test.ts` (parseChunk, ordering, done-batch, parseResponse, transforms)                                                     |
+| OpenAI Responses logprob extended edge                | **LSA-RL26**–**RL90** — `test/responses-logprobs-edge.test.ts` (malformed entries, position state, SSE splits, strictToolArgs, lifecycle, golden parity)                         |
+| OpenAI Responses logprob conformance                  | **LSA-LF06**–**LF11** — `test/logprobs-conformance.test.ts` Responses golden parity + maintainer `--check`                                                                       |
+| OpenAI Responses logprob integration edge             | **LSA-R71**–**R85** — `test/openai-responses-conformance.test.ts`, `test/openai-responses-edge-cases.test.ts`, golden streams (**R86**–**R90**)                                  |
+| Integration cookbook Responses logprob replay         | **LSA-INT55**–**INT58** — `test/examples/integration-cookbook.test.ts` + [integration-cookbook § Responses replay](./integration-cookbook.md#offline-replay--responses-logprobs) |
+| Cohere late tool id                                   | `test/fixtures/cohere/tool-late-id.jsonl` — **LSA-CO77**, **LSA-CO78**                                                                                                           |
+| Vertex envelope wrappers                              | `test/fixtures/gemini/vertex/envelope-wrapped.jsonl` — **LSA-GV07**, **LSA-GV98**                                                                                                |
+| Vertex tuned endpoint shape                           | `test/fixtures/gemini/vertex/envelope-tuned-endpoint.jsonl` — **LSA-GV46**                                                                                                       |
+| Vertex unknown envelope                               | `test/fixtures/gemini/vertex/unknown-envelope.jsonl` — **LSA-GV05**, **LSA-GV06**, **LSA-GV49**                                                                                  |
+| Vertex grounding metadata                             | `test/fixtures/gemini/vertex/grounding-metadata.jsonl` — **LSA-GV99**                                                                                                            |
+| Google AI vs Vertex parity                            | `test/fixtures/gemini/text-basic.sse` vs `vertex/text-basic.jsonl` — **LSA-GV97**–**LSA-GV97e**                                                                                  |
+| Vertex JSONL line split                               | `examples/vertex/read-chunk-stream.ts` — TCP may split mid-line; buffer until `\n` or brace-balanced object                                                                      |
+| Repo-wide LSA-ID uniqueness                           | **LSA-MAINT22** — `test/maintenance.test.ts`                                                                                                                                     |
 
 Per-adapter edge files are the authoritative deep suites; cross-adapter tests guard shared `EventAssembler` policy.
 

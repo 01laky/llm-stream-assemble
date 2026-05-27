@@ -1,0 +1,60 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ref_static"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ref_static",
+		"model": "gpt-4.1-mini",
+		"created": 1710000211
+	},
+	{
+		"type": "logprob",
+		"channel": "refusal",
+		"token": "Cannot",
+		"logprob": -0.25,
+		"bytes": [
+			67,
+			97,
+			110,
+			110,
+			111,
+			116
+		],
+		"position": 0
+	},
+	{
+		"type": "logprob",
+		"channel": "refusal",
+		"token": " comply",
+		"logprob": -0.18,
+		"bytes": [
+			32,
+			99,
+			111,
+			109,
+			112,
+			108,
+			121
+		],
+		"position": 1
+	},
+	{
+		"type": "refusal.delta",
+		"text": "Cannot comply"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 2,
+		"outputTokens": 2
+	},
+	{
+		"type": "refusal.done",
+		"text": "Cannot comply"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

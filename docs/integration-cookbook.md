@@ -1,6 +1,6 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.5.7` (initial cookbook shipped in `1.3.6`)
+**Status:** Active guide — `1.8.0` (initial cookbook shipped in `1.3.6`)
 
 Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 
@@ -237,6 +237,31 @@ for await (const event of assembleFromFile(
 ```
 
 Regenerate goldens after adapter changes: `node scripts/generate-openai-logprob-fixtures.mjs`. Live capture: `pnpm smoke:openai-logprobs --capture` → `.local-playground/openai-logprobs-capture/`.
+
+---
+
+## Offline replay — Responses logprobs
+
+Prove Responses logprob mapping without live API keys:
+
+```ts
+import { assembleFromFile, openaiResponsesAdapter } from "llm-stream-assemble";
+
+const events = [];
+for await (const event of assembleFromFile(
+	"test/fixtures/openai-responses/logprobs-stream.sse",
+	openaiResponsesAdapter(),
+)) {
+	events.push(event);
+}
+// expect logprob events before text.delta on each output_text.delta payload
+```
+
+Use `openaiResponsesAdapter({ jsonMode: true })` with `logprobs-json-mode.sse` for JSON-mode ordering (**LSA-RL15**). Done-batch fixture `logprobs-done-batch.sse` covers `output_text.done`-only logprob batches (**LSA-RL13**).
+
+Regenerate goldens: `node scripts/generate-openai-responses-logprob-fixtures.mjs` (check: `--check`). Live capture: `pnpm smoke:openai-responses-logprobs --capture` → `.local-playground/openai-responses-logprobs-capture/`. See [live-smoke § OpenAI Responses logprobs](./live-smoke.md#openai-responses-logprobs) for the full capture workflow.
+
+Integration regression: **LSA-INT55**–**INT58** lock cookbook references and replay mapper parity for Responses logprob fixtures.
 
 ---
 

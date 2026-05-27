@@ -1,0 +1,62 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_fail_lp"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_fail_lp",
+		"model": "gpt-4.1-mini",
+		"created": 1710000205
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "Partial",
+		"logprob": -0.5,
+		"bytes": [
+			80,
+			97,
+			114,
+			116,
+			105,
+			97,
+			108
+		],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "Partial"
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": " text",
+		"logprob": -0.3,
+		"bytes": [
+			32,
+			116,
+			101,
+			120,
+			116
+		],
+		"position": 1
+	},
+	{
+		"type": "text.delta",
+		"text": " text"
+	},
+	{
+		"type": "error",
+		"recoverable": false
+	},
+	{
+		"type": "text.done",
+		"text": "Partial text"
+	},
+	{
+		"type": "finish",
+		"reason": "error"
+	}
+]

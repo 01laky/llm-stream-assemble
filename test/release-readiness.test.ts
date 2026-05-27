@@ -184,6 +184,8 @@ describe("release readiness", () => {
 		const pkg = JSON.parse(read("package.json")) as { scripts: Record<string, string> };
 		expect(pkg.scripts["smoke:vertex"]).toBe("node scripts/live-smoke/vertex-gemini.mjs");
 		expect(pkg.scripts["fixtures:check-gemini"]).toBeDefined();
+		expect(pkg.scripts["fixtures:check-responses-logprobs"]).toBeDefined();
+		expect(pkg.scripts.verify).toContain("fixtures:check-responses-logprobs");
 	});
 
 	it("LSA-REL28: package.json scripts include smoke:gemini", () => {

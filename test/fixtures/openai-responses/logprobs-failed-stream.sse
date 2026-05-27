@@ -1,0 +1,7 @@
+data: {"type":"response.created","response":{"id":"resp_fail_lp","model":"gpt-4.1-mini","created_at":1710000205}}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"Partial","logprobs":[{"token":"Partial","logprob":-0.5,"bytes":[80,97,114,116,105,97,108]}]}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":" text","logprobs":[{"token":" text","logprob":-0.3,"bytes":[32,116,101,120,116]}]}
+
+data: {"type":"response.failed","response":{"id":"resp_fail_lp","status":"failed","error":{"message":"Provider failure"}}}

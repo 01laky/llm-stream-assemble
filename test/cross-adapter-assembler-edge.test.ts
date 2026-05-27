@@ -1,3 +1,5 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { anthropicAdapter } from "../src/adapters/anthropic";
 import { bedrockAdapter } from "../src/adapters/bedrock";
@@ -6,10 +8,20 @@ import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { cohereAdapter } from "../src/adapters/cohere";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
+import { assembleFromFile } from "../src/core/assemble-from-file";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
+import { assembleStream } from "../src/core/assemble-stream";
+import { isLogprob } from "../src/helpers/type-guards";
 import { collectStream } from "../src/transforms/collect-stream";
 import { tapEvents } from "../src/transforms/tap-events";
-import { collectAsync } from "./helpers/collect-events";
+import { runAdapterGoldenStream } from "./helpers/adapter-conformance";
+import { byteStreamFromStrings, collectAsync, strings } from "./helpers/collect-events";
+import { expectedOpenAIEvents, normalizeEvents } from "./helpers/openai-fixtures";
+import { normalizeResponsesEvents, responsesTextFixture } from "./helpers/responses-fixtures";
+
+const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
+const openaiFixtures = join(rootDir, "test/fixtures/openai-chat");
+const responsesFixtures = join(rootDir, "test/fixtures/openai-responses");
 
 const payload = (value: unknown) => JSON.stringify(value);
 
@@ -813,5 +825,108 @@ describe("cross-adapter assembler edge cases", () => {
 		expect(chunks).toContainEqual(
 			expect.objectContaining({ kind: "logprob", token: "g", choiceIndex: 1 }),
 		);
+	});
+
+	it("LSA-X99: mock Responses-shaped logprob RawChunk passthrough", async () => {
+		const adapter = {
+			parseChunk: () => [
+				{
+					kind: "logprob" as const,
+					channel: "content" as const,
+					token: "x",
+					logprob: -0.1,
+					raw: { source: "responses-mock" },
+				},
+				{ kind: "text-delta" as const, text: "x" },
+			],
+		};
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield JSON.stringify({ type: "mock" });
+				})(),
+				adapter,
+			),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(true);
+	});
+
+	it("LSA-X100: Chat logprobs-stream golden unchanged (OC320 smoke)", async () => {
+		const events = normalizeEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiChatAdapter(),
+				fixtureSsePath: join(openaiFixtures, "logprobs-stream.sse"),
+				expectedEventsPath: join(openaiFixtures, "logprobs-stream.expected.json"),
+			}),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("logprobs-stream"));
+	});
+
+	it("LSA-X101: collectStream on Responses logprobs mock sequence", async () => {
+		async function* source() {
+			yield { type: "logprob" as const, channel: "content" as const, token: "a", logprob: -0.1 };
+			yield { type: "text.delta" as const, text: "a" };
+		}
+		const collected = await collectStream(source());
+		expect(collected.logprobs).toHaveLength(1);
+		expect(collected.text).toBe("a");
+	});
+
+	it("LSA-X102: post-finish Responses logprob dropped via assembleFromPayloads", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				strings(
+					JSON.stringify({ type: "response.completed", response: { status: "completed" } }),
+					JSON.stringify({
+						type: "response.output_text.delta",
+						delta: "late",
+						logprobs: [{ token: "late", logprob: -0.1 }],
+					}),
+				),
+				openaiResponsesAdapter(),
+			),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-X103: tapEvents preserves logprob-before-text.delta ordering", async () => {
+		const events = normalizeResponsesEvents(
+			await collectAsync(
+				tapEvents(
+					assembleStream(
+						byteStreamFromStrings(responsesTextFixture("logprobs-stream", "sse")),
+						openaiResponsesAdapter(),
+					),
+					() => undefined,
+				),
+			),
+		);
+		const logprobIndex = events.findIndex((event) => event.type === "logprob");
+		const textIndex = events.findIndex((event) => event.type === "text.delta");
+		expect(logprobIndex).toBeLessThan(textIndex);
+	});
+
+	it("LSA-X104: strictToolArgs with Responses logprobs-tool-stream validates tools", async () => {
+		const events = await collectAsync(
+			assembleFromFile(
+				join(responsesFixtures, "logprobs-tool-stream.sse"),
+				openaiResponsesAdapter(),
+				{
+					strictToolArgs: true,
+				},
+			),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(true);
+		expect(events.some((event) => event.type === "tool_call.done")).toBe(true);
+	});
+
+	it("LSA-X105: Chat and Responses share isLogprob guard", async () => {
+		const events = await collectAsync(
+			assembleStream(
+				byteStreamFromStrings(responsesTextFixture("logprobs-stream", "sse")),
+				openaiResponsesAdapter(),
+			),
+		);
+		expect(events.filter(isLogprob).length).toBe(2);
 	});
 });

@@ -85,4 +85,24 @@ describe("openaiResponsesAdapter parseResponse", () => {
 		);
 		expect(events).toContainEqual({ type: "reasoning.done", text: "reason", variant: "summary" });
 	});
+
+	it("LSA-R91: logprobs-response.json matches expected events", () => {
+		expect(responseFixture("logprobs-response")).toEqual(
+			expectedResponsesEvents("logprobs-response"),
+		);
+	});
+
+	it("LSA-R92: logprobs-refusal-response.json matches expected events", () => {
+		expect(responseFixture("logprobs-refusal-response")).toEqual(
+			expectedResponsesEvents("logprobs-refusal-response"),
+		);
+	});
+
+	it("LSA-R93: logprobs-response emits logprob before text.done", () => {
+		const events = responseFixture("logprobs-response");
+		const logprobIndex = events.findIndex((event) => event.type === "logprob");
+		const textIndex = events.findIndex((event) => event.type === "text.done");
+		expect(logprobIndex).toBeGreaterThanOrEqual(0);
+		expect(textIndex).toBeGreaterThan(logprobIndex);
+	});
 });

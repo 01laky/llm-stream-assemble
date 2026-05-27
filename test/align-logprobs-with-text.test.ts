@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
+import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleStream } from "../src/core/assemble-stream";
 import { alignLogprobsWithText } from "../src/helpers/align-logprobs-with-text";
 import { collectStream } from "../src/transforms/collect-stream";
@@ -157,5 +158,26 @@ describe("align logprobs with text", () => {
 		});
 		expect(result.unaligned).toBe(0);
 		expect(result.entries.length).toBe(collected.logprobs.length);
+	});
+
+	it("LSA-LPA13: end-to-end on Responses logprobs-stream collected output", async () => {
+		const sse = readFileSync(
+			join(rootDir, "test/fixtures/openai-responses/logprobs-stream.sse"),
+			"utf8",
+		);
+		const collected = await collectStream(
+			assembleStream(byteStreamFromStrings(sse), openaiResponsesAdapter()),
+		);
+		const result = alignLogprobsWithText({
+			assistantText: collected.text,
+			logprobs: collected.logprobs.map((event) => ({
+				token: event.token,
+				logprob: event.logprob,
+				position: event.position,
+				channel: event.channel,
+			})),
+		});
+		expect(result.unaligned).toBe(0);
+		expect(result.entries.length).toBe(2);
 	});
 });

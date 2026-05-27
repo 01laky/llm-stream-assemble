@@ -1,0 +1,54 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_multi"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_multi",
+		"model": "gpt-4.1-mini",
+		"created": 1710000204
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "A",
+		"logprob": -0.1,
+		"bytes": [
+			65
+		],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "A"
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "B",
+		"logprob": -0.15,
+		"bytes": [
+			66
+		],
+		"choiceIndex": 1,
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "B"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 2,
+		"outputTokens": 2
+	},
+	{
+		"type": "text.done",
+		"text": "AB"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

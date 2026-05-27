@@ -1,0 +1,67 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_tool_lp"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_tool_lp",
+		"model": "gpt-4.1-mini",
+		"created": 1710000207
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "Calling",
+		"logprob": -0.2,
+		"bytes": [
+			67,
+			97,
+			108,
+			108,
+			105,
+			110,
+			103
+		],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "Calling"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_1",
+		"name": "get_weather",
+		"index": 1
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_1",
+		"delta": "{\"city\":\"Prague\"}",
+		"partial": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_1",
+		"name": "get_weather",
+		"args": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "usage",
+		"inputTokens": 10,
+		"outputTokens": 8
+	},
+	{
+		"type": "text.done",
+		"text": "Calling"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

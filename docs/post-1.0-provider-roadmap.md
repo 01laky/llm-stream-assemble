@@ -530,12 +530,12 @@ could be committed without secrets.
 
 These are **not** required for every new adapter but may become necessary:
 
-| Enhancement                              | Trigger                                                                                      |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Additional `RawChunk` kinds              | ✅ Shipped **1.6.0** — `citation`, `grounding` RawChunks; ✅ **1.7.0** — `logprob` RawChunks |
-| Multi-terminal finish policy             | Justified breaking change → defer to 2.0 or document partial behavior                        |
-| `StreamEvent` citation / grounding types | ✅ Shipped **1.6.0** — Gemini grounding, Cohere/Perplexity citations                         |
-| `StreamEvent` logprob type               | ✅ Shipped **1.7.0** — OpenAI Chat + compatible `choices[].logprobs`                         |
+| Enhancement                              | Trigger                                                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Additional `RawChunk` kinds              | ✅ Shipped **1.6.0** — `citation`, `grounding` RawChunks; ✅ **1.7.0** — `logprob` RawChunks                       |
+| Multi-terminal finish policy             | Justified breaking change → defer to 2.0 or document partial behavior                                              |
+| `StreamEvent` citation / grounding types | ✅ Shipped **1.6.0** — Gemini grounding, Cohere/Perplexity citations                                               |
+| `StreamEvent` logprob type               | ✅ Shipped **1.7.0** — OpenAI Chat + compatible `choices[].logprobs`; ✅ **1.8.0** — OpenAI Responses `logprobs[]` |
 
 Any `StreamEvent` union extension must remain backward compatible for existing consumers
 (additive event types only in 1.x).
@@ -817,7 +817,7 @@ requirements change materially:
 1. **Gemini Vertex vs Google AI** — ✅ resolved in `1.5.5`: one adapter, `apiSurface` flag + `normalizeVertexChunk`.
 2. **Bedrock EventStream** — document helper in examples vs optional tiny internal utility (still zero dep)?
 3. **Citation / grounding events** — ✅ resolved in **1.6.0**: additive `citation` / `grounding` `StreamEvent` types; legacy `metadata.raw` opt-in via `emitLegacyCitationMetadata`.
-4. **Logprobs** — ✅ resolved in **1.7.0**: additive `logprob` events for OpenAI Chat + compatible when request enables logprobs; helpers `logprobConfidence`, `alignLogprobsWithText`; OpenAI Responses logprobs still deferred.
+4. **Logprobs** — ✅ resolved in **1.7.0** (Chat + compatible) and **1.8.0** (Responses): additive `logprob` events when request enables logprobs; shared `logprobChunksFromResponsesLogprobs` for Responses `logprobs[]`; helpers `logprobConfidence`, `alignLogprobsWithText`.
 5. **Compatible preset explosion** — keep one enum vs split `presets/` directory for maintainability?
 6. **Live smoke in CI** — remain opt-in manual forever, or nightly workflow with repository secrets?
 7. **DeepSeek reasoning** — sufficient via compatible dialect, or dedicated reasoning parser module?

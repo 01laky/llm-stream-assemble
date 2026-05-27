@@ -1,0 +1,40 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_part"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_part",
+		"model": "gpt-4.1-mini",
+		"created": 1710000206
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "Hi",
+		"logprob": -0.08,
+		"bytes": [
+			72,
+			105
+		],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "Hi"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 1,
+		"outputTokens": 1
+	},
+	{
+		"type": "text.done",
+		"text": "Hi"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

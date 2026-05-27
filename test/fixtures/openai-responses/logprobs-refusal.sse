@@ -1,0 +1,7 @@
+data: {"type":"response.created","response":{"id":"resp_ref_lp","model":"gpt-4.1-mini","created_at":1710000203}}
+
+data: {"type":"response.refusal.delta","output_index":0,"delta":"No","logprobs":[{"token":"No","logprob":-0.2,"bytes":[78,111],"top_logprobs":[{"token":"No","logprob":-0.2,"bytes":[78,111]}]}]}
+
+data: {"type":"response.refusal.delta","output_index":0,"delta":" thanks","logprobs":[{"token":" thanks","logprob":-0.4,"bytes":[32,116,104,97,110,107,115]}]}
+
+data: {"type":"response.completed","response":{"id":"resp_ref_lp","status":"completed","usage":{"input_tokens":2,"output_tokens":3}}}

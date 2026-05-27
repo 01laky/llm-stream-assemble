@@ -9,12 +9,12 @@ function read(path: string): string {
 	return readFileSync(join(rootDir, path), "utf8");
 }
 
-describe("docs positioning 1.7.0", () => {
-	it("LSA-DOC127: README badges reference 1.7.0 and test count badge", () => {
-		const readme = read("README.md");
-		expect(readme).toContain("core-1.7.0");
-		expect(readme).toMatch(/Stable `1\.7\.0`/);
-		expect(readme).toMatch(/tests-(?:TBD|\d+)_passing/);
+describe("docs positioning 1.7.0 (historical)", () => {
+	it("LSA-DOC127: historical 1.7.0 release traceability in CHANGELOG", () => {
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.7.0]");
+		expect(changelog).toMatch(/logprob/i);
+		expect(changelog).toMatch(/1966|README test badge \*\*1966\*\*/);
 	});
 
 	it("LSA-DOC128: CHANGELOG 1.7.0 mentions logprob events", () => {
@@ -23,9 +23,8 @@ describe("docs positioning 1.7.0", () => {
 		expect(changelog).toMatch(/logprob/i);
 	});
 
-	it("LSA-DOC129: package.json version is 1.7.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.7.0");
+	it("LSA-DOC129: CHANGELOG 1.7.0 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.7.0]");
 	});
 
 	it("LSA-DOC130: compatibility matrix documents OpenAI Chat logprobs mapping", () => {
@@ -75,10 +74,10 @@ describe("docs positioning 1.7.0", () => {
 		expect(mmd).toContain("Provenance");
 	});
 
-	it("LSA-DOC138: edge-cases.md cites LF01–LF05 conformance suite", () => {
+	it("LSA-DOC138: edge-cases.md cites LF01–LF05 Chat conformance suite", () => {
 		const doc = read("docs/edge-cases.md");
 		expect(doc).toContain("LSA-LF01");
-		expect(doc).toMatch(/LSA-LF01[\s\S]*LF08/);
+		expect(doc).toMatch(/LSA-LF01[\s\S]*LF05/);
 	});
 
 	it("LSA-DOC139: integration-cookbook cites proxy SSE logprob subsection", () => {
@@ -144,8 +143,9 @@ describe("docs positioning 1.7.0", () => {
 		expect(historical).toMatch(/DOC112.*CHANGELOG.*1\.6\.0/i);
 	});
 
-	it("LSA-DOC150: active package.json version is 1.7.0", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.7.0");
+	it("LSA-DOC150: historical 1.7.0 shipped Chat logprobs documented in CHANGELOG", () => {
+		const section = read("CHANGELOG.md").split("## [1.7.0]")[1]?.split("## [1.6.0]")[0] ?? "";
+		expect(section).toMatch(/logprob/i);
+		expect(section).toMatch(/1966/);
 	});
 });

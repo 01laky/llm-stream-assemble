@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.8.0]
+
+### Added
+
+- **OpenAI Responses API logprobs mapping** — `response.output_text.delta` / `.done`, `response.refusal.delta`, `response.content_part.added`, and non-stream `output_text` / refusal content parts map to existing **`logprob`** events when the request includes `include: ["message.output_text.logprobs"]`; **LSA-RL01**–**RL90**, **R76**–**R85**.
+- **Shared helper** `logprobChunksFromResponsesLogprobs()` in `src/adapters/shared/logprobs.ts`.
+- **Fixtures** — `test/fixtures/openai-responses/logprobs-*` (stream, done-batch, json-mode, refusal, tool, multi-output, failed-stream, content-part-added, response, refusal-response); generator `scripts/generate-openai-responses-logprob-fixtures.mjs` with **`pnpm fixtures:check-responses-logprobs`** (**MAINT32**).
+- **Conformance** — **LF06**–**LF11**, **R71**–**R73**; suites `responses-logprobs-core.test.ts`, `responses-logprobs-edge.test.ts`.
+- **Depth parity** — multi-output `choiceIndex`, parser state reset, non-stream refusal parts, AI SDK refusal map (**INT58**), large `top_logprobs`, terminal error after partial logprobs, content-part-added golden.
+- **Live smoke** — `pnpm smoke:openai-responses-logprobs` with `--capture` workflow (**DOC171**).
+- **Docs** — adapter-guide Chat vs Responses comparison (**DOC172**); **DOC151**–**DOC172**; historical **1.7.0** doc pins revised.
+
+### Changed
+
+- **`openaiResponsesAdapter()`** — emits logprob events before text/refusal/json deltas; done-batch logprobs only when `textSeen === false`; resets `textSeen` and position state per adapter instance.
+- **`normalizeResponsesEvents`** — strips `raw` from logprob goldens; strips default `choiceIndex: 0`.
+- **`mapFixtureEventsToAISDKParts`** — optional `adapter` for Responses replay.
+- **`pnpm verify`** — includes `fixtures:check-responses-logprobs`.
+- Version labels **1.8.0** across docs; README test badge **2125**.
+
+### Notes
+
+- Request must include `include: ["message.output_text.logprobs"]` (documented; not inferred).
+- Still deferred: Interactions API, AI21/watsonx presets, npm publish automation.
+
 ## [1.7.0]
 
 ### Added

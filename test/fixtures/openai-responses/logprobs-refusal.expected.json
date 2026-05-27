@@ -1,0 +1,70 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ref_lp"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ref_lp",
+		"model": "gpt-4.1-mini",
+		"created": 1710000203
+	},
+	{
+		"type": "logprob",
+		"channel": "refusal",
+		"token": "No",
+		"logprob": -0.2,
+		"bytes": [
+			78,
+			111
+		],
+		"topLogprobs": [
+			{
+				"token": "No",
+				"logprob": -0.2,
+				"bytes": [
+					78,
+					111
+				]
+			}
+		],
+		"position": 0
+	},
+	{
+		"type": "refusal.delta",
+		"text": "No"
+	},
+	{
+		"type": "logprob",
+		"channel": "refusal",
+		"token": " thanks",
+		"logprob": -0.4,
+		"bytes": [
+			32,
+			116,
+			104,
+			97,
+			110,
+			107,
+			115
+		],
+		"position": 1
+	},
+	{
+		"type": "refusal.delta",
+		"text": " thanks"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 2,
+		"outputTokens": 3
+	},
+	{
+		"type": "refusal.done",
+		"text": "No thanks"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

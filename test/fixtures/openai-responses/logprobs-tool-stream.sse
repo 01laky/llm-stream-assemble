@@ -1,0 +1,13 @@
+data: {"type":"response.created","response":{"id":"resp_tool_lp","model":"gpt-4.1-mini","created_at":1710000207}}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"Calling","logprobs":[{"token":"Calling","logprob":-0.2,"bytes":[67,97,108,108,105,110,103]}]}
+
+data: {"type":"response.output_item.added","output_index":1,"item":{"type":"function_call","id":"fc_1","call_id":"call_1","name":"get_weather","arguments":""}}
+
+data: {"type":"response.function_call_arguments.delta","output_index":1,"call_id":"call_1","delta":"{\"city\":\"Prague\"}"}
+
+data: {"type":"response.function_call_arguments.done","output_index":1,"call_id":"call_1","arguments":"{\"city\":\"Prague\"}"}
+
+data: {"type":"response.output_item.done","output_index":1,"item":{"type":"function_call","id":"fc_1","call_id":"call_1","name":"get_weather","arguments":"{\"city\":\"Prague\"}"}}
+
+data: {"type":"response.completed","response":{"id":"resp_tool_lp","status":"completed","usage":{"input_tokens":10,"output_tokens":8}}}

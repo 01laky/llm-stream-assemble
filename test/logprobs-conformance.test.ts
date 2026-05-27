@@ -1,8 +1,10 @@
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
+import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleResponse } from "../src/core/assemble-response";
 import { runAdapterGoldenStream } from "./helpers/adapter-conformance";
 import { expectedCompatibleEvents, hostCompatibleFixture } from "./helpers/compatible-fixtures";
@@ -11,10 +13,12 @@ import {
 	normalizeEvents,
 	openAIJSONFixture,
 } from "./helpers/openai-fixtures";
+import { normalizeResponsesEvents } from "./helpers/responses-fixtures";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const openaiFixtures = join(rootDir, "test/fixtures/openai-chat");
 const compatibleRoot = join(rootDir, "test/fixtures/openai-compatible");
+const responsesFixtures = join(rootDir, "test/fixtures/openai-responses");
 
 describe("logprobs conformance", () => {
 	it("LSA-LF01: openaiChatAdapter logprobs-stream golden", async () => {
@@ -67,5 +71,66 @@ describe("logprobs conformance", () => {
 			}),
 		);
 		expect(events).toEqual(hostCompatibleFixture("groq", "logprobs-stream", "expected.json"));
+	});
+
+	it("LSA-LF06: openaiResponsesAdapter logprobs-stream golden", async () => {
+		const events = normalizeResponsesEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiResponsesAdapter(),
+				fixtureSsePath: join(responsesFixtures, "logprobs-stream.sse"),
+				expectedEventsPath: join(responsesFixtures, "logprobs-stream.expected.json"),
+			}),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(true);
+	});
+
+	it("LSA-LF07: openaiResponsesAdapter logprobs-response golden", () => {
+		const events = normalizeResponsesEvents(
+			assembleResponse(
+				JSON.parse(readFileSync(join(responsesFixtures, "logprobs-response.json"), "utf8")),
+				openaiResponsesAdapter(),
+			),
+		);
+		expect(events).toEqual(
+			JSON.parse(readFileSync(join(responsesFixtures, "logprobs-response.expected.json"), "utf8")),
+		);
+	});
+
+	it("LSA-LF08: openaiResponsesAdapter logprobs-json-mode golden", async () => {
+		const events = normalizeResponsesEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiResponsesAdapter({ jsonMode: true }),
+				fixtureSsePath: join(responsesFixtures, "logprobs-json-mode.sse"),
+				expectedEventsPath: join(responsesFixtures, "logprobs-json-mode.expected.json"),
+			}),
+		);
+		expect(events.some((event) => event.type === "json.delta")).toBe(true);
+	});
+
+	it("LSA-LF09: openaiResponsesAdapter logprobs-tool-stream golden", async () => {
+		await runAdapterGoldenStream({
+			adapter: openaiResponsesAdapter(),
+			fixtureSsePath: join(responsesFixtures, "logprobs-tool-stream.sse"),
+			expectedEventsPath: join(responsesFixtures, "logprobs-tool-stream.expected.json"),
+		});
+	});
+
+	it("LSA-LF10: openaiResponsesAdapter logprobs-done-batch golden", async () => {
+		await runAdapterGoldenStream({
+			adapter: openaiResponsesAdapter(),
+			fixtureSsePath: join(responsesFixtures, "logprobs-done-batch.sse"),
+			expectedEventsPath: join(responsesFixtures, "logprobs-done-batch.expected.json"),
+		});
+	});
+
+	it("LSA-LF11: openaiResponsesAdapter logprobs-multi-output golden", async () => {
+		const events = normalizeResponsesEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiResponsesAdapter(),
+				fixtureSsePath: join(responsesFixtures, "logprobs-multi-output.sse"),
+				expectedEventsPath: join(responsesFixtures, "logprobs-multi-output.expected.json"),
+			}),
+		);
+		expect(events.some((event) => event.type === "logprob" && event.choiceIndex === 1)).toBe(true);
 	});
 });

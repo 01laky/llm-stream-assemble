@@ -1,0 +1,5 @@
+data: {"type":"response.created","response":{"id":"resp_done","model":"gpt-4.1-mini","created_at":1710000201}}
+
+data: {"type":"response.output_text.done","output_index":0,"text":"Hello!","logprobs":[{"token":"Hello","logprob":-0.12,"bytes":[72,101,108,108,111]},{"token":"!","logprob":-0.006,"bytes":[33]}]}
+
+data: {"type":"response.completed","response":{"id":"resp_done","status":"completed","usage":{"input_tokens":3,"output_tokens":2}}}

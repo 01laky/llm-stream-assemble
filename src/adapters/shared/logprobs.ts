@@ -113,3 +113,24 @@ export function logprobChunksFromChoiceLogprobs(
 
 	return chunks;
 }
+
+/** Map Responses API LogProb[] (top-level on event or content part) to RawChunks. */
+export function logprobChunksFromResponsesLogprobs(
+	logprobs: unknown,
+	channel: LogprobChannel,
+	choiceIndex?: number,
+	positionState?: LogprobPositionState,
+): RawChunk[] {
+	if (logprobs === null || logprobs === undefined) return [];
+	if (!Array.isArray(logprobs)) return [];
+
+	const chunks: RawChunk[] = [];
+	for (let index = 0; index < logprobs.length; index += 1) {
+		const position = positionState
+			? nextLogprobPosition(positionState, choiceIndex, channel)
+			: index;
+		const chunk = logprobEntryFromProvider(logprobs[index], channel, choiceIndex, position);
+		if (chunk) chunks.push(chunk);
+	}
+	return chunks;
+}

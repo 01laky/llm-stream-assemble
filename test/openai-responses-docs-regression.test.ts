@@ -39,4 +39,21 @@ describe("OpenAI Responses docs regression", () => {
 		expect(readme).toContain("docs-shaped");
 		expect(readme).toContain("redacted-live");
 	});
+
+	it("LSA-R97: adapter-guide documents Responses logprobs mapping", () => {
+		const guide = read("docs/adapter-guide.md");
+		expect(guide).toMatch(/Responses.*logprob|logprob.*Responses/i);
+		expect(guide).toContain("message.output_text.logprobs");
+	});
+
+	it("LSA-R98: compatibility matrix documents Responses logprobs", () => {
+		const docs = read("docs/compatibility.md");
+		expect(docs).toMatch(/Responses.*logprob|logprob.*Responses/i);
+	});
+
+	it("LSA-R99: fixture README documents logprobs fixtures", () => {
+		const readme = read("test/fixtures/openai-responses/README.md");
+		expect(readme).toContain("logprobs-stream");
+		expect(readme).toContain("LF06");
+	});
 });

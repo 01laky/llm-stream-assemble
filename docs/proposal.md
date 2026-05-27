@@ -61,16 +61,16 @@ Existing solutions (LangChain, Vercel AI SDK, `@node-llm/core`, etc.) address th
 
 A focused TypeScript library with a single responsibility:
 
-| In scope                                                 | Out of scope                         |
-| -------------------------------------------------------- | ------------------------------------ |
-| Parse provider-specific stream chunks and JSON responses | HTTP client, auth, retries           |
-| Assemble text, tool calls, reasoning, structured JSON    | Agent loop, tool execution           |
-| Emit unified `StreamEvent`s (stream + non-stream)        | Memory / persistence                 |
-| Partial JSON for live preview                            | Billing, telemetry                   |
-| Provider adapters (pluggable)                            | React hooks, UI components           |
-| Transforms: `toSSE`, `collectStream`, `TransformStream`  | Multimodal audio/video streams (v1)  |
-| Type-safe event helpers                                  | Optional Zod validation (peer dep)   |
-| Proxy error sanitization option                          | OpenAI Responses logprobs (deferred) |
+| In scope                                                 | Out of scope                          |
+| -------------------------------------------------------- | ------------------------------------- |
+| Parse provider-specific stream chunks and JSON responses | HTTP client, auth, retries            |
+| Assemble text, tool calls, reasoning, structured JSON    | Agent loop, tool execution            |
+| Emit unified `StreamEvent`s (stream + non-stream)        | Memory / persistence                  |
+| Partial JSON for live preview                            | Billing, telemetry                    |
+| Provider adapters (pluggable)                            | React hooks, UI components            |
+| Transforms: `toSSE`, `collectStream`, `TransformStream`  | Multimodal audio/video streams (v1)   |
+| Type-safe event helpers                                  | Optional Zod validation (peer dep)    |
+| Proxy error sanitization option                          | Realtime WebSocket audio streams (v1) |
 
 ### Target users
 
@@ -596,7 +596,7 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 - Stream multiplex and resume / cursor support
 - Optional `zod` peer for strict `tool_call.done` / `json.done` validation
 - Citations and grounding shipped in **1.6.0** as additive `citation` / `grounding` events
-- Logprobs shipped in **1.7.0** as additive `logprob` events (OpenAI Chat + compatible; Responses deferred)
+- Logprobs shipped in **1.7.0** as additive `logprob` events (OpenAI Chat + compatible); Responses API logprobs shipped in **1.8.0**
 - Split into monorepo packages if adapter count warrants it
 - Browser bundle audit and dedicated edge entry point
 

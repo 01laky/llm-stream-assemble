@@ -26,14 +26,15 @@ Full README index: [Examples](../README.md#examples).
 
 Maintainer-only — requires `pnpm build` and API keys. See [`docs/live-smoke.md`](../docs/live-smoke.md).
 
-| Example file                      | Matching smoke command               | Notes                                              |
-| --------------------------------- | ------------------------------------ | -------------------------------------------------- |
-| `node-fetch/gemini.ts`            | `pnpm smoke:gemini`                  | Google AI key; optional `--capture`                |
-| `node-fetch/openai-chat.ts`       | `pnpm smoke:openai-logprobs`         | OpenAI key; `logprobs: true` smoke; skips if unset |
-| `node-fetch/vertex-gemini.ts`     | `pnpm smoke:vertex`                  | ADC bearer token, not Google AI key                |
-| `node-fetch/cohere.ts`            | `pnpm smoke:cohere`                  | Optional `--capture`                               |
-| `node-fetch/bedrock.ts`           | `pnpm smoke:bedrock`                 | AWS credential chain                               |
-| `node-fetch/openai-compatible.ts` | `pnpm smoke:ollama` / `deepseek` / … | Match `OPENAI_COMPATIBLE_PROVIDER` preset          |
+| Example file                      | Matching smoke command                 | Notes                                                             |
+| --------------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
+| `node-fetch/gemini.ts`            | `pnpm smoke:gemini`                    | Google AI key; optional `--capture`                               |
+| `node-fetch/openai-chat.ts`       | `pnpm smoke:openai-logprobs`           | OpenAI key; `logprobs: true` smoke; skips if unset                |
+| OpenAI Responses logprobs         | `pnpm smoke:openai-responses-logprobs` | `include: ["message.output_text.logprobs"]`; optional `--capture` |
+| `node-fetch/vertex-gemini.ts`     | `pnpm smoke:vertex`                    | ADC bearer token, not Google AI key                               |
+| `node-fetch/cohere.ts`            | `pnpm smoke:cohere`                    | Optional `--capture`                                              |
+| `node-fetch/bedrock.ts`           | `pnpm smoke:bedrock`                   | AWS credential chain                                              |
+| `node-fetch/openai-compatible.ts` | `pnpm smoke:ollama` / `deepseek` / …   | Match `OPENAI_COMPATIBLE_PROVIDER` preset                         |
 
 ## OpenAI
 

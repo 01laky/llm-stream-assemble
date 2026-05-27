@@ -16,6 +16,7 @@ All commands require **`pnpm build`** first. None run in CI.
 | --------------------------------------------------------------------- | -------------------------- | --------------------------------------------------- | ----------------------------------- |
 | [`smoke:gemini`](#gemini-google-ai)                                   | Google AI Gemini SSE       | `GOOGLE_API_KEY` / `GEMINI_API_KEY`, `GEMINI_MODEL` | `--capture`, `GEMINI_SMOKE_TOOLS=1` |
 | [`smoke:openai-logprobs`](#openai-chat-logprobs)                      | OpenAI Chat logprobs       | `OPENAI_API_KEY`, `OPENAI_LOGPROBS_MODEL`           | `--capture`; skips if no key        |
+| [`smoke:openai-responses-logprobs`](#openai-responses-logprobs)       | OpenAI Responses logprobs  | `OPENAI_API_KEY`, `OPENAI_RESPONSES_LOGPROBS_MODEL` | `--capture`; skips if no key        |
 | [`smoke:vertex`](#vertex-ai-gemini)                                   | Vertex AI Gemini JSONL     | `GOOGLE_CLOUD_PROJECT`, `VERTEX_ACCESS_TOKEN`, …    | `--capture`                         |
 | [`smoke:cohere`](#cohere-v2-chat)                                     | Cohere Chat v2             | `COHERE_API_KEY`, `COHERE_MODEL`                    | `--capture`, `COHERE_SMOKE_TOOLS=1` |
 | [`smoke:bedrock`](#bedrock-converse-conversestream)                   | AWS Bedrock ConverseStream | AWS credential chain, `BEDROCK_MODEL_ID`            | —                                   |
@@ -109,6 +110,62 @@ Optional env:
 | 401 / 403           | Invalid or missing API key                         |
 | 429                 | Quota / rate limit                                 |
 | No `logprob` events | Model or endpoint omitted logprobs despite request |
+
+## OpenAI Responses logprobs
+
+Requires an OpenAI API key with Responses API access. Skips gracefully (exit 0) when `OPENAI_API_KEY` is unset.
+
+```bash
+pnpm build
+pnpm smoke:openai-responses-logprobs
+```
+
+Optional capture for fixture drift detection:
+
+```bash
+pnpm build
+OPENAI_API_KEY=... pnpm smoke:openai-responses-logprobs --capture
+```
+
+Writes redacted provider payloads to `.local-playground/openai-responses-logprobs-capture/capture-<timestamp>.txt` (gitignored).
+
+Optional env:
+
+| Variable                          | Default       | Purpose                                                                    |
+| --------------------------------- | ------------- | -------------------------------------------------------------------------- |
+| `OPENAI_API_KEY`                  | —             | API auth; script skips when unset                                          |
+| `OPENAI_RESPONSES_LOGPROBS_MODEL` | `gpt-4o-mini` | Model id for smoke prompt with `include: ["message.output_text.logprobs"]` |
+
+### Expected event types (short text prompt with logprobs)
+
+- `metadata` or early response lifecycle events
+- `logprob` (one or more, before matching `text.delta` on each `output_text.delta`)
+- `text.delta` (one or more)
+- `text.done`
+- `finish` with `reason: "stop"`
+
+### Fixture capture workflow
+
+When updating Responses logprob fixtures against live API shapes:
+
+1. **Run capture** — `pnpm smoke:openai-responses-logprobs --capture` with billing enabled.
+2. **Inspect** — review `.local-playground/openai-responses-logprobs-capture/capture-<timestamp>.txt` for event types and `logprobs[]` shape.
+3. **Redact** — remove API keys, org ids, live request/response ids, and any PII before committing.
+4. **Merge fixtures** — translate redacted payloads into docs-shaped `.sse` / `.json` under `test/fixtures/openai-responses/logprobs-*`.
+5. **Regenerate** — `node scripts/generate-openai-responses-logprob-fixtures.mjs` to rewrite `.expected.json` goldens.
+6. **Test** — `node scripts/generate-openai-responses-logprob-fixtures.mjs --check` and `pnpm verify` (suites **LSA-RL01**–**RL52**, **R71**–**R99**, **LF06**–**LF11**).
+
+Prefer synthetic minimal fixtures for CI; use capture to detect provider drift.
+
+### Failure modes
+
+| Symptom             | Likely cause                                                          |
+| ------------------- | --------------------------------------------------------------------- |
+| Skipped immediately | `OPENAI_API_KEY` not set — expected locally                           |
+| 401 / 403           | Invalid or missing API key                                            |
+| 429                 | Quota / rate limit                                                    |
+| No `logprob` events | Missing `include: ["message.output_text.logprobs"]` on request        |
+| Empty `logprobs[]`  | Model may omit logprobs with structured outputs — provider limitation |
 
 ## Checklist before tagging a Gemini patch
 

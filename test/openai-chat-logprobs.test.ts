@@ -324,4 +324,26 @@ describe("openai chat logprobs", () => {
 		);
 		expect(contentLogprobs.map((event) => event.position)).toEqual([0, 1]);
 	});
+
+	it("LSA-OC319: text-basic.sse golden unchanged without logprobs", async () => {
+		const events = normalizeEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiChatAdapter(),
+				fixtureSsePath: join(fixturesDir, "text-basic.sse"),
+				expectedEventsPath: join(fixturesDir, "text-basic.expected.json"),
+			}),
+		);
+		expect(events.some((event) => event.type === "logprob")).toBe(false);
+	});
+
+	it("LSA-OC320: logprobs-stream golden unchanged after Responses shared-helper edit", async () => {
+		const events = normalizeEvents(
+			await runAdapterGoldenStream({
+				adapter: openaiChatAdapter(),
+				fixtureSsePath: join(fixturesDir, "logprobs-stream.sse"),
+				expectedEventsPath: join(fixturesDir, "logprobs-stream.expected.json"),
+			}),
+		);
+		expect(events).toEqual(expectedOpenAIEvents("logprobs-stream"));
+	});
 });

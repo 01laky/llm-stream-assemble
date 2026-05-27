@@ -1,5 +1,10 @@
 import type { RawChunk, StreamAdapter } from "../core/types";
 import { libraryError, providerErrorChunksFromMessage } from "./errors";
+import {
+	createLogprobPositionState,
+	logprobChunksFromResponsesLogprobs,
+	type LogprobPositionState,
+} from "./shared/logprobs";
 import { parseAdapterObjectPayload } from "./shared/parse-payload";
 import { textOrJsonDelta } from "./shared/text-delta";
 import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
@@ -29,6 +34,7 @@ export function openaiResponsesAdapter(options: OpenAIResponsesAdapterOptions = 
 class ResponsesParser {
 	private metadataEmitted = false;
 	private textSeen = false;
+	private readonly logprobPositions = createLogprobPositionState();
 	private readonly tools = new Map<string, ToolState>();
 
 	constructor(private readonly options: OpenAIResponsesAdapterOptions) {}
@@ -58,13 +64,13 @@ class ResponsesParser {
 				chunks.push(...this.textDone(payload));
 				break;
 			case "response.refusal.delta":
-				chunks.push(...refusalDelta(payload));
+				chunks.push(...this.refusalDelta(payload));
 				break;
 			case "response.refusal.done":
 				break;
 			case "response.content_part.added":
 			case "response.content_part.done":
-				chunks.push(...contentPartChunks(payload, this.options));
+				chunks.push(...this.contentPartChunks(payload));
 				break;
 			case "response.output_item.added":
 				chunks.push(...this.outputItemAdded(payload));
@@ -104,20 +110,65 @@ class ResponsesParser {
 	}
 
 	private textDelta(payload: Record<string, unknown>): RawChunk[] {
+		const chunks = logprobChunksFromResponsesLogprobs(
+			payload.logprobs,
+			"content",
+			choiceIndexFromOutputIndex(payload.output_index),
+			this.logprobPositions,
+		);
 		const text = asString(payload.delta) ?? asString(payload.text);
-		if (!text) return [];
+		if (!text) return chunks;
 		this.textSeen = true;
 		const chunk = textOrJsonDelta(text, { jsonMode: this.options.jsonMode });
-		return chunk ? [chunk] : [];
+		if (chunk) chunks.push(chunk);
+		return chunks;
 	}
 
 	private textDone(payload: Record<string, unknown>): RawChunk[] {
-		if (this.textSeen) return [];
+		const chunks: RawChunk[] = [];
+		if (!this.textSeen) {
+			chunks.push(
+				...logprobChunksFromResponsesLogprobs(
+					payload.logprobs,
+					"content",
+					choiceIndexFromOutputIndex(payload.output_index),
+					this.logprobPositions,
+				),
+			);
+		}
+		if (this.textSeen) return chunks;
 		const text = asString(payload.text) ?? asString(payload.delta);
-		if (!text) return [];
+		if (!text) return chunks;
 		this.textSeen = true;
 		const chunk = textOrJsonDelta(text, { jsonMode: this.options.jsonMode });
-		return chunk ? [chunk] : [];
+		if (chunk) chunks.push(chunk);
+		return chunks;
+	}
+
+	private refusalDelta(payload: Record<string, unknown>): RawChunk[] {
+		const chunks = logprobChunksFromResponsesLogprobs(
+			payload.logprobs,
+			"refusal",
+			choiceIndexFromOutputIndex(payload.output_index),
+			this.logprobPositions,
+		);
+		const text = asString(payload.delta) ?? asString(payload.refusal) ?? asString(payload.text);
+		if (text) chunks.push({ kind: "refusal-delta", text });
+		return chunks;
+	}
+
+	private contentPartChunks(payload: Record<string, unknown>): RawChunk[] {
+		const part = isRecord(payload.part)
+			? payload.part
+			: isRecord(payload.content_part)
+				? payload.content_part
+				: payload;
+		return messageItemChunks(
+			{ content: [part] },
+			this.options,
+			this.logprobPositions,
+			asNumber(payload.output_index),
+		);
 	}
 
 	private outputItemAdded(payload: Record<string, unknown>): RawChunk[] {
@@ -151,7 +202,12 @@ class ResponsesParser {
 			}
 			return chunks;
 		}
-		return messageItemChunks(item, this.options);
+		return messageItemChunks(
+			item,
+			this.options,
+			this.logprobPositions,
+			asNumber(payload.output_index),
+		);
 	}
 
 	private outputItemDelta(payload: Record<string, unknown>): RawChunk[] {
@@ -180,7 +236,13 @@ class ResponsesParser {
 
 	private outputItemDone(payload: Record<string, unknown>): RawChunk[] {
 		const item = isRecord(payload.item) ? payload.item : payload;
-		if (asString(item.type) !== "function_call") return messageItemChunks(item, this.options);
+		if (asString(item.type) !== "function_call")
+			return messageItemChunks(
+				item,
+				this.options,
+				this.logprobPositions,
+				asNumber(payload.output_index),
+			);
 		const state = this.toolState(payload, item);
 		if (state.done) return [];
 		state.done = true;
@@ -284,6 +346,7 @@ function parseResponse(body: unknown, options: OpenAIResponsesAdapterOptions): R
 		return providerErrorChunks(errorMessage(body));
 	}
 
+	const positionState = createLogprobPositionState();
 	const chunks: RawChunk[] = [];
 	chunks.push(...metadataChunks(body));
 	const output = Array.isArray(body.output) ? body.output : [];
@@ -298,7 +361,7 @@ function parseResponse(body: unknown, options: OpenAIResponsesAdapterOptions): R
 			if (args) chunks.push({ kind: "tool-args-delta", id, delta: args, index });
 			chunks.push({ kind: "tool-done", id, index });
 		} else {
-			chunks.push(...messageItemChunks(item, options));
+			chunks.push(...messageItemChunks(item, options, positionState));
 		}
 	}
 	chunks.push(...usageFromResponse(body));
@@ -306,6 +369,12 @@ function parseResponse(body: unknown, options: OpenAIResponsesAdapterOptions): R
 	if (status === "incomplete") chunks.push({ kind: "finish", reason: "incomplete" });
 	else chunks.push({ kind: "finish", reason: "stop" });
 	return chunks;
+}
+
+function choiceIndexFromOutputIndex(outputIndex: unknown): number | undefined {
+	const index = asNumber(outputIndex);
+	if (index === undefined || index === 0) return undefined;
+	return index;
 }
 
 function metadataChunks(response: Record<string, unknown>): RawChunk[] {
@@ -336,12 +405,19 @@ function hasResponseMetadata(response: Record<string, unknown>): boolean {
 function messageItemChunks(
 	item: Record<string, unknown>,
 	options: OpenAIResponsesAdapterOptions,
+	positionState?: LogprobPositionState,
+	outputIndex?: number,
 ): RawChunk[] {
 	const chunks: RawChunk[] = [];
+	const choiceIndex = choiceIndexFromOutputIndex(outputIndex);
 	const content = Array.isArray(item.content) ? item.content : [];
 	for (const part of content) {
 		if (!isRecord(part)) continue;
 		const type = asString(part.type);
+		const channel = type === "refusal" ? "refusal" : "content";
+		chunks.push(
+			...logprobChunksFromResponsesLogprobs(part.logprobs, channel, choiceIndex, positionState),
+		);
 		const text = asString(part.text) ?? asString(part.delta);
 		const refusal = asString(part.refusal);
 		if (type === "output_text" && text) chunks.push(textChunk(text, options));
@@ -352,23 +428,6 @@ function messageItemChunks(
 	if (directText) chunks.push(textChunk(directText, options));
 	chunks.push(...reasoningChunks(item));
 	return chunks;
-}
-
-function contentPartChunks(
-	payload: Record<string, unknown>,
-	options: OpenAIResponsesAdapterOptions,
-): RawChunk[] {
-	const part = isRecord(payload.part)
-		? payload.part
-		: isRecord(payload.content_part)
-			? payload.content_part
-			: payload;
-	return messageItemChunks({ content: [part] }, options);
-}
-
-function refusalDelta(payload: Record<string, unknown>): RawChunk[] {
-	const text = asString(payload.delta) ?? asString(payload.refusal) ?? asString(payload.text);
-	return text ? [{ kind: "refusal-delta", text }] : [];
 }
 
 function reasoningChunks(payload: Record<string, unknown>): RawChunk[] {
