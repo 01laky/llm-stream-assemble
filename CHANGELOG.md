@@ -30,6 +30,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 - Request must include `include: ["message.output_text.logprobs"]` (documented; not inferred).
 - Still deferred: Interactions API, AI21/watsonx presets, npm publish automation.
 
+### Fixed
+
+- Regenerated Gemini `grounding-metadata` goldens (Google AI + Vertex) to fix `fixtures:check-gemini` CI drift on `queries` array formatting.
+
 ## [1.7.0]
 
 ### Added
