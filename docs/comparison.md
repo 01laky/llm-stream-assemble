@@ -1,6 +1,6 @@
 # How this compares
 
-**Status:** Active guide — `1.5.5`
+**Status:** Active guide — `1.5.6`
 
 Where `llm-stream-assemble` fits relative to common alternatives. Comparisons are **best-effort** — other packages evolve independently; verify before choosing.
 
@@ -8,7 +8,7 @@ Where `llm-stream-assemble` fits relative to common alternatives. Comparisons ar
 
 ## Positioning in one sentence
 
-> A **zero-dependency stream assembly primitive**: provider bytes → unified `StreamEvent`s. Not an HTTP client, agent framework, or UI kit.
+> A **composable TypeScript stream assembly layer**: provider bytes → unified `StreamEvent`s with zero runtime dependencies. Not an HTTP client, agent framework, or UI kit.
 
 ---
 

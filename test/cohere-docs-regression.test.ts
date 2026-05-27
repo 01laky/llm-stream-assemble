@@ -32,9 +32,9 @@ describe("cohere docs regression", () => {
 		expect(changelog.toLowerCase()).toContain("cohere");
 	});
 
-	it("LSA-CO31: package.json version is 1.5.5", () => {
+	it("LSA-CO31: package.json version is 1.5.6", () => {
 		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.5");
+		expect(pkg.version).toBe("1.5.6");
 	});
 
 	it("LSA-CO32: examples/node-fetch/cohere.ts exists and mentions parseSSE", () => {

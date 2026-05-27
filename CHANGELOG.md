@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.6]
+
+### Added
+
+- **Adapter edge-case suites expanded** — OpenAI Chat (**LSA-OC234**–**OC252**), OpenAI Responses (**LSA-R45**–**R58**), Anthropic (**LSA-A42**–**A55**), Google AI Gemini (**LSA-G70**–**G85**), Bedrock (**LSA-B72**–**B78**), and Cohere duplicate-ID cleanup; dedicated edge files now mirror Cohere/Bedrock/Vertex depth (jsonMode, refusal, reasoning, parallel tools, post-finish drops, provider errors, unicode, finish-reason matrix, golden regressions).
+- **`test/docs-positioning-1.5.6.test.ts`** — README/GitHub About composable positioning with Vertex AI in the provider sweep, expanded `package.json` keywords, and **1.5.6** release metadata regressions (**LSA-DOC89**–**DOC96**).
+
+### Changed
+
+- **README blockquote / GitHub About** — composable TypeScript layer positioning with **Vertex AI** in the provider list (`Ollama → Azure → Vertex AI → Bedrock → Cohere → Cloudflare Workers AI`); runtime-deps badge unchanged.
+- **`package.json`** — description and keywords expanded (`vertex-ai`, `azure-openai`, `openai-compatible`, `stream-events`, `reasoning`, `json-mode`, `composable`, and related discovery terms).
+- **Active doc status labels** — `1.5.6` across README badges, compatibility matrix, adapter guide, FAQ, edge-cases, integration cookbook, performance, comparison, and `adapters-overview.mmd`.
+- **`docs/comparison.md`** positioning sentence aligned with composable About while noting zero runtime dependencies as a separate property.
+- Version-pinning regression tests updated from **1.5.5** → **1.5.6** where they assert the current release; historical **1.5.5** Vertex entries in CHANGELOG/roadmap tests preserved.
+
 ## [1.5.5]
 
 ### Added
@@ -25,7 +40,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 - **`docs/post-1.0-provider-roadmap.md`** — Vertex AI Gemini **1.5.5** marked shipped in release sequence; Gemini tier notes updated.
 - **`pnpm verify`** — includes **`fixtures:check-gemini`** after unit tests.
 - **Architecture diagrams** — `pipeline`, `quick-decision`, `chunk-assembly`, `assembler-lifecycle`, and `transforms` mermaid/SVG sources now show Vertex JSONL decode (`read-chunk-stream.ts`) and `apiSurface: "vertex"` alongside Bedrock EventStream; `docs/img/README.md`, **`docs/performance.md`**, and **`docs/comparison.md`** status labels aligned to **1.5.5**.
-- Version labels **1.5.5** across docs; README test badge **1477**.
+- Version labels **1.5.6** across docs; README test badge **1555**.
 
 ### Notes
 

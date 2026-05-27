@@ -49,7 +49,7 @@ describe("release readiness", () => {
 	});
 
 	it("LSA-REL08: README mentions publish-facing GitHub description", () => {
-		expect(read("README.md")).toContain("A zero-dependency TypeScript layer");
+		expect(read("README.md")).toContain("A composable TypeScript layer");
 	});
 
 	it("LSA-REL09: adapter guide status is not stale Phase 2 wording", () => {

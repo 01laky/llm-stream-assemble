@@ -1,19 +1,19 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.5.5-blue)
+![core](https://img.shields.io/badge/core-1.5.6-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1477_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1555_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.5.5-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.5.6-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
-> A zero-dependency TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Bedrock to Cohere to Cloudflare Workers AI.
+> A composable TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Vertex AI to Bedrock to Cohere to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.5.5`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.5.6`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 

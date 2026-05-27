@@ -133,8 +133,8 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(doc).toMatch(/tool calling/i);
 	});
 
-	it("LSA-DOC16: compatibility.md stable status is 1.5.5", () => {
-		expect(read("docs/compatibility.md")).toContain("Stable `1.5.5`");
+	it("LSA-DOC16: compatibility.md stable status is 1.5.6", () => {
+		expect(read("docs/compatibility.md")).toContain("Stable `1.5.6`");
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {
@@ -166,9 +166,9 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		}
 	});
 
-	it("LSA-DOC20: package.json description mentions zero-dependency and unified events", () => {
+	it("LSA-DOC20: package.json description mentions composable positioning and unified events", () => {
 		const pkg = JSON.parse(read("package.json")) as { description?: string };
-		expect(pkg.description).toMatch(/Zero-dependency/i);
+		expect(pkg.description).toMatch(/Composable/i);
 		expect(pkg.description).toMatch(/StreamEvent/i);
 	});
 });

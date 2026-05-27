@@ -1,6 +1,6 @@
 # Performance & runtime behavior
 
-**Status:** Active guide — `1.5.5`
+**Status:** Active guide — `1.5.6`
 
 How `llm-stream-assemble` handles streaming work: design properties, memory, and an informal smoke benchmark. This is not a formal benchmark suite or SLA.
 

@@ -6,7 +6,7 @@ import {
 	expectedBedrockEvents,
 	normalizeBedrockEvents,
 } from "./helpers/bedrock-fixtures";
-import { collectAsync } from "./helpers/collect-events";
+import { collectAsync, strings } from "./helpers/collect-events";
 
 const payload = (value: unknown) => JSON.stringify(value);
 
@@ -204,5 +204,125 @@ describe("bedrockAdapter edge cases", () => {
 					"trace" in (event.raw as Record<string, unknown>),
 			),
 		).toBe(false);
+	});
+
+	it("LSA-B72: assembler drops usage metadata after messageStop", async () => {
+		async function* payloads() {
+			yield payload({ messageStart: { role: "assistant" } });
+			yield payload({
+				contentBlockDelta: { contentBlockIndex: 0, delta: { text: "x" } },
+			});
+			yield payload({ messageStop: { stopReason: "end_turn" } });
+			yield payload({
+				metadata: { usage: { inputTokens: 3, outputTokens: 1, totalTokens: 4 } },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), bedrockAdapter()));
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+		expect(events.some((event) => event.type === "usage")).toBe(false);
+	});
+
+	it("LSA-B73: contentBlockStop for toolUse emits tool-done", () => {
+		const adapter = bedrockAdapter();
+		expect(
+			adapter.parseChunk(
+				payload({
+					contentBlockStart: {
+						contentBlockIndex: 0,
+						start: { toolUse: { toolUseId: "tool_1", name: "search" } },
+					},
+				}),
+			),
+		).toContainEqual({
+			kind: "tool-start",
+			id: "tool_1",
+			name: "search",
+			index: 0,
+			choiceIndex: 0,
+		});
+		expect(
+			adapter.parseChunk(payload({ contentBlockStop: { contentBlockIndex: 0 } })),
+		).toContainEqual({ kind: "tool-done", id: "tool_1", index: 0, choiceIndex: 0 });
+	});
+
+	it("LSA-B74: messageStop max_tokens maps to finish length", () => {
+		expect(
+			bedrockAdapter().parseChunk(payload({ messageStop: { stopReason: "max_tokens" } })),
+		).toContainEqual({ kind: "finish", reason: "length", choiceIndex: 0 });
+	});
+
+	it("LSA-B75: unicode text delta preserved", () => {
+		expect(
+			bedrockAdapter().parseChunk(
+				payload({
+					contentBlockDelta: { contentBlockIndex: 0, delta: { text: "čaj 🍵" } },
+				}),
+			),
+		).toEqual([{ kind: "text-delta", text: "čaj 🍵", choiceIndex: 0 }]);
+	});
+
+	it("LSA-B76: usage in messageStop before finish is emitted when stream still open", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				strings(
+					payload({ messageStart: { role: "assistant" } }),
+					payload({
+						contentBlockDelta: { contentBlockIndex: 0, delta: { text: "hi" } },
+					}),
+					payload({
+						messageStop: {
+							stopReason: "end_turn",
+							additionalModelResponseFields: undefined,
+						},
+					}),
+				),
+				bedrockAdapter(),
+			),
+		);
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+	});
+
+	it("LSA-B77: tool input incremental json delta maps tool-args-delta", () => {
+		const adapter = bedrockAdapter();
+		adapter.parseChunk(
+			payload({
+				contentBlockStart: {
+					contentBlockIndex: 0,
+					start: { toolUse: { toolUseId: "t1", name: "search" } },
+				},
+			}),
+		);
+		expect(
+			adapter.parseChunk(
+				payload({
+					contentBlockDelta: {
+						contentBlockIndex: 0,
+						delta: { toolUse: { input: '{"q":' } },
+					},
+				}),
+			),
+		).toContainEqual(
+			expect.objectContaining({
+				kind: "tool-args-delta",
+				id: "t1",
+				delta: '{"q":',
+				index: 0,
+				choiceIndex: 0,
+			}),
+		);
+	});
+
+	it("LSA-B78: provider-error golden stream matches expected events", async () => {
+		const events = normalizeBedrockEvents(
+			await collectAsync(
+				assembleFromPayloads(
+					(async function* () {
+						for (const line of bedrockJsonlLines("provider-error")) yield line;
+					})(),
+					bedrockAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedBedrockEvents("provider-error"));
 	});
 });

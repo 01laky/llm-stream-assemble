@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.5.5`
+**Status:** Active guide — `1.5.6`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
