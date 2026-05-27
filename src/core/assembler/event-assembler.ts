@@ -7,6 +7,7 @@ import type {
 	StreamEvent,
 } from "../types";
 import { utf8ByteLength } from "../utils/bytes";
+import { stripUndefined } from "../utils/object";
 import { errorFromUnknown, prefixedError } from "../utils/source";
 
 type TextState = Map<number, string>;
@@ -321,8 +322,10 @@ export class EventAssembler {
 }
 
 function optionalEvent(event: Record<string, unknown>): StreamEvent {
-	return Object.fromEntries(
-		Object.entries(event).filter(([, value]) => value !== undefined && value !== "kind"),
+	return stripUndefined(
+		Object.fromEntries(
+			Object.entries(event).filter(([, value]) => value !== undefined && value !== "kind"),
+		),
 	) as StreamEvent;
 }
 

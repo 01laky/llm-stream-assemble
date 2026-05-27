@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { geminiAdapter } from "../src/adapters/gemini";
+import { assembleFromPayloads } from "../src/core/assemble-payloads";
 import { assembleStream } from "../src/core/assemble-stream";
 import { byteStreamFromStrings, collectAsync } from "./helpers/collect-events";
 import {
@@ -110,5 +111,37 @@ describe("geminiAdapter edge cases", () => {
 			),
 		);
 		expect(events).toEqual(expectedGeminiEvents("tool-parallel"));
+	});
+
+	it("LSA-G64: empty or whitespace line yields no chunks", () => {
+		expect(geminiAdapter().parseChunk("")).toEqual([]);
+		expect(geminiAdapter().parseChunk("  ")).toEqual([]);
+	});
+
+	it("LSA-G65: [DONE] marker yields no chunks", () => {
+		expect(geminiAdapter().parseChunk("[DONE]")).toEqual([]);
+	});
+
+	it("LSA-G66: non-object JSON throws scoped expected object error", () => {
+		expect(() => geminiAdapter().parseChunk(JSON.stringify(true))).toThrow(
+			/geminiAdapter\.parseChunk: expected a JSON object/,
+		);
+	});
+
+	it("LSA-G67: assembler drops usage metadata after candidate finish", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, content: { parts: [{ text: "x" }] } }],
+			});
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				usageMetadata: { promptTokenCount: 2, candidatesTokenCount: 1, totalTokenCount: 3 },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+		expect(events.some((event) => event.type === "usage")).toBe(false);
 	});
 });

@@ -1,6 +1,6 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.4.0` (initial cookbook shipped in `1.3.6`)
+**Status:** Active guide — `1.4.1` (initial cookbook shipped in `1.3.6`)
 
 Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 

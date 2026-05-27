@@ -1,18 +1,17 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
-import { libraryError, providerErrorChunksFromMessage } from "./errors";
+import { anthropicBlockStartChunks, anthropicResponseBlockChunks } from "./shared/anthropic-blocks";
+import { parseAdapterObjectPayload } from "./shared/parse-payload";
+import { mapAnthropicLikeStopReason } from "./shared/stop-reasons";
+import { buildUsageChunk } from "./shared/usage";
 import {
-	asNumber,
-	asString,
-	createStreamAdapter,
-	isRecord,
-	optionalRawChunk,
-	parseAdapterJSON,
-} from "./utils";
+	libraryError,
+	providerErrorChunksFromMessage,
+	providerErrorChunksFromPayload,
+} from "./errors";
+import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
 
 export interface AnthropicAdapterOptions {
-	/**
-	 * Map `json` content blocks to json-delta instead of text-delta.
-	 */
+	/** Map `json` content blocks to json-delta instead of text-delta. */
 	jsonMode?: boolean;
 }
 
@@ -38,10 +37,8 @@ class AnthropicStreamParser {
 	constructor(private readonly options: AnthropicAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		const payload = parseAdapterJSON(raw, "anthropicAdapter.parseChunk");
-		if (!isRecord(payload)) {
-			throw libraryError("anthropicAdapter.parseChunk expected a JSON object");
-		}
+		const payload = parseAdapterObjectPayload(raw, "anthropicAdapter.parseChunk");
+		if (!payload) return [];
 
 		const type = asString(payload.type);
 		switch (type) {
@@ -60,7 +57,7 @@ class AnthropicStreamParser {
 			case "message_stop":
 				return this.messageStop();
 			case "error":
-				return providerErrorChunks(payload.error);
+				return providerErrorFromPayload(payload.error);
 			default:
 				throw libraryError(`anthropicAdapter.parseChunk unknown event type: ${String(type)}`);
 		}
@@ -76,7 +73,7 @@ class AnthropicStreamParser {
 		if (id || model) {
 			chunks.push(optionalRawChunk({ kind: "metadata", responseId: id, model, raw: message }));
 		}
-		const usage = usageChunk(message.usage);
+		const usage = buildUsageChunk(message.usage);
 		if (usage) chunks.push(usage);
 		return chunks;
 	}
@@ -89,42 +86,17 @@ class AnthropicStreamParser {
 		const state: BlockState = { type: blockType };
 		this.blocks.set(index, state);
 
-		switch (blockType) {
-			case "text": {
-				const text = asString(block.text);
-				return text ? [{ kind: "text-delta", text }] : [];
-			}
-			case "thinking": {
-				const text = asString(block.thinking);
-				return text ? [{ kind: "reasoning-delta", text, variant: "detail" }] : [];
-			}
-			case "redacted_thinking":
-				return [];
-			case "tool_use": {
-				const id = asString(block.id);
-				const name = asString(block.name) ?? "unknown";
-				if (id) state.id = id;
-				state.name = name;
-				const chunks: RawChunk[] = [optionalRawChunk({ kind: "tool-start", id, name, index })];
-				const input = block.input;
-				if (input !== undefined && !(isRecord(input) && Object.keys(input).length === 0)) {
-					chunks.push(
-						optionalRawChunk({ kind: "tool-args-delta", id, delta: JSON.stringify(input), index }),
-					);
-				}
-				return chunks;
-			}
-			case "json": {
-				const text = asString(block.text) ?? asString(block.partial_json);
-				return text ? [{ kind: "json-delta", delta: text }] : [];
-			}
-			case "refusal": {
-				const text = asString(block.refusal) ?? asString(block.text);
-				return text ? [{ kind: "refusal-delta", text }] : [];
-			}
-			default:
-				return [];
+		if (blockType === "tool_use") {
+			const id = asString(block.id);
+			const name = asString(block.name) ?? "unknown";
+			if (id) state.id = id;
+			state.name = name;
 		}
+
+		return anthropicBlockStartChunks(block, index, {
+			jsonMode: this.options.jsonMode,
+			mode: "stream-start",
+		});
 	}
 
 	private contentBlockDelta(payload: Record<string, unknown>): RawChunk[] {
@@ -138,8 +110,9 @@ class AnthropicStreamParser {
 			case "text_delta": {
 				const text = asString(delta.text);
 				if (!text) return [];
-				if (this.options.jsonMode || state?.type === "json")
+				if (this.options.jsonMode || state?.type === "json") {
 					return [{ kind: "json-delta", delta: text }];
+				}
 				if (state?.type === "refusal") return [{ kind: "refusal-delta", text }];
 				return [{ kind: "text-delta", text }];
 			}
@@ -173,7 +146,7 @@ class AnthropicStreamParser {
 
 	private messageDelta(payload: Record<string, unknown>): RawChunk[] {
 		const chunks: RawChunk[] = [];
-		const usage = usageChunk(payload.usage);
+		const usage = buildUsageChunk(payload.usage);
 		if (usage) chunks.push(usage);
 		const delta = isRecord(payload.delta) ? payload.delta : undefined;
 		const stopReason = delta ? asString(delta.stop_reason) : undefined;
@@ -197,23 +170,24 @@ function parseResponse(body: unknown, options: AnthropicAdapterOptions): RawChun
 		throw libraryError("anthropicAdapter.parseResponse expected an Anthropic message object");
 	}
 	if (asString(body.type) === "error" || isRecord(body.error)) {
-		return providerErrorChunks(body.error);
+		return providerErrorFromPayload(body.error);
 	}
 
 	const chunks: RawChunk[] = [];
 	const id = asString(body.id);
 	const model = asString(body.model);
 	if (id) chunks.push({ kind: "message-start", id });
-	if (id || model)
+	if (id || model) {
 		chunks.push(optionalRawChunk({ kind: "metadata", responseId: id, model, raw: body }));
-	const inputUsage = usageChunk(body.usage);
+	}
+	const inputUsage = buildUsageChunk(body.usage);
 	if (inputUsage) chunks.push(inputUsage);
 
 	const content = Array.isArray(body.content) ? body.content : [];
 	for (let index = 0; index < content.length; index += 1) {
 		const block = content[index];
 		if (!isRecord(block)) continue;
-		chunks.push(...responseBlockChunks(block, index, options));
+		chunks.push(...anthropicResponseBlockChunks(block, index, { jsonMode: options.jsonMode }));
 	}
 
 	const reason = finishReason(asString(body.stop_reason));
@@ -221,78 +195,19 @@ function parseResponse(body: unknown, options: AnthropicAdapterOptions): RawChun
 	return chunks;
 }
 
-function responseBlockChunks(
-	block: Record<string, unknown>,
-	index: number,
-	options: AnthropicAdapterOptions,
-): RawChunk[] {
-	const type = asString(block.type);
-	switch (type) {
-		case "text": {
-			const text = asString(block.text);
-			if (!text) return [];
-			return options.jsonMode
-				? [{ kind: "json-delta", delta: text }]
-				: [{ kind: "text-delta", text }];
-		}
-		case "thinking": {
-			const text = asString(block.thinking);
-			return text ? [{ kind: "reasoning-delta", text, variant: "detail" }] : [];
-		}
-		case "tool_use": {
-			const id = asString(block.id);
-			const name = asString(block.name) ?? "unknown";
-			const chunks: RawChunk[] = [optionalRawChunk({ kind: "tool-start", id, name, index })];
-			if (block.input !== undefined) {
-				chunks.push(
-					optionalRawChunk({
-						kind: "tool-args-delta",
-						id,
-						delta: JSON.stringify(block.input),
-						index,
-					}),
-				);
-			}
-			chunks.push(optionalRawChunk({ kind: "tool-done", id, index }));
-			return chunks;
-		}
-		case "refusal": {
-			const text = asString(block.refusal) ?? asString(block.text);
-			return text ? [{ kind: "refusal-delta", text }] : [];
-		}
-		default:
-			return [];
-	}
-}
-
 function finishReason(value: string | undefined): FinishReason | undefined {
-	switch (value) {
-		case "end_turn":
-		case "stop_sequence":
-			return "stop";
-		case "max_tokens":
-			return "length";
-		case "tool_use":
-			return "tool_calls";
-		case "refusal":
-			return "content_filter";
-		case undefined:
-		case null:
-			return undefined;
-		default:
-			return "stop";
+	if (value === undefined || value === null) return undefined;
+	return mapAnthropicLikeStopReason(value);
+}
+
+function providerErrorFromPayload(value: unknown): RawChunk[] {
+	if (isRecord(value)) {
+		return providerErrorChunksFromPayload(
+			value,
+			"anthropicAdapter.parseChunk",
+			false,
+			"Anthropic provider error",
+		);
 	}
-}
-
-function usageChunk(value: unknown): RawChunk | undefined {
-	if (!isRecord(value)) return undefined;
-	const inputTokens = asNumber(value.input_tokens);
-	const outputTokens = asNumber(value.output_tokens);
-	if (inputTokens === undefined && outputTokens === undefined) return undefined;
-	return optionalRawChunk({ kind: "usage", inputTokens, outputTokens, raw: value });
-}
-
-function providerErrorChunks(value: unknown): RawChunk[] {
-	const message = isRecord(value) ? asString(value.message) : undefined;
-	return providerErrorChunksFromMessage(message ?? "Anthropic provider error", false);
+	return providerErrorChunksFromMessage("Anthropic provider error", false);
 }

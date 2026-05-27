@@ -1,5 +1,6 @@
 /** Internal adapter utilities. Not part of the public API. */
 import type { RawChunk, StreamAdapter } from "../core/types";
+import { stripUndefined } from "../core/utils/object";
 import { adapterScopedError } from "./errors";
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -15,9 +16,7 @@ export function asNumber(value: unknown): number | undefined {
 }
 
 export function optionalRawChunk(input: Record<string, unknown>): RawChunk {
-	return Object.fromEntries(
-		Object.entries(input).filter(([, value]) => value !== undefined),
-	) as RawChunk;
+	return stripUndefined(input) as RawChunk;
 }
 
 export function prefixedAdapterError(feature: string, message: string): Error {

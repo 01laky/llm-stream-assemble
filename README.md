@@ -1,11 +1,11 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.4.0-blue)
+![core](https://img.shields.io/badge/core-1.4.1-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1124_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1183_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.4.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.4.1-brightgreen)
 
 **One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
 
@@ -13,7 +13,7 @@
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.4.0`. Six built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.4.1`. Six built-in adapters, thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 

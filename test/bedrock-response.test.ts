@@ -40,7 +40,7 @@ describe("bedrockAdapter parseResponse", () => {
 
 	it("LSA-B73: empty object response yields synthetic finish stop", () => {
 		expect(normalizeBedrockEvents(assembleResponse({}, bedrockAdapter()))).toEqual([
-			{ type: "finish", reason: "stop" },
+			{ type: "finish", reason: "stop", choiceIndex: 0 },
 		]);
 	});
 

@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.1]
+
+### Added
+
+- **`src/adapters/shared/`** — internal SSOT helpers: `parseAdapterObjectPayload`, `incrementalJsonStringDelta`, `mapAnthropicLikeStopReason`, `buildUsageChunk`, `textOrJsonDelta`, `anthropicBlockStartChunks`.
+- **`src/core/utils/object.ts`** — `stripUndefined()` shared by assembler and adapter optional chunk builders.
+- Extended edge-case suites: **`shared-adapters`**, **`anthropic-conformance`**, **`anthropic-finish-usage`**, **`openai-responses-conformance`**, **`openai-responses-edge-cases`**, **`openai-responses-finish-usage`**, **`openai-chat-edge-cases`**, **`cross-adapter-assembler-edge`**; expanded **anthropic** / **gemini** edge cases.
+- Tests **LSA-SH01**–**SH10**, **LSA-A26**–**A41**, **LSA-R32**–**R44**, **LSA-OC229**–**OC233**, **LSA-X58**–**X62**, **LSA-G64**–**G67**.
+
+### Changed
+
+- **Gemini, Bedrock, Anthropic, OpenAI Responses, OpenAI Chat** — refactored to shared parse/usage/stop-reason/incremental-json helpers; unified scoped parse errors (`scope: expected a JSON object`).
+- **Anthropic** — trim / `[DONE]` / whitespace lines; provider errors preserve `.raw`; response blocks share stream block mapper.
+- **Bedrock `parseResponse`** — synthesizes ConverseStream events through stream parser (DRY with stream mode).
+- **OpenAI Responses** — removed dead tool `aliases` map; empty/`[DONE]` via shared parse preamble.
+- **`AnthropicAdapterOptions`** exported from `adapters/index.ts`.
+- Docs **adapter-guide** shared internals section; version labels **1.4.1**; README test badge **1183**.
+
+### Fixed
+
+- OpenAI Chat empty SSE payload lines no longer throw JSON parse errors.
+
 ## [1.4.0]
 
 ### Added

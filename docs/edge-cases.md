@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.4.0`
+**Status:** Active guide — `1.4.1`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -115,6 +115,20 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 | Anthropic partial tool input | `test/fixtures/anthropic/tool-use.sse`                                          |
 | JSON mode                    | `test/fixtures/openai-chat/json-mode.sse`                                       |
 | O(n) assembly smoke          | **LSA-C52** — `test/performance-smoke.test.ts`; local repro: `pnpm bench:smoke` |
+
+---
+
+## H) Post-finish assembler drop (lifecycle layer)
+
+After `finish`, providers may still emit usage-only or trace metadata. The assembler **drops further chunks** once a terminal finish is processed:
+
+```text
+text.delta → finish (stop) → metadata { trace }  ← dropped at assembly layer
+```
+
+**What we do:** `EventAssembler` ignores adapter output after the first terminal `finish` per stream.
+
+**Proven in tests:** **LSA-B71**, **LSA-A41**, **LSA-G67**, **LSA-R40**, **LSA-X58**–**X62** — `test/cross-adapter-assembler-edge.test.ts` and per-adapter edge-case suites.
 
 ---
 

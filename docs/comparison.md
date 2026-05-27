@@ -1,6 +1,6 @@
 # How this compares
 
-**Status:** Active guide — `1.4.0`
+**Status:** Active guide — `1.4.1`
 
 Where `llm-stream-assemble` fits relative to common alternatives. Comparisons are **best-effort** — other packages evolve independently; verify before choosing.
 

@@ -1,6 +1,6 @@
 # Performance & runtime behavior
 
-**Status:** Active guide — `1.4.0`
+**Status:** Active guide — `1.4.1`
 
 How `llm-stream-assemble` handles streaming work: design properties, memory, and an informal smoke benchmark. This is not a formal benchmark suite or SLA.
 
@@ -64,4 +64,4 @@ Example output shape (numbers vary by machine and Node version):
 
 CI enforces **&lt; 5000 ms** for LSA-C52; local `bench-smoke` is for maintainer curiosity only — not a CI gate.
 
-**Disclaimer:** Informal smoke benchmark — not ops/sec marketing numbers. No allocation profiling in v1.4.0.
+**Disclaimer:** Informal smoke benchmark — not ops/sec marketing numbers. No allocation profiling in v1.4.1.

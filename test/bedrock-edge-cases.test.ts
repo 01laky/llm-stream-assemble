@@ -133,7 +133,7 @@ describe("bedrockAdapter edge cases", () => {
 
 	it("LSA-B66: non-object JSON throws bedrockAdapter.parseChunk expected object", () => {
 		expect(() => bedrockAdapter().parseChunk(JSON.stringify(["array"]))).toThrow(
-			/bedrockAdapter\.parseChunk expected a JSON object/,
+			/bedrockAdapter\.parseChunk: expected a JSON object/,
 		);
 	});
 

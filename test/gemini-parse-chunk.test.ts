@@ -22,7 +22,7 @@ describe("geminiAdapter parseChunk", () => {
 
 	it("LSA-G04: non-object JSON throws prefixed error", () => {
 		expect(() => geminiAdapter().parseChunk("[]")).toThrow(
-			/geminiAdapter\.parseChunk expected a JSON object/,
+			/geminiAdapter\.parseChunk: expected a JSON object/,
 		);
 	});
 

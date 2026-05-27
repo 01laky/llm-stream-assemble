@@ -10,8 +10,10 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.4.0 bedrock", () => {
-	it("LSA-DOC51: README badges reference 1.4.0", () => {
-		expect(read("README.md")).toContain("1.4.0");
+	it("LSA-DOC51: CHANGELOG documents 1.4.0 Bedrock release", () => {
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.4.0]");
+		expect(changelog).toContain("bedrockAdapter");
 	});
 
 	it("LSA-DOC52: adapters-overview.mmd/svg contains bedrockAdapter", () => {

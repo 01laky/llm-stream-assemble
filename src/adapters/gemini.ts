@@ -4,14 +4,11 @@ import {
 	providerErrorChunksFromMessage,
 	providerErrorChunksFromPayload,
 } from "./errors";
-import {
-	asNumber,
-	asString,
-	createStreamAdapter,
-	isRecord,
-	optionalRawChunk,
-	parseAdapterJSON,
-} from "./utils";
+import { incrementalJsonStringDelta } from "./shared/incremental-json";
+import { parseAdapterObjectPayload } from "./shared/parse-payload";
+import { textOrJsonDelta } from "./shared/text-delta";
+import { buildUsageChunk } from "./shared/usage";
+import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
 
 export interface GeminiAdapterOptions {
 	/** Map text parts to json-delta instead of text-delta. */
@@ -45,13 +42,8 @@ class GeminiStreamParser {
 	constructor(private readonly options: GeminiAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		const trimmed = raw.trim();
-		if (trimmed.length === 0 || trimmed === "[DONE]") return [];
-
-		const payload = parseAdapterJSON(trimmed, "geminiAdapter.parseChunk");
-		if (!isRecord(payload)) {
-			throw libraryError("geminiAdapter.parseChunk expected a JSON object");
-		}
+		const payload = parseAdapterObjectPayload(raw, "geminiAdapter.parseChunk");
+		if (!payload) return [];
 
 		if (isRecord(payload.error)) {
 			return providerErrorChunksFromPayload(
@@ -71,7 +63,7 @@ class GeminiStreamParser {
 
 		chunks.push(...this.metadataChunks(payload));
 
-		const usage = usageChunk(payload.usageMetadata);
+		const usage = buildUsageChunk(payload.usageMetadata);
 		if (usage) chunks.push(usage);
 
 		const candidates = Array.isArray(payload.candidates) ? payload.candidates : [];
@@ -158,9 +150,11 @@ class GeminiStreamParser {
 		if (thought && !text) return [];
 
 		if (text !== undefined) {
-			if (text.length === 0) return [];
-			if (this.options.jsonMode) return [{ kind: "json-delta", delta: text }];
-			return [{ kind: "text-delta", text, choiceIndex }];
+			const chunk = textOrJsonDelta(text, {
+				jsonMode: this.options.jsonMode,
+				choiceIndex,
+			});
+			return chunk ? [chunk] : [];
 		}
 
 		const functionCall = isRecord(part.functionCall) ? part.functionCall : undefined;
@@ -224,7 +218,7 @@ class GeminiStreamParser {
 		}
 
 		if (isRecord(functionCall.args)) {
-			const delta = this.argsObjectDelta(toolKey, functionCall.args);
+			const delta = incrementalJsonStringDelta(current, JSON.stringify(functionCall.args));
 			if (delta) {
 				chunks.push(
 					optionalRawChunk({
@@ -288,21 +282,6 @@ class GeminiStreamParser {
 			}
 		}
 		return `${choiceIndex}:${partIndex}`;
-	}
-
-	private argsObjectDelta(toolKey: string, args: Record<string, unknown>): string | undefined {
-		const next = JSON.stringify(args);
-		const state = this.tools.get(toolKey);
-		const prev = state?.lastArgsJson ?? "";
-		if (next === prev) return undefined;
-		let delta: string;
-		if (prev.length > 0 && next.startsWith(prev)) {
-			delta = next.slice(prev.length);
-		} else {
-			delta = next;
-		}
-		if (state) state.lastArgsJson = next;
-		return delta.length > 0 ? delta : undefined;
 	}
 }
 
@@ -370,21 +349,4 @@ function mapFinishReason(value: string): FinishReason {
 		default:
 			return "error";
 	}
-}
-
-function usageChunk(value: unknown): RawChunk | undefined {
-	if (!isRecord(value)) return undefined;
-	const inputTokens = asNumber(value.promptTokenCount);
-	const outputTokens = asNumber(value.candidatesTokenCount);
-	const reasoningTokens = asNumber(value.thoughtsTokenCount);
-	if (inputTokens === undefined && outputTokens === undefined && reasoningTokens === undefined) {
-		return undefined;
-	}
-	return optionalRawChunk({
-		kind: "usage",
-		inputTokens,
-		outputTokens,
-		reasoningTokens,
-		raw: value,
-	});
 }

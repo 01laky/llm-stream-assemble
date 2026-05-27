@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.4.0`), Anthropic Messages, OpenAI Responses, **Google Gemini**, and **AWS Bedrock** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.4.1`), Anthropic Messages, OpenAI Responses, **Google Gemini**, and **AWS Bedrock** are reference adapters.
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 
@@ -11,7 +11,22 @@ How to add or extend a provider adapter for `llm-stream-assemble`.
 - Keep adapters dependency-free; provider SDKs do not belong in adapter implementations.
 - Use `src/adapters/openai-chat.ts` and `test/fixtures/openai-chat/` as the reference implementation for mapping provider payloads into `RawChunk[]`.
 - Use `openaiCompatibleAdapter()` as the reference pattern for reusing an existing parser with small dialect options instead of forking adapter logic.
-- Adapter authors should prefer local provider-specific parsing logic, but internal shared helpers exist for safe unknown narrowing, optional RawChunk construction, JSON parsing, and prefixed adapter errors.
+- Adapter authors should prefer local provider-specific parsing logic, but internal shared helpers under `src/adapters/shared/` cover parse preamble, usage token aliases, Anthropic-like stop reasons, incremental tool JSON deltas, text/json routing, and Anthropic block mapping — see [Shared internal modules](#shared-internal-modules) below.
+
+## Shared internal modules
+
+Since **1.4.1**, reference adapters share internal utilities (not public API):
+
+| Module                       | Purpose                                                   |
+| ---------------------------- | --------------------------------------------------------- |
+| `shared/parse-payload.ts`    | Trim, skip `[DONE]`, parse JSON object, scoped errors     |
+| `shared/incremental-json.ts` | Prefix-diff streaming tool argument strings               |
+| `shared/stop-reasons.ts`     | `mapAnthropicLikeStopReason` for Anthropic + Bedrock      |
+| `shared/usage.ts`            | `buildUsageChunk` with cross-provider token field aliases |
+| `shared/text-delta.ts`       | `textOrJsonDelta` for jsonMode text routing               |
+| `shared/anthropic-blocks.ts` | Shared Anthropic content block → `RawChunk[]` mapping     |
+
+New adapters should reuse these helpers instead of copying parse guards or usage builders. Extend shared modules when two or more adapters need the same behavior.
 
 ## Steps
 

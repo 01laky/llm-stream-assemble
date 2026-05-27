@@ -1,9 +1,9 @@
 import type { RawChunk } from "../../../core/types";
-import { asNumber, asString, isRecord, parseAdapterJSON } from "../../utils";
+import { asNumber, asString, isRecord } from "../../utils";
+import { parseAdapterObjectPayload } from "../../shared/parse-payload";
 import {
 	openAIProviderErrorChunks,
 	providerErrorPayload,
-	throwAdapterObjectError,
 	throwUnrecognizedChunkError,
 } from "./errors";
 import {
@@ -29,12 +29,8 @@ export class OpenAIChatLikeParser {
 	constructor(private readonly options: RequiredOpenAIChatLikeParserOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		if (raw.trim() === "[DONE]") return [];
-
-		const payload = parseAdapterJSON(raw, `${this.options.errorPrefix}.parseChunk`);
-		if (!isRecord(payload)) {
-			throwAdapterObjectError(`${this.options.errorPrefix}.parseChunk`);
-		}
+		const payload = parseAdapterObjectPayload(raw, `${this.options.errorPrefix}.parseChunk`);
+		if (!payload) return [];
 
 		const looseError = providerErrorPayload(payload, this.options);
 		if (looseError) return openAIProviderErrorChunks(looseError, false, this.options);

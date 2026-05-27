@@ -1,13 +1,8 @@
 import type { RawChunk, StreamAdapter } from "../core/types";
 import { libraryError, providerErrorChunksFromMessage } from "./errors";
-import {
-	asNumber,
-	asString,
-	createStreamAdapter,
-	isRecord,
-	optionalRawChunk,
-	parseAdapterJSON,
-} from "./utils";
+import { parseAdapterObjectPayload } from "./shared/parse-payload";
+import { textOrJsonDelta } from "./shared/text-delta";
+import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
 
 export interface OpenAIResponsesAdapterOptions {
 	jsonMode?: boolean;
@@ -35,16 +30,12 @@ class ResponsesParser {
 	private metadataEmitted = false;
 	private textSeen = false;
 	private readonly tools = new Map<string, ToolState>();
-	private readonly aliases = new Map<string, string>();
 
 	constructor(private readonly options: OpenAIResponsesAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		if (raw.trim() === "[DONE]") return [];
-		const payload = parseAdapterJSON(raw, "openaiResponsesAdapter.parseChunk");
-		if (!isRecord(payload)) {
-			throw libraryError("openaiResponsesAdapter.parseChunk expected a JSON object");
-		}
+		const payload = parseAdapterObjectPayload(raw, "openaiResponsesAdapter.parseChunk");
+		if (!payload) return [];
 
 		if (isErrorPayload(payload)) return providerErrorChunks(errorMessage(payload));
 
@@ -116,9 +107,8 @@ class ResponsesParser {
 		const text = asString(payload.delta) ?? asString(payload.text);
 		if (!text) return [];
 		this.textSeen = true;
-		return [
-			this.options.jsonMode ? { kind: "json-delta", delta: text } : { kind: "text-delta", text },
-		];
+		const chunk = textOrJsonDelta(text, { jsonMode: this.options.jsonMode });
+		return chunk ? [chunk] : [];
 	}
 
 	private textDone(payload: Record<string, unknown>): RawChunk[] {
@@ -126,9 +116,8 @@ class ResponsesParser {
 		const text = asString(payload.text) ?? asString(payload.delta);
 		if (!text) return [];
 		this.textSeen = true;
-		return [
-			this.options.jsonMode ? { kind: "json-delta", delta: text } : { kind: "text-delta", text },
-		];
+		const chunk = textOrJsonDelta(text, { jsonMode: this.options.jsonMode });
+		return chunk ? [chunk] : [];
 	}
 
 	private outputItemAdded(payload: Record<string, unknown>): RawChunk[] {
@@ -273,13 +262,7 @@ class ResponsesParser {
 		const id = toolId(payload, item);
 		const index = asNumber(payload.output_index);
 		const existing = this.tools.get(id);
-		if (existing) {
-			const callId = asString(item?.call_id) ?? asString(payload.call_id);
-			const itemId = asString(item?.id) ?? asString(payload.item_id);
-			if (callId) this.aliases.set(callId, id);
-			if (itemId) this.aliases.set(itemId, id);
-			return existing;
-		}
+		if (existing) return existing;
 		const state: ToolState = {
 			id,
 			name: asString(item?.name) ?? "unknown",
@@ -289,10 +272,6 @@ class ResponsesParser {
 			done: false,
 		};
 		this.tools.set(id, state);
-		const callId = asString(item?.call_id) ?? asString(payload.call_id);
-		const itemId = asString(item?.id) ?? asString(payload.item_id);
-		if (callId) this.aliases.set(callId, id);
-		if (itemId) this.aliases.set(itemId, id);
 		return state;
 	}
 }
@@ -427,7 +406,8 @@ function usageFromResponse(response: Record<string, unknown>): RawChunk[] {
 }
 
 function textChunk(text: string, options: OpenAIResponsesAdapterOptions): RawChunk {
-	return options.jsonMode ? { kind: "json-delta", delta: text } : { kind: "text-delta", text };
+	const chunk = textOrJsonDelta(text, { jsonMode: options.jsonMode });
+	return chunk ?? { kind: "text-delta", text };
 }
 
 function providerErrorChunks(message: string): RawChunk[] {

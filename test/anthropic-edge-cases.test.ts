@@ -67,4 +67,68 @@ describe("anthropicAdapter edge cases and docs", () => {
 			expect(readme).toContain(name);
 		}
 	});
+
+	it("LSA-A34: empty or whitespace line yields no chunks", () => {
+		expect(anthropicAdapter().parseChunk("")).toEqual([]);
+		expect(anthropicAdapter().parseChunk("   ")).toEqual([]);
+	});
+
+	it("LSA-A35: [DONE] marker yields no chunks", () => {
+		expect(anthropicAdapter().parseChunk("[DONE]")).toEqual([]);
+	});
+
+	it("LSA-A36: malformed JSON throws anthropicAdapter.parseChunk scoped prefix", () => {
+		expect(() => anthropicAdapter().parseChunk("{")).toThrow(/anthropicAdapter\.parseChunk/);
+	});
+
+	it("LSA-A37: non-object JSON throws expected object scoped error", () => {
+		expect(() => anthropicAdapter().parseChunk(JSON.stringify(["array"]))).toThrow(
+			/anthropicAdapter\.parseChunk: expected a JSON object/,
+		);
+	});
+
+	it("LSA-A38: error event preserves raw on provider-error via payload helper", () => {
+		const chunks = anthropicAdapter().parseChunk(
+			payload({ type: "error", error: { type: "api_error", message: "rate limited" } }),
+		);
+		expect(chunks).toHaveLength(2);
+		expect(chunks[0]?.kind).toBe("provider-error");
+		if (chunks[0]?.kind === "provider-error") {
+			expect(chunks[0].error.message).toMatch(/rate limited/);
+			expect((chunks[0].error as Error & { raw?: unknown }).raw).toEqual({
+				type: "api_error",
+				message: "rate limited",
+			});
+		}
+	});
+
+	it("LSA-A39: ping event is ignored", () => {
+		expect(anthropicAdapter().parseChunk(payload({ type: "ping" }))).toEqual([]);
+	});
+
+	it("LSA-A40: duplicate message_stop after message_delta finish is ignored", () => {
+		const adapter = anthropicAdapter();
+		expect(
+			adapter.parseChunk(payload({ type: "message_delta", delta: { stop_reason: "end_turn" } })),
+		).toContainEqual({ kind: "finish", reason: "stop" });
+		expect(adapter.parseChunk(payload({ type: "message_stop" }))).toEqual([]);
+	});
+
+	it("LSA-A41: assembler drops chunks after finish (usage after terminal stop)", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "content_block_delta",
+				index: 0,
+				delta: { type: "text_delta", text: "hi" },
+			});
+			yield payload({ type: "message_delta", delta: { stop_reason: "end_turn" } });
+			yield payload({
+				type: "message_delta",
+				usage: { input_tokens: 9, output_tokens: 1 },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), anthropicAdapter()));
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+		expect(events.some((event) => event.type === "usage")).toBe(false);
+	});
 });

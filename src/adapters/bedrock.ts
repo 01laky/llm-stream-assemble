@@ -1,13 +1,11 @@
-import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
+import type { RawChunk, StreamAdapter } from "../core/types";
 import { libraryError, providerErrorChunksFromPayload } from "./errors";
-import {
-	asNumber,
-	asString,
-	createStreamAdapter,
-	isRecord,
-	optionalRawChunk,
-	parseAdapterJSON,
-} from "./utils";
+import { incrementalJsonStringDelta } from "./shared/incremental-json";
+import { parseAdapterObjectPayload } from "./shared/parse-payload";
+import { mapAnthropicLikeStopReason } from "./shared/stop-reasons";
+import { textOrJsonDelta } from "./shared/text-delta";
+import { buildUsageChunk } from "./shared/usage";
+import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
 
 export type BedrockModelFamily = "anthropic" | "openai-like" | "nova" | "auto";
 
@@ -53,13 +51,8 @@ class BedrockStreamParser {
 	constructor(private readonly options: BedrockAdapterOptions) {}
 
 	parseChunk(raw: string): RawChunk[] {
-		const trimmed = raw.trim();
-		if (trimmed.length === 0 || trimmed === "[DONE]") return [];
-
-		const payload = parseAdapterJSON(trimmed, "bedrockAdapter.parseChunk");
-		if (!isRecord(payload)) {
-			throw libraryError("bedrockAdapter.parseChunk expected a JSON object");
-		}
+		const payload = parseAdapterObjectPayload(raw, "bedrockAdapter.parseChunk");
+		if (!payload) return [];
 
 		for (const key of EXCEPTION_KEYS) {
 			const exception = payload[key];
@@ -148,16 +141,12 @@ class BedrockStreamParser {
 
 		const chunks: RawChunk[] = [];
 		const text = asString(delta.text);
-		if (text !== undefined && text.length > 0) {
-			if (this.options.jsonMode) {
-				chunks.push({ kind: "json-delta", delta: text });
-			} else {
-				chunks.push({ kind: "text-delta", text, choiceIndex: 0 });
-			}
-		}
+		const textChunk = text
+			? textOrJsonDelta(text, { jsonMode: this.options.jsonMode, choiceIndex: 0 })
+			: undefined;
+		if (textChunk) chunks.push(textChunk);
 
-		const reasoning = delta.reasoningContent;
-		const reasoningText = reasoningTextFromDelta(reasoning, this.options.modelFamily);
+		const reasoningText = reasoningTextFromDelta(delta.reasoningContent, this.options.modelFamily);
 		if (reasoningText) {
 			chunks.push({ kind: "reasoning-delta", text: reasoningText, variant: "detail" });
 		}
@@ -177,9 +166,9 @@ class BedrockStreamParser {
 		const input = toolUse.input;
 		let delta: string | undefined;
 		if (typeof input === "string") {
-			delta = incrementalArgsDelta(state, input);
+			delta = incrementalJsonStringDelta(state, input);
 		} else if (isRecord(input)) {
-			delta = incrementalArgsDelta(state, JSON.stringify(input));
+			delta = incrementalJsonStringDelta(state, JSON.stringify(input));
 		}
 		if (!delta) return [];
 
@@ -225,7 +214,11 @@ class BedrockStreamParser {
 				},
 			}),
 		);
-		chunks.push({ kind: "finish", reason: mapStopReason(stopReason), choiceIndex: 0 });
+		chunks.push({
+			kind: "finish",
+			reason: mapAnthropicLikeStopReason(stopReason),
+			choiceIndex: 0,
+		});
 		return chunks;
 	}
 
@@ -233,7 +226,7 @@ class BedrockStreamParser {
 		if (!isRecord(value)) return [];
 		const chunks: RawChunk[] = [];
 
-		const usage = usageChunk(value.usage);
+		const usage = buildUsageChunk(value.usage, undefined, { mirrorTotalTokens: true });
 		if (usage) chunks.push(usage);
 
 		const metrics = value.metrics;
@@ -269,85 +262,74 @@ function parseResponse(body: unknown, options: BedrockAdapterOptions): RawChunk[
 	}
 
 	const parser = new BedrockStreamParser(options);
+	const syntheticEvents = synthesizeConverseStreamEvents(body);
 	const chunks: RawChunk[] = [];
+	for (const event of syntheticEvents) {
+		chunks.push(...parser.parseChunk(JSON.stringify(event)));
+	}
 
+	const stopReason = asString(body.stopReason);
+	if (stopReason) {
+		chunks.push({
+			kind: "finish",
+			reason: mapAnthropicLikeStopReason(stopReason),
+			choiceIndex: 0,
+		});
+	} else if (!chunks.some((chunk) => chunk.kind === "finish")) {
+		chunks.push({ kind: "finish", reason: "stop", choiceIndex: 0 });
+	}
+
+	return chunks;
+}
+
+function synthesizeConverseStreamEvents(body: Record<string, unknown>): unknown[] {
+	const events: unknown[] = [];
 	const output = isRecord(body.output) ? body.output : undefined;
 	const message = output && isRecord(output.message) ? output.message : undefined;
-	if (message) {
-		chunks.push({ kind: "message-start" });
-		const role = asString(message.role);
-		if (role) {
-			chunks.push(optionalRawChunk({ kind: "metadata", raw: { role } }));
-		}
 
+	if (message) {
+		events.push({ messageStart: { role: message.role } });
 		const content = Array.isArray(message.content) ? message.content : [];
 		let blockIndex = 0;
 		for (const block of content) {
 			if (!isRecord(block)) continue;
-			const text = asString(block.text);
-			if (text !== undefined && text.length > 0) {
-				if (options.jsonMode) {
-					chunks.push({ kind: "json-delta", delta: text });
-				} else {
-					chunks.push({ kind: "text-delta", text, choiceIndex: 0 });
-				}
-			}
-
 			const toolUse = isRecord(block.toolUse) ? block.toolUse : undefined;
 			if (toolUse) {
-				const id = asString(toolUse.toolUseId) ?? `bedrock:${blockIndex}`;
-				const name = asString(toolUse.name) ?? "unknown";
-				chunks.push(
-					optionalRawChunk({
-						kind: "tool-start",
-						id,
-						name,
-						index: blockIndex,
-						choiceIndex: 0,
-					}),
-				);
-				const input = toolUse.input;
-				if (input !== undefined) {
-					const argsJson = typeof input === "string" ? input : JSON.stringify(input);
-					if (argsJson.length > 0) {
-						chunks.push(
-							optionalRawChunk({
-								kind: "tool-args-delta",
-								id,
-								delta: argsJson,
-								index: blockIndex,
-								choiceIndex: 0,
-							}),
-						);
-					}
+				events.push({
+					contentBlockStart: {
+						contentBlockIndex: blockIndex,
+						start: { toolUse },
+					},
+				});
+				if (toolUse.input !== undefined) {
+					events.push({
+						contentBlockDelta: {
+							contentBlockIndex: blockIndex,
+							delta: { toolUse: { input: toolUse.input } },
+						},
+					});
 				}
-				chunks.push(
-					optionalRawChunk({
-						kind: "tool-done",
-						id,
-						index: blockIndex,
-						choiceIndex: 0,
-					}),
-				);
+				events.push({ contentBlockStop: { contentBlockIndex: blockIndex } });
+			} else {
+				const text = asString(block.text);
+				if (text !== undefined && text.length > 0) {
+					events.push({
+						contentBlockDelta: {
+							contentBlockIndex: blockIndex,
+							delta: { text },
+						},
+					});
+				}
 			}
 			blockIndex += 1;
 		}
 	}
 
-	const usage = usageChunk(body.usage);
-	if (usage) chunks.push(usage);
-
-	const stopReason = asString(body.stopReason);
-	if (stopReason) {
-		chunks.push({ kind: "finish", reason: mapStopReason(stopReason), choiceIndex: 0 });
-	} else if (!chunks.some((chunk) => chunk.kind === "finish")) {
-		chunks.push({ kind: "finish", reason: "stop" });
+	if (body.usage !== undefined) {
+		events.push({ metadata: { usage: body.usage } });
 	}
 
-	// Touch parser options for modelFamily-specific paths in stream mode parity.
-	void parser;
-
-	return chunks;
+	return events;
 }
 
 function reasoningTextFromDelta(
@@ -367,56 +349,6 @@ function reasoningTextFromDelta(
 	}
 
 	return undefined;
-}
-
-function incrementalArgsDelta(state: BlockToolState, nextInput: string): string | undefined {
-	const prev = state.lastArgsJson;
-	if (nextInput === prev) return undefined;
-	let delta: string;
-	if (prev.length > 0 && nextInput.startsWith(prev)) {
-		delta = nextInput.slice(prev.length);
-	} else {
-		delta = nextInput;
-	}
-	state.lastArgsJson = nextInput;
-	return delta.length > 0 ? delta : undefined;
-}
-
-function mapStopReason(value: string): FinishReason {
-	switch (value) {
-		case "end_turn":
-		case "stop_sequence":
-			return "stop";
-		case "tool_use":
-			return "tool_calls";
-		case "max_tokens":
-			return "length";
-		case "content_filtered":
-		case "guardrail_intervened":
-			return "content_filter";
-		default:
-			return "stop";
-	}
-}
-
-function usageChunk(value: unknown): RawChunk | undefined {
-	if (!isRecord(value)) return undefined;
-	const inputTokens =
-		asNumber(value.inputTokens) ?? asNumber(value.promptTokens) ?? asNumber(value.inputTokenCount);
-	const outputTokens =
-		asNumber(value.outputTokens) ??
-		asNumber(value.completionTokens) ??
-		asNumber(value.outputTokenCount);
-	const totalTokens = asNumber(value.totalTokens) ?? asNumber(value.totalTokenCount);
-	if (inputTokens === undefined && outputTokens === undefined && totalTokens === undefined) {
-		return undefined;
-	}
-	return optionalRawChunk({
-		kind: "usage",
-		inputTokens,
-		outputTokens,
-		raw: { ...value, totalTokens },
-	});
 }
 
 function optionalMetadataRaw(payload: Record<string, unknown>): RawChunk[] {
