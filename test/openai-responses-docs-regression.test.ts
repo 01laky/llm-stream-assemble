@@ -24,7 +24,7 @@ describe("OpenAI Responses docs regression", () => {
 	it("LSA-R39: compatibility matrix marks OpenAI Responses adapter support", () => {
 		const docs = read("docs/compatibility.md");
 		expect(docs).toContain("`openaiResponsesAdapter`");
-		expect(docs).toContain("v0.7");
+		expect(docs).toContain("1.8.0");
 	});
 
 	it("LSA-R40: changelog documents OpenAI Responses adapter", () => {

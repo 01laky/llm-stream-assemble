@@ -21,10 +21,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 - **`normalizeResponsesEvents`** — strips `raw` from logprob goldens; strips default `choiceIndex: 0`.
 - **`mapFixtureEventsToAISDKParts`** — optional `adapter` for Responses replay.
 - **`pnpm verify`** — includes `fixtures:check-responses-logprobs`.
-- Version labels **1.8.0** across docs; README test badge **2125**.
+- Version labels **1.8.0** across docs; README test badge **2127**.
+- **Stable green release** — README `status-stable_1.8.0-brightgreen` (not beta/pre-release); compatibility matrix OpenAI Responses status **1.8.0**; `adapters-overview` diagram stable **1.8.0** (SVG regenerated); **`release:prep`** asserts stable status badge (**LSA-DOC173**, **LSA-REL31**).
 
 ### Notes
 
+- **1.8.0** is a stable semver release — publish to npm `latest`, not `beta`.
 - Request must include `include: ["message.output_text.logprobs"]` (documented; not inferred).
 - Still deferred: Interactions API, AI21/watsonx presets, npm publish automation.
 

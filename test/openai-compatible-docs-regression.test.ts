@@ -301,10 +301,10 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 		expect(guide).toMatch(/Workers AI|Workers AI REST|REST endpoint/i);
 	});
 
-	it("LSA-OC165: adapters-overview.mmd preset list includes cloudflare and stable 1.6.0", () => {
+	it("LSA-OC165: adapters-overview.mmd preset list includes cloudflare and stable 1.8.0", () => {
 		const mmd = readFileSync(join(rootDir, "docs/img/adapters-overview.mmd"), "utf8");
 		expect(mmd).toContain("cloudflare");
-		expect(mmd).toContain("1.6.0");
+		expect(mmd).toContain("1.8.0");
 	});
 
 	it("LSA-OC166: pipeline.mmd OpenAI-compatible hosts mention Cloudflare", () => {

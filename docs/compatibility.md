@@ -9,7 +9,7 @@ Living document — update when adapters ship or provider quirks are discovered.
 | OpenAI Chat Completions                 | `openaiChatAdapter`       | yes  | yes   | best-effort  | yes         | yes²         | yes¹         | yes¹⁵    | partial³     | v0.2   |
 | OpenAI-compatible                       | `openaiCompatibleAdapter` | yes  | yes   | best-effort  | best-effort | best-effort⁴ | best-effort⁵ | yes¹⁵    | partial³     | v0.3   |
 | Anthropic Messages                      | `anthropicAdapter`        | yes  | yes   | yes          | yes         | best-effort⁶ | yes          | —        | —            | v0.4   |
-| OpenAI Responses                        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | yes¹⁶    | —            | v0.7   |
+| OpenAI Responses                        | `openaiResponsesAdapter`  | yes  | yes   | best-effort⁷ | yes         | best-effort⁸ | best-effort  | yes¹⁶    | —            | 1.8.0  |
 | Google Gemini (Google AI + Vertex AI)   | `geminiAdapter`           | yes  | yes   | best-effort⁹ | —           | yes¹⁰        | yes          | —        | partial³     | 1.5.7  |
 | AWS Bedrock (Converse / ConverseStream) | `bedrockAdapter`          | yes  | yes   | best-effort  | —           | partial¹¹    | yes          | —        | partial³     | v1.4   |
 | Cohere Chat v2                          | `cohereAdapter`           | yes  | yes   | yes¹³        | —           | yes¹⁴        | yes          | —        | partial³     | 1.5.0  |

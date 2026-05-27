@@ -202,4 +202,10 @@ describe("release readiness", () => {
 	it("LSA-REL30: release-prep.mjs validates README tests badge against vitest count", () => {
 		expect(read("scripts/release-prep.mjs")).toMatch(/tests-\(\d+\)_passing|tests badge/i);
 	});
+
+	it("LSA-REL31: release-prep.mjs validates stable green status badge", () => {
+		const script = read("scripts/release-prep.mjs");
+		expect(script).toMatch(/status-stable_\$\{version\}-brightgreen|status-stable_/);
+		expect(script).toMatch(/status-beta_|beta or pre-release/i);
+	});
 });

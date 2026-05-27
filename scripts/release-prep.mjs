@@ -71,6 +71,17 @@ if (!readme.includes(`Stable \`${version}\``)) {
 	ok(`README stable status references ${version}`);
 }
 
+const stableBadge = `status-stable_${version}-brightgreen`;
+if (!readme.includes(stableBadge)) {
+	errors.push(`README.md missing ${stableBadge} status badge`);
+} else {
+	ok(`README status badge is stable green (${stableBadge})`);
+}
+
+if (/status-beta_|status-pre_|_rc-orange|_beta-yellow/i.test(readme)) {
+	errors.push("README.md still has beta or pre-release status badge");
+}
+
 if (!readme.includes(`core-${version}`)) {
 	warn(`README core badge may not reference ${version}`);
 } else {

@@ -128,4 +128,10 @@ describe("docs positioning 1.8.0", () => {
 		expect(doc).toContain("message.output_text.logprobs");
 		expect(doc).toContain("logprobs: true");
 	});
+
+	it("LSA-DOC173: README status badge is stable green 1.8.0 not beta", () => {
+		const readme = read("README.md");
+		expect(readme).toContain("status-stable_1.8.0-brightgreen");
+		expect(readme).not.toMatch(/status-beta_|status-pre_|_rc-orange|_beta-yellow/i);
+	});
 });
