@@ -21,8 +21,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/); versioning foll
 - **`normalizeResponsesEvents`** — strips `raw` from logprob goldens; strips default `choiceIndex: 0`.
 - **`mapFixtureEventsToAISDKParts`** — optional `adapter` for Responses replay.
 - **`pnpm verify`** — includes `fixtures:check-responses-logprobs`.
-- Version labels **1.8.0** across docs; README test badge **2127**.
-- **Stable green release** — README `status-stable_1.8.0-brightgreen` (not beta/pre-release); compatibility matrix OpenAI Responses status **1.8.0**; `adapters-overview` diagram stable **1.8.0** (SVG regenerated); **`release:prep`** asserts stable status badge (**LSA-DOC173**, **LSA-REL31**).
+- Version labels **1.8.0** across docs; README test badge **2128**.
+- **Stable green release** — README `status-stable_1.8.0-brightgreen` and `core-1.8.0-brightgreen` (not beta blue/pre-release); compatibility matrix OpenAI Responses status **1.8.0**; `adapters-overview` diagram stable **1.8.0** (SVG regenerated); **`release:prep`** asserts stable status and core badges (**LSA-DOC173**, **LSA-REL31**, **LSA-REL32**).
 
 ### Notes
 

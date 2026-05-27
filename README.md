@@ -1,9 +1,9 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.8.0-blue)
+![core](https://img.shields.io/badge/core-1.8.0-brightgreen)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-2127_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-2128_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
 ![status](https://img.shields.io/badge/status-stable_1.8.0-brightgreen)
 

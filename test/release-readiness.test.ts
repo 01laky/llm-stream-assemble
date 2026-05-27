@@ -208,4 +208,10 @@ describe("release readiness", () => {
 		expect(script).toMatch(/status-stable_\$\{version\}-brightgreen|status-stable_/);
 		expect(script).toMatch(/status-beta_|beta or pre-release/i);
 	});
+
+	it("LSA-REL32: release-prep.mjs validates stable green core badge", () => {
+		const script = read("scripts/release-prep.mjs");
+		expect(script).toMatch(/core-\$\{version\}-brightgreen|core-.*-brightgreen/);
+		expect(script).toMatch(/core-\$\{version\}-blue|beta blue/i);
+	});
 });

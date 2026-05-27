@@ -12,7 +12,7 @@ function read(path: string): string {
 describe("docs positioning 1.8.0", () => {
 	it("LSA-DOC151: README badges reference 1.8.0 and test count badge", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("core-1.8.0");
+		expect(readme).toContain("core-1.8.0-brightgreen");
 		expect(readme).toMatch(/Stable `1\.8\.0`/);
 		expect(readme).toMatch(/tests-(?:TBD|\d+)_passing/);
 	});
@@ -132,6 +132,8 @@ describe("docs positioning 1.8.0", () => {
 	it("LSA-DOC173: README status badge is stable green 1.8.0 not beta", () => {
 		const readme = read("README.md");
 		expect(readme).toContain("status-stable_1.8.0-brightgreen");
+		expect(readme).toContain("core-1.8.0-brightgreen");
 		expect(readme).not.toMatch(/status-beta_|status-pre_|_rc-orange|_beta-yellow/i);
+		expect(readme).not.toContain("core-1.8.0-blue");
 	});
 });

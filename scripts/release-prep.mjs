@@ -82,10 +82,15 @@ if (/status-beta_|status-pre_|_rc-orange|_beta-yellow/i.test(readme)) {
 	errors.push("README.md still has beta or pre-release status badge");
 }
 
-if (!readme.includes(`core-${version}`)) {
-	warn(`README core badge may not reference ${version}`);
+const coreBadge = `core-${version}-brightgreen`;
+if (!readme.includes(coreBadge)) {
+	errors.push(`README.md missing ${coreBadge} core badge`);
 } else {
-	ok(`README core badge references ${version}`);
+	ok(`README core badge is stable green (${coreBadge})`);
+}
+
+if (readme.includes(`core-${version}-blue`)) {
+	errors.push(`README.md core badge still uses beta blue (core-${version}-blue)`);
 }
 
 if (!changelog.includes(`## [${version}]`)) {
