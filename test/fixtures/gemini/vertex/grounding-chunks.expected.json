@@ -1,6 +1,15 @@
 [
 	{
-		"type": "metadata"
+		"type": "grounding",
+		"supports": [
+			{
+				"segment": {
+					"startIndex": 0,
+					"endIndex": 4,
+					"text": "Ground"
+				}
+			}
+		]
 	},
 	{
 		"type": "text.delta",

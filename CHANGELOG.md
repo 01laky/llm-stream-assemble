@@ -3,6 +3,38 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.6.0]
+
+### Added
+
+- **`citation` and `grounding` `StreamEvent` types** — first-class unified events for Cohere RAG citations (`citation-start`), Perplexity root `citations` / `search_results`, and Gemini `citationMetadata` / `groundingMetadata` on Google AI and Vertex; atomic events (no delta/done lifecycle); **LSA-CT01**–**CT29**.
+- **Shared `src/adapters/shared/citation-grounding.ts`** — Cohere, Perplexity, and Gemini mapping helpers; strips duplicate citation fields from sibling `metadata.raw` unless legacy flag set.
+- **`emitLegacyCitationMetadata` adapter option** (default `false`) — opt-in dual-emit of legacy `metadata.raw` citation blobs alongside typed events for migration (**LSA-CT19**–**CT20**, **DOC123**).
+- **`isCitation` / `isGrounding` type guards**, **`citationSpanAnchor()`** helper (**LSA-CSA01**–**CSA04**), and `matchEvent` handlers for new types.
+- **`collectStream`** — accumulates `citations` and `grounding` arrays on `CollectedStream`.
+- **`test/citation-grounding-core.test.ts`** — assembler, transform, toSSE, legacy flag, and pipeline coverage **LSA-CT01**–**CT29**.
+- **`test/citation-grounding-conformance.test.ts`** — shared golden parity **LSA-CF01**–**CF04** (Cohere, Perplexity, Vertex, Google AI grounding SSE).
+- **`test/citation-span-anchor.test.ts`**, **`test/openai-compatible-citations.test.ts`** — **LSA-CSA01**–**CSA04**, **LSA-OC276**–**OC289**.
+- **Cohere / Gemini / cross-adapter edge extensions** — **LSA-CO99**–**CO118**, **LSA-G100**–**G115**, **LSA-GV133**–**GV136**, **LSA-X77**–**X85**.
+- **`test/citation-grounding-edge.test.ts`** — extended edge matrix **LSA-CT30**–**CT55** (legacy flags, search_results-only, post-finish drops, tapEvents, transform pipeline, multi-candidate).
+- **`test/citation-span-anchor.test.ts`** extended to **LSA-CSA01**–**CSA12**; **LSA-CF05** Cohere response parity; **LSA-OC290**–**OC295** compatible preset matrix; **LSA-G116**/**G117** type guards.
+- **Fixtures** — `test/fixtures/gemini/grounding-metadata.sse`, `test/fixtures/cohere/response-citations.json` + regenerated citation/grounding goldens.
+- **`test/docs-positioning-1.6.0.test.ts`** — **LSA-DOC110**–**DOC126**; bundle gates **LSA-MAINT24**–**MAINT25**.
+- **Docs / diagrams** — README, compatibility, adapter-guide, faq, edge-cases, integration-cookbook, proposal, roadmap; `stream-event.mmd` + SVG includes Citation + Grounding nodes.
+- **Examples** — `stream-event-to-ai-sdk-parts.ts` maps `citation` / `grounding` to illustrative parts.
+
+### Changed
+
+- **Cohere `citation-start`** — emits `citation` RawChunk instead of `metadata.raw` (goldens rewritten; **LSA-CO07**, **LSA-CO98** revised).
+- **Gemini / Vertex** — `citationMetadata` and `groundingMetadata` emit typed events before text parts (**LSA-G59**, **LSA-GV88**–**GV120** revised in place).
+- **Perplexity preset** — root-level citations via shared OpenAI chat parser path; citation before text on same chunk (**LSA-OC99**, **LSA-RF20** revised).
+- **Fixture generator `normalize()`** — strips `raw` from `citation` / `grounding` goldens (compatible + gemini maintainers; cohere test helper).
+- Version labels **1.6.0** across docs; README test badge **1799**.
+
+### Notes
+
+- Still deferred: logprobs events, Interactions API, AI21/watsonx presets, npm publish automation.
+
 ## [1.5.7]
 
 ### Added

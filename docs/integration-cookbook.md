@@ -170,6 +170,25 @@ return Response.json({ text: collected.text, finish: collected.finishReason });
 
 Node replay: [`collect-stream-handler.ts`](../examples/integrations/collect-stream-handler.ts) uses `assembleFromFile` on golden fixtures.
 
+Since **1.6.0**, `collectStream` also accumulates **`citations`** and **`grounding`** arrays from typed events — useful for RAG UIs that render source lists alongside final text.
+
+---
+
+## Citation and grounding in proxy SSE
+
+When proxying unified events to browsers, `toSSE()` serializes **`citation`** and **`grounding`** events as standard `data: {"type":"citation",…}` lines (**LSA-CT24**–**CT26**). Consumers can parse the same JSON shape on the client or map via `matchEvent`:
+
+```ts
+matchEvent(event, {
+	citation: (e) => renderSources(e.urls ?? e.sources),
+	grounding: (e) => renderQueries(e.queries),
+});
+```
+
+For Cohere span alignment against assembled assistant text, use **`citationSpanAnchor({ assistantText, span })`** (**LSA-CSA01**–**CSA04**). Example mapper: [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts).
+
+Round-trip: assemble provider stream → `toSSE` → client parses `data:` lines — citation types survive unchanged in JSON (**LSA-CT24**, **LSA-DOC125**).
+
 ---
 
 ## `createAssemblyTransform` pipeline

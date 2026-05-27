@@ -30,6 +30,7 @@ const responseFixtures = [
 	"response-tool",
 	"response-error",
 	"response-format-json",
+	"response-citations",
 ];
 
 const sseFixtures = ["text-basic", "tool-single"];

@@ -6,7 +6,7 @@ Mermaid — always commit updated **`.svg`** files alongside **`.mmd`** edits.
 | File                      | Purpose                                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `pipeline.mmd`            | End-to-end bytes → adapters → core → apps (Bedrock EventStream decode, Vertex JSONL decode, Cohere v2 SSE) |
-| `adapters-overview.mmd`   | Built-in adapters and compatible presets (`geminiAdapter` Google AI + Vertex AI, `1.5.7`)                  |
+| `adapters-overview.mmd`   | Built-in adapters and compatible presets (`geminiAdapter` Google AI + Vertex AI, `1.6.0`)                  |
 | `stream-event.mmd`        | Unified `StreamEvent` union mindmap                                                                        |
 | `transforms.mmd`          | `collectStream`, `tapEvents`, `toSSE`, replay, `assembleFromPayloads` (Bedrock + Vertex JSONL)             |
 | `quick-decision.mmd`      | Adapter routing decision tree incl. Bedrock ConverseStream, Vertex JSONL, and Cohere v2                    |

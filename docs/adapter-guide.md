@@ -1,6 +1,6 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.5.7`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.6.0`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters.
 
 Every dedicated built-in adapter has a shared conformance harness under `test/*-conformance.test.ts` (OpenAI Chat: **LSA-OC253**–**OC255**).
 
@@ -157,17 +157,17 @@ Cohere Chat **v2** streams JSON objects over standard SSE (`data: {...}\n`). **`
 
 **Not OpenAI-compatible:** do not reuse `openaiCompatibleAdapter()` for Cohere — v2 event names and nested `delta.message` shapes require a dedicated parser.
 
-| Cohere v2 event   | Unified mapping                                             |
-| ----------------- | ----------------------------------------------------------- |
-| `message-start`   | `message.start`, optional `metadata` (id, role)             |
-| `content-delta`   | `text.delta` / `text.done` (or `json.*` when `jsonMode`)    |
-| `tool-plan-delta` | `reasoning.delta` / `reasoning.done` (`variant: "detail"`)  |
-| `tool-call-start` | `tool_call.start`                                           |
-| `tool-call-delta` | `tool_call.args.delta` (incremental JSON via shared helper) |
-| `tool-call-end`   | `tool_call.done`                                            |
-| `citation-start`  | `metadata.raw` citation payload (no `citation.*` in 1.x)    |
-| `message-end`     | `usage`, `finish`, optional finish metadata                 |
-| `type: "error"`   | `error` chunks via shared provider-error helpers            |
+| Cohere v2 event   | Unified mapping                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| `message-start`   | `message.start`, optional `metadata` (id, role)                                                    |
+| `content-delta`   | `text.delta` / `text.done` (or `json.*` when `jsonMode`)                                           |
+| `tool-plan-delta` | `reasoning.delta` / `reasoning.done` (`variant: "detail"`)                                         |
+| `tool-call-start` | `tool_call.start`                                                                                  |
+| `tool-call-delta` | `tool_call.args.delta` (incremental JSON via shared helper)                                        |
+| `tool-call-end`   | `tool_call.done`                                                                                   |
+| `citation-start`  | `citation` (span, sources, index; optional legacy `metadata.raw` via `emitLegacyCitationMetadata`) |
+| `message-end`     | `usage`, `finish`, optional finish metadata                                                        |
+| `type: "error"`   | `error` chunks via shared provider-error helpers                                                   |
 
 **Late tool id:** Cohere may emit `tool-call-start` before a stable tool `id` is known. The adapter synthesizes `cohere:tool:{index}` on `tool_call.start` and reconciles to the real id when it arrives on `tool-call-delta`. Downstream consumers should key on the reconciled id from args/done events. At stream end the assembler may emit an extra `tool_call.done` for the placeholder id (empty args) when closing stale state — see `test/fixtures/cohere/tool-late-id.jsonl` (**LSA-CO77**, **LSA-CO78**).
 
@@ -203,6 +203,22 @@ Use `resolveCompatibleAdapterConfig({ provider })` when you need resolved preset
 See README Architecture lifecycle diagram (`docs/img/assembler-lifecycle.svg`) and [FAQ](./faq.md).
 
 See [`test/fixtures/openai-compatible/README.md`](../test/fixtures/openai-compatible/README.md) and [`docs/live-smoke.md`](./live-smoke.md) checklist.
+
+## Citation and grounding events (1.6.0+)
+
+Since **1.6.0**, provenance payloads map to first-class **`citation`** and **`grounding`** `StreamEvent` types (atomic events — no delta/done lifecycle):
+
+| Provider / surface             | Source fields                           | Unified mapping                                                 |
+| ------------------------------ | --------------------------------------- | --------------------------------------------------------------- |
+| Cohere v2                      | `citation-start`                        | `citation` with optional `span`, `sources`, `index`             |
+| Perplexity (OpenAI-compatible) | root `citations`, `search_results`      | `citation` with `urls`, `searchResults`                         |
+| Gemini Google AI + Vertex      | `citationMetadata`, `groundingMetadata` | `citation` then `grounding` before text parts on same candidate |
+
+**Migration:** adapters default to typed events only. Set **`emitLegacyCitationMetadata: true`** on `cohereAdapter`, `geminiAdapter`, or `openaiCompatibleAdapter` to dual-emit legacy `metadata.raw` citation blobs during migration — deprecated; remove when consumers handle typed events.
+
+**Helpers:** `isCitation`, `isGrounding`, `matchEvent` handlers, `collectStream` → `citations` / `grounding` arrays, **`citationSpanAnchor()`** for Cohere span alignment.
+
+**Conformance:** every built-in adapter with citation fixtures has golden parity coverage — **LSA-CF01** (Cohere), **CF02** (Perplexity), **CF03** (Vertex grounding), **CF04** (Google AI grounding SSE). See `test/citation-grounding-conformance.test.ts`.
 
 ## Community adapters
 

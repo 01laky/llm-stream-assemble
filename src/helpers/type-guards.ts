@@ -78,6 +78,18 @@ export function isToolCallDone(
 	return event.type === "tool_call.done";
 }
 
+export function isCitation(
+	event: StreamEvent,
+): event is Extract<StreamEvent, { type: "citation" }> {
+	return event.type === "citation";
+}
+
+export function isGrounding(
+	event: StreamEvent,
+): event is Extract<StreamEvent, { type: "grounding" }> {
+	return event.type === "grounding";
+}
+
 export function isUsage(event: StreamEvent): event is Extract<StreamEvent, { type: "usage" }> {
 	return event.type === "usage";
 }

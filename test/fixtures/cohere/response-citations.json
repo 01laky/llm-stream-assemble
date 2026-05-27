@@ -1,0 +1,31 @@
+{
+	"id": "msg-cite-resp",
+	"finish_reason": "COMPLETE",
+	"message": {
+		"role": "assistant",
+		"content": [{ "text": "Benefits include gym memberships and more." }],
+		"citations": [
+			{
+				"start": 18,
+				"end": 33,
+				"text": "gym memberships",
+				"sources": [
+					{
+						"type": "document",
+						"id": "doc:1",
+						"document": {
+							"id": "doc:1",
+							"text": "Wellness benefits include gym memberships."
+						}
+					}
+				]
+			}
+		]
+	},
+	"usage": {
+		"billed_units": {
+			"input_tokens": 20,
+			"output_tokens": 12
+		}
+	}
+}

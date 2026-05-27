@@ -9,6 +9,8 @@ export interface OpenAIChatLikeParserOptions {
 	usageInputTokenFields?: string[];
 	usageOutputTokenFields?: string[];
 	rejectUnrecognizedPayloads?: boolean;
+	/** @deprecated Dual-emit legacy metadata.raw citation blobs alongside typed events. */
+	emitLegacyCitationMetadata?: boolean;
 }
 
 export interface RequiredOpenAIChatLikeParserOptions {
@@ -22,6 +24,7 @@ export interface RequiredOpenAIChatLikeParserOptions {
 	usageInputTokenFields: string[];
 	usageOutputTokenFields: string[];
 	rejectUnrecognizedPayloads: boolean;
+	emitLegacyCitationMetadata: boolean;
 }
 
 export function normalizeOptions(
@@ -38,6 +41,7 @@ export function normalizeOptions(
 		usageInputTokenFields: options.usageInputTokenFields ?? ["prompt_tokens"],
 		usageOutputTokenFields: options.usageOutputTokenFields ?? ["completion_tokens"],
 		rejectUnrecognizedPayloads: options.rejectUnrecognizedPayloads ?? false,
+		emitLegacyCitationMetadata: options.emitLegacyCitationMetadata ?? false,
 	};
 }
 

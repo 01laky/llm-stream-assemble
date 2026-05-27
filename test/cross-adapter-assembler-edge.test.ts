@@ -6,6 +6,7 @@ import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { cohereAdapter } from "../src/adapters/cohere";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
+import { tapEvents } from "../src/transforms/tap-events";
 import { collectAsync } from "./helpers/collect-events";
 
 const payload = (value: unknown) => JSON.stringify(value);
@@ -406,5 +407,179 @@ describe("cross-adapter assembler edge cases", () => {
 				assembleFromPayloads(payloads(), openaiResponsesAdapter(), { strictToolArgs: true }),
 			),
 		).rejects.toThrow(/^llm-stream-assemble:/);
+	});
+
+	it("LSA-X77: Gemini post-finish grounding dropped", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["late"] },
+						content: { parts: [] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(events.some((event) => event.type === "grounding")).toBe(false);
+	});
+
+	it("LSA-X78: Perplexity-compatible post-finish citation dropped", async () => {
+		const { openaiCompatibleAdapter } = await import("../src/adapters/openai-compatible");
+		async function* payloads() {
+			yield payload({
+				choices: [{ delta: { content: "done" }, finish_reason: "stop" }],
+			});
+			yield payload({ citations: ["https://late.test"] });
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), openaiCompatibleAdapter({ provider: "perplexity" })),
+		);
+		expect(events.some((event) => event.type === "citation")).toBe(false);
+	});
+
+	it("LSA-X79: strictToolArgs unaffected when citation events present", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 1, text: "a" } } },
+			});
+			yield payload({
+				type: "tool-call-start",
+				index: 0,
+				delta: {
+					message: {
+						tool_calls: {
+							id: "tool_x",
+							type: "function",
+							function: { name: "fn", arguments: "" },
+						},
+					},
+				},
+			});
+			yield payload({
+				type: "tool-call-delta",
+				index: 0,
+				delta: { message: { tool_calls: { function: { arguments: "{}" } } } },
+			});
+			yield payload({ type: "message-end", delta: { finish_reason: "COMPLETE" } });
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), cohereAdapter(), { strictToolArgs: true }),
+		);
+		expect(events.some((event) => event.type === "citation")).toBe(true);
+		expect(events.some((event) => event.type === "tool_call.done")).toBe(true);
+	});
+
+	it("LSA-X80: jsonMode and grounding interleave on Gemini", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["q"] },
+						content: { parts: [{ text: '{"a":1}' }] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), geminiAdapter({ jsonMode: true })),
+		);
+		const groundingIndex = events.findIndex((event) => event.type === "grounding");
+		const jsonIndex = events.findIndex((event) => event.type === "json.delta");
+		expect(groundingIndex).toBeGreaterThanOrEqual(0);
+		expect(jsonIndex).toBeGreaterThan(groundingIndex);
+	});
+
+	it("LSA-X81: mock adapter citation RawChunk passthrough", async () => {
+		const { sequenceMockAdapter } = await import("./helpers/mock-adapter");
+		const adapter = sequenceMockAdapter([
+			[{ kind: "citation", urls: ["https://mock.test"] }],
+			[{ kind: "text-delta", text: "x", choiceIndex: 0 }],
+			[{ kind: "finish", reason: "stop" }],
+		]);
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield "{}";
+					yield "{}";
+					yield "{}";
+				})(),
+				adapter,
+			),
+		);
+		expect(events).toContainEqual({ type: "citation", urls: ["https://mock.test"] });
+	});
+
+	it("LSA-X82: Cohere post-finish citation-start dropped as typed citation event", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "message-end",
+				delta: { finish_reason: "COMPLETE" },
+			});
+			yield payload({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 1, text: "x" } } },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), cohereAdapter()));
+		expect(events.some((event) => event.type === "citation")).toBe(false);
+	});
+
+	it("LSA-X83: Gemini post-finish citationMetadata dropped", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: [{ uri: "urn:late-x83" }] },
+						content: { parts: [] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(events.some((event) => event.type === "citation")).toBe(false);
+	});
+
+	it("LSA-X84: tapEvents preserves citation event ordering with text deltas", async () => {
+		const citation = { type: "citation" as const, urls: ["https://x84.test"] };
+		async function* source() {
+			yield { type: "text.delta" as const, text: "a" };
+			yield citation;
+		}
+		const events = await collectAsync(tapEvents(source(), () => undefined));
+		expect(events.map((event) => event.type)).toEqual(["text.delta", "citation"]);
+	});
+
+	it("LSA-X85: jsonMode Gemini grounding before json.delta interleave", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["json-q"] },
+						content: { parts: [{ text: '{"k":1}' }] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(
+			assembleFromPayloads(payloads(), geminiAdapter({ jsonMode: true })),
+		);
+		const groundingIndex = events.findIndex((event) => event.type === "grounding");
+		const jsonIndex = events.findIndex((event) => event.type === "json.delta");
+		expect(groundingIndex).toBeGreaterThanOrEqual(0);
+		expect(jsonIndex).toBeGreaterThan(groundingIndex);
 	});
 });

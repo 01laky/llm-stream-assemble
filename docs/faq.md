@@ -118,7 +118,7 @@ Do **not** point `openaiCompatibleAdapter()` at Cohere — you will miss tool-pl
 
 **Tool plan:** `tool-plan-delta` maps to `reasoning.*` with `variant: "detail"` (model planning text before tool calls).
 
-**Citations:** `citation-start` payloads are preserved in **`metadata.raw`** — there are no dedicated `citation.*` unified events in 1.x.
+**Citations:** `citation-start` maps to typed **`citation`** events (span, sources, index). Perplexity root `citations` / `search_results` and Gemini `citationMetadata` / `groundingMetadata` map to **`citation`** and **`grounding`** respectively. Use **`citationSpanAnchor()`** to align Cohere span offsets with assembled assistant text. Set **`emitLegacyCitationMetadata: true`** during migration to dual-emit legacy `metadata.raw` blobs alongside typed events.
 
 ---
 

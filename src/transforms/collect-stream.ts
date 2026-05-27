@@ -7,6 +7,8 @@ export async function collectStream(events: AsyncIterable<StreamEvent>): Promise
 		refusals: "",
 		json: undefined,
 		toolCalls: [],
+		citations: [],
+		grounding: [],
 	};
 	const iterator = events[Symbol.asyncIterator]();
 
@@ -48,6 +50,12 @@ function collectEvent(result: CollectedStream, event: StreamEvent): void {
 			break;
 		case "tool_call.done":
 			result.toolCalls.push({ id: event.id, name: event.name, args: event.args });
+			break;
+		case "citation":
+			result.citations.push(event);
+			break;
+		case "grounding":
+			result.grounding.push(event);
 			break;
 		case "usage":
 			result.usage = event;

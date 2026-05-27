@@ -5,6 +5,7 @@ import {
 	providerErrorChunksFromPayload,
 } from "./errors";
 import { incrementalJsonStringDelta } from "./shared/incremental-json";
+import { geminiCitationGroundingFromCandidate } from "./shared/citation-grounding";
 import { parseAdapterObjectPayload } from "./shared/parse-payload";
 import { textOrJsonDelta } from "./shared/text-delta";
 import { buildUsageChunk } from "./shared/usage";
@@ -20,6 +21,8 @@ export interface GeminiAdapterOptions {
 	 * @default "google-ai"
 	 */
 	apiSurface?: GeminiApiSurface;
+	/** @deprecated Dual-emit legacy metadata.raw citation blobs alongside typed events. */
+	emitLegacyCitationMetadata?: boolean;
 }
 
 interface ToolState {
@@ -124,9 +127,8 @@ class GeminiStreamParser {
 		const grounding = candidate.groundingMetadata;
 		if (citation !== undefined || grounding !== undefined) {
 			chunks.push(
-				optionalRawChunk({
-					kind: "metadata",
-					raw: { citationMetadata: citation, groundingMetadata: grounding },
+				...geminiCitationGroundingFromCandidate(candidate, {
+					emitLegacyCitationMetadata: this.options.emitLegacyCitationMetadata ?? false,
 				}),
 			);
 		}

@@ -13,6 +13,7 @@ const REQUIRED_EXPORTS = [
 	"toSSE",
 	"tapEvents",
 	"matchEvent",
+	"citationSpanAnchor",
 	"openaiChatAdapter",
 	"openaiCompatibleAdapter",
 	"anthropicAdapter",
@@ -36,6 +37,8 @@ const TYPE_GUARD_EXPORTS = [
 	"isToolCallStart",
 	"isToolCallArgsDelta",
 	"isToolCallDone",
+	"isCitation",
+	"isGrounding",
 	"isUsage",
 	"isFinish",
 	"isError",
@@ -56,7 +59,7 @@ describe("exports.test.ts — public API surface", () => {
 		}
 	});
 
-	it("LSA-E02: exports all sixteen type guards", () => {
+	it("LSA-E02: exports all eighteen type guards", () => {
 		for (const name of TYPE_GUARD_EXPORTS) {
 			expect(typeof lib[name]).toBe("function");
 		}

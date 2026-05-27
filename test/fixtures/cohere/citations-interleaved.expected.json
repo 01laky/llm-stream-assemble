@@ -11,7 +11,19 @@
 		"text": "See "
 	},
 	{
-		"type": "metadata"
+		"type": "citation",
+		"index": 0,
+		"span": {
+			"start": 4,
+			"end": 8,
+			"text": "docs"
+		},
+		"sources": [
+			{
+				"type": "document",
+				"id": "doc:2"
+			}
+		]
 	},
 	{
 		"type": "text.delta",

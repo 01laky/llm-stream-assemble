@@ -133,16 +133,16 @@ describe("openaiCompatibleAdapter host preset edge cases", () => {
 		});
 	});
 
-	it("LSA-OC99: perplexity citations-stream parseChunk preserves citations in metadata.raw", () => {
+	it("LSA-OC99: perplexity citations-stream parseChunk emits citation RawChunk with urls", () => {
 		const raw = hostCompatibleFixture("perplexity", "citations-stream", "sse") as string;
 		const dataLine = raw
 			.split("\n")
 			.find((line) => line.startsWith("data: ") && !line.includes("[DONE]"))!;
 		const payload = dataLine.slice("data: ".length);
 		const chunks = openaiCompatibleAdapter({ provider: "perplexity" }).parseChunk(payload);
-		const metadata = chunks.find((chunk) => chunk.kind === "metadata");
-		expect(metadata).toBeDefined();
-		expect((metadata as { raw?: { citations?: string[] } }).raw?.citations).toEqual([
+		const citation = chunks.find((chunk) => chunk.kind === "citation");
+		expect(citation).toBeDefined();
+		expect((citation as { urls?: string[] }).urls).toEqual([
 			"https://example.com/a",
 			"https://example.com/b",
 		]);

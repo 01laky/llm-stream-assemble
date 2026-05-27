@@ -126,7 +126,7 @@ describe("cohereAdapter parseChunk unit", () => {
 		]);
 	});
 
-	it("LSA-CO07: citation-start emits metadata.raw citation payload", () => {
+	it("LSA-CO07: citation-start emits citation payload", () => {
 		expect(
 			cohereAdapter().parseChunk(
 				payload({
@@ -137,7 +137,9 @@ describe("cohereAdapter parseChunk unit", () => {
 			),
 		).toEqual([
 			{
-				kind: "metadata",
+				kind: "citation",
+				index: 0,
+				span: { start: 0, end: 4, text: "cite" },
 				raw: { citation: { start: 0, end: 4, text: "cite" }, index: 0 },
 			},
 		]);

@@ -28,6 +28,10 @@ export function matchEvent<R>(event: StreamEvent, handlers: StreamEventHandlers<
 			return handlers["tool_call.args.delta"]?.(event);
 		case "tool_call.done":
 			return handlers["tool_call.done"]?.(event);
+		case "citation":
+			return handlers.citation?.(event);
+		case "grounding":
+			return handlers.grounding?.(event);
 		case "usage":
 			return handlers.usage?.(event);
 		case "finish":

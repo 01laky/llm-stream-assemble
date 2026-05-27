@@ -70,7 +70,7 @@ A focused TypeScript library with a single responsibility:
 | Provider adapters (pluggable)                            | React hooks, UI components          |
 | Transforms: `toSSE`, `collectStream`, `TransformStream`  | Multimodal audio/video streams (v1) |
 | Type-safe event helpers                                  | Optional Zod validation (peer dep)  |
-| Proxy error sanitization option                          | Logprobs / citations (future)       |
+| Proxy error sanitization option                          | Logprobs (future)                   |
 
 ### Target users
 
@@ -595,7 +595,8 @@ Community adapters (Gemini, Bedrock) can follow this guide without maintainer in
 - AI SDK / `@ai-sdk/provider` compatibility mapper
 - Stream multiplex and resume / cursor support
 - Optional `zod` peer for strict `tool_call.done` / `json.done` validation
-- Logprobs / citation events (if demand)
+- Citations and grounding shipped in **1.6.0** as additive `citation` / `grounding` events
+- Logprobs (if demand)
 - Split into monorepo packages if adapter count warrants it
 - Browser bundle audit and dedicated edge entry point
 

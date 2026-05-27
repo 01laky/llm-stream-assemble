@@ -15,17 +15,19 @@ Docs-derived synthetic fixtures matching [Cohere v2 streaming](https://docs.cohe
 | `json-mode`             | synthetic   | jsonMode option                                   |
 | `response-format-json`  | synthetic   | structured JSON stream (jsonMode)                 |
 | `tool-plan`             | synthetic   | reasoning-delta from tool-plan-delta              |
-| `citations-stream`      | docs-shaped | citation-start metadata.raw                       |
-| `citations-interleaved` | edge        | citation during content-delta                     |
+| `citations-stream`      | docs-shaped | citation-start → typed `citation` events          |
+| `citations-interleaved` | edge        | citation interleaved with content-delta           |
+| `response-citations`    | docs-shaped | parseResponse non-stream with message.citations   |
 | `provider-error`        | synthetic   | type error in stream                              |
 | `usage-only`            | synthetic   | message-end usage without content                 |
 | `incomplete`            | edge        | stream without message-end                        |
 | `response-*`            | docs-shaped | parseResponse non-stream bodies                   |
 
-## Mapping notes (1.5.0)
+## Mapping notes (1.6.0)
 
 - `tool-plan-delta` → `reasoning-delta` / `variant: "detail"`
-- Citations → `metadata.raw` (no dedicated citation events)
+- `citation-start` → typed **`citation`** events (span, sources, index)
+- Set `emitLegacyCitationMetadata: true` to dual-emit legacy `metadata.raw` during migration
 - Unknown event types → forward-compat `metadata.raw`
 - Cohere is **not** OpenAI-compatible — use `cohereAdapter()` + `parseSSE`
 

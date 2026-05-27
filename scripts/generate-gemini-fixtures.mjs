@@ -21,7 +21,12 @@ const surfaceFilter = surfaceArg?.split("=")[1];
 
 function normalize(events) {
 	return events.map((event) => {
-		if (event.type === "metadata" || event.type === "usage") {
+		if (
+			event.type === "metadata" ||
+			event.type === "usage" ||
+			event.type === "citation" ||
+			event.type === "grounding"
+		) {
 			const { raw, ...rest } = event;
 			void raw;
 			return rest;

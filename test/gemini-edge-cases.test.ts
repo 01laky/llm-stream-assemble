@@ -4,7 +4,9 @@ import { assembleFromPayloads } from "../src/core/assemble-payloads";
 import { assembleStream } from "../src/core/assemble-stream";
 import { byteStreamFromStrings, collectAsync, strings } from "./helpers/collect-events";
 import {
+	assembleVertexJsonl,
 	expectedGeminiEvents,
+	expectedVertexEvents,
 	geminiTextFixture,
 	normalizeGeminiEvents,
 } from "./helpers/gemini-fixtures";
@@ -12,7 +14,7 @@ import {
 const payload = (value: unknown) => JSON.stringify(value);
 
 describe("geminiAdapter edge cases", () => {
-	it("LSA-G59: citationMetadata and groundingMetadata emit metadata raw payloads", () => {
+	it("LSA-G59: citationMetadata and groundingMetadata emit citation and grounding chunks", () => {
 		expect(
 			geminiAdapter().parseChunk(
 				payload({
@@ -28,11 +30,14 @@ describe("geminiAdapter edge cases", () => {
 			),
 		).toEqual([
 			{
-				kind: "metadata",
-				raw: {
-					citationMetadata: { citations: [{ uri: "urn:x" }] },
-					groundingMetadata: { groundingChunks: [{ web: { uri: "https://example.com" } }] },
-				},
+				kind: "citation",
+				raw: { citations: [{ uri: "urn:x" }] },
+				sources: [{ uri: "urn:x" }],
+			},
+			{
+				kind: "grounding",
+				raw: { groundingChunks: [{ web: { uri: "https://example.com" } }] },
+				chunks: [{ web: { uri: "https://example.com" } }],
 			},
 		]);
 	});
@@ -454,5 +459,279 @@ describe("geminiAdapter edge cases", () => {
 			),
 		);
 		expect(events).toEqual(expectedGeminiEvents("text-basic"));
+	});
+
+	it("LSA-G100: citation-only candidate", () => {
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: [{ uri: "urn:only" }] },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toEqual([
+			{
+				kind: "citation",
+				raw: { citations: [{ uri: "urn:only" }] },
+				sources: [{ uri: "urn:only" }],
+			},
+		]);
+	});
+
+	it("LSA-G101: grounding-only candidate", () => {
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["only-query"] },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toEqual([
+			{ kind: "grounding", raw: { webSearchQueries: ["only-query"] }, queries: ["only-query"] },
+		]);
+	});
+
+	it("LSA-G102: both metadata types on one candidate", () => {
+		const kinds = geminiAdapter()
+			.parseChunk(
+				payload({
+					candidates: [
+						{
+							index: 0,
+							citationMetadata: { citations: [{ uri: "urn:x" }] },
+							groundingMetadata: { groundingChunks: [{ web: { uri: "https://a.test" } }] },
+							content: { parts: [{ text: "x" }] },
+						},
+					],
+				}),
+			)
+			.map((chunk) => chunk.kind);
+		expect(kinds).toEqual(["citation", "grounding", "text-delta"]);
+	});
+
+	it("LSA-G103: raw fields preserved on each event", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield payload({
+						candidates: [
+							{
+								index: 0,
+								citationMetadata: { citations: [{ uri: "urn:raw" }] },
+								groundingMetadata: { webSearchQueries: ["q"] },
+								content: { parts: [{ text: "t" }] },
+							},
+						],
+					});
+				})(),
+				geminiAdapter(),
+			),
+		);
+		const citation = events.find((event) => event.type === "citation");
+		const grounding = events.find((event) => event.type === "grounding");
+		expect(citation).toMatchObject({ raw: { citations: [{ uri: "urn:raw" }] } });
+		expect(grounding).toMatchObject({ raw: { webSearchQueries: ["q"] } });
+	});
+
+	it("LSA-G104: post-finish grounding dropped", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["late"] },
+						content: { parts: [] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(events.some((event) => event.type === "grounding")).toBe(false);
+	});
+
+	it("LSA-G105: google-ai text-basic unchanged (no false citation)", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("text-basic", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(events.some((event) => (event as { type?: string }).type === "citation")).toBe(false);
+		expect(events).toEqual(expectedGeminiEvents("text-basic"));
+	});
+
+	it("LSA-G106: grounding webSearchQueries maps to queries", () => {
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["weather"] },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({ kind: "grounding", queries: ["weather"] }),
+		);
+	});
+
+	it("LSA-G107: groundingChunks maps to chunks", () => {
+		const chunkList = [{ web: { uri: "https://chunks.test" } }];
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { groundingChunks: chunkList },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({ kind: "grounding", chunks: chunkList }),
+		);
+	});
+
+	it("LSA-G108: citationMetadata sources mapping", () => {
+		const sources = [{ uri: "https://source.test", title: "Doc" }];
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: sources },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(expect.objectContaining({ kind: "citation", sources }));
+	});
+
+	it("LSA-G109: Google AI grounding-metadata.sse golden", async () => {
+		const events = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("grounding-metadata", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(events).toEqual(expectedGeminiEvents("grounding-metadata"));
+	});
+
+	it("LSA-G110: Google AI vs Vertex grounding-metadata normalized field parity", async () => {
+		const google = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("grounding-metadata", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		const vertex = normalizeGeminiEvents(
+			await assembleVertexJsonl("grounding-metadata", { apiSurface: "vertex" }),
+		);
+		const googleTypes = google.map((event) => (event as { type?: string }).type);
+		const vertexTypes = vertex.map((event) => (event as { type?: string }).type);
+		expect(googleTypes.filter((type) => type === "citation" || type === "grounding")).toEqual(
+			vertexTypes.filter((type) => type === "citation" || type === "grounding"),
+		);
+	});
+
+	it("LSA-G111: groundingSupports maps to grounding.supports on Google AI", () => {
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: {
+							groundingSupports: [{ segment: { startIndex: 0, endIndex: 5, text: "hello" } }],
+						},
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({
+				kind: "grounding",
+				supports: [{ segment: { startIndex: 0, endIndex: 5, text: "hello" } }],
+			}),
+		);
+	});
+
+	it("LSA-G112: post-finish citationMetadata dropped on Google AI stream", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: [{ uri: "urn:late-g112" }] },
+						content: { parts: [] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), geminiAdapter()));
+		expect(events.some((event) => event.type === "citation")).toBe(false);
+	});
+
+	it("LSA-G113: emitLegacyCitationMetadata on geminiAdapter dual-emits metadata raw", () => {
+		const chunks = geminiAdapter({ emitLegacyCitationMetadata: true }).parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: [{ uri: "urn:g113" }] },
+						content: { parts: [] },
+					},
+				],
+			}),
+		);
+		expect(chunks.some((chunk) => chunk.kind === "citation")).toBe(true);
+		expect(chunks.some((chunk) => chunk.kind === "metadata")).toBe(true);
+	});
+
+	it("LSA-G114: grounding-chunks vertex jsonl golden matches expected", async () => {
+		expect(normalizeGeminiEvents(await assembleVertexJsonl("grounding-chunks"))).toEqual(
+			expectedVertexEvents("grounding-chunks"),
+		);
+	});
+
+	it("LSA-G115: empty citationMetadata citations array still emits citation with raw", () => {
+		const chunks = geminiAdapter().parseChunk(
+			payload({
+				candidates: [
+					{
+						index: 0,
+						citationMetadata: { citations: [] },
+						content: { parts: [{ text: "x" }] },
+					},
+				],
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({ kind: "citation", raw: { citations: [] }, sources: [] }),
+		);
 	});
 });

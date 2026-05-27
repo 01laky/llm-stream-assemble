@@ -9,6 +9,10 @@
 		"responseId": "pplx_r1"
 	},
 	{
+		"type": "citation",
+		"urls": ["https://example.com/doc"]
+	},
+	{
 		"type": "text.delta",
 		"text": "Grounded answer"
 	},

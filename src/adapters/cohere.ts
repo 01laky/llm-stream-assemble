@@ -1,6 +1,7 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
 import { libraryError, providerErrorChunksFromPayload } from "./errors";
 import { incrementalJsonStringDelta } from "./shared/incremental-json";
+import { cohereCitationFromStartPayload } from "./shared/citation-grounding";
 import { parseAdapterObjectPayload } from "./shared/parse-payload";
 import { textOrJsonDelta } from "./shared/text-delta";
 import { buildUsageChunk, type UsageFieldAliases } from "./shared/usage";
@@ -9,6 +10,8 @@ import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } f
 export interface CohereAdapterOptions {
 	/** Map content-delta text to json-delta instead of text-delta. */
 	jsonMode?: boolean;
+	/** @deprecated Dual-emit legacy metadata.raw citation blobs alongside typed events. */
+	emitLegacyCitationMetadata?: boolean;
 }
 
 interface ToolState {
@@ -254,12 +257,9 @@ class CohereStreamParser {
 		const delta = isRecord(payload.delta) ? payload.delta : undefined;
 		const message = delta && isRecord(delta.message) ? delta.message : undefined;
 		const citations = message?.citations;
-		return [
-			optionalRawChunk({
-				kind: "metadata",
-				raw: { citation: citations, index: payload.index },
-			}),
-		];
+		return cohereCitationFromStartPayload(citations, asNumber(payload.index), {
+			emitLegacyCitationMetadata: this.options.emitLegacyCitationMetadata ?? false,
+		});
 	}
 
 	private messageEndChunks(payload: CohereStreamEvent): RawChunk[] {

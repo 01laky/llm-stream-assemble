@@ -24,6 +24,22 @@ export type StreamEvent =
 	| { type: "tool_call.args.delta"; id: string; delta: string; partial?: unknown }
 	| { type: "tool_call.done"; id: string; name: string; args: unknown }
 	| {
+			type: "citation";
+			index?: number;
+			span?: { start: number; end: number; text?: string };
+			sources?: unknown[];
+			urls?: string[];
+			searchResults?: unknown[];
+			raw?: unknown;
+	  }
+	| {
+			type: "grounding";
+			queries?: string[];
+			chunks?: unknown[];
+			supports?: unknown[];
+			raw?: unknown;
+	  }
+	| {
 			type: "usage";
 			inputTokens?: number;
 			outputTokens?: number;
@@ -49,6 +65,22 @@ export type RawChunk =
 	| { kind: "tool-args-delta"; id?: string; delta: string; index?: number; choiceIndex?: number }
 	| { kind: "tool-done"; id?: string; index?: number; choiceIndex?: number }
 	| { kind: "metadata"; model?: string; responseId?: string; created?: number; raw?: unknown }
+	| {
+			kind: "citation";
+			index?: number;
+			span?: { start: number; end: number; text?: string };
+			sources?: unknown[];
+			urls?: string[];
+			searchResults?: unknown[];
+			raw?: unknown;
+	  }
+	| {
+			kind: "grounding";
+			queries?: string[];
+			chunks?: unknown[];
+			supports?: unknown[];
+			raw?: unknown;
+	  }
 	| {
 			kind: "usage";
 			inputTokens?: number;
@@ -78,6 +110,8 @@ export interface CollectedStream {
 	refusals: string;
 	json: unknown;
 	toolCalls: Array<{ id: string; name: string; args: unknown }>;
+	citations: Array<Extract<StreamEvent, { type: "citation" }>>;
+	grounding: Array<Extract<StreamEvent, { type: "grounding" }>>;
 	usage?: Extract<StreamEvent, { type: "usage" }>;
 	finishReason?: Extract<StreamEvent, { type: "finish" }>;
 }

@@ -40,5 +40,6 @@ export function openaiCompatibleAdapter(
 		usageOutputTokenFields: ["completion_tokens", "output_tokens"],
 		rejectUnrecognizedPayloads: resolved.rejectUnrecognizedPayloads,
 		reasoningFieldAliases: resolved.reasoningFieldAliases,
+		emitLegacyCitationMetadata: options.emitLegacyCitationMetadata ?? false,
 	});
 }

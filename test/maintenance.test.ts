@@ -156,6 +156,7 @@ describe("maintenance adapter regressions", () => {
 			"src/adapters/shared/usage.ts",
 			"src/adapters/shared/text-delta.ts",
 			"src/adapters/shared/anthropic-blocks.ts",
+			"src/adapters/shared/citation-grounding.ts",
 		]) {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}
@@ -228,6 +229,30 @@ describe("maintenance build and bundle regressions", () => {
 		for (const [file, limit] of limits) {
 			expect(statSync(join(rootDir, file)).size).toBeLessThan(limit);
 		}
+	});
+
+	it("LSA-MAINT23: dist index.d.ts exports StreamEvent includes citation and grounding", () => {
+		const dts = readFileSync(join(rootDir, "dist/index.d.ts"), "utf8");
+		expect(dts).toMatch(/type:\s*"citation"/);
+		expect(dts).toMatch(/type:\s*"grounding"/);
+		expect(dts).toContain("citationSpanAnchor");
+	});
+
+	it("LSA-MAINT24: bundle size remains within MAINT17 limits after citation helpers", () => {
+		const limits = new Map([
+			["dist/index.js", 205_000],
+			["dist/adapters/openai-chat.js", 85_000],
+			["dist/adapters/openai-compatible.js", 85_000],
+			["dist/adapters/anthropic.js", 85_000],
+		]);
+		for (const [file, limit] of limits) {
+			expect(statSync(join(rootDir, file)).size).toBeLessThan(limit);
+		}
+	});
+
+	it("LSA-MAINT25: cohere and gemini adapter bundles stay within soft growth gate", () => {
+		expect(statSync(join(rootDir, "dist/adapters/cohere.js")).size).toBeLessThan(45_000);
+		expect(statSync(join(rootDir, "dist/adapters/gemini.js")).size).toBeLessThan(55_000);
 	});
 
 	it("LSA-MAINT22: no duplicate LSA test IDs across test/**/*.test.ts", () => {

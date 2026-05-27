@@ -9,6 +9,16 @@
 		"responseId": "pplx_cite"
 	},
 	{
+		"type": "citation",
+		"urls": ["https://example.com/a", "https://example.com/b"],
+		"searchResults": [
+			{
+				"title": "Source A",
+				"url": "https://example.com/a"
+			}
+		]
+	},
+	{
 		"type": "text.delta",
 		"text": "With sources"
 	},

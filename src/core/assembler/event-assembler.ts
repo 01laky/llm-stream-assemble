@@ -55,6 +55,10 @@ export class EventAssembler {
 				return this.pushToolArgs(chunk);
 			case "tool-done":
 				return this.finishTool(chunk);
+			case "citation":
+				return [this.citationEvent(chunk)];
+			case "grounding":
+				return [this.groundingEvent(chunk)];
 			case "metadata": {
 				const { kind: _kind, ...metadata } = chunk;
 				return [optionalEvent({ type: "metadata", ...metadata })];
@@ -304,6 +308,16 @@ export class EventAssembler {
 		if (utf8ByteLength(value) > this.options.maxBufferBytes) {
 			throw prefixedError(`${label} buffer exceeded maxBufferBytes`);
 		}
+	}
+
+	private citationEvent(chunk: Extract<RawChunk, { kind: "citation" }>): StreamEvent {
+		const { kind: _kind, ...rest } = chunk;
+		return optionalEvent({ type: "citation", ...rest });
+	}
+
+	private groundingEvent(chunk: Extract<RawChunk, { kind: "grounding" }>): StreamEvent {
+		const { kind: _kind, ...rest } = chunk;
+		return optionalEvent({ type: "grounding", ...rest });
 	}
 
 	private errorEvent(error: unknown, recoverable: boolean | undefined): StreamEvent {

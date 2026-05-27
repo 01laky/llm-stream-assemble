@@ -133,8 +133,8 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(doc).toMatch(/tool calling/i);
 	});
 
-	it("LSA-DOC16: compatibility.md stable status is 1.5.7", () => {
-		expect(read("docs/compatibility.md")).toContain("Stable `1.5.7`");
+	it("LSA-DOC16: compatibility.md stable status is 1.6.0", () => {
+		expect(read("docs/compatibility.md")).toContain("Stable `1.6.0`");
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {

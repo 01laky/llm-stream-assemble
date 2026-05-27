@@ -371,9 +371,7 @@ export interface BedrockAdapterOptions {
 #### Mapping notes
 
 - Cohere chat/stream APIs use their own event types (text generation, tool calls, citations).
-- Citations may map to `metadata` or a future `citation.*` extension — **proposal:**
-  defer citation-specific events unless `StreamEvent` union is extended in a minor with
-  clear backward compatibility (new event types are additive and safe in 1.x).
+- Citations map to typed **`citation`** events since **1.6.0** (**LSA-CO99**–**CO113**, **CF01**).
 
 #### Initial scope
 
@@ -418,14 +416,13 @@ metadata and citation-like fields.
 #### Approach
 
 - Preset `perplexity` with fixtures for streaming text and optional search/citation metadata.
-- Map citation payloads to `metadata.raw` in 1.x unless a dedicated `citation.*` event
-  type is approved as an additive `StreamEvent` extension.
+- Map citation payloads to typed **`citation`** events since **1.6.0** (**LSA-OC276**–**OC289**, **CF02**).
 - Document that model list and response shape may change independently of this library.
 
 #### Deliverables checklist
 
 - [x] Preset `perplexity` with citations-stream, provider-error, and response fixtures
-- [x] Tests **LSA-OC87**–**LSA-OC90**, **LSA-OC99**, **LSA-RF20**; citations via `metadata.raw`
+- [x] Tests **LSA-OC87**–**LSA-OC90**, **LSA-OC99**, **LSA-RF20**, **LSA-OC276**–**OC289**; typed `citation` events
 - [x] Example `examples/node-fetch/perplexity.ts`; live smoke `pnpm smoke:perplexity`
 
 ---
@@ -535,9 +532,9 @@ These are **not** required for every new adapter but may become necessary:
 
 | Enhancement                              | Trigger                                                               |
 | ---------------------------------------- | --------------------------------------------------------------------- |
-| Additional `RawChunk` kinds              | Provider exposes citation blocks, grounding metadata, etc.            |
+| Additional `RawChunk` kinds              | ✅ Shipped **1.6.0** — `citation`, `grounding` RawChunks              |
 | Multi-terminal finish policy             | Justified breaking change → defer to 2.0 or document partial behavior |
-| `StreamEvent` citation / grounding types | Gemini Google Search grounding, Cohere citations                      |
+| `StreamEvent` citation / grounding types | ✅ Shipped **1.6.0** — Gemini grounding, Cohere/Perplexity citations  |
 
 Any `StreamEvent` union extension must remain backward compatible for existing consumers
 (additive event types only in 1.x).
@@ -818,7 +815,7 @@ requirements change materially:
 
 1. **Gemini Vertex vs Google AI** — ✅ resolved in `1.5.5`: one adapter, `apiSurface` flag + `normalizeVertexChunk`.
 2. **Bedrock EventStream** — document helper in examples vs optional tiny internal utility (still zero dep)?
-3. **Citation / grounding events** — extend `StreamEvent` in 1.x or stash for 2.0?
+3. **Citation / grounding events** — ✅ resolved in **1.6.0**: additive `citation` / `grounding` `StreamEvent` types; legacy `metadata.raw` opt-in via `emitLegacyCitationMetadata`.
 4. **Compatible preset explosion** — keep one enum vs split `presets/` directory for maintainability?
 5. **Live smoke in CI** — remain opt-in manual forever, or nightly workflow with repository secrets?
 6. **DeepSeek reasoning** — sufficient via compatible dialect, or dedicated reasoning parser module?

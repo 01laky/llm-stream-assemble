@@ -15,9 +15,9 @@ describe("gemini vertex docs regression", () => {
 		expect(read("CHANGELOG.md")).toMatch(/Vertex|apiSurface/i);
 	});
 
-	it("LSA-DOC76: package.json version is 1.5.7", () => {
+	it("LSA-DOC76: package.json version is 1.6.0", () => {
 		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.7");
+		expect(pkg.version).toBe("1.6.0");
 	});
 
 	it("LSA-DOC77: README mentions apiSurface vertex", () => {

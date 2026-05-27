@@ -105,11 +105,12 @@ export function hostFixtureAdapterOptions(
 
 export function normalizeCompatibleEvents(events: StreamEvent[]): unknown[] {
 	return events.map((event) => {
-		if (event.type === "metadata") {
-			const { raw: _raw, ...rest } = event;
-			return rest;
-		}
-		if (event.type === "usage") {
+		if (
+			event.type === "metadata" ||
+			event.type === "usage" ||
+			event.type === "citation" ||
+			event.type === "grounding"
+		) {
 			const { raw: _raw, ...rest } = event;
 			return rest;
 		}
@@ -126,11 +127,12 @@ export function normalizeCompatibleEvents(events: StreamEvent[]): unknown[] {
 
 export function normalizeCompatibleRawChunks(chunks: RawChunk[]): unknown[] {
 	return chunks.map((chunk) => {
-		if (chunk.kind === "metadata") {
-			const { raw: _raw, ...rest } = chunk;
-			return rest;
-		}
-		if (chunk.kind === "usage") {
+		if (
+			chunk.kind === "metadata" ||
+			chunk.kind === "usage" ||
+			chunk.kind === "citation" ||
+			chunk.kind === "grounding"
+		) {
 			const { raw: _raw, ...rest } = chunk;
 			return rest;
 		}

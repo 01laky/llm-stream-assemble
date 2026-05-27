@@ -9,6 +9,7 @@ import {
 import {
 	choiceIndexFor,
 	choiceKey,
+	citationChunksFromRootPayload,
 	finishReasonChunks,
 	hasMetadata,
 	metadataChunks,
@@ -44,10 +45,15 @@ export class OpenAIChatLikeParser {
 		}
 
 		const chunks: RawChunk[] = [];
+		const citationOptions = {
+			emitLegacyCitationMetadata: this.options.emitLegacyCitationMetadata,
+		};
 		if (!this.metadataEmitted && hasMetadata(payload)) {
-			chunks.push(...metadataChunks(payload));
+			chunks.push(...metadataChunks(payload, citationOptions));
 			this.metadataEmitted = true;
 		}
+
+		chunks.push(...citationChunksFromRootPayload(payload, citationOptions));
 
 		const usage = usageChunk(payload.usage, this.options);
 		if (usage) chunks.push(usage);

@@ -245,7 +245,7 @@ describe("refactor: openai-compatible presets", () => {
 		expect(deepseek.parseChunk(payload)).toEqual([]);
 	});
 
-	it("LSA-RF20: parseResponse on perplexity response-citations preserves citations in metadata.raw", () => {
+	it("LSA-RF20: parseResponse on perplexity response-citations emits citation chunk", () => {
 		const body = JSON.parse(
 			readFileSync(
 				join(
@@ -256,11 +256,9 @@ describe("refactor: openai-compatible presets", () => {
 			),
 		);
 		const chunks = openaiCompatibleAdapter({ provider: "perplexity" }).parseResponse!(body);
-		const metadata = chunks.find((chunk) => chunk.kind === "metadata");
-		expect(metadata).toBeDefined();
-		expect((metadata as { raw?: { citations?: string[] } }).raw?.citations).toContain(
-			"https://example.com/doc",
-		);
+		const citation = chunks.find((chunk) => chunk.kind === "citation");
+		expect(citation).toBeDefined();
+		expect((citation as { urls?: string[] }).urls).toContain("https://example.com/doc");
 	});
 
 	it("LSA-RF21: parseResponse on azure response-content-filter preserves filter metadata.raw", () => {

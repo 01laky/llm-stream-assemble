@@ -45,7 +45,7 @@ Cross-preset guards:
 | `together/`   | `together`   | `reasoning` alias (not `thinking`)                                                                                             |
 | `fireworks/`  | `fireworks`  | Text and tool streaming                                                                                                        |
 | `openrouter/` | `openrouter` | Router metadata fields                                                                                                         |
-| `perplexity/` | `perplexity` | Citations/search metadata, provider error, response                                                                            |
+| `perplexity/` | `perplexity` | Root `citations` / `search_results` → typed `citation` events (**CF02**, **OC276**–**OC289**)                                  |
 | `xai/`        | `xai`        | Grok OpenAI-compatible; reasoning stream, tools                                                                                |
 | `azure/`      | `azure`      | Deployment-shaped Chat Completions; content filter, json-mode, strict preset                                                   |
 | `cloudflare/` | `cloudflare` | Workers AI REST; sparse metadata, usage chunk finish, json-mode, tools; **`manifest.json`** drives golden/conformance test ids |

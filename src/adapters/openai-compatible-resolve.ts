@@ -12,6 +12,8 @@ export interface OpenAICompatibleAdapterOptions {
 	allowMissingMetadata?: boolean;
 	useChoicePositionFallback?: boolean;
 	reasoningFieldAliases?: string[];
+	/** @deprecated Dual-emit legacy metadata.raw citation blobs alongside typed events. */
+	emitLegacyCitationMetadata?: boolean;
 }
 
 export interface ResolvedCompatibleAdapterConfig {

@@ -45,16 +45,15 @@ describe("docs positioning 1.5.7", () => {
 		expect(changelog).toMatch(/smoke:gemini|openai-chat-conformance|MAINT22/i);
 	});
 
-	it("LSA-DOC102: package.json version is 1.5.7", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.5.7");
+	it("LSA-DOC102: CHANGELOG 1.5.7 section remains for historical traceability", () => {
+		expect(read("CHANGELOG.md")).toContain("## [1.5.7]");
 	});
 
-	it("LSA-DOC103: README badges reference 1.5.7 and test count", () => {
+	it("LSA-DOC103: README and CHANGELOG still reference 1.5.7 release history", () => {
 		const readme = read("README.md");
-		expect(readme).toContain("core-1.5.7");
-		expect(readme).toContain("Stable `1.5.7`");
-		expect(readme).toMatch(/tests-\d+_passing/);
+		const changelog = read("CHANGELOG.md");
+		expect(changelog).toContain("## [1.5.7]");
+		expect(readme).toMatch(/1\.5\.7|CHANGELOG/i);
 	});
 
 	it("LSA-DOC105: docs/live-smoke.md has smoke command index with smoke:gemini", () => {
@@ -89,6 +88,6 @@ describe("docs positioning 1.5.7", () => {
 		const badgeMatch = readme.match(/tests-(\d+)_passing/);
 		expect(badgeMatch).not.toBeNull();
 		expect(releasePrep).toMatch(/tests-\(\\d\+\)_passing|readmeTestsBadgeCount/i);
-		expect(Number(badgeMatch?.[1])).toBeGreaterThanOrEqual(1637);
+		expect(Number(badgeMatch?.[1])).toBeGreaterThanOrEqual(1799);
 	});
 });

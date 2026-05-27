@@ -5,6 +5,8 @@ import { assembleStream } from "../src/core/assemble-stream";
 import { byteStreamFromStrings, collectAsync } from "./helpers/collect-events";
 import {
 	assembleCohereJsonl,
+	assembleCohereResponse,
+	cohereJSONFixture,
 	cohereJsonlLines,
 	expectedCohereEvents,
 	normalizeCohereEvents,
@@ -287,7 +289,7 @@ describe("cohereAdapter edge cases", () => {
 		]);
 	});
 
-	it("LSA-CO88: assembler drops post-finish citation metadata", async () => {
+	it("LSA-CO88: assembler drops post-finish citation event", async () => {
 		async function* payloads() {
 			yield payload({
 				type: "message-start",
@@ -315,15 +317,7 @@ describe("cohereAdapter edge cases", () => {
 		}
 		const events = await collectAsync(assembleFromPayloads(payloads(), cohereAdapter()));
 		expect(events.some((event) => event.type === "finish")).toBe(true);
-		expect(
-			events.some(
-				(event) =>
-					event.type === "metadata" &&
-					typeof event.raw === "object" &&
-					event.raw !== null &&
-					"citation" in (event.raw as Record<string, unknown>),
-			),
-		).toBe(false);
+		expect(events.some((event) => event.type === "citation")).toBe(false);
 	});
 
 	it("LSA-CO89: assembler drops post-finish content-delta text", async () => {
@@ -472,7 +466,7 @@ describe("cohereAdapter edge cases", () => {
 		expect(adapter.parseChunk(start)).toEqual([]);
 	});
 
-	it("LSA-CO98: citations-stream golden preserves citation metadata before finish", async () => {
+	it("LSA-CO98: citations-stream golden preserves citation event before finish", async () => {
 		const events = await collectAsync(
 			assembleFromPayloads(
 				(async function* () {
@@ -481,15 +475,256 @@ describe("cohereAdapter edge cases", () => {
 				cohereAdapter(),
 			),
 		);
-		expect(
-			events.some(
-				(event) =>
-					event.type === "metadata" &&
-					typeof event.raw === "object" &&
-					event.raw !== null &&
-					"citation" in (event.raw as Record<string, unknown>),
-			),
-		).toBe(true);
+		expect(events.some((event) => event.type === "citation")).toBe(true);
 		expect(events.some((event) => event.type === "finish" && event.reason === "stop")).toBe(true);
+	});
+
+	it("LSA-CO99: citation-start emits citation not metadata", () => {
+		const chunks = cohereAdapter().parseChunk(
+			JSON.stringify({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 2, text: "hi" } } },
+			}),
+		);
+		expect(chunks.some((chunk) => chunk.kind === "citation")).toBe(true);
+		expect(chunks.some((chunk) => chunk.kind === "metadata")).toBe(false);
+	});
+
+	it("LSA-CO100: citation span fields mapped from Cohere payload", () => {
+		const chunks = cohereAdapter().parseChunk(
+			JSON.stringify({
+				type: "citation-start",
+				index: 0,
+				delta: {
+					message: {
+						citations: { start: 5, end: 10, text: "hello" },
+					},
+				},
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({
+				kind: "citation",
+				span: { start: 5, end: 10, text: "hello" },
+			}),
+		);
+	});
+
+	it("LSA-CO101: citation sources preserved", () => {
+		const sources = [{ type: "document", id: "doc:1" }];
+		const chunks = cohereAdapter().parseChunk(
+			JSON.stringify({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 1, text: "a", sources } } },
+			}),
+		);
+		expect(chunks).toContainEqual(expect.objectContaining({ kind: "citation", sources }));
+	});
+
+	it("LSA-CO102: citations-stream golden updated with citation events", async () => {
+		expect(await assembleCohereJsonl("citations-stream")).toEqual(
+			expectedCohereEvents("citations-stream"),
+		);
+	});
+
+	it("LSA-CO103: citations-interleaved golden updated", async () => {
+		expect(await assembleCohereJsonl("citations-interleaved")).toEqual(
+			expectedCohereEvents("citations-interleaved"),
+		);
+	});
+
+	it("LSA-CO104: post-finish citation dropped", async () => {
+		async function* payloads() {
+			yield JSON.stringify({
+				type: "message-end",
+				delta: { finish_reason: "COMPLETE" },
+			});
+			yield JSON.stringify({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 1, text: "late" } } },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), cohereAdapter()));
+		expect(events.some((event) => event.type === "citation")).toBe(false);
+	});
+
+	it("LSA-CO105: citation-end still returns empty array", () => {
+		expect(cohereAdapter().parseChunk(JSON.stringify({ type: "citation-end", index: 0 }))).toEqual(
+			[],
+		);
+	});
+
+	it("LSA-CO107: citation index forwarded", () => {
+		const chunks = cohereAdapter().parseChunk(
+			JSON.stringify({
+				type: "citation-start",
+				index: 3,
+				delta: { message: { citations: { start: 0, end: 1, text: "a" } } },
+			}),
+		);
+		expect(chunks).toContainEqual(expect.objectContaining({ kind: "citation", index: 3 }));
+	});
+
+	it("LSA-CO108: citation raw retains full provider object", () => {
+		const citation = { start: 0, end: 1, text: "a", sources: [{ id: "doc:1" }] };
+		const chunks = cohereAdapter().parseChunk(
+			JSON.stringify({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: citation } },
+			}),
+		);
+		expect(chunks).toContainEqual(
+			expect.objectContaining({ kind: "citation", raw: { citation, index: 0 } }),
+		);
+	});
+
+	it("LSA-CO109: stream without citations unchanged (text-basic regression)", async () => {
+		expect(await assembleCohereJsonl("text-basic")).toEqual(expectedCohereEvents("text-basic"));
+	});
+
+	it("LSA-CO110: citation interleaves between text deltas", async () => {
+		const events = await assembleCohereJsonl("citations-interleaved");
+		const types = events.map((event) => (event as { type?: string }).type);
+		const firstText = types.indexOf("text.delta");
+		const citationIndex = types.indexOf("citation");
+		const secondText = types.lastIndexOf("text.delta");
+		expect(firstText).toBeGreaterThanOrEqual(0);
+		expect(citationIndex).toBeGreaterThan(firstText);
+		expect(secondText).toBeGreaterThan(citationIndex);
+	});
+
+	it("LSA-CO111: jsonMode stream and citation interleave", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					for (const line of cohereJsonlLines("citations-stream")) yield line;
+				})(),
+				cohereAdapter({ jsonMode: true }),
+			),
+		);
+		expect(events.some((event) => event.type === "citation")).toBe(true);
+	});
+
+	it("LSA-CO112: assembler citation events survive until finish", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					for (const line of cohereJsonlLines("citations-stream")) yield line;
+				})(),
+				cohereAdapter(),
+			),
+		);
+		const citationIndex = events.findIndex((event) => event.type === "citation");
+		const finishIndex = events.findIndex((event) => event.type === "finish");
+		expect(citationIndex).toBeGreaterThanOrEqual(0);
+		expect(finishIndex).toBeGreaterThan(citationIndex);
+	});
+
+	it("LSA-CO113: response-citations.json non-stream golden", () => {
+		expect(assembleCohereResponse("response-citations")).toEqual(
+			expectedCohereEvents("response-citations"),
+		);
+	});
+
+	it("LSA-CO114: emitLegacyCitationMetadata on cohereAdapter dual-emits metadata.raw citation", () => {
+		const chunks = cohereAdapter({ emitLegacyCitationMetadata: true }).parseChunk(
+			payload({
+				type: "citation-start",
+				index: 2,
+				delta: {
+					message: {
+						citations: {
+							start: 1,
+							end: 4,
+							text: "abc",
+							sources: [{ id: "doc:legacy" }],
+						},
+					},
+				},
+			}),
+		);
+		expect(chunks.filter((chunk) => chunk.kind === "citation")).toHaveLength(1);
+		expect(chunks.filter((chunk) => chunk.kind === "metadata")).toHaveLength(1);
+	});
+
+	it("LSA-CO115: citation-start with null citations forwards citation raw chunk", () => {
+		expect(
+			cohereAdapter().parseChunk(
+				payload({
+					type: "citation-start",
+					index: 0,
+					delta: { message: { citations: null } },
+				}),
+			),
+		).toContainEqual(
+			expect.objectContaining({
+				kind: "citation",
+				raw: { citation: null, index: 0 },
+			}),
+		);
+	});
+
+	it("LSA-CO116: parseResponse response-citations preserves multiple citation spans", () => {
+		const chunks = cohereAdapter().parseResponse!(cohereJSONFixture("response-citations"));
+		const citations = chunks.filter((chunk) => chunk.kind === "citation");
+		expect(citations.length).toBeGreaterThanOrEqual(1);
+		expect(citations[0]).toMatchObject({
+			kind: "citation",
+			span: expect.objectContaining({ text: "gym memberships" }),
+		});
+	});
+
+	it("LSA-CO117: citation interleaved with tool-plan reasoning preserves order", async () => {
+		async function* payloads() {
+			yield payload({
+				type: "tool-plan-delta",
+				index: 0,
+				delta: { message: { tool_plan: "plan step" } },
+			});
+			yield payload({
+				type: "citation-start",
+				index: 0,
+				delta: { message: { citations: { start: 0, end: 1, text: "a" } } },
+			});
+			yield payload({
+				type: "content-delta",
+				index: 0,
+				delta: { message: { content: { text: "answer" } } },
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), cohereAdapter()));
+		const types = events.map((event) => event.type);
+		const reasoningIndex = types.indexOf("reasoning.delta");
+		const citationIndex = types.indexOf("citation");
+		const textIndex = types.indexOf("text.delta");
+		expect(reasoningIndex).toBeGreaterThanOrEqual(0);
+		expect(citationIndex).toBeGreaterThan(reasoningIndex);
+		expect(textIndex).toBeGreaterThan(citationIndex);
+	});
+
+	it("LSA-CO118: jsonMode citation stream still emits citation not json for citation-start", async () => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					yield payload({
+						type: "citation-start",
+						index: 0,
+						delta: { message: { citations: { start: 0, end: 2, text: "hi" } } },
+					});
+					yield payload({
+						type: "content-delta",
+						index: 0,
+						delta: { message: { content: { text: '{"a":1}' } } },
+					});
+				})(),
+				cohereAdapter({ jsonMode: true }),
+			),
+		);
+		expect(events.some((event) => event.type === "citation")).toBe(true);
+		expect(events.some((event) => event.type === "json.delta")).toBe(true);
 	});
 });

@@ -1,19 +1,19 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.5.7-blue)
+![core](https://img.shields.io/badge/core-1.6.0-blue)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-1637_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-1799_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.5.7-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.6.0-brightgreen)
 
-**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, errors, and non-streaming responses.
+**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, citations, grounding, errors, and non-streaming responses.
 
 > A composable TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Vertex AI to Bedrock to Cohere to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.5.7`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.6.0`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
@@ -410,7 +410,7 @@ Provider presets:
 | `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                                                    |
 | `together`   | Together AI                   | OpenAI-like; `reasoning` / `reasoning_delta` aliases                                        |
 | `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                                                         |
-| `perplexity` | Perplexity API                | Search-grounded answers; citations in `metadata.raw`                                        |
+| `perplexity` | Perplexity API                | Search-grounded answers; root `citations` / `search_results` → typed `citation` events      |
 | `xai`        | xAI Grok API                  | OpenAI-compatible; `reasoning_content` mapped when present                                  |
 | `azure`      | Azure OpenAI Chat Completions | Stricter preset; deployment URL + `api-key` auth; content filter metadata in `metadata.raw` |
 | `cloudflare` | Cloudflare Workers AI REST    | OpenAI-compatible `/v1/chat/completions`; Bearer + account id; loose preset like Groq       |
@@ -687,7 +687,7 @@ for await (const event of assembleStream(response.body!, cohereAdapter())) {
 }
 ```
 
-Use `cohereAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. **`tool-plan-delta`** events map to `reasoning.*` with `variant: "detail"`. **`citation-start`** payloads are preserved in `metadata.raw` — there are no dedicated `citation.*` unified events in 1.x. Legacy Cohere v1 endpoints are out of scope.
+Use `cohereAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. **`tool-plan-delta`** events map to `reasoning.*` with `variant: "detail"`. **`citation-start`** maps to typed **`citation`** events (span, sources, index). Set `emitLegacyCitationMetadata: true` on any citation-capable adapter to dual-emit legacy `metadata.raw` blobs during migration. Legacy Cohere v1 endpoints are out of scope.
 
 Subpath import: `import { cohereAdapter } from "llm-stream-assemble/adapters/cohere"`.
 

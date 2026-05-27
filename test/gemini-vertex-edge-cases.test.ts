@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { geminiAdapter, normalizeVertexChunk } from "../src/adapters/gemini";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";
-import { collectAsync } from "./helpers/collect-events";
+import { assembleStream } from "../src/core/assemble-stream";
+import { byteStreamFromStrings, collectAsync } from "./helpers/collect-events";
 import {
 	assembleVertexJsonl,
 	expectedVertexEvents,
+	geminiTextFixture,
 	normalizeGeminiEvents,
 	vertexJsonlLines,
 } from "./helpers/gemini-fixtures";
@@ -102,7 +104,7 @@ describe("geminiAdapter vertex parseChunk edge cases", () => {
 });
 
 describe("geminiAdapter vertex extended edge cases", () => {
-	it("LSA-GV105: citationMetadata and groundingMetadata emit metadata raw via response wrapper", () => {
+	it("LSA-GV105: citationMetadata and groundingMetadata emit citation and grounding via response wrapper", () => {
 		expect(
 			vertex().parseChunk(
 				payload({
@@ -120,15 +122,18 @@ describe("geminiAdapter vertex extended edge cases", () => {
 					},
 				}),
 			),
-		).toContainEqual({
-			kind: "metadata",
-			raw: {
-				citationMetadata: { citations: [{ uri: "urn:x" }] },
-				groundingMetadata: {
-					groundingChunks: [{ web: { uri: "https://example.com" } }],
-				},
+		).toEqual([
+			{
+				kind: "citation",
+				raw: { citations: [{ uri: "urn:x" }] },
+				sources: [{ uri: "urn:x" }],
 			},
-		});
+			{
+				kind: "grounding",
+				raw: { groundingChunks: [{ web: { uri: "https://example.com" } }] },
+				chunks: [{ web: { uri: "https://example.com" } }],
+			},
+		]);
 	});
 
 	it("LSA-GV106: executableCode parts are skipped on vertex surface", () => {
@@ -278,7 +283,7 @@ describe("geminiAdapter vertex extended edge cases", () => {
 		expect(chunks.some((c) => c.kind === "provider-error")).toBe(true);
 	});
 
-	it("LSA-GV120: groundingMetadata on candidate includes webSearchQueries in metadata raw", () => {
+	it("LSA-GV120: groundingMetadata on candidate emits grounding chunk with webSearchQueries", () => {
 		const chunks = vertex().parseChunk(
 			payload({
 				candidates: [
@@ -291,9 +296,11 @@ describe("geminiAdapter vertex extended edge cases", () => {
 			}),
 		);
 		expect(chunks).toContainEqual({
-			kind: "metadata",
-			raw: { groundingMetadata: { webSearchQueries: ["weather Boston"] } },
+			kind: "grounding",
+			raw: { webSearchQueries: ["weather Boston"] },
+			queries: ["weather Boston"],
 		});
+		expect(chunks).toContainEqual({ kind: "text-delta", text: "ok", choiceIndex: 0 });
 	});
 
 	it("LSA-GV121: assembler drops post-finish text delta on vertex surface", async () => {
@@ -451,5 +458,63 @@ describe("geminiAdapter vertex extended edge cases", () => {
 			outputTokens: 6,
 			raw: { promptTokenCount: 4, candidatesTokenCount: 6 },
 		});
+	});
+
+	it("LSA-GV133: post-finish grounding dropped", async () => {
+		async function* payloads() {
+			yield payload({
+				candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }],
+			});
+			yield payload({
+				candidates: [
+					{
+						index: 0,
+						groundingMetadata: { webSearchQueries: ["late"] },
+						content: { parts: [] },
+					},
+				],
+			});
+		}
+		const events = await collectAsync(assembleFromPayloads(payloads(), vertex()));
+		expect(events.some((event) => event.type === "grounding")).toBe(false);
+	});
+
+	it("LSA-GV134: envelope-wrapped grounding forward compat", async () => {
+		const events = normalizeGeminiEvents(await assembleVertexJsonl("grounding-metadata"));
+		expect(events.some((event) => (event as { type?: string }).type === "grounding")).toBe(true);
+	});
+
+	it("LSA-GV135: vertex and google-ai parity on grounding-metadata fixture", async () => {
+		const vertexEvents = normalizeGeminiEvents(await assembleVertexJsonl("grounding-metadata"));
+		const googleEvents = normalizeGeminiEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(geminiTextFixture("grounding-metadata", "sse")),
+					geminiAdapter(),
+				),
+			),
+		);
+		expect(
+			vertexEvents.filter((event) => (event as { type?: string }).type === "grounding"),
+		).toEqual(googleEvents.filter((event) => (event as { type?: string }).type === "grounding"));
+	});
+
+	it("LSA-GV136: unknown envelope plus grounding forward compat", () => {
+		const chunks = vertex().parseChunk(
+			payload({
+				vertexTraceId: "trace-ground",
+				response: {
+					candidates: [
+						{
+							index: 0,
+							groundingMetadata: { webSearchQueries: ["q"] },
+							content: { parts: [{ text: "ok" }] },
+						},
+					],
+				},
+			}),
+		);
+		expect(chunks.some((chunk) => chunk.kind === "grounding")).toBe(true);
+		expect(chunks.some((chunk) => chunk.kind === "text-delta")).toBe(true);
 	});
 });

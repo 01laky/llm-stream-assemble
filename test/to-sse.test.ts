@@ -100,6 +100,27 @@ describe("toSSE", () => {
 		const output = await readStream(toSSE(events({ type: "text.delta", text: "hi" })));
 		expect(output).not.toContain("event:");
 	});
+
+	it("LSA-T29: citation and grounding serialize before finish without alteration", async () => {
+		const output = await readStream(
+			toSSE(
+				events(
+					{
+						type: "citation",
+						urls: ["https://t29.test"],
+						searchResults: [{ url: "https://t29.test" }],
+					},
+					{ type: "grounding", queries: ["q"], chunks: [{ web: { uri: "https://t29.test" } }] },
+					{ type: "finish", reason: "stop" },
+				),
+			),
+		);
+		expect(output).toContain('"type":"citation"');
+		expect(output).toContain('"searchResults"');
+		expect(output).toContain('"type":"grounding"');
+		expect(output).toContain('"queries":["q"]');
+		expect(output).toMatch(/data: \{"type":"finish"/);
+	});
 });
 
 function returningIterable(onReturn: () => void): AsyncIterable<StreamEvent> {

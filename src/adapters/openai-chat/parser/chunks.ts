@@ -1,14 +1,26 @@
 import type { FinishReason, RawChunk } from "../../../core/types";
 import { asNumber, asString, isRecord, optionalRawChunk } from "../../utils";
 import { adapterScopedError } from "../../errors";
+import {
+	metadataPayloadWithoutCitationFields,
+	perplexityCitationFromPayload,
+	type CitationGroundingOptions,
+} from "../../shared/citation-grounding";
 import type { RequiredOpenAIChatLikeParserOptions } from "./types";
 
-export function metadataChunks(payload: Record<string, unknown>): RawChunk[] {
+export function metadataChunks(
+	payload: Record<string, unknown>,
+	_options: CitationGroundingOptions = {},
+): RawChunk[] {
 	const chunks: RawChunk[] = [];
 	const id = asString(payload.id);
 	if (id) chunks.push({ kind: "message-start", id });
 
-	const metadata: Extract<RawChunk, { kind: "metadata" }> = { kind: "metadata", raw: payload };
+	const metadataPayload = metadataPayloadWithoutCitationFields(payload);
+	const metadata: Extract<RawChunk, { kind: "metadata" }> = {
+		kind: "metadata",
+		raw: metadataPayload,
+	};
 	const model = asString(payload.model);
 	const created = asNumber(payload.created);
 	if (model) metadata.model = model;
@@ -18,6 +30,22 @@ export function metadataChunks(payload: Record<string, unknown>): RawChunk[] {
 		chunks.push(metadata);
 	}
 	return chunks;
+}
+
+export function citationChunksFromRootPayload(
+	payload: Record<string, unknown>,
+	options: CitationGroundingOptions = {},
+): RawChunk[] {
+	return perplexityCitationFromPayload(payload, options);
+}
+
+export function hasRootCitationFields(payload: Record<string, unknown>): boolean {
+	const citations = payload.citations;
+	const searchResults = payload.search_results;
+	return (
+		(Array.isArray(citations) && citations.length > 0) ||
+		(Array.isArray(searchResults) && searchResults.length > 0)
+	);
 }
 
 export function hasMetadata(payload: Record<string, unknown>): boolean {

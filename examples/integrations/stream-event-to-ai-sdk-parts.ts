@@ -4,6 +4,8 @@ import type { StreamEvent } from "../../src/core/types";
 export type AISDKStylePart =
 	| { type: "text-delta"; textDelta: string }
 	| { type: "tool-call"; toolCallId: string; toolName: string; args: unknown }
+	| { type: "citation"; urls?: string[]; sources?: unknown[] }
+	| { type: "grounding"; queries?: string[]; chunks?: unknown[] }
 	| { type: "finish"; finishReason: string }
 	| { type: "error"; message: string };
 
@@ -19,6 +21,18 @@ export function mapStreamEventToAISDKPart(
 				toolCallId: event.id,
 				toolName: event.name,
 				args: event.args,
+			};
+		case "citation":
+			return {
+				type: "citation",
+				urls: event.urls,
+				sources: event.sources,
+			};
+		case "grounding":
+			return {
+				type: "grounding",
+				queries: event.queries,
+				chunks: event.chunks,
 			};
 		case "finish":
 			return { type: "finish", finishReason: event.reason };

@@ -8,6 +8,7 @@ import {
 } from "./errors";
 import {
 	choiceIndexFor,
+	citationChunksFromRootPayload,
 	finishReasonChunks,
 	isRecognizableResponse,
 	metadataChunks,
@@ -40,7 +41,9 @@ export function parseResponse(
 
 	const chunks: RawChunk[] = [];
 	const finishChunks: RawChunk[] = [];
-	chunks.push(...metadataChunks(body));
+	const citationOptions = { emitLegacyCitationMetadata: options.emitLegacyCitationMetadata };
+	chunks.push(...metadataChunks(body, citationOptions));
+	chunks.push(...citationChunksFromRootPayload(body, citationOptions));
 
 	const choices = Array.isArray(body.choices) ? body.choices : [];
 	for (let position = 0; position < choices.length; position += 1) {

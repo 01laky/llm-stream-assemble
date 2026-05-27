@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+	isCitation,
+	isGrounding,
 	isError,
 	isFinish,
 	isJsonDelta,
@@ -143,5 +145,17 @@ describe("type-guards.test.ts", () => {
 			expect(trueCount).toBe(1);
 			expect(guard(match)).toBe(true);
 		}
+	});
+
+	it("LSA-G116: isCitation guard discriminates citation events", () => {
+		expect(isCitation({ type: "citation", urls: ["https://g116.test"] })).toBe(true);
+		expect(isCitation({ type: "grounding", queries: [] })).toBe(false);
+		expect(isCitation({ type: "text.delta", text: "x" })).toBe(false);
+	});
+
+	it("LSA-G117: isGrounding guard discriminates grounding events", () => {
+		expect(isGrounding({ type: "grounding", queries: ["q"] })).toBe(true);
+		expect(isGrounding({ type: "citation", urls: [] })).toBe(false);
+		expect(isGrounding({ type: "metadata" })).toBe(false);
 	});
 });

@@ -42,11 +42,12 @@ export function vertexJsonlLines(name: string): string[] {
 
 export function normalizeGeminiEvents(events: StreamEvent[]): unknown[] {
 	return events.map((event) => {
-		if (event.type === "metadata") {
-			const { raw: _raw, ...rest } = event;
-			return rest;
-		}
-		if (event.type === "usage") {
+		if (
+			event.type === "metadata" ||
+			event.type === "usage" ||
+			event.type === "citation" ||
+			event.type === "grounding"
+		) {
 			const { raw: _raw, ...rest } = event;
 			return rest;
 		}
