@@ -14,7 +14,9 @@
 		"channel": "content",
 		"token": "A",
 		"logprob": -0.1,
-		"bytes": [65],
+		"bytes": [
+			65
+		],
 		"position": 0
 	},
 	{
@@ -26,7 +28,9 @@
 		"channel": "content",
 		"token": "B",
 		"logprob": -0.15,
-		"bytes": [66],
+		"bytes": [
+			66
+		],
 		"choiceIndex": 1,
 		"position": 0
 	},

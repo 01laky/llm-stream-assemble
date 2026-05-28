@@ -1,6 +1,6 @@
 # Testing strategy
 
-**Status:** Active — `1.9.0`  
+**Status:** Active — `1.9.1`  
 **Policy:** Zero paid provider API calls in CI.
 
 ## Zero API key CI policy

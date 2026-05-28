@@ -4,12 +4,12 @@ Machine-readable catalog lives in `test/helpers/fixture-catalog.ts` (`discoverSt
 
 ## Summary
 
-| Metric                 | Count |
-| ---------------------- | ----: |
-| Stream fixtures        |   171 |
-| Tier-1 stream fixtures |   169 |
-| Response fixtures      |    36 |
-| Evil-offset samples    |    10 |
+| Metric | Count |
+| --- | ---: |
+| Stream fixtures | 171 |
+| Tier-1 stream fixtures | 169 |
+| Response fixtures | 36 |
+| Evil-offset samples | 10 |
 
 ## Exclusions
 
@@ -19,29 +19,29 @@ Machine-readable catalog lives in `test/helpers/fixture-catalog.ts` (`discoverSt
 
 ## Adapter stream counts
 
-| Adapter key                  | Fixtures |
-| ---------------------------- | -------: |
-| anthropic                    |       10 |
-| bedrock                      |       15 |
-| cohere                       |       17 |
-| gemini                       |       20 |
-| gemini-vertex                |       24 |
-| openai-chat                  |       14 |
-| openai-compatible            |        9 |
-| openai-compatible/azure      |        8 |
-| openai-compatible/cloudflare |        6 |
-| openai-compatible/deepseek   |        4 |
-| openai-compatible/fireworks  |        2 |
-| openai-compatible/groq       |        5 |
-| openai-compatible/lmstudio   |        2 |
-| openai-compatible/mistral    |        3 |
-| openai-compatible/ollama     |        3 |
-| openai-compatible/openrouter |        2 |
-| openai-compatible/perplexity |        4 |
-| openai-compatible/together   |        2 |
-| openai-compatible/xai        |        4 |
-| openai-responses             |       16 |
-| unknown                      |        1 |
+| Adapter key | Fixtures |
+| --- | ---: |
+| anthropic | 10 |
+| bedrock | 15 |
+| cohere | 17 |
+| gemini | 20 |
+| gemini-vertex | 24 |
+| openai-chat | 14 |
+| openai-compatible | 9 |
+| openai-compatible/azure | 8 |
+| openai-compatible/cloudflare | 6 |
+| openai-compatible/deepseek | 4 |
+| openai-compatible/fireworks | 2 |
+| openai-compatible/groq | 5 |
+| openai-compatible/lmstudio | 2 |
+| openai-compatible/mistral | 3 |
+| openai-compatible/ollama | 3 |
+| openai-compatible/openrouter | 2 |
+| openai-compatible/perplexity | 4 |
+| openai-compatible/together | 2 |
+| openai-compatible/xai | 4 |
+| openai-responses | 16 |
+| unknown | 1 |
 
 ## Tier-1 stream fixture IDs
 
@@ -266,3 +266,4 @@ Machine-readable catalog lives in `test/helpers/fixture-catalog.ts` (`discoverSt
 - openai-compatible/generic-text.sse
 - openai-compatible/groq/text-basic.sse
 - openai-compatible/azure/content-filter-block.sse
+

@@ -14,7 +14,10 @@
 		"channel": "content",
 		"token": "Hi",
 		"logprob": -0.08,
-		"bytes": [72, 105],
+		"bytes": [
+			72,
+			105
+		],
 		"position": 0
 	},
 	{

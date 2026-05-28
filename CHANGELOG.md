@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.9.1]
+
+### Fixed
+
+- Regenerated Gemini `grounding-metadata` goldens (Google AI + Vertex) and OpenAI Responses logprobs expected files to fix `fixtures:check-gemini` / `fixtures:check-responses-logprobs` CI drift after Prettier reformatted committed expected files differently from maintainer generator output.
+
+### Changed
+
+- **`.prettierignore`** — exclude `test/fixtures/**/*.expected.json` so golden files stay byte-identical to generator output and `fixtures:check-*` stays green across environments.
+- Version labels **1.9.1** across docs; README stable **1.9.1** badges; **DOC199**–**DOC206**; historical **1.9.0** doc pins in `docs-positioning-1.9.0.test.ts`.
+
+### Notes
+
+- Patch after **1.9.0** — no adapter or public API changes; semver-safe upgrade from **1.9.0**.
+
 ## [1.9.0]
 
 ### Added

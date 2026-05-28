@@ -14,7 +14,15 @@
 		"channel": "content",
 		"token": "Partial",
 		"logprob": -0.5,
-		"bytes": [80, 97, 114, 116, 105, 97, 108],
+		"bytes": [
+			80,
+			97,
+			114,
+			116,
+			105,
+			97,
+			108
+		],
 		"position": 0
 	},
 	{
@@ -26,7 +34,13 @@
 		"channel": "content",
 		"token": " text",
 		"logprob": -0.3,
-		"bytes": [32, 116, 101, 120, 116],
+		"bytes": [
+			32,
+			116,
+			101,
+			120,
+			116
+		],
 		"position": 1
 	},
 	{
