@@ -1,0 +1,20 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_empty"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_empty",
+		"model": "claude-3-5-sonnet"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 2,
+		"outputTokens": 0
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

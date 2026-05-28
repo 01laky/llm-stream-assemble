@@ -34,8 +34,8 @@ describe("docs positioning 1.4.1 refactor", () => {
 		expect(read("CHANGELOG.md")).toContain("## [1.4.1]");
 	});
 
-	it("LSA-DOC64: adapters-overview stable label is 1.8.1", () => {
-		expect(read("docs/img/adapters-overview.mmd")).toContain("1.8.1");
+	it("LSA-DOC64: adapters-overview stable label is 1.9.0", () => {
+		expect(read("docs/img/adapters-overview.mmd")).toContain("1.9.0");
 		expect(existsSync(join(rootDir, "docs/img/adapters-overview.svg"))).toBe(true);
 	});
 });

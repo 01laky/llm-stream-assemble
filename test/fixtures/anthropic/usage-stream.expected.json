@@ -1,0 +1,36 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_usage"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_usage",
+		"model": "claude-3-5-sonnet"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 10,
+		"outputTokens": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello"
+	},
+	{
+		"type": "text.delta",
+		"text": " usage"
+	},
+	{
+		"type": "usage",
+		"outputTokens": 5
+	},
+	{
+		"type": "text.done",
+		"text": "Hello usage"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

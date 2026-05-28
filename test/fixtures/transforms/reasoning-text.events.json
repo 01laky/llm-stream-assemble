@@ -1,0 +1,6 @@
+[
+	{ "type": "reasoning.delta", "text": "think" },
+	{ "type": "text.delta", "text": "out" },
+	{ "type": "text.done", "text": "out" },
+	{ "type": "finish", "reason": "stop" }
+]

@@ -1,0 +1,6 @@
+[
+	{ "type": "logprob", "channel": "content", "token": "a", "logprob": -0.1 },
+	{ "type": "text.delta", "text": "a" },
+	{ "type": "text.done", "text": "a" },
+	{ "type": "finish", "reason": "stop" }
+]

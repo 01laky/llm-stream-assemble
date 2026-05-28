@@ -1,0 +1,5 @@
+[
+	{ "type": "json.delta", "delta": "{\"ok\":", "partial": {} },
+	{ "type": "json.done", "value": { "ok": true } },
+	{ "type": "finish", "reason": "stop" }
+]

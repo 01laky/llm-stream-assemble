@@ -14,18 +14,12 @@
 		"channel": "refusal",
 		"token": "No",
 		"logprob": -0.2,
-		"bytes": [
-			78,
-			111
-		],
+		"bytes": [78, 111],
 		"topLogprobs": [
 			{
 				"token": "No",
 				"logprob": -0.2,
-				"bytes": [
-					78,
-					111
-				]
+				"bytes": [78, 111]
 			}
 		],
 		"position": 0
@@ -39,15 +33,7 @@
 		"channel": "refusal",
 		"token": " thanks",
 		"logprob": -0.4,
-		"bytes": [
-			32,
-			116,
-			104,
-			97,
-			110,
-			107,
-			115
-		],
+		"bytes": [32, 116, 104, 97, 110, 107, 115],
 		"position": 1
 	},
 	{

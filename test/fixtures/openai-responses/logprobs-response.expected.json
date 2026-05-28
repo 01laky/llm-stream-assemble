@@ -14,13 +14,7 @@
 		"channel": "content",
 		"token": "Hello",
 		"logprob": -0.1,
-		"bytes": [
-			72,
-			101,
-			108,
-			108,
-			111
-		],
+		"bytes": [72, 101, 108, 108, 111],
 		"position": 0
 	},
 	{
@@ -28,9 +22,7 @@
 		"channel": "content",
 		"token": "!",
 		"logprob": -0.01,
-		"bytes": [
-			33
-		],
+		"bytes": [33],
 		"position": 1
 	},
 	{

@@ -1,0 +1,6 @@
+[
+	{ "type": "tool_call.start", "id": "call_1", "name": "search", "index": 0 },
+	{ "type": "tool_call.args.delta", "id": "call_1", "delta": "{\"q\":", "partial": {} },
+	{ "type": "tool_call.done", "id": "call_1", "name": "search", "args": { "q": "x" } },
+	{ "type": "finish", "reason": "tool_calls" }
+]

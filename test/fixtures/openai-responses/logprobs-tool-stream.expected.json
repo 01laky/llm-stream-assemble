@@ -14,15 +14,7 @@
 		"channel": "content",
 		"token": "Calling",
 		"logprob": -0.2,
-		"bytes": [
-			67,
-			97,
-			108,
-			108,
-			105,
-			110,
-			103
-		],
+		"bytes": [67, 97, 108, 108, 105, 110, 103],
 		"position": 0
 	},
 	{

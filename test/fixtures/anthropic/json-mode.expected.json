@@ -1,0 +1,44 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_json"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_json",
+		"model": "claude-3-5-sonnet"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 8,
+		"outputTokens": 0
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"answer\":\"",
+		"partial": {
+			"answer": ""
+		}
+	},
+	{
+		"type": "json.delta",
+		"delta": "yes\"}",
+		"partial": {
+			"answer": "yes"
+		}
+	},
+	{
+		"type": "usage",
+		"outputTokens": 4
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"answer": "yes"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

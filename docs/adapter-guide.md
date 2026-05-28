@@ -1,8 +1,8 @@
 # Adapter author guide
 
-**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.7.0`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters. Responses logprobs since **1.8.0**.
+**Status:** Active guide — OpenAI Chat, OpenAI-compatible (including host presets through `1.7.0`), Anthropic Messages, OpenAI Responses, **Google Gemini (Google AI + Vertex AI)**, **AWS Bedrock**, and **Cohere Chat v2** are reference adapters. Responses logprobs since **1.8.0**. Test hardening harness since **1.9.0** — see [`testing-strategy.md`](./testing-strategy.md).
 
-Every dedicated built-in adapter has a shared conformance harness under `test/*-conformance.test.ts` (OpenAI Chat: **LSA-OC253**–**OC255**).
+Every dedicated built-in adapter has a shared conformance harness under `test/*-conformance.test.ts` and the **1.9.0** adapter conformance matrix (`adapter-conformance-matrix.test.ts`, **AC** rows).
 
 How to add or extend a provider adapter for `llm-stream-assemble`.
 

@@ -1,0 +1,6 @@
+event: ping
+data: keep-alive
+
+data: <<<{broken>>>}
+
+data: {"candidates":[{"content":{"parts":[{"text":"gem"}]}}]}

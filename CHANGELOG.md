@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.9.0]
+
+### Added
+
+- **Chunk-split byte matrix** — tier-1 stream goldens replayed through `assembleStream` / `assembleFromPayloads` at chunk sizes 1–64 (extended tier-1 block through 128/256); **TH01**–**TH28** anchors; **≥1000** parameterized cases in `chunk-split-matrix.test.ts`.
+- **Adapter conformance harness v2** — unified **AC** matrix across seven built-in adapters plus generic OpenAI-compatible; shared `assertStreamInvariants` helper.
+- **Simulated provider E2E** — injected chunked `fetch` through example/proxy entrypoints (**INT59**–**INT110**); zero paid API in CI.
+- **Anthropic fixture parity** — new golden families (parallel tools, usage-only, incomplete, json-mode, empty stream) with **A64**–**A99** coverage rows.
+- **Transforms goldens** — expanded `test/fixtures/transforms/` plus **T43**–**T70** roundtrip suite.
+- **Deep pipeline hardening** — non-stream `parseResponse` byte-split matrix (**TH21**–**TH25**); evil offset sample (**TH26**–**TH28**); Vertex read-chunk-stream (**INT141**–**INT143**); Bedrock EventStream bytes (**B93**–**B95**); AI SDK / replay mapper matrix (**INT151**–**INT160**); stream concurrency (**X181**–**X183**); malformed catalog (**NR01**–**NR20**); `replay-fixture.ts` matrix (**RP01**–**RP30**).
+- **Shared test helpers** — `byte-stream.ts`, `fixture-catalog.ts`, `golden-parity.ts`, `stream-invariants.ts`, `simulated-provider.ts`.
+- **`docs/testing-strategy.md`**, auto-generated **`test/fixtures/REGISTRY.md`**, and `fixtures:audit-registry` wired into **`pnpm verify`**.
+
+### Changed
+
+- README test badge **4207**; stable **1.9.0** badges; **`release:prep`** minimum test count gate (**LSA-REL33** ≥ 4000).
+- **`examples/node-fetch/replay-fixture.ts`** — optional `adapter` param and JSONL replay support.
+- Historical doc pins frozen in `docs-positioning-1.8.1.test.ts`; active pins in **`docs-positioning-1.9.0.test.ts`** (**DOC182**–**DOC198**).
+
+### Notes
+
+- **No public API changes** by design; semver-safe upgrade from **1.8.x**.
+- npm publish automation still deferred → **1.10.0**.
+- Live smoke scripts remain maintainer-only; not required for CI or release.
+
 ## [1.8.1]
 
 ### Changed

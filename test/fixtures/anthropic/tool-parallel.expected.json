@@ -1,0 +1,84 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_parallel"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_parallel",
+		"model": "claude-3-5-sonnet"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 15,
+		"outputTokens": 0
+	},
+	{
+		"type": "tool_call.start",
+		"id": "toolu_w",
+		"name": "weather",
+		"index": 0
+	},
+	{
+		"type": "tool_call.start",
+		"id": "toolu_t",
+		"name": "time",
+		"index": 1
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_w",
+		"delta": "{\"city\":\"Pra",
+		"partial": {
+			"city": "Pra"
+		}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_t",
+		"delta": "{\"zone\":\"UT",
+		"partial": {
+			"zone": "UT"
+		}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_w",
+		"delta": "gue\"}",
+		"partial": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "toolu_t",
+		"delta": "C\"}",
+		"partial": {
+			"zone": "UTC"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "toolu_w",
+		"name": "weather",
+		"args": {
+			"city": "Prague"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "toolu_t",
+		"name": "time",
+		"args": {
+			"zone": "UTC"
+		}
+	},
+	{
+		"type": "usage",
+		"outputTokens": 12
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

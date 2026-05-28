@@ -666,21 +666,11 @@ Templates (future): `.github/ISSUE_TEMPLATE/new-adapter.md` — optional follow-
 
 ---
 
-## Adapter conformance harness (proposal)
+## Adapter conformance harness — **implemented in 1.9.0**
 
 Reduce duplicated test boilerplate across `LSA-O*`, `LSA-A*`, `LSA-G*`, etc.
 
-**Goal:** internal test helper (not public API) such as:
-
-```ts
-// test/helpers/adapter-conformance.ts (proposal)
-runAdapterGoldenStream({
-	adapter,
-	fixturePath,
-	expectedEventsPath,
-	testIdPrefix: "LSA-G",
-});
-```
+**Shipped:** internal test helpers (not public API) in `test/helpers/golden-parity.ts`, `test/helpers/stream-invariants.ts`, and `test/adapter-conformance-matrix.test.ts` (**AC** rows). Shared golden stream/response parity runners plus `assertStreamInvariants` cover the checklist below across all seven built-in adapters and generic OpenAI-compatible.
 
 **Checks every adapter should pass:**
 
@@ -690,7 +680,7 @@ runAdapterGoldenStream({
 - non-streaming `parseResponse` parity with stream terminal state
 - empty/whitespace chunk → no throw; zero or benign chunks
 
-Implement when third net-new adapter (Gemini) lands to validate the abstraction.
+See [`testing-strategy.md`](./testing-strategy.md) for fixture tiers, chunk-split matrix, and zero-API CI policy.
 
 ---
 

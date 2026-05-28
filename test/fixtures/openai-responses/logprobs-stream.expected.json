@@ -14,33 +14,17 @@
 		"channel": "content",
 		"token": "Hello",
 		"logprob": -0.12,
-		"bytes": [
-			72,
-			101,
-			108,
-			108,
-			111
-		],
+		"bytes": [72, 101, 108, 108, 111],
 		"topLogprobs": [
 			{
 				"token": "Hello",
 				"logprob": -0.12,
-				"bytes": [
-					72,
-					101,
-					108,
-					108,
-					111
-				]
+				"bytes": [72, 101, 108, 108, 111]
 			},
 			{
 				"token": " Hi",
 				"logprob": -2.4,
-				"bytes": [
-					32,
-					72,
-					105
-				]
+				"bytes": [32, 72, 105]
 			}
 		],
 		"position": 0
@@ -54,23 +38,17 @@
 		"channel": "content",
 		"token": "!",
 		"logprob": -0.006,
-		"bytes": [
-			33
-		],
+		"bytes": [33],
 		"topLogprobs": [
 			{
 				"token": "!",
 				"logprob": -0.006,
-				"bytes": [
-					33
-				]
+				"bytes": [33]
 			},
 			{
 				"token": ".",
 				"logprob": -5.1,
-				"bytes": [
-					46
-				]
+				"bytes": [46]
 			}
 		],
 		"position": 1

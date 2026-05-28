@@ -1,0 +1,4 @@
+{"type":"message-start","id":"m1","delta":{"message":{"role":"assistant"}}}
+not-json
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"ok"}}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE"}}

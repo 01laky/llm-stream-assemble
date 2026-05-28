@@ -1,0 +1,5 @@
+data: not-json-at-all
+
+data: {"choices":[{"index":0,"delta":{"content":"ok"}}]}
+
+data: [DONE]

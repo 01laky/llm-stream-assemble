@@ -1,0 +1,7 @@
+[
+	{ "type": "citation", "urls": ["https://example.test/doc"] },
+	{ "type": "grounding", "queries": ["weather today"], "chunks": [] },
+	{ "type": "text.delta", "text": "answer" },
+	{ "type": "text.done", "text": "answer" },
+	{ "type": "finish", "reason": "stop" }
+]

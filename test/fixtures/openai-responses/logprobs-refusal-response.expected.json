@@ -14,14 +14,7 @@
 		"channel": "refusal",
 		"token": "Cannot",
 		"logprob": -0.25,
-		"bytes": [
-			67,
-			97,
-			110,
-			110,
-			111,
-			116
-		],
+		"bytes": [67, 97, 110, 110, 111, 116],
 		"position": 0
 	},
 	{
@@ -29,15 +22,7 @@
 		"channel": "refusal",
 		"token": " comply",
 		"logprob": -0.18,
-		"bytes": [
-			32,
-			99,
-			111,
-			109,
-			112,
-			108,
-			121
-		],
+		"bytes": [32, 99, 111, 109, 112, 108, 121],
 		"position": 1
 	},
 	{

@@ -9,37 +9,41 @@ function read(path: string): string {
 	return readFileSync(join(rootDir, path), "utf8");
 }
 
-describe("docs positioning 1.8.1", () => {
-	it("LSA-DOC174: README badges reference 1.8.1 and test count badge", () => {
-		const readme = read("README.md");
-		expect(readme).toContain("core-1.8.1-brightgreen");
-		expect(readme).toMatch(/Stable `1\.8\.1`/);
-		expect(readme).toMatch(/tests-(?:TBD|\d+)_passing/);
+function changelogSection(version: string, nextVersion: string): string {
+	return read("CHANGELOG.md").split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
+}
+
+describe("docs positioning 1.8.1 (historical)", () => {
+	it("LSA-DOC174: CHANGELOG 1.8.1 documents README badge and stable release", () => {
+		const section = changelogSection("1.8.1", "1.8.0");
+		expect(section).toMatch(/2136|test badge \*\*2136\*\*/);
+		expect(section).toMatch(/1\.8\.1/);
 	});
 
 	it("LSA-DOC175: CHANGELOG 1.8.1 section exists", () => {
 		expect(read("CHANGELOG.md")).toContain("## [1.8.1]");
 	});
 
-	it("LSA-DOC176: package.json version is 1.8.1", () => {
-		const pkg = JSON.parse(read("package.json")) as { version: string };
-		expect(pkg.version).toBe("1.8.1");
+	it("LSA-DOC176: CHANGELOG 1.8.1 documents patch release metadata", () => {
+		const section = changelogSection("1.8.1", "1.8.0");
+		expect(section).toMatch(/1\.8\.1/);
+		expect(section).toMatch(/2136|patch/i);
 	});
 
-	it("LSA-DOC177: compatibility.md stable status is 1.8.1", () => {
-		expect(read("docs/compatibility.md")).toMatch(/Stable `1\.8\.1`/);
+	it("LSA-DOC177: CHANGELOG 1.8.1 documents compatibility stable label", () => {
+		const section = changelogSection("1.8.1", "1.8.0");
+		expect(section).toMatch(/Version labels \*\*1\.8\.1\*\*|stable \*\*1\.8\.1\*\*/i);
 	});
 
-	it("LSA-DOC178: adapters-overview stable label is 1.8.1", () => {
-		expect(read("docs/img/adapters-overview.mmd")).toContain("1.8.1");
+	it("LSA-DOC178: CHANGELOG 1.8.1 documents adapters-overview stable 1.8.1", () => {
+		const section = changelogSection("1.8.1", "1.8.0");
+		expect(section).toMatch(/adapters-overview.*1\.8\.1|1\.8\.1.*adapters-overview/i);
 	});
 
-	it("LSA-DOC179: README stable green badges are 1.8.1 not beta", () => {
-		const readme = read("README.md");
-		expect(readme).toContain("status-stable_1.8.1-brightgreen");
-		expect(readme).toContain("core-1.8.1-brightgreen");
-		expect(readme).not.toMatch(/status-beta_|status-pre_|_rc-orange|_beta-yellow/i);
-		expect(readme).not.toContain("core-1.8.1-blue");
+	it("LSA-DOC179: CHANGELOG 1.8.1 documents stable green badges", () => {
+		const section = changelogSection("1.8.1", "1.8.0");
+		expect(section).toContain("core-1.8.1-brightgreen");
+		expect(section).toContain("status-stable_1.8.1-brightgreen");
 	});
 
 	it("LSA-DOC180: docs-positioning-1.8.0 pins historical 1.8.0 metadata", () => {

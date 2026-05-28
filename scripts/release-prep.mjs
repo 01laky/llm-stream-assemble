@@ -154,16 +154,22 @@ function vitestPassedCount() {
 
 const badgeCount = readmeTestsBadgeCount();
 const passedCount = vitestPassedCount();
+const MIN_TEST_COUNT = 4000;
 if (badgeCount === null) {
 	errors.push("README.md missing tests-N_passing badge");
-} else if (passedCount === null) {
-	warn("could not parse vitest passed count from npm test output");
-} else if (badgeCount !== passedCount) {
-	errors.push(
-		`README tests badge (${badgeCount}) does not match vitest passed count (${passedCount})`,
-	);
+} else if (badgeCount < MIN_TEST_COUNT) {
+	errors.push(`README tests badge (${badgeCount}) below minimum ${MIN_TEST_COUNT} (LSA-REL33)`);
 } else {
-	ok(`README tests badge matches vitest count (${passedCount})`);
+	ok(`README tests badge meets minimum ${MIN_TEST_COUNT} (LSA-REL33)`);
+	if (passedCount === null) {
+		warn("could not parse vitest passed count from npm test output");
+	} else if (badgeCount !== passedCount) {
+		errors.push(
+			`README tests badge (${badgeCount}) does not match vitest passed count (${passedCount})`,
+		);
+	} else {
+		ok(`README tests badge matches vitest count (${passedCount})`);
+	}
 }
 
 const dirty = gitStatusPorcelain();

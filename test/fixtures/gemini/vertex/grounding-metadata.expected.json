@@ -9,9 +9,7 @@
 	},
 	{
 		"type": "grounding",
-		"queries": [
-			"weather Boston"
-		],
+		"queries": ["weather Boston"],
 		"chunks": [
 			{
 				"web": {
