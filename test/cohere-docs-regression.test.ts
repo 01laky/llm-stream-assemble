@@ -27,13 +27,13 @@ describe("cohere docs regression", () => {
 	});
 
 	it("LSA-CO30: CHANGELOG contains 1.5.0 and cohere", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.5.0]");
 		expect(changelog.toLowerCase()).toContain("cohere");
 	});
 
 	it("LSA-CO31: CHANGELOG 1.5.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.0]");
+		expect(read("CHANGELOG.md")).toContain("## [1.5.0]");
 	});
 
 	it("LSA-CO32: examples/node-fetch/cohere.ts exists and mentions parseSSE", () => {

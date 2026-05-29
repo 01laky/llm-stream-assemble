@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 function changelogSection(version: string, nextVersion: string): string {
-	const combined = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+	const combined = read("CHANGELOG.md");
 	return combined.split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
 }
 
@@ -22,7 +22,7 @@ describe("docs positioning 1.8.1 (historical)", () => {
 	});
 
 	it("LSA-DOC175: CHANGELOG 1.8.1 section exists", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.8.1]");
+		expect(read("CHANGELOG.md")).toContain("## [1.8.1]");
 	});
 
 	it("LSA-DOC176: CHANGELOG 1.8.1 documents patch release metadata", () => {

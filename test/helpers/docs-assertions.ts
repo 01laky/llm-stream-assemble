@@ -14,7 +14,7 @@ export function docCorpus(rootDir: string): string {
 }
 
 export function fullChangelogText(rootDir: string): string {
-	return readRepoFile(rootDir, "CHANGELOG.md") + readRepoFile(rootDir, "CHANGELOG-archive.md");
+	return readRepoFile(rootDir, "CHANGELOG.md");
 }
 
 export function fullChangelog(rootDir: string): string {

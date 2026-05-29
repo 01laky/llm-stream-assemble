@@ -11,7 +11,7 @@ describe("transforms docs regression", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("collectStream");
 		expect(readme).toContain("Collecting a Stream");
 	});
@@ -21,7 +21,7 @@ describe("transforms docs regression", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("tapEvents");
 		expect(readme).toContain("Tapping Events");
 	});
@@ -31,7 +31,7 @@ describe("transforms docs regression", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("toSSE");
 		expect(readme).toContain("sanitizeErrors");
 	});
@@ -41,7 +41,7 @@ describe("transforms docs regression", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("assembleFromFile");
 		expect(readme).toContain("Node/dev replay helper");
 	});
@@ -51,7 +51,7 @@ describe("transforms docs regression", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("browser bundles");
 		expect(readme).toContain("node:fs/promises");
 	});

@@ -27,13 +27,13 @@ describe("bedrock docs regression", () => {
 	});
 
 	it("LSA-B30: CHANGELOG contains 1.4.0 and bedrock", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.4.0]");
 		expect(changelog.toLowerCase()).toContain("bedrock");
 	});
 
 	it("LSA-B31: CHANGELOG 1.4.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.4.0]");
+		expect(read("CHANGELOG.md")).toContain("## [1.4.0]");
 	});
 
 	it("LSA-B32: examples/bedrock/README.md exists and mentions decode", () => {

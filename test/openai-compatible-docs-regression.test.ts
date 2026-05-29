@@ -53,7 +53,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("OpenAI-Compatible Usage");
 		expect(readme).toContain("OpenAI-compatible");
 	});
@@ -63,7 +63,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("Provider presets:");
 		expect(readme).toContain("`openrouter`");
 		expect(readme).toContain("OpenRouter");
@@ -76,7 +76,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("Strict vs loose configuration");
 		expect(readme).toContain("allowMissingMetadata: false");
 		expect(readme).toContain("looseErrorShape: false");
@@ -118,7 +118,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("`deepseek`");
 		expect(readme).toContain("`mistral`");
 		expect(readme).toContain("api.deepseek.com");
@@ -144,8 +144,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC83: CHANGELOG documents 1.1.5 preset expansion", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.1.5]");
 		expect(changelog).toContain("deepseek");
 		expect(changelog).toContain("mistral");
@@ -153,8 +152,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC84: CHANGELOG 1.1.5 section remains for historical traceability", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.1.5]");
 	});
 
@@ -163,7 +161,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("`azure`");
 		expect(readme).toContain("openai.azure.com");
 		expect(readme).toContain("/deployments/");
@@ -178,8 +176,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC105: CHANGELOG documents 1.2.0 Azure preset expansion", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.2.0]");
 		expect(changelog).toContain("azure");
 	});
@@ -196,10 +193,9 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.1.5]");
 		expect(readme).toMatch(/OpenAI-compatible|CHANGELOG/i);
 	});
@@ -216,7 +212,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("Azure OpenAI Usage");
 		expect(readme).toContain("api-key");
 	});
@@ -229,8 +225,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC133: CHANGELOG documents 1.2.0 preset expansion", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.2.0]");
 		expect(changelog).toContain("LSA-OC113");
 	});
@@ -255,10 +250,9 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.2.0]");
 		expect(readme).toMatch(/azure|CHANGELOG/i);
 	});
@@ -279,7 +273,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("`cloudflare`");
 		expect(readme).toContain("api.cloudflare.com");
 	});
@@ -289,7 +283,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toMatch(/Cloudflare Workers AI Usage/i);
 		expect(readme).toContain("CLOUDFLARE_API_TOKEN");
 	});
@@ -302,8 +296,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC162: CHANGELOG documents 1.3.0 cloudflare preset and LSA-OC142", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.3.0]");
 		expect(changelog).toContain("cloudflare");
 		expect(changelog).toContain("json-mode");
@@ -312,8 +305,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 
 	it("LSA-OC169b: CHANGELOG documents 1.3.1 preset SSOT refactor and LSA-OC211", () => {
 		const changelog =
-			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(changelog).toContain("## [1.3.1]");
 		expect(changelog).toContain("openai-compatible-presets.ts");
 		expect(changelog).toContain("LSA-OC211");
@@ -386,7 +378,7 @@ describe("openaiCompatibleAdapter docs and regression guards", () => {
 			readFileSync(join(rootDir, "README.md"), "utf8") +
 			readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8") +
 			readFileSync(join(rootDir, "examples/README.md"), "utf8") +
-			readFileSync(join(rootDir, "CHANGELOG-archive.md"), "utf8");
+			readFileSync(join(rootDir, "CHANGELOG.md"), "utf8");
 		expect(readme).toContain("docs/img/adapters-overview.svg");
 		expect(readme).toContain("`cloudflare`");
 	});

@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 function changelogSection(version: string, nextVersion: string): string {
-	const combined = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+	const combined = read("CHANGELOG.md");
 	return combined.split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
 }
 

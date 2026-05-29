@@ -40,18 +40,18 @@ describe("docs positioning 1.5.7", () => {
 	});
 
 	it("LSA-DOC101: CHANGELOG contains 1.5.7 release section", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.5.7]");
 		expect(changelog).toMatch(/smoke:gemini|openai-chat-conformance|MAINT22/i);
 	});
 
 	it("LSA-DOC102: CHANGELOG 1.5.7 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.7]");
+		expect(read("CHANGELOG.md")).toContain("## [1.5.7]");
 	});
 
 	it("LSA-DOC103: README and CHANGELOG still reference 1.5.7 release history", () => {
 		const readme = read("README.md") + read("docs/usage-guides.md");
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.5.7]");
 		expect(readme).toMatch(/1\.5\.7|CHANGELOG/i);
 	});

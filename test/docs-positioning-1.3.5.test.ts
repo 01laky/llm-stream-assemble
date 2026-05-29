@@ -56,7 +56,7 @@ describe("docs positioning 1.3.5 edge-case showcase", () => {
 	});
 
 	it("LSA-DOC29: CHANGELOG contains 1.3.5 and docs/edge-cases.md", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.3.5]");
 		expect(changelog).toContain("docs/edge-cases.md");
 	});

@@ -28,7 +28,7 @@ describe("OpenAI Responses docs regression", () => {
 	});
 
 	it("LSA-R40: changelog documents OpenAI Responses adapter", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("[0.7.0]");
 		expect(changelog).toContain("OpenAI Responses adapter");
 	});

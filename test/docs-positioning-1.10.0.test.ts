@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 function changelogSection(version: string, nextVersion: string): string {
-	const archive = read("CHANGELOG-archive.md");
+	const archive = read("CHANGELOG.md");
 	return archive.split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
 }
 
@@ -31,7 +31,7 @@ describe("docs positioning 1.10.0 (frozen)", () => {
 	});
 
 	it("LSA-DOC214: CHANGELOG archive contains 1.10.0 section", () => {
-		expect(read("CHANGELOG-archive.md")).toContain("## [1.10.0]");
+		expect(read("CHANGELOG.md")).toContain("## [1.10.0]");
 	});
 
 	it("LSA-DOC215: CHANGELOG 1.10.0 documents REL33 / duration gates", () => {

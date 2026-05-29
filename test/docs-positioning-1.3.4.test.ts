@@ -140,7 +140,7 @@ describe("docs positioning 1.3.4 edge cases", () => {
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.3.4]");
 		expect(changelog).toContain("docs/faq.md");
 		expect(changelog).toContain("bench-smoke");

@@ -43,24 +43,24 @@ describe("docs positioning 1.5.6", () => {
 	});
 
 	it("LSA-DOC92: CHANGELOG contains 1.5.6 release section", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.5.6]");
 		expect(changelog).toMatch(/composable|edge-case/i);
 	});
 
 	it("LSA-DOC93: CHANGELOG 1.5.6 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.6]");
+		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
 	});
 
 	it("LSA-DOC94: README and CHANGELOG still reference 1.5.6 release history", () => {
 		const readme = read("README.md") + read("docs/usage-guides.md");
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.5.6]");
 		expect(readme).toContain("CHANGELOG.md");
 	});
 
 	it("LSA-DOC95: active docs retain 1.5.6 traceability in edge-cases or CHANGELOG", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.6]");
+		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
 		expect(read("docs/edge-cases.md")).toMatch(/1\.5\.6/);
 	});
 

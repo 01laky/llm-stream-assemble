@@ -12,13 +12,13 @@ function read(path: string): string {
 describe("docs positioning 1.4.1 refactor", () => {
 	it("LSA-DOC60: README retains 1.4.1 release traceability in CHANGELOG", () => {
 		const readme = read("README.md");
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.4.1]");
 		expect(readme).toMatch(/CHANGELOG|1\.4\.1/i);
 	});
 
 	it("LSA-DOC61: CHANGELOG contains 1.4.1 shared/common adapter section", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.4.1]");
 		expect(changelog).toMatch(/adapters\/(shared|common)\//);
 	});
@@ -31,7 +31,7 @@ describe("docs positioning 1.4.1 refactor", () => {
 	});
 
 	it("LSA-DOC63: CHANGELOG 1.4.1 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.4.1]");
+		expect(read("CHANGELOG.md")).toContain("## [1.4.1]");
 	});
 
 	it("LSA-DOC64: adapters-overview stable label is 1.10.1", () => {

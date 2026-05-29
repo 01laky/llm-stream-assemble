@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 function changelogSection(version: string, nextVersion: string): string {
-	const combined = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+	const combined = read("CHANGELOG.md");
 	return combined.split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
 }
 
@@ -86,7 +86,7 @@ describe("docs positioning 1.9.0 (historical)", () => {
 	});
 
 	it("LSA-DOC197: CHANGELOG 1.9.0 section exists", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.9.0]");
+		expect(read("CHANGELOG.md")).toContain("## [1.9.0]");
 	});
 
 	it("LSA-DOC198: CHANGELOG 1.9.0 documents stable badges", () => {

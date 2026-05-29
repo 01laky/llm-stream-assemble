@@ -11,20 +11,20 @@ function read(path: string): string {
 
 describe("docs positioning 1.7.0 (historical)", () => {
 	it("LSA-DOC127: historical 1.7.0 release traceability in CHANGELOG", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.7.0]");
 		expect(changelog).toMatch(/logprob/i);
 		expect(changelog).toMatch(/1966|README test badge \*\*1966\*\*/);
 	});
 
 	it("LSA-DOC128: CHANGELOG 1.7.0 mentions logprob events", () => {
-		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+		const changelog = read("CHANGELOG.md");
 		expect(changelog).toContain("## [1.7.0]");
 		expect(changelog).toMatch(/logprob/i);
 	});
 
 	it("LSA-DOC129: CHANGELOG 1.7.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.7.0]");
+		expect(read("CHANGELOG.md")).toContain("## [1.7.0]");
 	});
 
 	it("LSA-DOC130: compatibility matrix documents OpenAI Chat logprobs mapping", () => {
@@ -64,7 +64,7 @@ describe("docs positioning 1.7.0 (historical)", () => {
 	it("LSA-DOC136: roadmap resolves logprobs deferral for Chat Completions", () => {
 		const roadmap = read("docs/post-1.0-provider-roadmap.md");
 		const changelog17 =
-			(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).split("## [1.6.0]")[0] ?? "";
+			(read("CHANGELOG.md")).split("## [1.6.0]")[0] ?? "";
 		expect(roadmap).toMatch(/1\.7\.0.*logprob|logprob.*1\.7\.0/i);
 		expect(changelog17).not.toMatch(/Still deferred: logprobs events/);
 	});
@@ -146,7 +146,7 @@ describe("docs positioning 1.7.0 (historical)", () => {
 
 	it("LSA-DOC150: historical 1.7.0 shipped Chat logprobs documented in CHANGELOG", () => {
 		const section =
-			(read("CHANGELOG.md") + read("CHANGELOG-archive.md"))
+			(read("CHANGELOG.md"))
 				.split("## [1.7.0]")[1]
 				?.split("## [1.6.0]")[0] ?? "";
 		expect(section).toMatch(/logprob/i);
