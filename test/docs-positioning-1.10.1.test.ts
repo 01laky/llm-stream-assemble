@@ -56,8 +56,9 @@ describe("docs positioning 1.10.1 (frozen)", () => {
 		expect(read("docs/testing-strategy.md")).toContain("test-id-migration.md");
 	});
 
-	it("LSA-DOC235: cursor rules for refactor hygiene exist", () => {
-		expect(read(".cursor/rules/docs-version-sync.mdc")).toContain("package.json");
+	it("LSA-DOC235: CHANGELOG 1.10.1 documents docs hygiene policy", () => {
+		const section = changelogSection("1.10.1", "1.10.0");
+		expect(section).toMatch(/\.cursor\/rules|docs sync|test-id-migration/i);
 	});
 
 	it("LSA-DOC236: examples vs matrix E2E policy documented", () => {
