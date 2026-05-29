@@ -1,0 +1,8 @@
+data: {"type":"response.created","response":{"id":"resp_ec85","model":"gpt-4.1-mini"}}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"No","logprobs":[{"token":"No","logprob":-0.2,"bytes":[78,111],"top_logprobs":[]}]}
+
+data: {"type":"response.refusal.delta","delta":" thanks."}
+
+data: {"type":"response.completed","response":{"id":"resp_ec85","status":"completed"}}
+

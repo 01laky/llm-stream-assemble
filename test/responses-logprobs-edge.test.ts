@@ -8,7 +8,7 @@ import {
 	logprobEntryFromProvider,
 	nextLogprobPosition,
 	normalizeTopLogprobs,
-} from "../src/adapters/shared/logprobs";
+} from "../src/adapters/common/logprobs";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleFromFile } from "../src/core/assemble-from-file";
 import { assembleFromPayloads } from "../src/core/assemble-payloads";

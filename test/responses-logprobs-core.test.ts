@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
 	logprobChunksFromResponsesLogprobs,
 	logprobEntryFromProvider,
-} from "../src/adapters/shared/logprobs";
+} from "../src/adapters/common/logprobs";
 import { openaiResponsesAdapter } from "../src/adapters/openai-responses";
 import { assembleResponse } from "../src/core/assemble-response";
 import { createAssemblyTransform } from "../src/core/create-assembly-transform";

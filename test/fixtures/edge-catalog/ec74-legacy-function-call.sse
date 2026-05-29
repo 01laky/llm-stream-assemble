@@ -1,0 +1,6 @@
+data: {"id":"chatcmpl_legacy","created":1710000003,"model":"gpt-3.5-turbo","choices":[{"index":0,"delta":{"function_call":{"name":"lookup","arguments":"{\"id\":\"ab"}},"finish_reason":null}]}
+
+data: {"id":"chatcmpl_legacy","created":1710000003,"model":"gpt-3.5-turbo","choices":[{"index":0,"delta":{"function_call":{"arguments":"c\"}"}},"finish_reason":"function_call"}]}
+
+data: [DONE]
+

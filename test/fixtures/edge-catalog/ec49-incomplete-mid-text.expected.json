@@ -1,21 +1,9 @@
 [
 	{
-		"type": "message.start",
-		"id": "ec49"
+		"type": "metadata"
 	},
 	{
-		"type": "metadata",
-		"model": "gpt-4o-mini",
-		"responseId": "ec49",
-		"created": 1710000000
-	},
-	{
-		"type": "text.delta",
-		"text": "partial"
-	},
-	{
-		"type": "text.done",
-		"text": "partial"
+		"type": "metadata"
 	},
 	{
 		"type": "finish",

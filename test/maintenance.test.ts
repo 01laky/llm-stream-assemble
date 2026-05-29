@@ -148,15 +148,15 @@ describe("maintenance adapter regressions", () => {
 		).toEqual([{ kind: "text-delta", text: "hi", choiceIndex: 0 }]);
 	});
 
-	it("LSA-MAINT19: shared adapter modules exist under src/adapters/shared", () => {
+	it("LSA-MAINT19: common adapter modules exist under src/adapters/common", () => {
 		for (const file of [
-			"src/adapters/shared/parse-payload.ts",
-			"src/adapters/shared/incremental-json.ts",
-			"src/adapters/shared/stop-reasons.ts",
-			"src/adapters/shared/usage.ts",
-			"src/adapters/shared/text-delta.ts",
-			"src/adapters/shared/anthropic-blocks.ts",
-			"src/adapters/shared/citation-grounding.ts",
+			"src/adapters/common/parse-payload.ts",
+			"src/adapters/common/incremental-json.ts",
+			"src/adapters/common/stop-reasons.ts",
+			"src/adapters/common/usage.ts",
+			"src/adapters/common/text-delta.ts",
+			"src/adapters/common/anthropic-blocks.ts",
+			"src/adapters/common/citation-grounding.ts",
 		]) {
 			expect(existsSync(join(rootDir, file))).toBe(true);
 		}

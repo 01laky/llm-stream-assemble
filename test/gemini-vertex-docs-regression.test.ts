@@ -11,12 +11,12 @@ function read(path: string): string {
 
 describe("gemini vertex docs regression", () => {
 	it("LSA-DOC75: CHANGELOG contains 1.5.5 and Vertex", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.5.5]");
-		expect(read("CHANGELOG.md")).toMatch(/Vertex|apiSurface/i);
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.5]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toMatch(/Vertex|apiSurface/i);
 	});
 
 	it("LSA-DOC76: CHANGELOG 1.5.5 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.5.5]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.5]");
 	});
 
 	it("LSA-DOC77: README mentions apiSurface vertex", () => {
@@ -49,7 +49,7 @@ describe("gemini vertex docs regression", () => {
 
 describe("docs positioning 1.5.5 vertex", () => {
 	it("LSA-DOC83: CHANGELOG documents 1.5.5 Vertex release", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.5.5]");
 		expect(changelog).toContain("apiSurface");
 	});

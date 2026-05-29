@@ -19,7 +19,7 @@ import {
 	usageChunk,
 	withChoiceIndex,
 } from "./chunks";
-import { logprobChunksFromChoiceLogprobs } from "../../shared/logprobs";
+import { logprobChunksFromChoiceLogprobs } from "../../common/logprobs";
 import type { RequiredOpenAIChatLikeParserOptions } from "./types";
 
 export function parseResponse(

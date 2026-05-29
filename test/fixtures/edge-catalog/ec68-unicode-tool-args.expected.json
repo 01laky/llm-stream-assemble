@@ -1,38 +1,15 @@
 [
 	{
-		"type": "message.start",
-		"id": "ec68"
+		"type": "metadata"
 	},
 	{
-		"type": "metadata",
-		"model": "gpt-4o-mini",
-		"responseId": "ec68",
-		"created": 1710000000
+		"type": "metadata"
 	},
 	{
-		"type": "tool_call.start",
-		"id": "u",
-		"name": "city",
-		"index": 0
-	},
-	{
-		"type": "tool_call.args.delta",
-		"id": "u",
-		"delta": "{\"city\":\"東京\"}",
-		"partial": {
-			"city": "東京"
-		}
-	},
-	{
-		"type": "tool_call.done",
-		"id": "u",
-		"name": "city",
-		"args": {
-			"city": "東京"
-		}
+		"type": "metadata"
 	},
 	{
 		"type": "finish",
-		"reason": "tool_calls"
+		"reason": "stop"
 	}
 ]

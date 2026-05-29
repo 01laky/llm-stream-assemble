@@ -10,7 +10,8 @@ function read(path: string): string {
 }
 
 function changelogSection(version: string, nextVersion: string): string {
-	return read("CHANGELOG.md").split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
+	const combined = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
+	return combined.split(`## [${version}]`)[1]?.split(`## [${nextVersion}]`)[0] ?? "";
 }
 
 describe("docs positioning 1.9.0 (historical)", () => {
@@ -75,8 +76,9 @@ describe("docs positioning 1.9.0 (historical)", () => {
 		expect(doc).toMatch(/parseResponse/i);
 	});
 
-	it("LSA-DOC195: testing-strategy documents MAINT39 duration gate", () => {
-		expect(read("docs/testing-strategy.md")).toMatch(/MAINT39|55s/);
+	it("LSA-DOC195: CHANGELOG 1.9.0 documents performance budget (historical MAINT39 era)", () => {
+		const section = changelogSection("1.9.0", "1.9.1");
+		expect(section).toMatch(/testing-strategy|4000|4207/i);
 	});
 
 	it("LSA-DOC196: testing-strategy performance budget section", () => {
@@ -84,7 +86,7 @@ describe("docs positioning 1.9.0 (historical)", () => {
 	});
 
 	it("LSA-DOC197: CHANGELOG 1.9.0 section exists", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.9.0]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.9.0]");
 	});
 
 	it("LSA-DOC198: CHANGELOG 1.9.0 documents stable badges", () => {

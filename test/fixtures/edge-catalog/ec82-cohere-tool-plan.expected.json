@@ -1,0 +1,52 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-plan"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "Planning",
+		"variant": "detail"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": " step",
+		"variant": "detail"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "plan_tool",
+		"name": "calc",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "plan_tool",
+		"delta": "{\"x\":1}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "plan_tool",
+		"name": "calc",
+		"args": {
+			"x": 1
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "Planning step",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

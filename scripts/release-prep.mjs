@@ -154,7 +154,7 @@ function vitestPassedCount() {
 
 const badgeCount = readmeTestsBadgeCount();
 const passedCount = vitestPassedCount();
-const MIN_TEST_COUNT = 6000;
+const MIN_TEST_COUNT = 6620;
 if (badgeCount === null) {
 	errors.push("README.md missing tests-N_passing badge");
 } else if (badgeCount < MIN_TEST_COUNT) {

@@ -1,0 +1,45 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec81"
+	},
+	{
+		"type": "metadata",
+		"responseId": "ec81",
+		"model": "claude"
+	},
+	{
+		"type": "text.delta",
+		"text": "Plan: "
+	},
+	{
+		"type": "tool_call.start",
+		"id": "ec81_tool",
+		"name": "lookup",
+		"index": 1
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "ec81_tool",
+		"delta": "{\"q\":\"x\"}",
+		"partial": {
+			"q": "x"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "ec81_tool",
+		"name": "lookup",
+		"args": {
+			"q": "x"
+		}
+	},
+	{
+		"type": "text.done",
+		"text": "Plan: "
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

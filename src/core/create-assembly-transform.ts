@@ -1,6 +1,5 @@
 import type { AssembleOptions, StreamAdapter, StreamEvent } from "./types";
-import { processPayload, resolveTerminalFlush } from "./assembly/process-payload";
-import { EventAssembler } from "./assembler/event-assembler";
+import { AssemblySession } from "./assembly/session";
 import { Utf8StreamDecoder } from "./utils/bytes";
 import { SSEParser } from "./utils/sse-parser";
 
@@ -10,9 +9,7 @@ export function createAssemblyTransform(
 ): TransformStream<Uint8Array, StreamEvent> {
 	const decoder = new Utf8StreamDecoder();
 	const parser = new SSEParser();
-	const assembler = new EventAssembler(options);
-	let sawTerminalMarker = false;
-	let aborted = false;
+	const session = AssemblySession.create(adapter, options);
 
 	const emit = (
 		controller: TransformStreamDefaultController<StreamEvent>,
@@ -27,16 +24,7 @@ export function createAssemblyTransform(
 		payload: string,
 		controller: TransformStreamDefaultController<StreamEvent>,
 	) => {
-		const result = processPayload(payload, assembler, adapter, options);
-		if (result.kind === "done-marker") {
-			sawTerminalMarker = true;
-			return;
-		}
-		if (result.kind === "recoverable-error") {
-			controller.enqueue(result.event);
-			return;
-		}
-		emit(controller, result.events);
+		emit(controller, session.handlePayload(payload));
 	};
 
 	return new TransformStream<Uint8Array, StreamEvent>({
@@ -44,18 +32,18 @@ export function createAssemblyTransform(
 			options.signal?.addEventListener(
 				"abort",
 				() => {
-					if (aborted || assembler.hasFinished()) return;
-					aborted = true;
-					emit(controller, assembler.flush({ terminalReason: "aborted" }));
+					if (session.isAborted() || session.assembler.hasFinished()) return;
+					session.markAborted();
+					emit(controller, session.terminalFlush());
 					controller.terminate();
 				},
 				{ once: true },
 			);
 		},
 		transform(chunk, controller) {
-			if (aborted || options.signal?.aborted) {
-				aborted = true;
-				emit(controller, assembler.flush({ terminalReason: "aborted" }));
+			if (session.isAborted()) {
+				session.markAborted();
+				emit(controller, session.terminalFlush());
 				controller.terminate();
 				return;
 			}
@@ -65,8 +53,8 @@ export function createAssemblyTransform(
 			}
 		},
 		flush(controller) {
-			if (aborted || options.signal?.aborted) {
-				emit(controller, assembler.flush({ terminalReason: "aborted" }));
+			if (session.isAborted()) {
+				emit(controller, session.terminalFlush());
 				return;
 			}
 
@@ -81,7 +69,7 @@ export function createAssemblyTransform(
 				handlePayload(payload, controller);
 			}
 
-			emit(controller, resolveTerminalFlush(assembler, { sawTerminalMarker, aborted: false }));
+			emit(controller, session.terminalFlush());
 		},
 	});
 }

@@ -11,20 +11,20 @@ function read(path: string): string {
 
 describe("docs positioning 1.8.0 (historical)", () => {
 	it("LSA-DOC151: historical 1.8.0 release traceability in CHANGELOG", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.8.0]");
 		expect(changelog).toMatch(/Responses.*logprob|logprob.*Responses/i);
 		expect(changelog).toMatch(/2128|README test badge \*\*2128\*\*/);
 	});
 
 	it("LSA-DOC152: CHANGELOG 1.8.0 mentions Responses logprobs", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.8.0]");
 		expect(changelog).toMatch(/Responses.*logprob|logprob.*Responses/i);
 	});
 
 	it("LSA-DOC153: CHANGELOG 1.8.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.8.0]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.8.0]");
 	});
 
 	it("LSA-DOC154: compatibility.md Responses row documents logprobs include", () => {
@@ -76,7 +76,7 @@ describe("docs positioning 1.8.0 (historical)", () => {
 	});
 
 	it("LSA-DOC163: README mentions Chat and Responses logprob paths", () => {
-		const readme = read("README.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
 		expect(readme).toMatch(/Chat.*logprob|logprob.*Chat/i);
 		expect(readme).toMatch(/Responses.*logprob|logprob.*Responses/i);
 	});
@@ -86,7 +86,10 @@ describe("docs positioning 1.8.0 (historical)", () => {
 	});
 
 	it("LSA-DOC165: CHANGELOG 1.8.0 removes Responses-only deferral from active notes", () => {
-		const section = read("CHANGELOG.md").split("## [1.8.0]")[1]?.split("## [1.7.0]")[0] ?? "";
+		const section =
+			(read("CHANGELOG.md") + read("CHANGELOG-archive.md"))
+				.split("## [1.8.0]")[1]
+				?.split("## [1.7.0]")[0] ?? "";
 		expect(section).toMatch(/Responses.*logprob/i);
 	});
 
@@ -111,7 +114,10 @@ describe("docs positioning 1.8.0 (historical)", () => {
 	});
 
 	it("LSA-DOC170: historical 1.8.0 stable green badges documented in CHANGELOG", () => {
-		const section = read("CHANGELOG.md").split("## [1.8.0]")[1]?.split("## [1.7.0]")[0] ?? "";
+		const section =
+			(read("CHANGELOG.md") + read("CHANGELOG-archive.md"))
+				.split("## [1.8.0]")[1]
+				?.split("## [1.7.0]")[0] ?? "";
 		expect(section).toMatch(/core-1\.8\.0-brightgreen|stable green/i);
 	});
 
@@ -129,7 +135,10 @@ describe("docs positioning 1.8.0 (historical)", () => {
 	});
 
 	it("LSA-DOC173: historical 1.8.0 shipped Responses logprobs documented in CHANGELOG", () => {
-		const section = read("CHANGELOG.md").split("## [1.8.0]")[1]?.split("## [1.7.0]")[0] ?? "";
+		const section =
+			(read("CHANGELOG.md") + read("CHANGELOG-archive.md"))
+				.split("## [1.8.0]")[1]
+				?.split("## [1.7.0]")[0] ?? "";
 		expect(section).toMatch(/Responses.*logprob/i);
 		expect(section).toMatch(/2128/);
 	});

@@ -8,7 +8,7 @@ import {
 	logprobEntryFromProvider,
 	nextLogprobPosition,
 	normalizeTopLogprobs,
-} from "../src/adapters/shared/logprobs";
+} from "../src/adapters/common/logprobs";
 import { openaiChatAdapter } from "../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../src/adapters/openai-compatible";
 import { EventAssembler } from "../src/core/assembler/event-assembler";

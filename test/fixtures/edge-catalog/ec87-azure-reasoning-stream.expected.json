@@ -1,0 +1,33 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl-az-reason"
+	},
+	{
+		"type": "metadata",
+		"model": "o3-mini-deployment",
+		"responseId": "chatcmpl-az-reason"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "Planning step",
+		"variant": "detail"
+	},
+	{
+		"type": "text.delta",
+		"text": "Final answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Final answer"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "Planning step",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

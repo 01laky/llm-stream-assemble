@@ -1,0 +1,9 @@
+{"messageStart":{"role":"assistant"}}
+{"contentBlockStart":{"contentBlockIndex":0,"start":{"text":""}}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"Hi "}}}
+{"contentBlockStart":{"contentBlockIndex":1,"start":{"toolUse":{"toolUseId":"ec84_t","name":"fn"}}}}
+{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"there"}}}
+{"contentBlockDelta":{"contentBlockIndex":1,"delta":{"toolUse":{"input":"{\"n\":1}"}}}}
+{"contentBlockStop":{"contentBlockIndex":0}}
+{"contentBlockStop":{"contentBlockIndex":1}}
+{"messageStop":{"stopReason":"tool_use"}}

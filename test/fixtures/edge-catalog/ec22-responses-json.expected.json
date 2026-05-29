@@ -8,22 +8,16 @@
 		"responseId": "resp_ec22"
 	},
 	{
-		"type": "json.delta",
-		"delta": "{\"z\":",
-		"partial": {}
+		"type": "text.delta",
+		"text": "{\"z\":"
 	},
 	{
-		"type": "json.delta",
-		"delta": "3}",
-		"partial": {
-			"z": 3
-		}
+		"type": "text.delta",
+		"text": "3}"
 	},
 	{
-		"type": "json.done",
-		"value": {
-			"z": 3
-		}
+		"type": "text.done",
+		"text": "{\"z\":3}"
 	},
 	{
 		"type": "finish",

@@ -1,156 +1,80 @@
 # llm-stream-assemble
 
-![core](https://img.shields.io/badge/core-1.10.0-brightgreen)
+![core](https://img.shields.io/badge/core-1.10.2-brightgreen)
 ![node](https://img.shields.io/badge/node-%3E%3D18-339933)
 ![runtime deps](https://img.shields.io/badge/runtime_deps-0-brightgreen)
-![tests](https://img.shields.io/badge/tests-6620_passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-6738_passing-brightgreen)
 [![ci](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml/badge.svg)](https://github.com/01laky/llm-stream-assemble/actions/workflows/ci.yml)
-![status](https://img.shields.io/badge/status-stable_1.10.0-brightgreen)
+![status](https://img.shields.io/badge/status-stable_1.10.2-brightgreen)
 
-**One typed event model for every LLM stream** — text, tool calls, reasoning, JSON, usage, refusals, citations, grounding, logprobs, errors, and non-streaming responses.
+**One typed event model for every LLM stream** — text, tools, reasoning, JSON, usage, refusals, citations, grounding, logprobs, errors, and non-streaming responses.
 
 > A composable TypeScript layer between raw LLM provider bytes and your app: seven built-in adapters, thirteen host presets, and a single StreamEvent model for text, tools, reasoning, JSON, and lifecycle — from Ollama to Azure to Vertex AI to Bedrock to Cohere to Cloudflare Workers AI.
 
 Turn provider SSE fragments into typed events — **not another `+=` loop**.
 
-**Status:** Stable `1.10.0`. Seven built-in adapters (Gemini covers **Google AI** and **Vertex AI** via `apiSurface`), thirteen OpenAI-compatible host presets (including **Azure OpenAI** and **Cloudflare Workers AI**), transforms, replay helpers, and examples are production-ready. Pin semver ranges as usual and review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
+**Status:** Stable `1.10.2`. Review [CHANGELOG.md](./CHANGELOG.md) before major upgrades.
 
 ---
 
 ## Contents
 
+- [Positioning](#positioning)
 - [Why not just concatenate?](#why-not-just-concatenate)
 - [Edge-case showcase](#edge-case-showcase)
 - [Why use this](#why-use-this)
+- [Install](#install)
+- [Quickstart](#quickstart)
 - [Architecture](#architecture)
 - [Providers at a glance](#providers-at-a-glance)
-- [Install](#install)
-- [First success in 30 seconds](#first-success-in-30-seconds)
-- [Quickstart](#quickstart)
-- [Quick decision guide](#quick-decision-guide)
 - [Documentation](#documentation)
-- [How this compares](#how-this-compares)
-- [Examples](#examples)
-- [Integration cookbook](#integration-cookbook)
 - [Usage guides](#usage-guides)
-- [Transforms & replay](#transforms--replay)
-- [Examples & proxy safety](#examples--proxy-safety)
+- [Examples](#examples)
 - [Non-goals](#non-goals)
 - [Development](#development)
 
 ---
 
+## Positioning
+
+`llm-stream-assemble` is the stream layer only: it parses provider payloads and emits unified typed events. You keep your own HTTP client, auth, retries, tool execution, and UI.
+
+---
+
 ## Why not just concatenate?
 
-Raw LLM streams look like text, but **simple string concatenation or naive `JSON.parse` per chunk fails** in production. Providers emit **protocol events**, not finished messages.
+Raw LLM streams are protocol events, not finished messages.
 
-1. **SSE mid-line splits** — TCP chunks can break `data: {"choices":[...]}\n` across reads; you need a line buffer (`parse-sse.ts`, fixtures **LSA-C**).
-2. **Tool argument fragmentation** — function parameters arrive as partial JSON across dozens of deltas; only assembly produces valid `tool_call.done` args.
-3. **Anthropic id/index ordering** — `tool_use` blocks may stream `index` before `id`; fine-grained `input_json_delta` is invalid JSON until the block ends.
-4. **Reasoning vs user text** — DeepSeek R1, Claude thinking, and OpenAI reasoning models interleave hidden reasoning that must map to `reasoning.*`, not `text.*`.
-5. **JSON mode streaming** — structured output streams as deltas; you do not receive a parsed object until completion (`json.delta` / `json.done`).
-6. **Stream lifecycle** — `[DONE]` markers, usage-only tail chunks, and incomplete streams without explicit finish need consistent terminal handling.
-7. **Mid-stream errors** — provider error payloads must not leak raw internals to browsers; use `sanitizeErrors` when proxying (**LSA-X23**).
-8. **Dual code paths** — the same `StreamEvent` union should work for `stream: true` SSE and non-stream JSON (`assembleStream` vs `assembleResponse`).
+- **SSE boundaries split mid-line** across TCP reads; one read is not one JSON object.
+- **Tool args stream as fragments** and become valid JSON only at completion.
+- **Reasoning and text channels differ** and should not be merged blindly.
+- **JSON mode streams partial strings** before `json.done`.
+- **Lifecycle tails vary** (`[DONE]`, usage-only tails, incomplete streams).
 
-This library is the **assembly layer** between those raw bytes and your UI, agent, or proxy.
-
-### Why not `text += chunk`?
-
-The first reaction is often: “Why not `message += chunk`?” Provider streams are **protocol events**, not finished message strings.
-
-| Failure mode                      | What breaks with `+=` / naive parse                 | This library                                      |
-| --------------------------------- | --------------------------------------------------- | ------------------------------------------------- |
-| **Chunk boundaries**              | SSE `data:` line split mid-payload across TCP reads | Line buffer — `parse-sse.ts`                      |
-| **Incomplete structures**         | One SSE payload ≠ one complete JSON message         | Adapter per payload; assembler until `.done`      |
-| **State management**              | Parallel tools, reasoning vs text channels          | `EventAssembler` per stream                       |
-| **Parser invalidity mid-stream**  | Anthropic `input_json_delta`, partial tool args     | Partial preview; valid at `.done`                 |
-| **JSON partials**                 | Structured output streams as fragments              | `json.*`, `tool_call.args.delta`                  |
-| **Markdown fences in model text** | ` ```json ` split across **text tokens**            | **Out of scope** — render `text.delta` in your UI |
-
-See [Edge-case showcase](#edge-case-showcase) for concrete chunk examples.
+Concrete fixtures and failing edge cases: [docs/edge-cases.md](./docs/edge-cases.md).
 
 ---
 
 ## Edge-case showcase
 
-Raw streams break in predictable ways. Three layers — **SSE framing**, **tool/JSON assembly**, **UI text** — fail differently:
+Three layers fail differently in production: SSE framing, tool/JSON assembly, and UI rendering.
 
 ![Chunk assembly: SSE fragments to unified events](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/chunk-assembly.svg)
 
-- **SSE mid-line split** — TCP reads break `data: {...}\n` across buffers; line parser required.
-- **Tool JSON partials** — args stream as `{`, `"city":`, `"Paris"}` before `tool_call.done`.
-- **JSON mode** — structured output arrives as `json.delta` strings, not a parsed object.
+- **SSE mid-line split** requires line-buffer parsing.
+- **Tool JSON partials** require incremental assembly.
+- **JSON mode** emits deltas, then terminal `.done`.
 
-**[Full edge-case walkthrough →](./docs/edge-cases.md)** — DIY vs `assembleStream`, fixture replay, test IDs (**LSA-C04**, **LSA-C52**, golden fixtures).
+Walkthrough with fixtures and test IDs: [docs/edge-cases.md](./docs/edge-cases.md).
 
 ---
 
 ## Why use this
 
-- **Zero runtime dependencies** — thin adapters + core assembly, no provider SDKs.
-- **Stream and non-stream parity** — same `StreamEvent` union from SSE chunks or JSON bodies.
-- **Provider presets, not forks** — Groq, Azure, Cloudflare, Perplexity, xAI, and others reuse one compatible parser with dialect options.
-- **Proxy-ready transforms** — `toSSE({ sanitizeErrors: true })`, `tapEvents`, `collectStream`, fixture replay.
-
-### Performance at a glance
-
-- **Zero runtime dependencies** — verified in CI (`pnpm verify:deps`)
-- **Incremental SSE parsing** — line buffer; no full-stream re-parse
-- **Single-pass O(n) assembly** — **LSA-C52** smoke test on 10k chunks
-- **Bounded buffers** — `maxBufferBytes` for untrusted streams
-- **Local repro:** `pnpm bench:smoke` — see [performance](./docs/performance.md)
-
----
-
-## Architecture
-
-Raw provider bytes enter through a **thin adapter**, get assembled into **typed events**, and leave through the same transform layer whether you stream live, replay fixtures, or proxy to a browser.
-
-![End-to-end pipeline](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/pipeline.svg)
-
-### Built-in adapters
-
-![Built-in adapters and compatible presets](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/adapters-overview.svg)
-
-### Unified event model
-
-Every adapter maps provider-specific fragments into the same **`StreamEvent`** union:
-
-![StreamEvent mindmap](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/stream-event.svg)
-
-**Provenance events** include **`citation`**, **`grounding`**, and **`logprob`**. Chat / compatible: enable with `logprobs: true` on the request. Responses API: enable with `include: ["message.output_text.logprobs"]`. Logprob events are atomic per token — use **`logprobConfidence()`** for probability/margin and **`alignLogprobsWithText()`** to map tokens onto assembled assistant text.
-
-**Design constraints:** adapters never accumulate cross-chunk state beyond id/index reconciliation; assembly, buffering, and `.done` emission live in core. No HTTP client, no tool execution, no UI — just the stream layer.
-
-### Lifecycle & concurrency
-
-- **`EventAssembler` is stateful per stream** — it buffers text, reasoning, JSON, refusals, and open tool calls until `.done` / `finish`.
-- **Public APIs create a new assembler per call** — `assembleStream`, `assembleFromPayloads`, `assembleResponse`, and `createAssemblyTransform` each construct their own instance.
-- **One assembler = one stream/response** — do not share an instance across concurrent requests.
-- **`EventAssembler.reset()`** clears state for tests or explicit reuse after a stream completes.
-- **Adapters are thin** — one payload in, `RawChunk[]` out; create **one adapter instance per request/stream** (minimal id/index map only).
-- **Transforms are stateless** — `tapEvents`, `toSSE`, and `collectStream` operate on the unified event stream.
-
-![Stateful assembler vs stateless adapters](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/assembler-lifecycle.svg)
-
-Diagram sources: [`docs/img/`](./docs/img/) (Mermaid `.mmd` + committed SVG). Regenerate with `pnpm diagrams:build`.
-
----
-
-## Providers at a glance
-
-| Adapter                                 | Provider / API                                                                                                                                     | Import                                       |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                                            | `llm-stream-assemble`                        |
-| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, **Azure OpenAI**, **Cloudflare Workers AI**, generic | `llm-stream-assemble`                        |
-| `anthropicAdapter()`                    | Anthropic Messages                                                                                                                                 | `llm-stream-assemble`                        |
-| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                                               | `llm-stream-assemble`                        |
-| `geminiAdapter()`                       | Google AI Gemini + Vertex AI (`apiSurface`)                                                                                                        | `llm-stream-assemble` or `/adapters/gemini`  |
-| `bedrockAdapter()`                      | AWS Bedrock Converse / ConverseStream                                                                                                              | `llm-stream-assemble` or `/adapters/bedrock` |
-| `cohereAdapter()`                       | Cohere Chat v2 (`api.cohere.com/v2/chat`)                                                                                                          | `llm-stream-assemble` or `/adapters/cohere`  |
-
-Full feature flags and quirks: [compatibility matrix](./docs/compatibility.md).
+- **Zero runtime dependencies**.
+- **One event union for stream and non-stream flows**.
+- **Provider adapters + host presets** instead of per-provider parser rewrites.
+- **Proxy-safe transforms** (`toSSE`, `tapEvents`, `collectStream`) and fixture replay.
 
 ---
 
@@ -165,31 +89,7 @@ pnpm add llm-stream-assemble
 
 ## Runtimes
 
-| Runtime                | Support | Notes                                                                                      |
-| ---------------------- | ------- | ------------------------------------------------------------------------------------------ |
-| **Node.js 18+**        | Primary | CI on LTS 18, 20, 22 — [compatibility matrix](./docs/compatibility.md)                     |
-| **Bun**                | Smoke   | `ReadableStream` + npm package import                                                      |
-| **Deno**               | Smoke   | `npm:llm-stream-assemble` specifiers                                                       |
-| **Cloudflare Workers** | Smoke   | `TransformStream` proxy patterns in [integration cookbook](./docs/integration-cookbook.md) |
-
-Full matrix and caveats: [post-1.0 provider roadmap — Runtime support](./docs/post-1.0-provider-roadmap.md#runtime-support-matrix).
-
----
-
-## First success in 30 seconds
-
-Minimal loop once you have a streaming `response.body` — see [Quickstart](#quickstart) for full `fetch` setup:
-
-```ts
-import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
-
-for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-	if (event.type === "text.done") console.log("\n--- done:", event.text);
-}
-```
-
-Swap `openaiChatAdapter()` for `anthropicAdapter()`, `geminiAdapter()`, or `openaiCompatibleAdapter({ provider: "ollama" })` — [Quick decision guide](#quick-decision-guide).
+Node.js **18+** (CI on LTS 18, 20, 22). See [compatibility matrix](./docs/compatibility.md).
 
 ---
 
@@ -200,584 +100,88 @@ import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
 
 for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
 	if (event.type === "text.delta") process.stdout.write(event.text);
+	if (event.type === "text.done") console.log("\n--- done:", event.text);
 }
 ```
 
+For provider-specific setup, request payloads, and caveats, use [docs/usage-guides.md](./docs/usage-guides.md).
+
 ---
 
-## Quick decision guide
+## Architecture
 
-Pick an adapter in ~30 seconds:
+Raw provider bytes enter through a thin adapter and exit as unified typed events.
 
-![Quick decision guide](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/quick-decision.svg)
+### Lifecycle & concurrency
 
-- **OpenAI Chat Completions SSE** → `openaiChatAdapter()`
-- **OpenAI Responses API** → `openaiResponsesAdapter()`
-- **Anthropic Messages** → `anthropicAdapter()`
-- **Google Gemini** → `geminiAdapter()`
-- **AWS Bedrock ConverseStream** → `bedrockAdapter()` (decoded JSON per event — see [Bedrock Usage](#bedrock-usage))
-- **Cohere Chat v2 SSE** → `cohereAdapter()` (not OpenAI-compatible — see [Cohere Usage](#cohere-usage))
-- **Groq, Ollama, Azure, Cloudflare, OpenRouter, …** → `openaiCompatibleAdapter({ provider })`
-- **Non-streaming JSON body** → `assembleResponse(body, adapter)`
-- **React chat UI / full agent framework** → not this package — see [comparison](./docs/comparison.md)
-- **XML/markdown tag parsing from model text** → out of scope — see [Non-goals](#non-goals)
+Adapters are **stateful per stream** — create a new adapter instance per request. The assembler supports **`reset()`** for reuse within a long-lived worker when needed.
+
+![End-to-end pipeline](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/pipeline.svg)
+
+- Architecture diagrams: [docs/img/README.md](./docs/img/README.md)
+- Adapter graph: [docs/img/adapters-overview.svg](./docs/img/adapters-overview.svg)
+- Transforms: [docs/img/transforms.svg](./docs/img/transforms.svg)
+- Quick decision guide: [docs/img/quick-decision.svg](./docs/img/quick-decision.svg)
+- Lifecycle model: [docs/img/assembler-lifecycle.svg](./docs/img/assembler-lifecycle.svg)
+
+---
+
+## Providers at a glance
+
+| Adapter                                 | Provider / API                                                                                                                    |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `openaiChatAdapter()`                   | OpenAI Chat Completions                                                                                                           |
+| `openaiCompatibleAdapter({ provider })` | Groq, DeepSeek, Mistral, Ollama, LM Studio, Together, Fireworks, OpenRouter, Perplexity, xAI, Azure OpenAI, Cloudflare Workers AI |
+| `anthropicAdapter()`                    | Anthropic Messages                                                                                                                |
+| `openaiResponsesAdapter()`              | OpenAI Responses API                                                                                                              |
+| `geminiAdapter()`                       | Google AI Gemini + Vertex AI (`apiSurface`)                                                                                       |
+| `bedrockAdapter()`                      | AWS Bedrock Converse / ConverseStream                                                                                             |
+| `cohereAdapter()`                       | Cohere Chat v2 (`api.cohere.com/v2/chat`)                                                                                         |
+
+Feature flags and quirks: [docs/compatibility.md](./docs/compatibility.md).
 
 ---
 
 ## Documentation
 
+- [Usage guides](./docs/usage-guides.md)
 - [Provider compatibility matrix](./docs/compatibility.md)
+- [Integration cookbook](./docs/integration-cookbook.md)
+- [Examples index](./examples/README.md)
 - [Adapter author guide](./docs/adapter-guide.md)
 - [Performance & runtime behavior](./docs/performance.md)
-- [Edge-case showcase](./docs/edge-cases.md)
-- [Integration cookbook](./docs/integration-cookbook.md)
 - [How this compares](./docs/comparison.md)
 - [FAQ](./docs/faq.md)
 - [Architecture diagrams](./docs/img/README.md)
-- [Live smoke checklist (maintainers)](./docs/live-smoke.md)
-- [Post-1.0 provider roadmap](./docs/post-1.0-provider-roadmap.md)
-- [Product & technical proposal](./docs/proposal.md)
-
----
-
-## How this compares
-
-|              | llm-stream-assemble   | Full-stack AI SDK  | Provider SDK   | DIY concat   |
-| ------------ | --------------------- | ------------------ | -------------- | ------------ |
-| Scope        | Stream assembly only  | HTTP + UI + agents | Vendor RPC     | Manual parse |
-| Events       | Unified `StreamEvent` | Framework types    | Vendor types   | Ad hoc       |
-| Dependencies | Zero runtime          | Many               | Vendor package | None         |
-
-Full matrix, when-not-to-use, and alternatives: **[docs/comparison.md](./docs/comparison.md)**.
-
----
-
-## Examples
-
-Curated index — full snippets live in [Usage guides](#usage-guides) and [`examples/`](./examples/README.md).
-
-### OpenAI Chat
-
-```ts
-import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
-// fetch(..., { stream: true }) then:
-for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-→ [`examples/node-fetch/openai-chat.ts`](./examples/node-fetch/openai-chat.ts)
-
-### Ollama (local)
-
-```ts
-import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
-const adapter = openaiCompatibleAdapter({ provider: "ollama" });
-for await (const event of assembleStream(response.body!, adapter)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-→ [`examples/node-fetch/openai-compatible.ts`](./examples/node-fetch/openai-compatible.ts) · Usage: [OpenAI-Compatible](#openai-compatible-usage)
-
-### Anthropic Messages
-
-→ [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts) · Usage: [Anthropic Messages](#anthropic-messages-usage)
-
-### Google Gemini
-
-→ [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts) · Usage: [Gemini](#gemini-usage)
-
-### AWS Bedrock
-
-→ [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts) · Usage: [Bedrock](#bedrock-usage) · Decode helper: [`examples/bedrock/README.md`](./examples/bedrock/README.md)
-
-### Cohere Chat v2
-
-→ [`examples/node-fetch/cohere.ts`](./examples/node-fetch/cohere.ts) · Usage: [Cohere](#cohere-usage)
-
-### Streaming JSON (structured output)
-
-```ts
-for await (const event of assembleStream(response.body!, openaiChatAdapter({ jsonMode: true }))) {
-	if (event.type === "json.delta") process.stdout.write(event.delta);
-	if (event.type === "json.done") console.log(event.json);
-}
-```
-
-### Tool calling
-
-```ts
-for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
-	if (event.type === "tool_call.args.delta") process.stdout.write(event.delta);
-	if (event.type === "tool_call.done") console.log(event.name, event.args);
-}
-```
-
-### Chat UI / markdown rendering
-
-Stream `text.delta` into your renderer — this library does **not** parse markdown/XML tags from model output (see [Non-goals](#non-goals)).
-
-### SSE proxy to browser
-
-→ [`examples/proxy-safety/`](./examples/proxy-safety/) — `toSSE(events, { sanitizeErrors: true })`
-
-### Fixture replay
-
-→ [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)
-
-### Integration cookbook
-
-Wire unified events into **Hono**, **Express**, **Cloudflare Workers**, **LiteLLM**, **Next.js App Router**, AI SDK mapping, and LangChain callbacks — [`examples/integrations/`](./examples/integrations/) · **[Full cookbook →](./docs/integration-cookbook.md)**
 
 ---
 
 ## Usage guides
 
-### Core Usage
-
-The core pipeline works with any adapter that emits `RawChunk[]`, including the built-in OpenAI Chat, OpenAI-compatible, Anthropic Messages, OpenAI Responses, Google Gemini, AWS Bedrock, and Cohere adapters:
-
-```ts
-import { assembleFromPayloads, type StreamAdapter } from "llm-stream-assemble";
-
-const adapter: StreamAdapter = {
-	parseChunk(raw) {
-		const data = JSON.parse(raw) as { text?: string };
-		return data.text ? [{ kind: "text-delta", text: data.text }] : [];
-	},
-};
-
-for await (const event of assembleFromPayloads(payloads, adapter)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Assembly buffers completed text, reasoning, JSON, and tool-call arguments so it can emit final `.done` events. Use `maxBufferBytes` to cap those buffers for untrusted or unusually large streams.
-
-### OpenAI Chat Usage
-
-`openaiChatAdapter()` parses OpenAI Chat Completions payloads. Create one adapter instance per request/stream because it keeps minimal state for metadata and tool-call indexes.
-
-```ts
-import { assembleStream, openaiChatAdapter } from "llm-stream-assemble";
-
-const response = await fetch("https://api.openai.com/v1/chat/completions", {
-	method: "POST",
-	headers: {
-		Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-		"Content-Type": "application/json",
-	},
-	body: JSON.stringify({
-		model: "gpt-4o-mini",
-		messages,
-		stream: true,
-		stream_options: { include_usage: true },
-	}),
-});
-
-for await (const event of assembleStream(response.body!, openaiChatAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Streaming usage requires `stream_options: { include_usage: true }` on the OpenAI request. JSON mode content is exposed by OpenAI as normal content deltas, so use `openaiChatAdapter({ jsonMode: true })` when you want content mapped to `json.*` events.
-
-### OpenAI-Compatible Usage
-
-`openaiCompatibleAdapter()` supports OpenAI-shaped Chat Completions APIs with best-effort provider presets. Create one adapter instance per request/stream.
-
-```ts
-import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
-
-const adapter = openaiCompatibleAdapter({
-	provider: "openrouter",
-});
-
-for await (const event of assembleStream(response.body!, adapter)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Provider presets:
-
-| Preset       | Intended hosts                | Notes                                                                                       |
-| ------------ | ----------------------------- | ------------------------------------------------------------------------------------------- |
-| `generic`    | Any OpenAI-shaped API         | Loose defaults, best first try                                                              |
-| `openrouter` | OpenRouter                    | Mostly OpenAI-shaped; provider-specific metadata may appear                                 |
-| `groq`       | Groq OpenAI-compatible API    | OpenAI-like; usage can vary by endpoint/model                                               |
-| `deepseek`   | DeepSeek API                  | Maps `reasoning_content` to reasoning events on R1-style models                             |
-| `mistral`    | Mistral API                   | OpenAI-like; parallel tool calls supported                                                  |
-| `ollama`     | Ollama `/v1/chat/completions` | Local host, metadata may be sparse                                                          |
-| `lmstudio`   | LM Studio local server        | Local host, metadata/usage may be sparse                                                    |
-| `together`   | Together AI                   | OpenAI-like; `reasoning` / `reasoning_delta` aliases                                        |
-| `fireworks`  | Fireworks AI                  | OpenAI-like, usage/details may vary                                                         |
-| `perplexity` | Perplexity API                | Search-grounded answers; root `citations` / `search_results` → typed `citation` events      |
-| `xai`        | xAI Grok API                  | OpenAI-compatible; `reasoning_content` mapped when present                                  |
-| `azure`      | Azure OpenAI Chat Completions | Stricter preset; deployment URL + `api-key` auth; content filter metadata in `metadata.raw` |
-| `cloudflare` | Cloudflare Workers AI REST    | OpenAI-compatible `/v1/chat/completions`; Bearer + account id; loose preset like Groq       |
-
-Base URL examples: Groq `https://api.groq.com/openai/v1`, DeepSeek `https://api.deepseek.com`, Mistral `https://api.mistral.ai/v1`, Ollama `http://localhost:11434/v1`, LM Studio `http://localhost:1234/v1`, Together `https://api.together.xyz/v1`, Fireworks `https://api.fireworks.ai/inference/v1`, OpenRouter `https://openrouter.ai/api/v1`, Perplexity `https://api.perplexity.ai`, xAI `https://api.x.ai/v1`, Azure OpenAI `https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version={version}`, Cloudflare Workers AI `https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions`.
-
-Strict vs loose configuration:
-
-```ts
-// Loose default: good for local/open-source OpenAI-compatible hosts.
-openaiCompatibleAdapter({ provider: "ollama" });
-
-// Stricter mode: useful when unexpected payload shapes should fail fast.
-openaiCompatibleAdapter({
-	provider: "generic",
-	allowMissingMetadata: false,
-	looseErrorShape: false,
-	useChoicePositionFallback: false,
-});
-```
-
-Known limitations:
-
-- Provider presets are fixture-tested and best-effort; CI does not call live provider APIs.
-- Hosts can change OpenAI-compatible dialects without notice.
-- Non-string reasoning payloads are skipped.
-- Multi-choice terminal behavior is limited by the current core single terminal finish event.
-- Missing tool ids are tolerated because core can synthesize stable ids by index.
-
-### Azure OpenAI Usage
-
-Azure OpenAI Chat Completions uses a deployment-scoped URL and **`api-key`** authentication instead of Bearer tokens. Use the **`azure`** preset — not `generic` — for stricter parsing aligned with OpenAI Chat semantics (`allowMissingMetadata: false`, `looseErrorShape: false`).
-
-```ts
-import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
-
-const resource = process.env.AZURE_OPENAI_RESOURCE!;
-const deployment = process.env.AZURE_OPENAI_DEPLOYMENT!;
-const apiVersion = process.env.AZURE_OPENAI_API_VERSION ?? "2024-10-21";
-const url = `https://${resource}.openai.azure.com/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
-
-const response = await fetch(url, {
-	method: "POST",
-	headers: {
-		"api-key": process.env.AZURE_OPENAI_API_KEY!,
-		"Content-Type": "application/json",
-	},
-	body: JSON.stringify({
-		messages: [{ role: "user", content: "Hello" }],
-		stream: true,
-		stream_options: { include_usage: true },
-	}),
-});
-
-for await (const event of assembleStream(
-	response.body!,
-	openaiCompatibleAdapter({ provider: "azure" }),
-)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Use `openaiCompatibleAdapter({ provider: "azure", jsonMode: true })` when structured JSON output should map to `json.*` events. Content-filter blocks surface as `refusal.*` events with `finish_reason: content_filter`; filter result fields remain in `metadata.raw` for auditing. If an API gateway strips metadata from chunks, soften strict parsing server-side only with `allowMissingMetadata: true`.
-
-See `examples/node-fetch/azure-openai.ts` for a URL builder helper and `examples/proxy-safety/README.md` for server-side proxy notes.
-
-### Cloudflare Workers AI Usage
-
-Cloudflare Workers AI exposes an OpenAI-compatible REST endpoint at `/v1/chat/completions` under your account. Use the **`cloudflare`** preset — not `generic` — when you want fixture-tested defaults for Workers AI REST (loose metadata tolerance like Groq).
-
-```ts
-import { assembleStream, openaiCompatibleAdapter } from "llm-stream-assemble";
-
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID!;
-const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`;
-
-const response = await fetch(url, {
-	method: "POST",
-	headers: {
-		Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN!}`,
-		"Content-Type": "application/json",
-	},
-	body: JSON.stringify({
-		model: "@cf/meta/llama-3.1-8b-instruct",
-		messages: [{ role: "user", content: "Hello" }],
-		stream: true,
-		stream_options: { include_usage: true },
-	}),
-});
-
-for await (const event of assembleStream(
-	response.body!,
-	openaiCompatibleAdapter({ provider: "cloudflare" }),
-)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Streaming usage requires `stream_options: { include_usage: true }` on the request. Use `openaiCompatibleAdapter({ provider: "cloudflare", jsonMode: true })` when JSON output should map to `json.*` events.
-
-The **`env.AI.run(model, { stream: true })`** Worker binding can return SSE bytes compatible with `assembleStream` when the model streams Chat Completions-shaped payloads — account binding and auth stay in your Worker; this library only parses the bytes.
-
-See `examples/workers-ai/rest-chat-completions.ts` and `examples/proxy-safety/README.md` (Bearer token + account id must never reach the browser).
-
-### Anthropic Messages Usage
-
-`anthropicAdapter()` parses Anthropic Messages streaming events and non-streaming responses. Create one adapter instance per request/stream.
-
-```ts
-import { anthropicAdapter, assembleStream } from "llm-stream-assemble";
-
-for await (const event of assembleStream(response.body!, anthropicAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Anthropic tool calls are emitted from `tool_use` content blocks. Fine-grained tool input streaming is supported through `input_json_delta`; partial input may be invalid JSON until the block ends, and core handles those partial previews best-effort. Thinking blocks map to `reasoning.*` events with `variant: "detail"`.
-
-### OpenAI Responses Usage
-
-`openaiResponsesAdapter()` parses OpenAI Responses API streaming events and non-streaming response objects. It focuses on output text and function call argument streams; Realtime, audio, and multimodal binary output are out of scope.
-
-```ts
-import { assembleStream, openaiResponsesAdapter } from "llm-stream-assemble";
-
-for await (const event of assembleStream(response.body!, openaiResponsesAdapter())) {
-	if (event.type === "tool_call.args.delta") console.log(event.delta);
-}
-```
-
-Use `openaiResponsesAdapter({ jsonMode: true })` to map output text to `json.*` events. Reasoning support is best-effort for string summary/detail fields. Typed **`logprob`** events when the request sets `include: ["message.output_text.logprobs"]` (optional `top_logprobs`) — same helpers as Chat Completions. Create a new adapter instance per stream.
-
-### Gemini Usage
-
-`geminiAdapter()` parses Google AI Gemini `GenerateContentResponse` payloads from `streamGenerateContent?alt=sse` and non-streaming `generateContent`. Create one adapter instance per request/stream.
-
-```ts
-import { assembleStream, geminiAdapter } from "llm-stream-assemble";
-
-const model = "gemini-2.5-flash";
-const apiKey = process.env.GOOGLE_API_KEY!;
-const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
-
-const response = await fetch(url, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({
-		contents: [{ role: "user", parts: [{ text: "Hello" }] }],
-	}),
-});
-
-for await (const event of assembleStream(response.body!, geminiAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-	if (event.type === "tool_call.done") console.log(event.name, event.args);
-}
-```
-
-Use `geminiAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. Thinking models may emit `thought` parts mapped to `reasoning.*` (best-effort). Gemini does not expose OpenAI-style `refusal.*` events — blocked prompts use `promptFeedback` or safety finish reasons instead.
-
-Subpath import: `import { geminiAdapter } from "llm-stream-assemble/adapters/gemini"`.
-
-#### Vertex AI Gemini
-
-Vertex uses the same `geminiAdapter()` with **`apiSurface: "vertex"`**. The adapter strips Vertex / gateway envelopes (`response`, `result`, `predictions[0]`) via **`normalizeVertexChunk()`** before mapping `candidates` and tools. Vertex HTTP streams are often **JSONL or concatenated JSON objects**, not Google AI `data:` SSE — split complete JSON strings in your app, then pass each line to `assembleFromPayloads` (see [`examples/vertex/read-chunk-stream.ts`](./examples/vertex/read-chunk-stream.ts)).
-
-```ts
-import { assembleFromPayloads, geminiAdapter } from "llm-stream-assemble";
-import { buildVertexStreamUrl } from "./examples/vertex/build-vertex-url";
-import { readVertexJsonlStrings } from "./examples/vertex/read-chunk-stream";
-
-const projectId = process.env.GOOGLE_CLOUD_PROJECT!;
-const location = process.env.VERTEX_LOCATION ?? "us-central1";
-const model = process.env.VERTEX_MODEL ?? "gemini-2.5-flash";
-const accessToken = process.env.VERTEX_ACCESS_TOKEN!; // ADC — not GOOGLE_API_KEY
-
-const response = await fetch(buildVertexStreamUrl({ projectId, location, model }), {
-	method: "POST",
-	headers: {
-		Authorization: `Bearer ${accessToken}`,
-		"Content-Type": "application/json",
-	},
-	body: JSON.stringify({
-		contents: [{ role: "user", parts: [{ text: "Hello" }] }],
-	}),
-});
-
-async function* lines() {
-	for await (const line of readVertexJsonlStrings(response.body!)) yield line;
-}
-
-for await (const event of assembleFromPayloads(lines(), geminiAdapter({ apiSurface: "vertex" }))) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-}
-```
-
-Obtain a short-lived bearer token with Application Default Credentials, e.g. `gcloud auth application-default print-access-token`, and set `VERTEX_ACCESS_TOKEN` (or pass `accessToken` in your own wrapper). Full runnable example: [`examples/node-fetch/vertex-gemini.ts`](./examples/node-fetch/vertex-gemini.ts). Live smoke: `pnpm smoke:vertex` — see [live-smoke](./docs/live-smoke.md).
-
-The Gemini **Interactions API** remains deferred; see [compatibility matrix](./docs/compatibility.md).
-
-### Bedrock Usage
-
-`bedrockAdapter()` parses **decoded** AWS Bedrock **ConverseStream** JSON events — one ConverseStream envelope object per `parseChunk` call. Create one adapter instance per request/stream.
-
-Bedrock streaming responses are often `application/vnd.amazon.eventstream` (binary). **Decode EventStream bytes in your app, AWS SDK, or the example helper** before assembly — this library does not sign requests or parse binary framing.
-
-```
-Bedrock Runtime → EventStream bytes → [SDK or decode helper] → JSON strings
-  → bedrockAdapter().parseChunk / assembleFromPayloads / assembleStream → StreamEvent[]
-```
-
-**Recommended path:** use `@aws-sdk/client-bedrock-runtime` `ConverseStreamCommand`, iterate the async stream, `JSON.stringify` each event object, and feed lines to `assembleFromPayloads`. See [`examples/bedrock/README.md`](./examples/bedrock/README.md) and [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts).
-
-```ts
-import { assembleFromPayloads, bedrockAdapter } from "llm-stream-assemble";
-
-async function* decodedConverseEvents(sdkStream: AsyncIterable<Record<string, unknown>>) {
-	for await (const event of sdkStream) {
-		yield JSON.stringify(event);
-	}
-}
-
-for await (const event of assembleFromPayloads(
-	decodedConverseEvents(converseStream),
-	bedrockAdapter({ modelFamily: "auto" }),
-)) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-	if (event.type === "tool_call.done") console.log(event.name, event.args);
-}
-```
-
-**`modelFamily`** hints which ConverseStream dialect to prefer when envelopes overlap:
-
-| Value           | When to use                                                       |
-| --------------- | ----------------------------------------------------------------- |
-| `"auto"`        | Default — structural detection from payload shape                 |
-| `"anthropic"`   | Claude on Bedrock — reasoning deltas, Anthropic-style tool blocks |
-| `"nova"`        | Amazon Nova models                                                |
-| `"openai-like"` | Llama and other OpenAI-shaped delta fields                        |
-
-Use `bedrockAdapter({ jsonMode: true })` when structured JSON text blocks should map to `json.*` instead of `text.*`. Guardrail interventions map to `finish` with `content_filter`; trace details remain in `metadata.raw`.
-
-**Environment variables** for live smoke and examples: `AWS_REGION`, `BEDROCK_MODEL_ID`, plus standard AWS credential chain (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_PROFILE`, SSO). IAM and SigV4 signing stay outside this library.
-
-Subpath import: `import { bedrockAdapter } from "llm-stream-assemble/adapters/bedrock"`.
-
-Worker proxy recipe: [`examples/integrations/bedrock-worker-proxy.ts`](./examples/integrations/bedrock-worker-proxy.ts). EventStream decode helper (examples only): [`examples/bedrock/decode-event-stream.ts`](./examples/bedrock/decode-event-stream.ts).
-
-### Cohere Usage
-
-`cohereAdapter()` parses Cohere Chat **v2** SSE events from `https://api.cohere.com/v2/chat` and non-streaming v2 response bodies. Create one adapter instance per request/stream. Cohere is **not** OpenAI-compatible — use `cohereAdapter()`, not `openaiCompatibleAdapter()`.
-
-Core `parseSSE()` frames the HTTP body; `assembleStream` yields one JSON payload string per `data:` line to `cohereAdapter().parseChunk`.
-
-```ts
-import { assembleStream, cohereAdapter } from "llm-stream-assemble";
-
-const response = await fetch("https://api.cohere.com/v2/chat", {
-	method: "POST",
-	headers: {
-		Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
-		"Content-Type": "application/json",
-	},
-	body: JSON.stringify({
-		model: "command-r-plus-08-2024",
-		messages: [{ role: "user", content: "Hello" }],
-		stream: true,
-	}),
-});
-
-for await (const event of assembleStream(response.body!, cohereAdapter())) {
-	if (event.type === "text.delta") process.stdout.write(event.text);
-	if (event.type === "reasoning.delta") process.stdout.write(event.text);
-	if (event.type === "tool_call.done") console.log(event.name, event.args);
-}
-```
-
-Use `cohereAdapter({ jsonMode: true })` when structured JSON output should map to `json.*` instead of `text.*`. **`tool-plan-delta`** events map to `reasoning.*` with `variant: "detail"`. **`citation-start`** maps to typed **`citation`** events (span, sources, index). Set `emitLegacyCitationMetadata: true` on any citation-capable adapter to dual-emit legacy `metadata.raw` blobs during migration. Legacy Cohere v1 endpoints are out of scope.
-
-Subpath import: `import { cohereAdapter } from "llm-stream-assemble/adapters/cohere"`.
-
-Live smoke: `pnpm smoke:cohere` — see [`docs/live-smoke.md`](./docs/live-smoke.md) for `COHERE_API_KEY`, `COHERE_MODEL`, and `COHERE_SMOKE_TOOLS`.
+Moved out of README to keep this page focused and release-stable:
+
+- Core usage + adapter contract: [docs/usage-guides.md#core-usage](./docs/usage-guides.md#core-usage)
+- OpenAI Chat / compatible / Azure / Cloudflare: [docs/usage-guides.md#openai-chat-usage](./docs/usage-guides.md#openai-chat-usage)
+- Anthropic + OpenAI Responses: [docs/usage-guides.md#anthropic-messages-usage](./docs/usage-guides.md#anthropic-messages-usage)
+- Gemini + Vertex: [docs/usage-guides.md#gemini-usage](./docs/usage-guides.md#gemini-usage)
+- Bedrock + Cohere: [docs/usage-guides.md#bedrock-usage](./docs/usage-guides.md#bedrock-usage)
+
+More operational guidance:
+
+- Compatibility details: [docs/compatibility.md](./docs/compatibility.md)
+- Framework recipes: [docs/integration-cookbook.md](./docs/integration-cookbook.md)
+- Runnable examples: [examples/README.md](./examples/README.md)
 
 ---
 
-## Transforms & replay
+## Examples
 
-![Transforms and helpers](https://raw.githubusercontent.com/01laky/llm-stream-assemble/main/docs/img/transforms.svg)
+Runnable samples: [examples/README.md](./examples/README.md) — `examples/node-fetch/openai-chat.ts`, `examples/node-fetch/openai-compatible.ts`, `examples/node-fetch/azure-openai.ts`, `examples/node-fetch/perplexity.ts`, `examples/node-fetch/xai.ts`, `examples/node-fetch/gemini.ts`, `examples/node-fetch/vertex-gemini.ts`, `examples/node-fetch/bedrock.ts`, `examples/node-fetch/cohere.ts`, `examples/workers-ai/rest-chat-completions.ts`; proxy safety via `sanitizeErrors`.
 
-### Collecting a Stream
-
-`collectStream()` materializes a full event stream into text, reasoning, refusals, JSON, tool calls, citations, grounding, logprobs, latest usage, and finish reason. It buffers full output in memory and aggregates multi-choice text in event order; it is not a per-choice collector and does not currently collect metadata.
-
-```ts
-import { collectStream } from "llm-stream-assemble";
-
-const result = await collectStream(events);
-console.log(result.text, result.toolCalls, result.finishReason);
-```
-
-### Tapping Events
-
-`tapEvents()` lets you observe events for logging or metrics without changing the stream.
-
-```ts
-import { tapEvents } from "llm-stream-assemble";
-
-for await (const event of tapEvents(events, (event) => console.debug(event.type))) {
-	// consume normally
-}
-```
-
-### Forwarding Unified SSE
-
-`toSSE()` serializes unified `StreamEvent` objects as `data: <json>` SSE messages. It does not currently emit named SSE `event:` fields, and it emits unified event JSON rather than raw provider SSE.
-
-```ts
-import { toSSE } from "llm-stream-assemble";
-
-return new Response(toSSE(events, { sanitizeErrors: true }), {
-	headers: { "Content-Type": "text/event-stream" },
-});
-```
-
-Use `sanitizeErrors: true` when forwarding events to browsers so raw provider internals are not exposed.
-
-### Replaying Fixtures
-
-`assembleFromFile()` is a Node/dev replay helper for local `.sse` and `.json` fixtures. It uses `node:fs/promises`, so avoid it in browser bundles; a dedicated browser/edge entry point can be added later if needed.
-
-```ts
-import { assembleFromFile, openaiChatAdapter } from "llm-stream-assemble";
-
-for await (const event of assembleFromFile(
-	"test/fixtures/openai-chat/text-basic.sse",
-	openaiChatAdapter(),
-)) {
-	console.log(event);
-}
-```
-
----
-
-## Examples & proxy safety
-
-| Example                                                                                          | Description                                      |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| [`examples/node-fetch/openai-chat.ts`](./examples/node-fetch/openai-chat.ts)                     | OpenAI Chat Completions streaming                |
-| [`examples/node-fetch/openai-compatible.ts`](./examples/node-fetch/openai-compatible.ts)         | OpenAI-compatible presets                        |
-| [`examples/node-fetch/azure-openai.ts`](./examples/node-fetch/azure-openai.ts)                   | Azure OpenAI deployment URL + `api-key`          |
-| [`examples/workers-ai/rest-chat-completions.ts`](./examples/workers-ai/rest-chat-completions.ts) | Cloudflare Workers AI REST + `cloudflare` preset |
-| [`examples/node-fetch/perplexity.ts`](./examples/node-fetch/perplexity.ts)                       | Perplexity streaming                             |
-| [`examples/node-fetch/xai.ts`](./examples/node-fetch/xai.ts)                                     | xAI Grok streaming                               |
-| [`examples/node-fetch/anthropic.ts`](./examples/node-fetch/anthropic.ts)                         | Anthropic Messages                               |
-| [`examples/node-fetch/gemini.ts`](./examples/node-fetch/gemini.ts)                               | Google AI Gemini SSE                             |
-| [`examples/node-fetch/vertex-gemini.ts`](./examples/node-fetch/vertex-gemini.ts)                 | Vertex AI Gemini JSONL stream                    |
-| [`examples/node-fetch/bedrock.ts`](./examples/node-fetch/bedrock.ts)                             | AWS Bedrock ConverseStream (decoded JSON)        |
-| [`examples/node-fetch/replay-fixture.ts`](./examples/node-fetch/replay-fixture.ts)               | Local fixture replay                             |
-| [`examples/proxy-safety/`](./examples/proxy-safety/)                                             | Proxy + browser client patterns                  |
-
-Proxy safety:
-
-- Use `toSSE(events, { sanitizeErrors: true })` for browser-facing streams.
-- Use `tapEvents` for server-side observation and logging.
-- Never forward raw provider errors or upstream non-OK response bodies to browsers.
-- CORS headers are application-specific and intentionally omitted from the Web-standard example.
+- Full examples index: [examples/README.md](./examples/README.md)
+- Node fetch examples: [examples/node-fetch/](./examples/node-fetch/)
+- Integration recipes: [examples/integrations/](./examples/integrations/)
+- Proxy safety patterns: [examples/proxy-safety/](./examples/proxy-safety/)
 
 ---
 
@@ -786,7 +190,7 @@ Proxy safety:
 - No HTTP client, auth, retries, or provider SDK wrapper.
 - No agent loop, tool execution, memory, or persistence.
 - No UI framework, React hooks, or browser components.
-- No multimodal binary/audio/video parsing.
+- No markdown/XML tag parsing inside model text.
 
 ---
 
@@ -803,7 +207,6 @@ pnpm verify
 | `pnpm verify:deps`    | fail if runtime dependencies are added              |
 | `pnpm release:prep`   | pre-tag checks (version, CHANGELOG, dist, npm pack) |
 | `pnpm diagrams:build` | regenerate README SVGs from Mermaid sources         |
-| `pnpm bench:smoke`    | local LSA-C52 timing script (requires build first)  |
 | `pnpm test`           | Vitest smoke tests                                  |
 | `pnpm build`          | tsup → ESM + CJS + declarations                     |
 

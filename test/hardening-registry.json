@@ -1,0 +1,70 @@
+{
+	"requiredTestFiles": [
+		"test/chunk-split-matrix.test.ts",
+		"test/chunk-split-evil-full.test.ts",
+		"test/chunk-split-tier2-matrix.test.ts",
+		"test/edge-catalog-matrix.test.ts",
+		"test/edge-cases-audit.test.ts",
+		"test/parse-chunk-atom-matrix.test.ts",
+		"test/finish-trailing-event-matrix.test.ts",
+		"test/deterministic-seed-matrix.test.ts",
+		"test/adapter-options-matrix.test.ts",
+		"test/responses-logprobs-combinatorial.test.ts",
+		"test/adapter-conformance-matrix.test.ts",
+		"test/parse-response-chunk-matrix.test.ts",
+		"test/simulated-provider-e2e.test.ts",
+		"test/replay-fixture-matrix.test.ts",
+		"test/malformed-stream-matrix.test.ts",
+		"test/transforms-golden.test.ts",
+		"test/stream-concurrency.test.ts",
+		"test/cross-adapter-contract-matrix.test.ts",
+		"test/cross-adapter-contract-matrix-x196.test.ts",
+		"test/anthropic-fixture-parity.test.ts",
+		"test/compatible-preset-scenario-matrix.test.ts",
+		"test/stream-invariants-matrix.test.ts",
+		"test/simulated-proxy-matrix.test.ts",
+		"test/ai-sdk-mapper-exhaustive.test.ts",
+		"test/openai-compatible-strict-matrix.test.ts",
+		"test/openai-compatible-loose-matrix.test.ts",
+		"test/openai-compatible-reasoning-matrix.test.ts"
+	],
+	"requiredHelpers": [
+		"test/helpers/byte-stream.ts",
+		"test/helpers/fixture-catalog.ts",
+		"test/helpers/golden-parity.ts",
+		"test/helpers/stream-invariants.ts",
+		"test/helpers/simulated-provider.ts",
+		"test/helpers/matrix-runner.ts"
+	],
+	"gates": [
+		{
+			"id": "MAINT43",
+			"type": "wall-time-doc",
+			"file": "docs/testing-strategy.md",
+			"pattern": "75s.*90s"
+		},
+		{
+			"id": "MAINT51",
+			"type": "stream-invariants-matrix",
+			"file": "test/stream-invariants-matrix.test.ts",
+			"pattern": "LSA-AC100"
+		},
+		{
+			"id": "MAINT41",
+			"type": "parse-response-chunk-sizes",
+			"file": "test/parse-response-chunk-matrix.test.ts",
+			"pattern": "LSA-TH121"
+		},
+		{
+			"id": "MAINT48",
+			"type": "edge-catalog-audit",
+			"script": "audit-edge-cases-catalog"
+		},
+		{
+			"id": "REL33",
+			"type": "min-test-count",
+			"file": "scripts/release-prep.mjs",
+			"min": 6620
+		}
+	]
+}

@@ -1,0 +1,56 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_a",
+		"name": "search",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_b",
+		"name": "calc",
+		"index": 1,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_a",
+		"delta": "{\"q\":\"a\"}"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_b",
+		"delta": "{\"x\":1}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_a",
+		"name": "search",
+		"args": {
+			"q": "a"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_b",
+		"name": "calc",
+		"args": {
+			"x": 1
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

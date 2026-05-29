@@ -99,7 +99,7 @@ describe("examples docs regression", () => {
 	});
 
 	it("LSA-X28: changelog documents examples and proxy safety", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("[0.6.0]");
 		expect(changelog).toContain("proxy safety");
 	});

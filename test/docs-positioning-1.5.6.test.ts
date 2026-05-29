@@ -14,7 +14,7 @@ const COMPOSABLE_ABOUT =
 
 describe("docs positioning 1.5.6", () => {
 	it("LSA-DOC89: README blockquote uses composable About with Vertex AI sweep", () => {
-		const readme = read("README.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
 		expect(readme).toContain(COMPOSABLE_ABOUT);
 		expect(readme).not.toContain("A zero-dependency TypeScript layer");
 	});
@@ -43,24 +43,24 @@ describe("docs positioning 1.5.6", () => {
 	});
 
 	it("LSA-DOC92: CHANGELOG contains 1.5.6 release section", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.5.6]");
 		expect(changelog).toMatch(/composable|edge-case/i);
 	});
 
 	it("LSA-DOC93: CHANGELOG 1.5.6 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.6]");
 	});
 
 	it("LSA-DOC94: README and CHANGELOG still reference 1.5.6 release history", () => {
-		const readme = read("README.md");
-		const changelog = read("CHANGELOG.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.5.6]");
 		expect(readme).toContain("CHANGELOG.md");
 	});
 
 	it("LSA-DOC95: active docs retain 1.5.6 traceability in edge-cases or CHANGELOG", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.5.6]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.5.6]");
 		expect(read("docs/edge-cases.md")).toMatch(/1\.5\.6/);
 	});
 

@@ -1,0 +1,6 @@
+data: {"choices":[{"index":0,"delta":{"reasoning_content":"Let me think…"}}]}
+
+data: {"choices":[{"index":0,"delta":{"content":"Answer"}}],"finish_reason":"stop"}
+
+data: [DONE]
+

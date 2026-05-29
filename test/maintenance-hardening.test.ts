@@ -18,6 +18,7 @@ const HARDENING_HELPERS = [
 	"test/helpers/golden-parity.ts",
 	"test/helpers/stream-invariants.ts",
 	"test/helpers/simulated-provider.ts",
+	"test/helpers/matrix-runner.ts",
 ] as const;
 
 const HARDENING_TESTS = [
@@ -112,7 +113,13 @@ describe("maintenance hardening gates", () => {
 		expect(source).toContain("HOST_COMPATIBLE_PRESETS");
 	});
 
-	it("LSA-MAINT43: stream invariants matrix exists with AC100+ coverage", () => {
+	it("LSA-MAINT43: wall-time budget documented in testing-strategy", () => {
+		const source = readFileSync(join(rootDir, "docs/testing-strategy.md"), "utf8");
+		expect(source).toMatch(/75s.*90s/);
+		expect(source).toContain("LSA-MAINT43");
+	});
+
+	it("LSA-MAINT51: stream invariants matrix exists with AC100+ coverage", () => {
 		const source = readFileSync(join(rootDir, "test/stream-invariants-matrix.test.ts"), "utf8");
 		expect(source).toContain("LSA-AC100");
 		expect(source).toContain("assertEventOrdering");
@@ -158,9 +165,18 @@ describe("maintenance hardening gates", () => {
 		expect(source).toContain("LSA-INT${121 + index}");
 	});
 
-	it("LSA-TH141: release prep gate for minimum test count upgraded to 6000", () => {
+	it("LSA-TH141: release prep gate for minimum test count upgraded to 6620", () => {
 		const source = readFileSync(join(rootDir, "scripts/release-prep.mjs"), "utf8");
-		expect(source).toContain("MIN_TEST_COUNT = 6000");
+		expect(source).toContain("MIN_TEST_COUNT = 6620");
 		expect(source).toContain("LSA-REL33");
+	});
+
+	it("LSA-REF11: hardening-registry.json lists required matrix files", () => {
+		const registry = JSON.parse(
+			readFileSync(join(rootDir, "test/hardening-registry.json"), "utf8"),
+		) as { requiredTestFiles: string[] };
+		expect(registry.requiredTestFiles.length).toBeGreaterThanOrEqual(20);
+		expect(registry.requiredTestFiles).toContain("test/chunk-split-evil-full.test.ts");
+		expect(registry.requiredTestFiles).toContain("test/edge-catalog-matrix.test.ts");
 	});
 });

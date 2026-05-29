@@ -1,8 +1,8 @@
 # Integration cookbook
 
-**Status:** Active guide — `1.9.1` (initial cookbook shipped in `1.3.6`)
+**Status:** Active guide — `1.10.1` (initial cookbook shipped in `1.3.6`)
 
-Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Quick decision guide](../README.md#quick-decision-guide). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
+Wire unified `StreamEvent`s into your application stack. This library is the **assembly layer** — integrations connect `assembleStream` / `toSSE` / `collectStream` to framework boundaries. For provider setup, see [Usage guides](./usage-guides.md). For proxy safety, see [`examples/proxy-safety/`](../examples/proxy-safety/).
 
 ---
 
@@ -23,9 +23,9 @@ Wire unified `StreamEvent`s into your application stack. This library is the **a
 | Cloudflare Workers (edge proxy)   | [`cloudflare-worker-proxy.ts`](../examples/integrations/cloudflare-worker-proxy.ts)                                               | [`rest-chat-completions.ts`](../examples/workers-ai/rest-chat-completions.ts) (client)                                                |
 | AWS Bedrock on Cloudflare Workers | [`bedrock-worker-proxy.ts`](../examples/integrations/bedrock-worker-proxy.ts)                                                     | [`decode-event-stream.ts`](../examples/bedrock/decode-event-stream.ts) + [`node-fetch/bedrock.ts`](../examples/node-fetch/bedrock.ts) |
 | Cohere Chat v2 on Workers / edge  | [`cohere-proxy.ts`](../examples/integrations/cohere-proxy.ts)                                                                     | [`node-fetch/cohere.ts`](../examples/node-fetch/cohere.ts) — SSE via `cohereAdapter()` (not OpenAI-compatible)                        |
-| Vertex AI Gemini (Node server)    | [`vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts) + [`read-chunk-stream.ts`](../examples/vertex/read-chunk-stream.ts) | README [Vertex AI Gemini Usage](../README.md#vertex-ai-gemini) — JSONL boundary, ADC bearer auth                                      |
-| LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)                                           | [OpenAI-compatible Usage](../README.md#openai-compatible-usage)                                                                       |
-| OpenRouter                        | [OpenAI-compatible Usage](../README.md#openai-compatible-usage) (`provider: "openrouter"`)                                        | not LiteLLM file                                                                                                                      |
+| Vertex AI Gemini (Node server)    | [`vertex-gemini.ts`](../examples/node-fetch/vertex-gemini.ts) + [`read-chunk-stream.ts`](../examples/vertex/read-chunk-stream.ts) | [Usage guides: Gemini](./usage-guides.md#gemini-usage) — JSONL boundary, ADC bearer auth                                              |
+| LiteLLM / local OpenAI proxy      | [`litellm-openai-compatible.ts`](../examples/integrations/litellm-openai-compatible.ts)                                           | [Usage guides: OpenAI-compatible](./usage-guides.md#openai-compatible-usage)                                                          |
+| OpenRouter                        | [Usage guides: OpenAI-compatible](./usage-guides.md#openai-compatible-usage) (`provider: "openrouter"`)                           | not LiteLLM file                                                                                                                      |
 | Vercel AI SDK                     | [`stream-event-to-ai-sdk-parts.ts`](../examples/integrations/stream-event-to-ai-sdk-parts.ts)                                     | [comparison](./comparison.md)                                                                                                         |
 | LangChain.js                      | [`langchain-callback-pattern.ts`](../examples/integrations/langchain-callback-pattern.ts)                                         | [comparison](./comparison.md)                                                                                                         |
 | Next.js App Router                | [`nextjs-app-route.ts`](../examples/integrations/nextjs-app-route.ts)                                                             | Edge vs Node notes below                                                                                                              |

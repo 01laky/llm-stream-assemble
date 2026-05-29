@@ -1,6 +1,5 @@
 import type { AssembleOptions, StreamAdapter, StreamEvent } from "./types";
-import { processPayload, resolveTerminalFlush } from "./assembly/process-payload";
-import { EventAssembler } from "./assembler/event-assembler";
+import { AssemblySession } from "./assembly/session";
 
 export function assembleFromPayloads(
 	payloads: AsyncIterable<string>,
@@ -15,36 +14,23 @@ async function* assembleFromPayloadsGenerator(
 	adapter: StreamAdapter,
 	options: AssembleOptions,
 ): AsyncIterable<StreamEvent> {
-	const assembler = new EventAssembler(options);
+	const session = AssemblySession.create(adapter, options);
 	const iterator = payloads[Symbol.asyncIterator]();
-	let sawTerminalMarker = false;
 
 	try {
 		while (true) {
-			if (options.signal?.aborted) {
-				yield* assembler.flush({ terminalReason: "aborted" });
+			if (session.isAborted()) {
+				yield* session.terminalFlush();
 				return;
 			}
 
 			const item = await iterator.next();
 			if (item.done) break;
 
-			const result = processPayload(item.value, assembler, adapter, options);
-			if (result.kind === "done-marker") {
-				sawTerminalMarker = true;
-				continue;
-			}
-			if (result.kind === "recoverable-error") {
-				yield result.event;
-				continue;
-			}
-			yield* result.events;
+			yield* session.handlePayload(item.value);
 		}
 
-		yield* resolveTerminalFlush(assembler, {
-			sawTerminalMarker,
-			aborted: options.signal?.aborted === true,
-		});
+		yield* session.terminalFlush();
 	} finally {
 		await iterator.return?.();
 	}

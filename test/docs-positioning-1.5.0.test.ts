@@ -11,7 +11,7 @@ function read(path: string): string {
 
 describe("docs positioning 1.5.0 cohere", () => {
 	it("LSA-DOC65: CHANGELOG documents 1.5.0 Cohere release", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.5.0]");
 		expect(changelog).toContain("cohereAdapter");
 	});
@@ -59,7 +59,7 @@ describe("docs positioning 1.5.0 cohere", () => {
 	});
 
 	it("LSA-DOC74: CHANGELOG 1.5.0 lists release test ids REL INT X63", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		const section = changelog.split("## [1.5.0]")[1]?.split("## [1.4.1]")[0] ?? "";
 		expect(section).toContain("LSA-REL23");
 		expect(section).toContain("LSA-INT42");

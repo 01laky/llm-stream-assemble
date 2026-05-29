@@ -1,50 +1,15 @@
-import type { RawChunk, StreamAdapter } from "../core/types";
-import { libraryError, providerErrorChunksFromPayload } from "./errors";
-import { incrementalJsonStringDelta } from "./shared/incremental-json";
-import { parseAdapterObjectPayload } from "./shared/parse-payload";
-import { mapAnthropicLikeStopReason } from "./shared/stop-reasons";
-import { textOrJsonDelta } from "./shared/text-delta";
-import { buildUsageChunk } from "./shared/usage";
-import { asNumber, asString, createStreamAdapter, isRecord, optionalRawChunk } from "./utils";
+import type { RawChunk } from "../../core/types";
+import { providerErrorChunksFromPayload } from "../errors";
+import { incrementalJsonStringDelta } from "../common/incremental-json";
+import { parseAdapterObjectPayload } from "../common/parse-payload";
+import { mapAnthropicLikeStopReason } from "../common/stop-reasons";
+import { textOrJsonDelta } from "../common/text-delta";
+import { buildUsageChunk } from "../common/usage";
+import { asNumber, asString, isRecord, optionalRawChunk } from "../utils";
+import { EXCEPTION_KEYS, optionalMetadataRaw, reasoningTextFromDelta } from "./helpers";
+import type { BedrockAdapterOptions, BlockToolState } from "./types";
 
-export type BedrockModelFamily = "anthropic" | "openai-like" | "nova" | "auto";
-
-export interface BedrockAdapterOptions {
-	/**
-	 * Hint which ConverseStream payload dialect to prefer when envelopes overlap.
-	 * "auto" uses structural detection (document heuristics in adapter-guide).
-	 */
-	modelFamily?: BedrockModelFamily;
-	/** Map structured JSON text blocks to json-delta instead of text-delta. */
-	jsonMode?: boolean;
-}
-
-interface BlockToolState {
-	id: string;
-	name: string;
-	index: number;
-	open: boolean;
-	lastArgsJson: string;
-}
-
-const EXCEPTION_KEYS = [
-	"internalServerException",
-	"modelStreamErrorException",
-	"validationException",
-	"throttlingException",
-	"serviceUnavailableException",
-] as const;
-
-export function bedrockAdapter(options: BedrockAdapterOptions = {}): StreamAdapter {
-	const parser = new BedrockStreamParser(options);
-	return createStreamAdapter({
-		parser,
-		parseResponse,
-		options,
-	});
-}
-
-class BedrockStreamParser {
+export class BedrockStreamParser {
 	private messageStarted = false;
 	private readonly blocks = new Map<number, BlockToolState>();
 
@@ -242,121 +207,4 @@ class BedrockStreamParser {
 
 		return chunks;
 	}
-}
-
-function parseResponse(body: unknown, options: BedrockAdapterOptions): RawChunk[] {
-	if (!isRecord(body)) {
-		throw libraryError("bedrockAdapter.parseResponse expected a Converse response object");
-	}
-
-	for (const key of EXCEPTION_KEYS) {
-		const exception = body[key];
-		if (isRecord(exception)) {
-			return providerErrorChunksFromPayload(
-				exception,
-				"bedrockAdapter.parseResponse",
-				false,
-				`Bedrock ${key}`,
-			);
-		}
-	}
-
-	const parser = new BedrockStreamParser(options);
-	const syntheticEvents = synthesizeConverseStreamEvents(body);
-	const chunks: RawChunk[] = [];
-	for (const event of syntheticEvents) {
-		chunks.push(...parser.parseChunk(JSON.stringify(event)));
-	}
-
-	const stopReason = asString(body.stopReason);
-	if (stopReason) {
-		chunks.push({
-			kind: "finish",
-			reason: mapAnthropicLikeStopReason(stopReason),
-			choiceIndex: 0,
-		});
-	} else if (!chunks.some((chunk) => chunk.kind === "finish")) {
-		chunks.push({ kind: "finish", reason: "stop", choiceIndex: 0 });
-	}
-
-	return chunks;
-}
-
-function synthesizeConverseStreamEvents(body: Record<string, unknown>): unknown[] {
-	const events: unknown[] = [];
-	const output = isRecord(body.output) ? body.output : undefined;
-	const message = output && isRecord(output.message) ? output.message : undefined;
-
-	if (message) {
-		events.push({ messageStart: { role: message.role } });
-		const content = Array.isArray(message.content) ? message.content : [];
-		let blockIndex = 0;
-		for (const block of content) {
-			if (!isRecord(block)) continue;
-			const toolUse = isRecord(block.toolUse) ? block.toolUse : undefined;
-			if (toolUse) {
-				events.push({
-					contentBlockStart: {
-						contentBlockIndex: blockIndex,
-						start: { toolUse },
-					},
-				});
-				if (toolUse.input !== undefined) {
-					events.push({
-						contentBlockDelta: {
-							contentBlockIndex: blockIndex,
-							delta: { toolUse: { input: toolUse.input } },
-						},
-					});
-				}
-				events.push({ contentBlockStop: { contentBlockIndex: blockIndex } });
-			} else {
-				const text = asString(block.text);
-				if (text !== undefined && text.length > 0) {
-					events.push({
-						contentBlockDelta: {
-							contentBlockIndex: blockIndex,
-							delta: { text },
-						},
-					});
-				}
-			}
-			blockIndex += 1;
-		}
-	}
-
-	if (body.usage !== undefined) {
-		events.push({ metadata: { usage: body.usage } });
-	}
-
-	return events;
-}
-
-function reasoningTextFromDelta(
-	reasoning: unknown,
-	modelFamily: BedrockModelFamily | undefined,
-): string | undefined {
-	if (reasoning === undefined) return undefined;
-	if (typeof reasoning === "string") return reasoning.length > 0 ? reasoning : undefined;
-	if (!isRecord(reasoning)) return undefined;
-
-	const text = asString(reasoning.text);
-	if (text !== undefined && text.length > 0) return text;
-
-	if (modelFamily === "anthropic" || modelFamily === "auto") {
-		const thinking = asString(reasoning.thinking);
-		if (thinking !== undefined && thinking.length > 0) return thinking;
-	}
-
-	return undefined;
-}
-
-function optionalMetadataRaw(payload: Record<string, unknown>): RawChunk[] {
-	if (Object.keys(payload).length === 0) return [];
-	return [
-		optionalRawChunk({
-			kind: "metadata",
-			raw: payload,
-		}),
-	];
 }

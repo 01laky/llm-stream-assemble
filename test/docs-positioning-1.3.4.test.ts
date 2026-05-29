@@ -10,19 +10,19 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.3.4 edge cases", () => {
-	const readme = () => read("README.md");
+	const readme = () => read("README.md") + read("docs/usage-guides.md");
 
-	it("LSA-DOC01: README lists all eight Why-not-concatenate edge cases", () => {
-		const text = readme();
+	it("LSA-DOC01: edge-case docs list Why-not-concatenate scenarios", () => {
+		const text = read("docs/edge-cases.md") + readme();
 		const edgeCases = [
-			"SSE mid-line splits",
-			"Tool argument fragmentation",
-			"Anthropic id/index ordering",
-			"Reasoning vs user text",
+			"SSE mid-line split",
+			"Tool argument JSON partials",
 			"JSON mode streaming",
-			"Stream lifecycle",
-			"Mid-stream errors",
-			"Dual code paths",
+			"assembleStream",
+			"assembleResponse",
+			"Post-finish assembler",
+			"DIY vs `assembleStream`",
+			"markdown fences",
 		];
 		for (const edge of edgeCases) {
 			expect(text).toContain(edge);
@@ -44,8 +44,10 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(text).toContain("tool_call.done");
 	});
 
-	it("LSA-DOC04: README Examples explicitly states no markdown/XML tag parser", () => {
-		expect(readme()).toMatch(/does \*\*not\*\* parse markdown\/XML tags/i);
+	it("LSA-DOC04: docs state no markdown/XML tag parser", () => {
+		expect(readme() + read("README.md")).toMatch(
+			/markdown\/XML tag parsing|does \*\*not\*\* parse markdown/i,
+		);
 	});
 
 	it("LSA-DOC05: comparison doc covers five alternative categories", () => {
@@ -134,11 +136,11 @@ describe("docs positioning 1.3.4 edge cases", () => {
 	});
 
 	it("LSA-DOC16: compatibility.md stable status is current 1.10.x", () => {
-		expect(read("docs/compatibility.md")).toMatch(/Stable `1\.10\.0`/);
+		expect(read("docs/compatibility.md")).toMatch(/Stable `1\.10\.\d`/);
 	});
 
 	it("LSA-DOC17: CHANGELOG 1.3.4 documents new docs and bench script", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.3.4]");
 		expect(changelog).toContain("docs/faq.md");
 		expect(changelog).toContain("bench-smoke");
@@ -154,8 +156,8 @@ describe("docs positioning 1.3.4 edge cases", () => {
 		expect(text).toContain("openaiCompatibleAdapter({ provider })");
 	});
 
-	it("LSA-DOC19: README lifecycle section names all four public assembly entry points", () => {
-		const text = readme();
+	it("LSA-DOC19: usage guides name all four public assembly entry points", () => {
+		const text = readme() + read("docs/usage-guides.md");
 		for (const entry of [
 			"assembleStream",
 			"assembleFromPayloads",

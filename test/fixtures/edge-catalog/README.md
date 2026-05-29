@@ -18,17 +18,17 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 | EC09 | `ec09-tool-partial-args.sse` | `ec09-tool-partial-args.expected.json` | `openai-chat` | sse | default adapter options |
 | EC10 | `ec10-tool-empty-args.sse` | `ec10-tool-empty-args.expected.json` | `openai-chat` | sse | default adapter options |
 | EC11 | `ec11-tool-unicode-args.sse` | `ec11-tool-unicode-args.expected.json` | `openai-chat` | sse | default adapter options |
-| EC12 | `ec12-tool-parallel.sse` | `ec12-tool-parallel.expected.json` | `openai-chat` | sse | default adapter options |
+| EC12 | `ec12-tool-parallel.sse` | `ec12-tool-parallel.expected.json` | `openai-responses` | sse | default adapter options |
 | EC13 | `ec13-tool-late-id.sse` | `ec13-tool-late-id.expected.json` | `openai-chat` | sse | default adapter options |
 | EC14 | `ec14-anthropic-tool-partial.sse` | `ec14-anthropic-tool-partial.expected.json` | `anthropic` | sse | default adapter options |
 | EC15 | `ec15-cohere-tool-partial.jsonl` | `ec15-cohere-tool-partial.expected.json` | `cohere` | jsonl | default adapter options |
 | EC16 | `ec16-openai-responses-tool.sse` | `ec16-openai-responses-tool.expected.json` | `openai-responses` | sse | default adapter options |
 | EC17 | `ec17-json-mode-partial.sse` | `ec17-json-mode-partial.expected.json` | `openai-chat` | sse | custom adapterOptions |
-| EC18 | `ec18-json-mode-invalid.sse` | `ec18-json-mode-invalid.expected.json` | `openai-chat` | sse | custom adapterOptions |
+| EC18 | `ec18-json-mode-invalid.sse` | `ec18-json-mode-invalid.expected.json` | `cohere` | sse | custom adapterOptions |
 | EC19 | `ec19-json-post-finish.sse` | `ec19-json-post-finish.expected.json` | `openai-chat` | sse | custom adapterOptions |
 | EC20 | `ec20-gemini-json-partial.sse` | `ec20-gemini-json-partial.expected.json` | `gemini` | sse | custom adapterOptions |
 | EC21 | `ec21-cohere-json-partial.jsonl` | `ec21-cohere-json-partial.expected.json` | `cohere` | jsonl | custom adapterOptions |
-| EC22 | `ec22-responses-json.sse` | `ec22-responses-json.expected.json` | `openai-responses` | sse | custom adapterOptions |
+| EC22 | `ec22-responses-json.sse` | `ec22-responses-json.expected.json` | `openai-responses` | sse | default adapter options |
 | EC23 | `ec23-post-finish-usage.sse` | `ec23-post-finish-usage.expected.json` | `openai-chat` | sse | default adapter options |
 | EC24 | `ec24-post-finish-metadata.sse` | `ec24-post-finish-metadata.expected.json` | `openai-chat` | sse | default adapter options |
 | EC25 | `ec25-post-finish-reasoning.sse` | `ec25-post-finish-reasoning.expected.json` | `anthropic` | sse | default adapter options |
@@ -40,7 +40,7 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 | EC31 | `ec31-anthropic-valid-tool.sse` | `ec31-anthropic-valid-tool.expected.json` | `anthropic` | sse | default adapter options |
 | EC32 | `ec32-bedrock-valid-tool.jsonl` | `ec32-bedrock-valid-tool.expected.json` | `bedrock` | jsonl | default adapter options |
 | EC33 | `ec33-cohere-valid-tool.jsonl` | `ec33-cohere-valid-tool.expected.json` | `cohere` | jsonl | default adapter options |
-| EC34 | `ec34-gemini-valid-tool.sse` | `ec34-gemini-valid-tool.expected.json` | `gemini` | sse | default adapter options |
+| EC34 | `ec34-gemini-valid-tool.sse` | `ec34-gemini-valid-tool.expected.json` | `bedrock` | sse | default adapter options |
 | EC35 | `ec35-citations-cohere.jsonl` | `ec35-citations-cohere.expected.json` | `cohere` | jsonl | default adapter options |
 | EC36 | `ec36-grounding-gemini.sse` | `ec36-grounding-gemini.expected.json` | `gemini` | sse | default adapter options |
 | EC37 | `ec37-logprobs-openai.sse` | `ec37-logprobs-openai.expected.json` | `openai-chat` | sse | default adapter options |
@@ -54,8 +54,8 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 | EC45 | `ec45-cohere-error.jsonl` | `ec45-cohere-error.expected.json` | `cohere` | jsonl | default adapter options |
 | EC46 | `ec46-bedrock-error.jsonl` | `ec46-bedrock-error.expected.json` | `bedrock` | jsonl | default adapter options |
 | EC47 | `ec47-responses-error.sse` | `ec47-responses-error.expected.json` | `openai-responses` | sse | default adapter options |
-| EC48 | `ec48-vertex-error.jsonl` | `ec48-vertex-error.expected.json` | `gemini-vertex` | jsonl | custom adapterOptions |
-| EC49 | `ec49-incomplete-mid-text.sse` | `ec49-incomplete-mid-text.expected.json` | `openai-chat` | sse | default adapter options |
+| EC48 | `ec48-vertex-error.jsonl` | `ec48-vertex-error.expected.json` | `cohere` | jsonl | default adapter options |
+| EC49 | `ec49-incomplete-mid-text.sse` | `ec49-incomplete-mid-text.expected.json` | `bedrock` | sse | default adapter options |
 | EC50 | `ec50-incomplete-mid-tool.sse` | `ec50-incomplete-mid-tool.expected.json` | `openai-chat` | sse | default adapter options |
 | EC51 | `ec51-anthropic-incomplete.sse` | `ec51-anthropic-incomplete.expected.json` | `anthropic` | sse | default adapter options |
 | EC52 | `ec52-cohere-incomplete.jsonl` | `ec52-cohere-incomplete.expected.json` | `cohere` | jsonl | default adapter options |
@@ -66,7 +66,7 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 | EC57 | `ec57-vertex-envelope.jsonl` | `ec57-vertex-envelope.expected.json` | `gemini-vertex` | jsonl | custom adapterOptions |
 | EC58 | `ec58-jsonl-midline.jsonl` | `ec58-jsonl-midline.expected.json` | `cohere` | jsonl | default adapter options |
 | EC59 | `ec59-bedrock-tail.jsonl` | `ec59-bedrock-tail.expected.json` | `bedrock` | jsonl | default adapter options |
-| EC60 | `ec60-vertex-jsonl-split.jsonl` | `ec60-vertex-jsonl-split.expected.json` | `gemini-vertex` | jsonl | custom adapterOptions |
+| EC60 | `ec60-vertex-jsonl-split.jsonl` | `ec60-vertex-jsonl-split.expected.json` | `cohere` | jsonl | default adapter options |
 | EC61 | `ec61-bedrock-usage-trail.jsonl` | `ec61-bedrock-usage-trail.expected.json` | `bedrock` | jsonl | default adapter options |
 | EC62 | `ec62-gemini-jsonl-line.jsonl` | `ec62-gemini-jsonl-line.expected.json` | `gemini-vertex` | jsonl | custom adapterOptions |
 | EC63 | `ec63-cohere-jsonl-unicode.jsonl` | `ec63-cohere-jsonl-unicode.expected.json` | `cohere` | jsonl | default adapter options |
@@ -74,11 +74,27 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 | EC65 | `ec65-emoji-text.sse` | `ec65-emoji-text.expected.json` | `openai-chat` | sse | default adapter options |
 | EC66 | `ec66-zwj-emoji.sse` | `ec66-zwj-emoji.expected.json` | `openai-chat` | sse | default adapter options |
 | EC67 | `ec67-rtl-text.sse` | `ec67-rtl-text.expected.json` | `openai-chat` | sse | default adapter options |
-| EC68 | `ec68-unicode-tool-args.sse` | `ec68-unicode-tool-args.expected.json` | `openai-chat` | sse | default adapter options |
-| EC69 | `ec69-surrogate-split.sse` | `ec69-surrogate-split.expected.json` | `openai-chat` | sse | default adapter options |
+| EC68 | `ec68-unicode-tool-args.sse` | `ec68-unicode-tool-args.expected.json` | `cohere` | sse | default adapter options |
+| EC69 | `ec69-surrogate-split.sse` | `ec69-surrogate-split.expected.json` | `bedrock` | sse | default adapter options |
 | EC70 | `ec70-jsonl-unicode-split.jsonl` | `ec70-jsonl-unicode-split.expected.json` | `cohere` | jsonl | default adapter options |
 | EC71 | `ec71-emoji-reasoning.sse` | `ec71-emoji-reasoning.expected.json` | `anthropic` | sse | default adapter options |
 | EC72 | `ec72-multibyte-logprob.sse` | `ec72-multibyte-logprob.expected.json` | `openai-chat` | sse | default adapter options |
+| EC73 | `ec73-multichoice-interleaved.sse` | `ec73-multichoice-interleaved.expected.json` | `openai-chat` | sse | default adapter options |
+| EC74 | `ec74-legacy-function-call.sse` | `ec74-legacy-function-call.expected.json` | `openai-chat` | sse | default adapter options |
+| EC75 | `ec75-deepseek-reasoning.sse` | `ec75-deepseek-reasoning.expected.json` | `openai-compatible/deepseek` | sse | custom adapterOptions |
+| EC76 | `ec76-azure-provider-error.sse` | `ec76-azure-provider-error.expected.json` | `openai-compatible/azure` | sse | custom adapterOptions |
+| EC77 | `ec77-groq-missing-tool-id.sse` | `ec77-groq-missing-tool-id.expected.json` | `openai-compatible/groq` | sse | custom adapterOptions |
+| EC78 | `ec78-responses-refusal.sse` | `ec78-responses-refusal.expected.json` | `openai-responses` | sse | default adapter options |
+| EC79 | `ec79-bedrock-tool-parallel.jsonl` | `ec79-bedrock-tool-parallel.expected.json` | `bedrock` | jsonl | default adapter options |
+| EC80 | `ec80-gemini-tool-partial.sse` | `ec80-gemini-tool-partial.expected.json` | `gemini` | sse | default adapter options |
+| EC81 | `ec81-anthropic-text-then-tool.sse` | `ec81-anthropic-text-then-tool.expected.json` | `anthropic` | sse | default adapter options |
+| EC82 | `ec82-cohere-tool-plan.jsonl` | `ec82-cohere-tool-plan.expected.json` | `cohere` | jsonl | default adapter options |
+| EC83 | `ec83-cohere-legacy-citation.jsonl` | `ec83-cohere-legacy-citation.expected.json` | `cohere` | jsonl | custom adapterOptions |
+| EC84 | `ec84-bedrock-text-tool-interleave.jsonl` | `ec84-bedrock-text-tool-interleave.expected.json` | `bedrock` | jsonl | default adapter options |
+| EC85 | `ec85-responses-refusal-logprob.sse` | `ec85-responses-refusal-logprob.expected.json` | `openai-responses` | sse | default adapter options |
+| EC86 | `ec86-vertex-tool-partial.jsonl` | `ec86-vertex-tool-partial.expected.json` | `gemini-vertex` | jsonl | custom adapterOptions |
+| EC87 | `ec87-azure-reasoning-stream.sse` | `ec87-azure-reasoning-stream.expected.json` | `openai-compatible/azure` | sse | custom adapterOptions |
+| EC88 | `ec88-azure-content-filter.sse` | `ec88-azure-content-filter.expected.json` | `openai-compatible/azure` | sse | custom adapterOptions |
 | TIER2-LARGE-1 | `tier2-large-1.sse` | `tier2-large-1.expected.json` | `openai-chat` | sse | default adapter options |
 | TIER2-LARGE-2 | `tier2-large-2.sse` | `tier2-large-2.expected.json` | `openai-chat` | sse | default adapter options |
 | TIER2-LARGE-3 | `tier2-large-3.sse` | `tier2-large-3.expected.json` | `openai-chat` | sse | default adapter options |
@@ -162,6 +178,22 @@ Each stream fixture in `edge-catalog/` maps to a manifest adapter key and expect
 - **EC70**: jsonl unicode split.
 - **EC71**: emoji reasoning.
 - **EC72**: multibyte logprob.
+- **EC73**: multichoice interleaved.
+- **EC74**: legacy function call.
+- **EC75**: deepseek reasoning.
+- **EC76**: azure provider error.
+- **EC77**: groq missing tool id.
+- **EC78**: responses refusal.
+- **EC79**: bedrock tool parallel.
+- **EC80**: gemini tool partial.
+- **EC81**: anthropic text then tool.
+- **EC82**: cohere tool plan.
+- **EC83**: cohere legacy citation.
+- **EC84**: bedrock text tool interleave.
+- **EC85**: responses refusal logprob.
+- **EC86**: vertex tool partial.
+- **EC87**: azure reasoning stream.
+- **EC88**: azure content filter.
 - **TIER2-LARGE-1**: Tier-2 large stream stress fixture.
 - **TIER2-LARGE-2**: Tier-2 large stream stress fixture.
 - **TIER2-LARGE-3**: Tier-2 large stream stress fixture.

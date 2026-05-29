@@ -132,9 +132,9 @@ describe("collectStream", () => {
 		expect("metadata" in result).toBe(false);
 	});
 
-	it("LSA-T12c: README warns collectStream materializes full output in memory", () => {
-		const readme = readFileSync(join(rootDir, "README.md"), "utf8");
-		expect(readme).toContain("collectStream");
-		expect(readme).toContain("materializes");
+	it("LSA-T12c: usage guides warn collectStream materializes full output in memory", () => {
+		const guides = readFileSync(join(rootDir, "docs/usage-guides.md"), "utf8");
+		expect(guides).toContain("collectStream");
+		expect(guides).toContain("materializes");
 	});
 });

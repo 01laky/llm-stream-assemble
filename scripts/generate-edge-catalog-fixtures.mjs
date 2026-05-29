@@ -13,6 +13,7 @@ import { bedrockAdapter } from "../dist/adapters/bedrock.js";
 import { cohereAdapter } from "../dist/adapters/cohere.js";
 import { geminiAdapter } from "../dist/adapters/gemini.js";
 import { openaiChatAdapter } from "../dist/adapters/openai-chat.js";
+import { openaiCompatibleAdapter } from "../dist/adapters/openai-compatible.js";
 import { openaiResponsesAdapter } from "../dist/adapters/openai-responses.js";
 import { assembleStream, assembleFromPayloads } from "../dist/core/index.js";
 
@@ -102,16 +103,59 @@ async function writeGolden(name, content, adapter, transport = "sse") {
 	void ext;
 }
 
-const oaiChunk = (id, delta, finish = null) =>
+const oaiChunk = (id, delta, finish = null, index = 0) =>
 	`data: ${JSON.stringify({
 		id,
 		object: "chat.completion.chunk",
 		created: 1710000000,
 		model: "gpt-4o-mini",
-		choices: [{ index: 0, delta, finish_reason: finish }],
+		choices: [{ index, delta, finish_reason: finish }],
 	})}\n\n`;
 
 const anthropicEvent = (type, payload) => `event: ${type}\ndata: ${JSON.stringify(payload)}\n\n`;
+
+/** Explicit manifest rows for fixtures where filename inference is ambiguous. */
+const MANIFEST_OVERRIDES = {
+	"edge-catalog/ec40-citation-order.sse": {
+		adapterKey: "openai-compatible/perplexity",
+		transport: "sse",
+		adapterOptions: { provider: "perplexity" },
+	},
+	"edge-catalog/ec75-deepseek-reasoning.sse": {
+		adapterKey: "openai-compatible/deepseek",
+		transport: "sse",
+		adapterOptions: { provider: "deepseek" },
+	},
+	"edge-catalog/ec76-azure-provider-error.sse": {
+		adapterKey: "openai-compatible/azure",
+		transport: "sse",
+		adapterOptions: { provider: "azure" },
+	},
+	"edge-catalog/ec77-groq-missing-tool-id.sse": {
+		adapterKey: "openai-compatible/groq",
+		transport: "sse",
+		adapterOptions: { provider: "groq" },
+	},
+	"edge-catalog/ec82-cohere-tool-plan.jsonl": {
+		adapterKey: "cohere",
+		transport: "jsonl",
+	},
+	"edge-catalog/ec83-cohere-legacy-citation.jsonl": {
+		adapterKey: "cohere",
+		transport: "jsonl",
+		adapterOptions: { emitLegacyCitationMetadata: true },
+	},
+	"edge-catalog/ec87-azure-reasoning-stream.sse": {
+		adapterKey: "openai-compatible/azure",
+		transport: "sse",
+		adapterOptions: { provider: "azure" },
+	},
+	"edge-catalog/ec88-azure-content-filter.sse": {
+		adapterKey: "openai-compatible/azure",
+		transport: "sse",
+		adapterOptions: { provider: "azure" },
+	},
+};
 
 /** @type {Array<{ file: string, content: string, adapter: unknown, transport?: string }>} */
 const FIXTURES = [];
@@ -120,34 +164,38 @@ function add(file, content, adapter, transport = "sse") {
 	FIXTURES.push({ file, content, adapter, transport });
 }
 
+function needsJsonMode(file) {
+	return file.includes("json-mode") || file.includes("json-partial") || /^ec21-/.test(file);
+}
+
 function inferEdgeCatalogMeta(file) {
 	const transport = file.endsWith(".jsonl") ? "jsonl" : "sse";
-	if (file.includes("anthropic") || /^ec1[45]|^ec2[5]|^ec3[1]|^ec5[1]|^ec7[1]/.test(file))
-		return { adapterKey: "anthropic", transport };
 	if (
 		file.includes("cohere") ||
-		/^ec1[58]|^ec2[18]|^ec2[8]|^ec4[58]|^ec5[2]|^ec5[8]|^ec6[038]/.test(file)
+		/^ec1[58]|^ec2[18]|^ec2[8]|^ec4[58]|^ec5[2]|^ec5[8]|^ec6[038]|^ec7[0]|^ec8[23]/.test(file)
 	)
 		return {
 			adapterKey: "cohere",
 			transport,
-			adapterOptions: file.includes("json") ? { jsonMode: true } : undefined,
+			adapterOptions: needsJsonMode(file) ? { jsonMode: true } : undefined,
 		};
-	if (file.includes("bedrock") || /^ec3[24]|^ec4[69]|^ec5[49]|^ec6[19]/.test(file))
+	if (file.includes("anthropic") || /^ec14|^ec2[5]|^ec3[1]|^ec5[1]|^ec7[1]|^ec81/.test(file))
+		return { adapterKey: "anthropic", transport };
+	if (file.includes("bedrock") || /^ec3[24]|^ec4[69]|^ec5[49]|^ec6[19]|^ec7[9]|^ec84/.test(file))
 		return { adapterKey: "bedrock", transport };
-	if (file.includes("vertex") || /^ec4[89]|^ec5[7]|^ec6[02]/.test(file))
+	if (file.includes("vertex") || /^ec4[89]|^ec5[7]|^ec6[02]|^ec86/.test(file))
 		return { adapterKey: "gemini-vertex", transport, adapterOptions: { apiSurface: "vertex" } };
-	if (file.includes("gemini") || /^ec2[07]|^ec3[46]|^ec4[46]|^ec5[3]/.test(file))
+	if (file.includes("gemini") || /^ec2[07]|^ec3[46]|^ec4[46]|^ec5[3]|^ec80/.test(file))
 		return {
 			adapterKey: "gemini",
 			transport,
-			adapterOptions: file.includes("json") ? { jsonMode: true } : undefined,
+			adapterOptions: needsJsonMode(file) ? { jsonMode: true } : undefined,
 		};
-	if (file.includes("responses") || /^ec1[26]|^ec2[2]|^ec4[78]|^ec5[5]/.test(file))
+	if (file.includes("responses") || /^ec1[26]|^ec2[2]|^ec4[78]|^ec5[5]|^ec7[8]|^ec85/.test(file))
 		return {
 			adapterKey: "openai-responses",
 			transport,
-			adapterOptions: file.includes("json") ? { jsonMode: true } : undefined,
+			adapterOptions: needsJsonMode(file) ? { jsonMode: true } : undefined,
 		};
 	if (file.startsWith("tier2-")) return { adapterKey: "openai-chat", transport };
 	if (/^ec1[79]|^ec1[89]|^ec19/.test(file))
@@ -788,6 +836,142 @@ add(
 	openaiChatAdapter(),
 );
 
+// EC73–EC88: post-1.10.1 adapter/preset/session stress (explicit manifest overrides)
+add(
+	"ec73-multichoice-interleaved.sse",
+	readFileSync(join(root, "test/fixtures/openai-chat/multichoice.sse"), "utf8"),
+	openaiChatAdapter(),
+);
+add(
+	"ec74-legacy-function-call.sse",
+	readFileSync(join(root, "test/fixtures/openai-chat/legacy-function-call.sse"), "utf8"),
+	openaiChatAdapter(),
+);
+add(
+	"ec75-deepseek-reasoning.sse",
+	readFileSync(join(root, "test/fixtures/openai-compatible/deepseek/reasoning-stream.sse"), "utf8"),
+	openaiCompatibleAdapter({ provider: "deepseek" }),
+);
+add(
+	"ec76-azure-provider-error.sse",
+	readFileSync(join(root, "test/fixtures/openai-compatible/azure/provider-error.sse"), "utf8"),
+	openaiCompatibleAdapter({ provider: "azure" }),
+);
+add(
+	"ec77-groq-missing-tool-id.sse",
+	readFileSync(join(root, "test/fixtures/openai-compatible/groq/missing-tool-id.sse"), "utf8"),
+	openaiCompatibleAdapter({ provider: "groq" }),
+);
+add(
+	"ec78-responses-refusal.sse",
+	readFileSync(join(root, "test/fixtures/openai-responses/refusal.sse"), "utf8"),
+	openaiResponsesAdapter(),
+);
+add(
+	"ec79-bedrock-tool-parallel.jsonl",
+	readFileSync(join(root, "test/fixtures/bedrock/tool-parallel.jsonl"), "utf8"),
+	bedrockAdapter(),
+	"jsonl",
+);
+add(
+	"ec80-gemini-tool-partial.sse",
+	readFileSync(join(root, "test/fixtures/gemini/tool-partial-args.sse"), "utf8"),
+	geminiAdapter(),
+);
+add(
+	"ec81-anthropic-text-then-tool.sse",
+	anthropicEvent("message_start", {
+		type: "message_start",
+		message: { id: "ec81", model: "claude" },
+	}) +
+		anthropicEvent("content_block_start", {
+			type: "content_block_start",
+			index: 0,
+			content_block: { type: "text", text: "" },
+		}) +
+		anthropicEvent("content_block_delta", {
+			type: "content_block_delta",
+			index: 0,
+			delta: { type: "text_delta", text: "Plan: " },
+		}) +
+		anthropicEvent("content_block_stop", { type: "content_block_stop", index: 0 }) +
+		anthropicEvent("content_block_start", {
+			type: "content_block_start",
+			index: 1,
+			content_block: { type: "tool_use", id: "ec81_tool", name: "lookup", input: {} },
+		}) +
+		anthropicEvent("content_block_delta", {
+			type: "content_block_delta",
+			index: 1,
+			delta: { type: "input_json_delta", partial_json: '{"q":"x"}' },
+		}) +
+		anthropicEvent("content_block_stop", { type: "content_block_stop", index: 1 }) +
+		anthropicEvent("message_delta", {
+			type: "message_delta",
+			delta: { stop_reason: "tool_use" },
+		}) +
+		anthropicEvent("message_stop", { type: "message_stop" }),
+	anthropicAdapter(),
+);
+add(
+	"ec82-cohere-tool-plan.jsonl",
+	readFileSync(join(root, "test/fixtures/cohere/tool-plan.jsonl"), "utf8"),
+	cohereAdapter(),
+	"jsonl",
+);
+add(
+	"ec83-cohere-legacy-citation.jsonl",
+	readFileSync(join(root, "test/fixtures/cohere/citations-stream.jsonl"), "utf8"),
+	cohereAdapter({ emitLegacyCitationMetadata: true }),
+	"jsonl",
+);
+add(
+	"ec84-bedrock-text-tool-interleave.jsonl",
+	'{"messageStart":{"role":"assistant"}}\n' +
+		'{"contentBlockStart":{"contentBlockIndex":0,"start":{"text":""}}}\n' +
+		'{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"Hi "}}}\n' +
+		'{"contentBlockStart":{"contentBlockIndex":1,"start":{"toolUse":{"toolUseId":"ec84_t","name":"fn"}}}}\n' +
+		'{"contentBlockDelta":{"contentBlockIndex":0,"delta":{"text":"there"}}}\n' +
+		'{"contentBlockDelta":{"contentBlockIndex":1,"delta":{"toolUse":{"input":"{\\"n\\":1}"}}}}\n' +
+		'{"contentBlockStop":{"contentBlockIndex":0}}\n' +
+		'{"contentBlockStop":{"contentBlockIndex":1}}\n' +
+		'{"messageStop":{"stopReason":"tool_use"}}\n',
+	bedrockAdapter(),
+	"jsonl",
+);
+add(
+	"ec85-responses-refusal-logprob.sse",
+	`data: ${JSON.stringify({ type: "response.created", response: { id: "resp_ec85", model: "gpt-4.1-mini" } })}\n\n` +
+		`data: ${JSON.stringify({
+			type: "response.output_text.delta",
+			output_index: 0,
+			delta: "No",
+			logprobs: [{ token: "No", logprob: -0.2, bytes: [78, 111], top_logprobs: [] }],
+		})}\n\n` +
+		`data: ${JSON.stringify({ type: "response.refusal.delta", delta: " thanks." })}\n\n` +
+		`data: ${JSON.stringify({ type: "response.completed", response: { id: "resp_ec85", status: "completed" } })}\n\n`,
+	openaiResponsesAdapter(),
+);
+add(
+	"ec86-vertex-tool-partial.jsonl",
+	readFileSync(join(root, "test/fixtures/gemini/vertex/tool-partial-args.jsonl"), "utf8"),
+	geminiAdapter({ apiSurface: "vertex" }),
+	"jsonl",
+);
+add(
+	"ec87-azure-reasoning-stream.sse",
+	readFileSync(join(root, "test/fixtures/openai-compatible/azure/reasoning-stream.sse"), "utf8"),
+	openaiCompatibleAdapter({ provider: "azure" }),
+);
+add(
+	"ec88-azure-content-filter.sse",
+	readFileSync(
+		join(root, "test/fixtures/openai-compatible/azure/content-filter-block.sse"),
+		"utf8",
+	),
+	openaiCompatibleAdapter({ provider: "azure" }),
+);
+
 // Tier-2 large fixtures (8): pad event count > 120
 function padToTier2(baseSse, id, count = 125) {
 	let out = "";
@@ -810,7 +994,10 @@ async function main() {
 		await writeGolden(spec.file, spec.content, spec.adapter, spec.transport ?? "sse");
 	}
 	const manifest = Object.fromEntries(
-		FIXTURES.map((spec) => [`edge-catalog/${spec.file}`, inferEdgeCatalogMeta(spec.file)]),
+		FIXTURES.map((spec) => {
+			const id = `edge-catalog/${spec.file}`;
+			return [id, MANIFEST_OVERRIDES[id] ?? inferEdgeCatalogMeta(spec.file)];
+		}),
 	);
 	if (!checkMode) {
 		writeFileSync(

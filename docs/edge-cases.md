@@ -1,6 +1,6 @@
 # Edge-case showcase
 
-**Status:** Active guide — `1.10.0`
+**Status:** Active guide — `1.10.1`
 
 Concrete examples of what breaks when you treat LLM streams as plain text, and how `llm-stream-assemble` handles the **protocol layer**. For positioning vs other tools, see [comparison](./comparison.md).
 
@@ -112,7 +112,7 @@ Node/dev helper only (`node:fs`); see README Transforms and [`examples/node-fetc
 
 ## G) Fixture and test provenance
 
-1.10.0 adds the edge-catalog maintenance map at
+1.10.1 includes the edge-catalog maintenance map at
 `test/fixtures/edge-catalog/README.md` (EC scenario-to-fixture mapping),
 combinatorial compatibility preset scenarios (**LSA-OC381**), stream invariant
 matrix gates (**LSA-AC100+**), and catalog audit automation (**LSA-MAINT48**).

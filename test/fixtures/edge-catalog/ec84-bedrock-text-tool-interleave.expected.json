@@ -1,0 +1,48 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hi "
+	},
+	{
+		"type": "tool_call.start",
+		"id": "ec84_t",
+		"name": "fn",
+		"index": 1,
+		"choiceIndex": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "there"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "ec84_t",
+		"delta": "{\"n\":1}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "ec84_t",
+		"name": "fn",
+		"args": {
+			"n": 1
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Hi there"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

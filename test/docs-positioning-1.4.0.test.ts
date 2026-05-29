@@ -11,7 +11,7 @@ function read(path: string): string {
 
 describe("docs positioning 1.4.0 bedrock", () => {
 	it("LSA-DOC51: CHANGELOG documents 1.4.0 Bedrock release", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.4.0]");
 		expect(changelog).toContain("bedrockAdapter");
 	});

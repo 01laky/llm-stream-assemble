@@ -1,8 +1,8 @@
 import type { FinishReason, RawChunk, StreamAdapter } from "../core/types";
-import { anthropicBlockStartChunks, anthropicResponseBlockChunks } from "./shared/anthropic-blocks";
-import { parseAdapterObjectPayload } from "./shared/parse-payload";
-import { mapAnthropicLikeStopReason } from "./shared/stop-reasons";
-import { buildUsageChunk } from "./shared/usage";
+import { anthropicBlockStartChunks, anthropicResponseBlockChunks } from "./common/anthropic-blocks";
+import { parseAdapterObjectPayload } from "./common/parse-payload";
+import { mapAnthropicLikeStopReason } from "./common/stop-reasons";
+import { buildUsageChunk } from "./common/usage";
 import {
 	libraryError,
 	providerErrorChunksFromMessage,

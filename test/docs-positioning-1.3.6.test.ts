@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.3.6 integration cookbook", () => {
-	const readme = () => read("README.md");
+	const readme = () => read("README.md") + read("docs/usage-guides.md");
 
 	it("LSA-DOC35: docs/integration-cookbook.md exists with status 1.3.6", () => {
 		expect(existsSync(join(rootDir, "docs/integration-cookbook.md"))).toBe(true);
@@ -56,7 +56,7 @@ describe("docs positioning 1.3.6 integration cookbook", () => {
 	});
 
 	it("LSA-DOC43: CHANGELOG contains 1.3.6 and integration-cookbook", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.3.6]");
 		expect(changelog).toContain("integration-cookbook");
 	});

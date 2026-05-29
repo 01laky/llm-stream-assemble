@@ -11,9 +11,9 @@ function read(path: string): string {
 
 describe("bedrock docs regression", () => {
 	it("LSA-B27: README contains bedrockAdapter and Bedrock Usage", () => {
-		const readme = read("README.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
 		expect(readme).toContain("bedrockAdapter");
-		expect(readme).toContain("### Bedrock Usage");
+		expect(readme).toContain("Bedrock Usage");
 	});
 
 	it("LSA-B28: compatibility.md contains Bedrock row and bedrockAdapter", () => {
@@ -27,13 +27,13 @@ describe("bedrock docs regression", () => {
 	});
 
 	it("LSA-B30: CHANGELOG contains 1.4.0 and bedrock", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.4.0]");
 		expect(changelog.toLowerCase()).toContain("bedrock");
 	});
 
 	it("LSA-B31: CHANGELOG 1.4.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.4.0]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.4.0]");
 	});
 
 	it("LSA-B32: examples/bedrock/README.md exists and mentions decode", () => {

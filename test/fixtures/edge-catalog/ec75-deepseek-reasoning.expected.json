@@ -1,0 +1,24 @@
+[
+	{
+		"type": "reasoning.delta",
+		"text": "Let me think…",
+		"variant": "detail"
+	},
+	{
+		"type": "text.delta",
+		"text": "Answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Answer"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "Let me think…",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

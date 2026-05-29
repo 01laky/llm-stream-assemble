@@ -1,6 +1,6 @@
 import type { RawChunk } from "../../../core/types";
 import { asNumber, asString, isRecord } from "../../utils";
-import { parseAdapterObjectPayload } from "../../shared/parse-payload";
+import { parseAdapterObjectPayload } from "../../common/parse-payload";
 import {
 	openAIProviderErrorChunks,
 	providerErrorPayload,
@@ -24,7 +24,7 @@ import {
 	createLogprobPositionState,
 	logprobChunksFromChoiceLogprobs,
 	type LogprobPositionState,
-} from "../../shared/logprobs";
+} from "../../common/logprobs";
 import type { RequiredOpenAIChatLikeParserOptions, ToolState } from "./types";
 
 export class OpenAIChatLikeParser {

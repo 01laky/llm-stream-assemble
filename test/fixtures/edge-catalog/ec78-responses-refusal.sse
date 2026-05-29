@@ -1,0 +1,6 @@
+data: {"type":"response.created","response":{"id":"resp_refusal","model":"gpt-4.1-mini"}}
+
+data: {"type":"response.refusal.delta","delta":"I cannot comply."}
+
+data: {"type":"response.completed","response":{"id":"resp_refusal","status":"completed"}}
+

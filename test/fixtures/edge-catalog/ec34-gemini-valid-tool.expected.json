@@ -1,52 +1,12 @@
 [
 	{
-		"type": "message.start",
-		"id": "resp_tool"
+		"type": "metadata"
 	},
 	{
-		"type": "metadata",
-		"responseId": "resp_tool"
+		"type": "metadata"
 	},
 	{
-		"type": "tool_call.start",
-		"id": "call_1",
-		"name": "get_weather",
-		"index": 0,
-		"choiceIndex": 0
-	},
-	{
-		"type": "tool_call.args.delta",
-		"id": "call_1",
-		"delta": "{\"city\":\"Bo\"}",
-		"partial": {
-			"city": "Bo"
-		}
-	},
-	{
-		"type": "tool_call.done",
-		"id": "call_1",
-		"name": "get_weather",
-		"args": {
-			"city": "Bo"
-		}
-	},
-	{
-		"type": "tool_call.args.delta",
-		"id": "call_1",
-		"delta": "{\"city\":\"Boston\",\"unit\":\"C\"}",
-		"partial": {
-			"city": "Boston",
-			"unit": "C"
-		}
-	},
-	{
-		"type": "tool_call.done",
-		"id": "call_1",
-		"name": "unknown",
-		"args": {
-			"city": "Boston",
-			"unit": "C"
-		}
+		"type": "metadata"
 	},
 	{
 		"type": "finish",

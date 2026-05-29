@@ -10,7 +10,7 @@ function read(path: string): string {
 }
 
 describe("docs positioning 1.3.5 edge-case showcase", () => {
-	const readme = () => read("README.md");
+	const readme = () => read("README.md") + read("docs/usage-guides.md");
 
 	it("LSA-DOC21: README contains First success in 30 seconds", () => {
 		expect(readme()).toContain("First success in 30 seconds");
@@ -56,7 +56,7 @@ describe("docs positioning 1.3.5 edge-case showcase", () => {
 	});
 
 	it("LSA-DOC29: CHANGELOG contains 1.3.5 and docs/edge-cases.md", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.3.5]");
 		expect(changelog).toContain("docs/edge-cases.md");
 	});

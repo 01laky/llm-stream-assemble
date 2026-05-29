@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { mapAnthropicLikeStopReason } from "../src/adapters/shared/stop-reasons";
-import { incrementalJsonStringDelta } from "../src/adapters/shared/incremental-json";
-import { parseAdapterObjectPayload } from "../src/adapters/shared/parse-payload";
-import { buildUsageChunk } from "../src/adapters/shared/usage";
-import { textOrJsonDelta } from "../src/adapters/shared/text-delta";
-import { anthropicBlockStartChunks } from "../src/adapters/shared/anthropic-blocks";
+import { mapAnthropicLikeStopReason } from "../src/adapters/common/stop-reasons";
+import { incrementalJsonStringDelta } from "../src/adapters/common/incremental-json";
+import { parseAdapterObjectPayload } from "../src/adapters/common/parse-payload";
+import { buildUsageChunk } from "../src/adapters/common/usage";
+import { textOrJsonDelta } from "../src/adapters/common/text-delta";
+import { anthropicBlockStartChunks } from "../src/adapters/common/anthropic-blocks";
 
 describe("shared adapter utilities", () => {
 	it("LSA-SH01: incrementalJsonStringDelta emits suffix on prefix extension", () => {

@@ -11,21 +11,21 @@ function read(path: string): string {
 
 describe("docs positioning 1.6.0", () => {
 	it("LSA-DOC110: historical 1.6.0 release traceability in CHANGELOG and README history", () => {
-		const readme = read("README.md");
-		const changelog = read("CHANGELOG.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.6.0]");
 		expect(changelog).toMatch(/tests-1799_passing|README test badge \*\*1799\*\*/);
 		expect(readme).toMatch(/1\.6\.0|CHANGELOG/i);
 	});
 
 	it("LSA-DOC111: CHANGELOG 1.6.0 mentions citation and grounding", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		expect(changelog).toContain("## [1.6.0]");
 		expect(changelog).toMatch(/citation.*grounding|grounding.*citation/i);
 	});
 
 	it("LSA-DOC112: CHANGELOG 1.6.0 section remains for historical traceability", () => {
-		expect(read("CHANGELOG.md")).toContain("## [1.6.0]");
+		expect(read("CHANGELOG.md") + read("CHANGELOG-archive.md")).toContain("## [1.6.0]");
 	});
 
 	it("LSA-DOC113: compatibility matrix rows updated for Cohere, Perplexity, Gemini", () => {
@@ -57,7 +57,7 @@ describe("docs positioning 1.6.0", () => {
 	});
 
 	it("LSA-DOC117: README StreamEvent section includes citation and grounding", () => {
-		const readme = read("README.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
 		expect(readme).toMatch(/citations.*grounding|grounding.*citations/i);
 		expect(readme).toContain("stream-event.svg");
 	});
@@ -90,7 +90,7 @@ describe("docs positioning 1.6.0", () => {
 	});
 
 	it("LSA-DOC122: CHANGELOG 1.6.0 section documents historical test badge 1799", () => {
-		const changelog = read("CHANGELOG.md");
+		const changelog = read("CHANGELOG.md") + read("CHANGELOG-archive.md");
 		const section = changelog.split("## [1.6.0]")[1]?.split("## [")[0] ?? "";
 		expect(section).toMatch(/1799/);
 	});
@@ -114,7 +114,7 @@ describe("docs positioning 1.6.0", () => {
 	});
 
 	it("LSA-DOC126: README or adapter-guide references citationSpanAnchor helper", () => {
-		const readme = read("README.md");
+		const readme = read("README.md") + read("docs/usage-guides.md");
 		const guide = read("docs/adapter-guide.md");
 		expect(readme.includes("citationSpanAnchor") || guide.includes("citationSpanAnchor")).toBe(
 			true,

@@ -47,8 +47,8 @@ describe("edge-catalog matrix", () => {
 		});
 	}
 
-	it("LSA-MAINT44: edge catalog fixture count >= 48", () => {
-		expect(edgeEntries.length).toBeGreaterThanOrEqual(48);
+	it("LSA-MAINT44: edge catalog fixture count >= 88", () => {
+		expect(edgeEntries.length).toBeGreaterThanOrEqual(88);
 	});
 
 	it.each(matrixRows)("$label golden parity with invariants", async ({ entry, chunkSize }) => {

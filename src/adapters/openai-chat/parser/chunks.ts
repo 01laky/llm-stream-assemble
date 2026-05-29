@@ -5,7 +5,7 @@ import {
 	metadataPayloadWithoutCitationFields,
 	perplexityCitationFromPayload,
 	type CitationGroundingOptions,
-} from "../../shared/citation-grounding";
+} from "../../common/citation-grounding";
 import type { RequiredOpenAIChatLikeParserOptions } from "./types";
 
 export function metadataChunks(
