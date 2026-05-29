@@ -1,0 +1,43 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_ec14"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_ec14",
+		"model": "claude"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool_ec14",
+		"name": "search",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_ec14",
+		"delta": "{\"q\":",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool_ec14",
+		"delta": "\"test\"}",
+		"partial": {
+			"q": "test"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool_ec14",
+		"name": "search",
+		"args": {
+			"q": "test"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

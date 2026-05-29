@@ -1,0 +1,25 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-err"
+	},
+	{
+		"type": "text.delta",
+		"text": "Partial"
+	},
+	{
+		"type": "error",
+		"recoverable": false
+	},
+	{
+		"type": "text.done",
+		"text": "Partial"
+	},
+	{
+		"type": "finish",
+		"reason": "error"
+	}
+]

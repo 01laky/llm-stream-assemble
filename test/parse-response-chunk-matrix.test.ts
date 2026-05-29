@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { discoverResponseFixtures } from "./helpers/fixture-catalog";
 import { loadGoldenExpected, runGoldenResponseParity } from "./helpers/golden-parity";
 
-const RESPONSE_CHUNK_SIZES = [0, 1, 17, 64] as const;
+const RESPONSE_CHUNK_SIZES = [0, 1, 3, 7, 17, 31, 64] as const;
 
 describe("parse response chunk matrix", () => {
 	const entries = discoverResponseFixtures().filter(
@@ -17,32 +17,32 @@ describe("parse response chunk matrix", () => {
 		})),
 	);
 
-	it("LSA-TH21: response fixture catalog is non-empty", () => {
+	it("LSA-TH121: response fixture catalog is non-empty", () => {
 		expect(entries.length).toBeGreaterThan(0);
 	});
 
-	it("LSA-TH22: anthropic response-text identity parity", async () => {
+	it("LSA-TH122: anthropic response-text identity parity", async () => {
 		const entry = entries.find((row) => row.id === "anthropic/response-text");
 		expect(entry).toBeDefined();
 		const events = await runGoldenResponseParity({ entry: entry!, byteChunkSize: 0 });
 		expect(events).toEqual(loadGoldenExpected(entry!.expectedPath));
 	});
 
-	it("LSA-TH23: bedrock response-text chunk-1 parity", async () => {
+	it("LSA-TH123: bedrock response-text chunk-1 parity", async () => {
 		const entry = entries.find((row) => row.id === "bedrock/response-text");
 		expect(entry).toBeDefined();
 		const events = await runGoldenResponseParity({ entry: entry!, byteChunkSize: 1 });
 		expect(events).toEqual(loadGoldenExpected(entry!.expectedPath));
 	});
 
-	it("LSA-TH24: gemini response-text chunk-17 parity", async () => {
+	it("LSA-TH124: gemini response-text chunk-17 parity", async () => {
 		const entry = entries.find((row) => row.id === "gemini/response-text");
 		expect(entry).toBeDefined();
 		const events = await runGoldenResponseParity({ entry: entry!, byteChunkSize: 17 });
 		expect(events).toEqual(loadGoldenExpected(entry!.expectedPath));
 	});
 
-	it("LSA-TH25: openai-chat response-text chunk-64 parity", async () => {
+	it("LSA-TH125: openai-chat response-text chunk-64 parity", async () => {
 		const entry = entries.find((row) => row.id === "openai-chat/response-text");
 		expect(entry).toBeDefined();
 		const events = await runGoldenResponseParity({ entry: entry!, byteChunkSize: 64 });

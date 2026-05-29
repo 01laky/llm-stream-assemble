@@ -1,0 +1,33 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec71"
+	},
+	{
+		"type": "metadata",
+		"responseId": "ec71",
+		"model": "claude"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "🤔",
+		"variant": "detail"
+	},
+	{
+		"type": "text.delta",
+		"text": "ok"
+	},
+	{
+		"type": "text.done",
+		"text": "ok"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "🤔",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

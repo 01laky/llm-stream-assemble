@@ -1,0 +1,63 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-tool-1"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": "I will",
+		"variant": "detail"
+	},
+	{
+		"type": "reasoning.delta",
+		"text": " check weather",
+		"variant": "detail"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "get_weather_abc",
+		"name": "get_weather",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "get_weather_abc",
+		"delta": "{\"city\":\"Bo"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "get_weather_abc",
+		"delta": "ston\",\"unit\":\"C\"}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "get_weather_abc",
+		"name": "get_weather",
+		"args": {
+			"city": "Boston",
+			"unit": "C"
+		}
+	},
+	{
+		"type": "usage",
+		"inputTokens": 37,
+		"outputTokens": 28
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "reasoning.done",
+		"text": "I will check weather",
+		"variant": "detail"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

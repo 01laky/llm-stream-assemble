@@ -1,0 +1,6 @@
+data: {"id":"ec18","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+
+data: {"id":"ec18","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"content":"{bad json"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

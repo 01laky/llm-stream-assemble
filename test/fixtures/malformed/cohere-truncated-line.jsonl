@@ -1,0 +1,3 @@
+{"type":"message-start","id":"m1","delta":{"message":{"role":"assistant"}}}
+{"type":"content-delta","index":0,"delta":{"message":{"content":{"text":"partial"}}}
+

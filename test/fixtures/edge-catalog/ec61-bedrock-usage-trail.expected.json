@@ -1,0 +1,11 @@
+[
+	{
+		"type": "usage",
+		"inputTokens": 3,
+		"outputTokens": 0
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]

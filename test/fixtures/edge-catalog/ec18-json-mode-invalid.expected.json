@@ -1,0 +1,25 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec18"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec18",
+		"created": 1710000000
+	},
+	{
+		"type": "json.delta",
+		"delta": "{bad json",
+		"partial": {}
+	},
+	{
+		"type": "error",
+		"recoverable": false
+	},
+	{
+		"type": "finish",
+		"reason": "error"
+	}
+]

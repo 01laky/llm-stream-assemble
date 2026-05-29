@@ -1,0 +1,6 @@
+data: {"id":"ec05","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+
+data: {"id":"ec05","choices":[{"index":0,"delta":{"content":"prefix"},"finish_reason":"stop"}]}
+
+data: [DONE]
+

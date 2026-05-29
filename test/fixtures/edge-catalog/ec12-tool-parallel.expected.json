@@ -1,0 +1,52 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec12"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec12",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "a",
+		"name": "a",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "a",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.start",
+		"id": "b",
+		"name": "b",
+		"index": 1
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "b",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "a",
+		"name": "a",
+		"args": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "b",
+		"name": "b",
+		"args": {}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

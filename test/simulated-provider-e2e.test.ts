@@ -10,6 +10,7 @@ import { runBedrockExample } from "../examples/node-fetch/bedrock";
 import { runCohereExample } from "../examples/node-fetch/cohere";
 import { runGeminiExample } from "../examples/node-fetch/gemini";
 import { runOpenAIChatExample } from "../examples/node-fetch/openai-chat";
+import { runOpenAICompatibleExample } from "../examples/node-fetch/openai-compatible";
 import { createExpressProxyHandler } from "../examples/integrations/express-proxy";
 import { handleHonoLLMProxy } from "../examples/integrations/hono-proxy";
 import { bedrockJsonlLines } from "./helpers/bedrock-fixtures";
@@ -258,5 +259,86 @@ describe("simulated provider e2e", () => {
 			runExample: runAnthropicExample,
 		});
 		expect(result.output).toContain("Hello usage");
+	});
+
+	it("LSA-INT79: runSimulatedProviderCall OpenAI-compatible text-basic", async () => {
+		const compatibleSse = fixture("test/fixtures/openai-compatible/groq/text-basic.sse");
+		const result = await runSimulatedProviderCall({
+			fixtureBody: compatibleSse,
+			runExample: ({ fetchImpl, apiKey, write }) =>
+				runOpenAICompatibleExample({
+					baseUrl: "https://example.test/v1",
+					apiKey,
+					model: "gpt-4o-mini",
+					provider: "generic",
+					fetchImpl,
+					write,
+				}),
+		});
+		expect(result.output).toContain("Finish:");
+	});
+
+	it("LSA-INT80: runSimulatedProviderCall OpenAI-compatible chunk-7", async () => {
+		const compatibleSse = fixture("test/fixtures/openai-compatible/groq/text-basic.sse");
+		const result = await runSimulatedProviderCall({
+			fixtureBody: compatibleSse,
+			chunkSize: 7,
+			runExample: ({ fetchImpl, apiKey, write }) =>
+				runOpenAICompatibleExample({
+					baseUrl: "https://example.test/v1",
+					apiKey,
+					model: "gpt-4o-mini",
+					provider: "generic",
+					fetchImpl,
+					write,
+				}),
+		});
+		expect(result.output).toContain("Finish:");
+	});
+
+	it("LSA-INT81: handleHonoLLMProxy openai-compatible provider", async () => {
+		const compatibleSse = fixture("test/fixtures/openai-compatible/groq/text-basic.sse");
+		const response = await handleHonoLLMProxy(
+			proxyRequest({ provider: "openai-compatible", prompt: "hi" }),
+			{
+				apiKey: "key",
+				fetchImpl: fakeStreamingFetch(compatibleSse),
+			},
+		);
+		expect(response.headers.get("Content-Type")).toBe("text/event-stream");
+		const events = parseUnifiedSSE(await readResponseText(response));
+		expect(events.some((event) => (event as { type?: string }).type === "finish")).toBe(true);
+	});
+
+	it("LSA-INT82: Express proxy anthropic provider emits finish", async () => {
+		const handler = createExpressProxyHandler({
+			apiKey: "key",
+			fetchImpl: fakeStreamingFetch(anthropicSse),
+		});
+		const req = mockIncomingRequest(
+			JSON.stringify({ provider: "anthropic", prompt: "hi", stream: true }),
+		);
+		const res = mockServerResponse();
+		await handler(req, res);
+		const events = parseUnifiedSSE(Buffer.concat(res.chunks).toString("utf8"));
+		expect(events.some((event) => (event as { type?: string }).type === "finish")).toBe(true);
+	});
+
+	it("LSA-INT83: runSimulatedProviderCall anthropic tool-parallel fixture", async () => {
+		const toolFixture = fixture("test/fixtures/anthropic/tool-parallel.sse");
+		const result = await runSimulatedProviderCall({
+			fixtureBody: toolFixture,
+			runExample: runAnthropicExample,
+		});
+		expect(result.output).toContain("Tool");
+	});
+
+	it("LSA-INT84: runSimulatedProviderCall OpenAI tool-parallel chunk-1", async () => {
+		const result = await runSimulatedProviderCall({
+			fixtureBody: toolSse,
+			chunkSize: 1,
+			runExample: runOpenAIChatExample,
+		});
+		expect(result.output).toContain("Tool call:");
 	});
 });

@@ -109,4 +109,66 @@ describe("malformed stream matrix", () => {
 		const path = join(malformedDir, "truncated-json.sse");
 		await expect(assembleMalformed(path, "sse", anthropicAdapter())).resolves.toBeDefined();
 	});
+
+	it("LSA-NR21: malformed fixture directory has at least 25 files", () => {
+		expect(files.length).toBeGreaterThanOrEqual(25);
+	});
+
+	it("LSA-NR22: newly added malformed fixtures are present", () => {
+		for (const name of [
+			"comment-only.sse",
+			"done-with-tail.sse",
+			"cohere-truncated-line.jsonl",
+			"bedrock-nonjson-line.jsonl",
+			"jsonl-missing-brace.jsonl",
+		]) {
+			expect(files).toContain(name);
+		}
+	});
+
+	const sseAdapters = [
+		{ name: "openai-chat", create: () => openaiChatAdapter() },
+		{ name: "anthropic", create: () => anthropicAdapter() },
+		{ name: "openai-responses", create: () => openaiResponsesAdapter() },
+		{ name: "gemini", create: () => geminiAdapter() },
+		{ name: "openai-compatible", create: () => openaiCompatibleAdapter() },
+	] as const;
+	const jsonlAdapters = [
+		{ name: "openai-chat", create: () => openaiChatAdapter() },
+		{ name: "cohere", create: () => cohereAdapter() },
+		{ name: "bedrock", create: () => bedrockAdapter() },
+	] as const;
+	const nrRows: Array<{
+		id: string;
+		file: string;
+		adapter: string;
+		transport: "sse" | "jsonl";
+		assemble: () => Promise<unknown[]>;
+	}> = [];
+	for (const file of [...files].sort()) {
+		const transport = file.endsWith(".jsonl") ? "jsonl" : "sse";
+		const adapters = transport === "sse" ? sseAdapters : jsonlAdapters;
+		for (const adapter of adapters) {
+			if (nrRows.length >= 28) break;
+			const path = join(malformedDir, file);
+			nrRows.push({
+				id: `LSA-NR${23 + nrRows.length}`,
+				file,
+				adapter: adapter.name,
+				transport,
+				assemble: () => assembleMalformed(path, transport, adapter.create()),
+			});
+		}
+		if (nrRows.length >= 28) break;
+	}
+
+	it("LSA-NR22b: NR23-NR50 matrix contains 28 adapter/file rows", () => {
+		expect(nrRows).toHaveLength(28);
+		expect(nrRows.at(0)?.id).toBe("LSA-NR23");
+		expect(nrRows.at(-1)?.id).toBe("LSA-NR50");
+	});
+
+	it.each(nrRows)("$id $adapter $file does not throw", async ({ assemble }) => {
+		await expect(assemble()).resolves.toBeDefined();
+	});
 });

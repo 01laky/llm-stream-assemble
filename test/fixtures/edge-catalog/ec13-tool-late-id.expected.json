@@ -1,0 +1,40 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec13"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec13",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "tool:0:0",
+		"name": "late",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool:0:0",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "tool:0:0",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "tool:0:0",
+		"name": "late",
+		"args": "{}{}"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

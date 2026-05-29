@@ -1,0 +1,23 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec25"
+	},
+	{
+		"type": "metadata",
+		"responseId": "ec25",
+		"model": "claude"
+	},
+	{
+		"type": "text.delta",
+		"text": "done"
+	},
+	{
+		"type": "text.done",
+		"text": "done"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

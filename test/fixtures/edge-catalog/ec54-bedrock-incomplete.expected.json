@@ -1,0 +1,20 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "partial"
+	},
+	{
+		"type": "text.done",
+		"text": "partial"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]

@@ -1,0 +1,28 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec01"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec01",
+		"created": 1710000000
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello"
+	},
+	{
+		"type": "text.delta",
+		"text": " world"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello world"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

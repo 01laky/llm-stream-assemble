@@ -1,0 +1,24 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec06"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec06",
+		"created": 1710000000
+	},
+	{
+		"type": "text.delta",
+		"text": "done"
+	},
+	{
+		"type": "text.done",
+		"text": "done"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

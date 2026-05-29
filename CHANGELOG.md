@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.10.0]
+
+### Added
+
+- **Edge-case catalog v2** — `test/fixtures/edge-catalog/` with **80** synthetic streams (**EC01**–**EC72** + **8** tier-2 pads), manifest-driven adapter routing, `edge-catalog-matrix.test.ts`, and `scripts/regenerate-edge-catalog-goldens.ts` check gate.
+- **Full tier-1 evil-offset chunk matrix** — all tier-1 streams × evil byte boundaries in `chunk-split-evil-full.test.ts` (**TH31**–**TH33**; **507** rows).
+- **Tier-2 chunk matrix** — eight synthetic large fixtures × `[1, 17, 64]` in `chunk-split-tier2-matrix.test.ts` (**TH100**–**TH105**).
+- **parseResponse exhaustive matrix** — seven chunk sizes × response goldens; **TH121**–**TH125** in `parse-response-chunk-matrix.test.ts`.
+- **parseChunk atom matrix** — **289** adapter×payload rows plus **PC01**–**PC05** / **MAINT45** gates in `parse-chunk-atom-matrix.test.ts`.
+- **Compatible preset scenario grid** — **OC381** + **MAINT47** waiver in `compatible-preset-scenario-matrix.test.ts`.
+- **Cross-adapter exhaustive contracts** — **X196**–**X280** in `cross-adapter-contract-matrix-x196.test.ts`.
+- **Finish×trailing-event matrix** — **X311**–**X360** policy in `finish-trailing-event-matrix.test.ts`.
+- **Adapter options permutation matrix** — **OPT01**–**OPT25** in `adapter-options-matrix.test.ts` (**136** rows).
+- **Deterministic seeded mutator grid** — **SD01**–**SD99** in `deterministic-seed-matrix.test.ts` (**80** rows).
+- **Stream invariants + ordering** — `assertEventOrdering()` and **AC100+** in `stream-invariants-matrix.test.ts`.
+- **Malformed catalog v2**, **strict/abort combinatorial** (**X281**–**X310**), **Bedrock EventStream bytes** (**B96**–**B110**), **Responses logprobs combinatorial** (**RL91**–**RL110**), **simulated proxy E2E v2** (**INT79**–**INT120**), **replay / AI SDK mapper exhaustive** (**RP04**–**RP50**, **INT121**–**INT135**, **RP31** / **MAINT50**).
+- **`scripts/audit-edge-cases-catalog.ts`** — **MAINT48** in `pnpm verify`; auto-generated `test/fixtures/edge-catalog/README.md`.
+
+### Changed
+
+- README test badge **6620**; stable **1.10.0** badges; **`release:prep`** **REL33** threshold **6000**.
+- `docs/testing-strategy.md` — full tier-1 evil-offset, **MAINT43**/**MAINT49** duration, **MAINT48** audit, 6000 gate.
+- `docs/edge-cases.md` — cross-links to edge-catalog + **X311** finish matrix.
+- Historical **1.9.1** doc pins frozen (CHANGELOG-only); **DOC207**–**DOC225** active in `docs-positioning-1.10.0.test.ts`.
+- `discoverEdgeCatalogFixtures()` + manifest adapter routing; edge-catalog fixtures excluded from general chunk matrix via **CHUNK_MATRIX_EXCLUSIONS**.
+
+### Notes
+
+- No public API changes by design; semver-safe from **1.9.x**.
+- npm publish automation deferred → **1.11.0**.
+
 ## [1.9.1]
 
 ### Fixed

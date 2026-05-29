@@ -1,0 +1,37 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ground"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ground"
+	},
+	{
+		"type": "grounding",
+		"queries": [
+			"weather Boston"
+		],
+		"chunks": [
+			{
+				"web": {
+					"uri": "https://example.com",
+					"title": "Example"
+				}
+			}
+		]
+	},
+	{
+		"type": "text.delta",
+		"text": "Grounded answer"
+	},
+	{
+		"type": "text.done",
+		"text": "Grounded answer"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

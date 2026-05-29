@@ -123,4 +123,53 @@ describe("core pipeline extended edge cases", () => {
 			),
 		).resolves.toEqual([{ type: "finish", reason: "aborted" }]);
 	});
+
+	it("LSA-C-EXT39: assembleFromPayloads trims payload and treats spaced DONE as terminal", async () => {
+		await expect(
+			collectAsync(
+				assembleFromPayloads(strings("   [DONE]   "), {
+					parseChunk() {
+						throw new Error("must not parse DONE");
+					},
+				}),
+			),
+		).resolves.toEqual([{ type: "finish", reason: "stop" }]);
+	});
+
+	it("LSA-C-EXT40: assembleStream recoverMalformed surfaces recoverable error event", async () => {
+		const events = await collectAsync(
+			assembleStream(
+				strings("data: bad\n\n", "data: good\n\n"),
+				{
+					parseChunk(raw) {
+						if (raw === "bad") throw new Error("bad");
+						return [{ kind: "text-delta", text: raw }];
+					},
+				},
+				{ recoverMalformed: true },
+			),
+		);
+		expect(events.some((event) => event.type === "error" && event.recoverable)).toBe(true);
+		expect(events).toContainEqual({ type: "text.delta", text: "good" });
+	});
+
+	it("LSA-C-EXT41: createAssemblyTransform forwards recoverMalformed error events", async () => {
+		const transform = createAssemblyTransform(
+			{
+				parseChunk(raw) {
+					if (raw === "bad") throw new Error("bad");
+					return [{ kind: "text-delta", text: raw }];
+				},
+			},
+			{ recoverMalformed: true },
+		);
+		const collected = collectReadable(transform.readable);
+		const writer = transform.writable.getWriter();
+		await writer.write(new TextEncoder().encode("data: bad\n\n"));
+		await writer.write(new TextEncoder().encode("data: ok\n\n"));
+		await writer.close();
+		const events = await collected;
+		expect(events.some((event) => event.type === "error")).toBe(true);
+		expect(events).toContainEqual({ type: "text.delta", text: "ok" });
+	});
 });

@@ -53,4 +53,22 @@ describe("parseSSE extended edge cases", () => {
 			collectAsync(parseSSE(strings("data: first\n\n", "data: second\n\n", "data: third\n\n"))),
 		).resolves.toEqual(["first", "second", "third"]);
 	});
+
+	it("LSA-C-EXT33: comment and event lines are ignored while data lines dispatch", async () => {
+		await expect(
+			collectAsync(parseSSE(strings(": ping\n\nevent: message\nid: 1\ndata: kept\n\n"))),
+		).resolves.toEqual(["kept"]);
+	});
+
+	it("LSA-C-EXT34: multiple data lines in one event preserve newline joins", async () => {
+		await expect(collectAsync(parseSSE(strings("data: first\ndata: second\n\n")))).resolves.toEqual(
+			["first\nsecond"],
+		);
+	});
+
+	it("LSA-C-EXT35: data line with leading spaces after colon is preserved", async () => {
+		await expect(collectAsync(parseSSE(strings("data:    spaced\n\n")))).resolves.toEqual([
+			"   spaced",
+		]);
+	});
 });

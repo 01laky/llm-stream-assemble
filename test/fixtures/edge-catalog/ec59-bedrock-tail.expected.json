@@ -1,0 +1,33 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello"
+	},
+	{
+		"type": "text.delta",
+		"text": " Bedrock"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 10,
+		"outputTokens": 5
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello Bedrock"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

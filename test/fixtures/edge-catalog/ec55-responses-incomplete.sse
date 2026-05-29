@@ -1,0 +1,4 @@
+data: {"type":"response.created","response":{"id":"ec55"}}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"part"}
+

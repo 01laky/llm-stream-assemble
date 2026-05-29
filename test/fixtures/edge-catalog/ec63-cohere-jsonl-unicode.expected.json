@@ -1,0 +1,34 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-unicode"
+	},
+	{
+		"type": "text.delta",
+		"text": "Ahoj 🌍"
+	},
+	{
+		"type": "text.delta",
+		"text": " — 日本語"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 4,
+		"outputTokens": 6
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Ahoj 🌍 — 日本語"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

@@ -1,0 +1,52 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-partial"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "fn_1",
+		"name": "search",
+		"index": 0,
+		"choiceIndex": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "fn_1",
+		"delta": "{\"q\":"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "fn_1",
+		"delta": "\"partial"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "fn_1",
+		"delta": " json\""
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "fn_1",
+		"delta": "}"
+	},
+	{
+		"type": "tool_call.done",
+		"id": "fn_1",
+		"name": "search",
+		"args": {
+			"q": "partial json"
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls",
+		"choiceIndex": 0
+	}
+]

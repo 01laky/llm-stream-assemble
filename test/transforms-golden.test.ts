@@ -108,4 +108,42 @@ describe("transforms golden roundtrip", () => {
 		);
 		expect(parsed.map((event) => (event as { type?: string }).type)).toContain("reasoning.delta");
 	});
+
+	it("LSA-T50: toSSE output frames contain finish event for text-basic", async () => {
+		const parsed = parseSseDataLines(
+			await readStream(toSSE(eventsFromFile("text-basic.events.json"))),
+		) as Array<{ type?: string }>;
+		expect(parsed.some((event) => event.type === "finish")).toBe(true);
+	});
+
+	it("LSA-T51: toSSE preserves event count for tool-call fixture", async () => {
+		const source = JSON.parse(
+			readFileSync(join(transformsDir, "tool-call.events.json"), "utf8"),
+		) as StreamEvent[];
+		const parsed = parseSseDataLines(
+			await readStream(toSSE(eventsFromFile("tool-call.events.json"))),
+		);
+		expect(parsed).toHaveLength(source.length);
+	});
+
+	it("LSA-T52: empty source yields empty SSE payload set", async () => {
+		async function* emptySource(): AsyncIterable<StreamEvent> {}
+		const parsed = parseSseDataLines(await readStream(toSSE(emptySource())));
+		expect(parsed).toEqual([]);
+	});
+
+	it("LSA-T53: citation-grounding fixture retains typed citation event", async () => {
+		const parsed = parseSseDataLines(
+			await readStream(toSSE(eventsFromFile("citation-grounding.events.json"))),
+		) as Array<{ type?: string }>;
+		expect(parsed.some((event) => event.type === "citation")).toBe(true);
+		expect(parsed.some((event) => event.type === "grounding")).toBe(true);
+	});
+
+	it("LSA-T54: all transform fixtures roundtrip with non-empty payload frames", async () => {
+		for (const name of eventFiles) {
+			const parsed = parseSseDataLines(await readStream(toSSE(eventsFromFile(name))));
+			expect(parsed.length).toBeGreaterThan(0);
+		}
+	});
 });

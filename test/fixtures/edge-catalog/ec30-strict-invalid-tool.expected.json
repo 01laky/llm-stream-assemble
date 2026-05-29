@@ -1,0 +1,34 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec30"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec30",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "si",
+		"name": "fn",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "si",
+		"delta": "{bad",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "si",
+		"name": "fn",
+		"args": "{bad"
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

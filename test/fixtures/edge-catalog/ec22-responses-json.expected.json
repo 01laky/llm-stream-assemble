@@ -1,0 +1,32 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ec22"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ec22"
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"z\":",
+		"partial": {}
+	},
+	{
+		"type": "json.delta",
+		"delta": "3}",
+		"partial": {
+			"z": 3
+		}
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"z": 3
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

@@ -1,0 +1,43 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec09"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec09",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_ec09",
+		"name": "get_weather",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_ec09",
+		"delta": "{\"loc"
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_ec09",
+		"delta": "ation\":\"NYC\"}",
+		"partial": {
+			"location": "NYC"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_ec09",
+		"name": "get_weather",
+		"args": {
+			"location": "NYC"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

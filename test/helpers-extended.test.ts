@@ -46,4 +46,61 @@ describe("helpers extended edge cases", () => {
 	it("LSA-M-EXT03: matchEvent returns undefined when no handler matches", () => {
 		expect(matchEvent({ type: "usage", inputTokens: 1 }, {})).toBeUndefined();
 	});
+
+	it("LSA-T100: isFinish narrows finish reason payload", () => {
+		const event: StreamEvent = { type: "finish", reason: "stop" };
+		expect(isFinish(event)).toBe(true);
+	});
+
+	it("LSA-T101: isToolCallDone matches tool_call.done events", () => {
+		expect(isToolCallDone({ type: "tool_call.done", id: "t1", name: "fn", args: {} })).toBe(true);
+	});
+
+	it("LSA-T102: isTextDelta rejects json.delta", () => {
+		expect(isTextDelta({ type: "json.delta", delta: "{}" })).toBe(false);
+	});
+
+	it("LSA-T103: isError rejects plain objects without error type", () => {
+		expect(isError({ type: "finish", reason: "error" })).toBe(false);
+	});
+
+	it("LSA-M20: matchEvent supports usage handler", () => {
+		const value = matchEvent(
+			{ type: "usage", inputTokens: 1, outputTokens: 2 },
+			{
+				usage: (event) => (event.outputTokens ?? 0) - (event.inputTokens ?? 0),
+			},
+		);
+		expect(value).toBe(1);
+	});
+
+	it("LSA-M21: matchEvent supports citation handler", () => {
+		const value = matchEvent(
+			{ type: "citation", urls: ["https://a.test"] },
+			{
+				citation: (event) => event.urls?.[0],
+			},
+		);
+		expect(value).toBe("https://a.test");
+	});
+
+	it("LSA-M22: matchEvent supports grounding handler", () => {
+		const value = matchEvent(
+			{ type: "grounding", queries: ["query"] },
+			{
+				grounding: (event) => event.queries?.length ?? 0,
+			},
+		);
+		expect(value).toBe(1);
+	});
+
+	it("LSA-M23: matchEvent supports logprob handler", () => {
+		const value = matchEvent(
+			{ type: "logprob", channel: "content", token: "a", logprob: -0.1 },
+			{
+				logprob: (event) => event.token,
+			},
+		);
+		expect(value).toBe("a");
+	});
 });

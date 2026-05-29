@@ -1,0 +1,15 @@
+[
+	{
+		"type": "text.delta",
+		"text": "g"
+	},
+	{
+		"type": "text.done",
+		"text": "g"
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

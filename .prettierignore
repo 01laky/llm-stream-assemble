@@ -5,3 +5,4 @@ pnpm-lock.yaml
 test/fixtures/transforms/invalid.json
 test/fixtures/**/*.expected.json
 test/fixtures/REGISTRY.md
+test/fixtures/edge-catalog/README.md

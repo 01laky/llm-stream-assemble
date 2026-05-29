@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -30,8 +30,13 @@ const HARDENING_TESTS = [
 	"test/transforms-golden.test.ts",
 	"test/stream-concurrency.test.ts",
 	"test/cross-adapter-contract-matrix.test.ts",
+	"test/cross-adapter-contract-matrix-x196.test.ts",
 	"test/anthropic-fixture-parity.test.ts",
 	"test/maintenance-hardening.test.ts",
+	"test/compatible-preset-scenario-matrix.test.ts",
+	"test/stream-invariants-matrix.test.ts",
+	"test/simulated-proxy-matrix.test.ts",
+	"test/ai-sdk-mapper-exhaustive.test.ts",
 ] as const;
 
 describe("maintenance hardening gates", () => {
@@ -89,5 +94,73 @@ describe("maintenance hardening gates", () => {
 		};
 		expect(pkg.scripts?.["fixtures:audit-registry"]).toBeDefined();
 		expect(pkg.scripts?.verify).toContain("fixtures:audit-registry");
+	});
+
+	it("LSA-MAINT41: parse-response matrix includes expanded TH121-TH125 gate set", () => {
+		const source = readFileSync(join(rootDir, "test/parse-response-chunk-matrix.test.ts"), "utf8");
+		expect(source).toContain("[0, 1, 3, 7, 17, 31, 64]");
+		expect(source).toContain("LSA-TH121");
+		expect(source).toContain("LSA-TH125");
+	});
+
+	it("LSA-MAINT42: compatible preset scenario matrix exists with OC381 gate", () => {
+		const source = readFileSync(
+			join(rootDir, "test/compatible-preset-scenario-matrix.test.ts"),
+			"utf8",
+		);
+		expect(source).toContain("LSA-OC381");
+		expect(source).toContain("HOST_COMPATIBLE_PRESETS");
+	});
+
+	it("LSA-MAINT43: stream invariants matrix exists with AC100+ coverage", () => {
+		const source = readFileSync(join(rootDir, "test/stream-invariants-matrix.test.ts"), "utf8");
+		expect(source).toContain("LSA-AC100");
+		expect(source).toContain("assertEventOrdering");
+	});
+
+	it("LSA-MAINT44b: cross adapter contract x196 expansion file exists", () => {
+		const source = readFileSync(
+			join(rootDir, "test/cross-adapter-contract-matrix-x196.test.ts"),
+			"utf8",
+		);
+		expect(source).toContain("LSA-X196");
+		expect(source).toContain("LSA-X280");
+	});
+
+	it("LSA-MAINT45b: malformed fixture catalog expanded beyond 25 files", () => {
+		const malformedDir = join(rootDir, "test/fixtures/malformed");
+		const files = readdirSync(malformedDir).filter(
+			(name) => name.endsWith(".sse") || name.endsWith(".jsonl"),
+		);
+		expect(existsSync(join(malformedDir, "cohere-truncated-line.jsonl"))).toBe(true);
+		expect(existsSync(join(malformedDir, "done-with-tail.sse"))).toBe(true);
+		expect(files.length).toBeGreaterThanOrEqual(25);
+	});
+
+	it("LSA-MAINT46: simulated proxy matrix exists with INT85 gate", () => {
+		const source = readFileSync(join(rootDir, "test/simulated-proxy-matrix.test.ts"), "utf8");
+		expect(source).toContain("LSA-INT85");
+		expect(source).toContain("createExpressProxyHandler");
+		expect(source).toContain("handleHonoLLMProxy");
+	});
+
+	it("LSA-MAINT47b: compatible matrix includes waiver documentation text", () => {
+		const source = readFileSync(
+			join(rootDir, "test/compatible-preset-scenario-matrix.test.ts"),
+			"utf8",
+		);
+		expect(source).toContain("MAINT47 waiver");
+	});
+
+	it("LSA-MAINT49: ai-sdk mapper exhaustive file includes RP31 and INT121+", () => {
+		const source = readFileSync(join(rootDir, "test/ai-sdk-mapper-exhaustive.test.ts"), "utf8");
+		expect(source).toContain("LSA-RP31");
+		expect(source).toContain("LSA-INT${121 + index}");
+	});
+
+	it("LSA-TH141: release prep gate for minimum test count upgraded to 6000", () => {
+		const source = readFileSync(join(rootDir, "scripts/release-prep.mjs"), "utf8");
+		expect(source).toContain("MIN_TEST_COUNT = 6000");
+		expect(source).toContain("LSA-REL33");
 	});
 });

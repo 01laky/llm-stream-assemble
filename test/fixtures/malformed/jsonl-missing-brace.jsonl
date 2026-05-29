@@ -1,0 +1,3 @@
+{"type":"message-start","id":"m3","delta":{"message":{"role":"assistant"}}}
+{"type":"message-end","delta":{"finish_reason":"COMPLETE"}
+

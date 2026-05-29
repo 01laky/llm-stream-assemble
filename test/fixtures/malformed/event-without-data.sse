@@ -1,0 +1,6 @@
+event: delta
+id: 1
+retry: 1000
+
+data: {"choices":[{"delta":{"content":"fallback"}}]}
+

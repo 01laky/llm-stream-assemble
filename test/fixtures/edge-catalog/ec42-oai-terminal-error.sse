@@ -1,0 +1,6 @@
+data: {"id":"ec42","object":"chat.completion.chunk","created":1710000000,"model":"gpt-4o-mini","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+
+data: {"error":{"message":"server","type":"server_error"}}
+
+data: [DONE]
+

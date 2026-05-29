@@ -1,0 +1,22 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec05"
+	},
+	{
+		"type": "metadata",
+		"responseId": "ec05"
+	},
+	{
+		"type": "text.delta",
+		"text": "prefix"
+	},
+	{
+		"type": "text.done",
+		"text": "prefix"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

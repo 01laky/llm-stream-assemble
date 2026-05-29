@@ -16,7 +16,11 @@ import { collectStream } from "../src/transforms/collect-stream";
 import { tapEvents } from "../src/transforms/tap-events";
 import { runAdapterGoldenStream } from "./helpers/adapter-conformance";
 import { byteStreamFromStrings, collectAsync, strings } from "./helpers/collect-events";
-import { expectedOpenAIEvents, normalizeEvents } from "./helpers/openai-fixtures";
+import {
+	expectedOpenAIEvents,
+	normalizeEvents,
+	openAITextFixture,
+} from "./helpers/openai-fixtures";
 import { normalizeResponsesEvents, responsesTextFixture } from "./helpers/responses-fixtures";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -928,5 +932,276 @@ describe("cross-adapter assembler edge cases", () => {
 			),
 		);
 		expect(events.filter(isLogprob).length).toBe(2);
+	});
+});
+
+describe("cross-adapter assembler edge cases x296-x310", () => {
+	it.each([
+		[
+			"LSA-X296",
+			openaiChatAdapter(),
+			[
+				payload({ choices: [{ index: 0, delta: { content: "ok" }, finish_reason: "stop" }] }),
+				payload({ choices: [{ index: 0, delta: { content: "late" }, finish_reason: null }] }),
+			],
+		],
+		[
+			"LSA-X297",
+			openaiResponsesAdapter(),
+			[
+				payload({ type: "response.output_text.delta", delta: "ok" }),
+				payload({ type: "response.completed", response: {} }),
+				payload({ type: "response.output_text.delta", delta: "late" }),
+			],
+		],
+		[
+			"LSA-X298",
+			anthropicAdapter(),
+			[
+				payload({
+					type: "content_block_delta",
+					index: 0,
+					delta: { type: "text_delta", text: "ok" },
+				}),
+				payload({ type: "message_delta", delta: { stop_reason: "end_turn" } }),
+				payload({ type: "message_stop" }),
+				payload({
+					type: "content_block_delta",
+					index: 0,
+					delta: { type: "text_delta", text: "late" },
+				}),
+			],
+		],
+		[
+			"LSA-X299",
+			geminiAdapter(),
+			[
+				payload({ candidates: [{ index: 0, content: { parts: [{ text: "ok" }] } }] }),
+				payload({ candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }] }),
+				payload({ candidates: [{ index: 0, content: { parts: [{ text: "late" }] } }] }),
+			],
+		],
+		[
+			"LSA-X300",
+			bedrockAdapter(),
+			[
+				payload({ messageStart: { role: "assistant" } }),
+				payload({ contentBlockDelta: { contentBlockIndex: 0, delta: { text: "ok" } } }),
+				payload({ messageStop: { stopReason: "end_turn" } }),
+				payload({ contentBlockDelta: { contentBlockIndex: 0, delta: { text: "late" } } }),
+			],
+		],
+		[
+			"LSA-X301",
+			cohereAdapter(),
+			[
+				payload({
+					type: "message-start",
+					id: "m",
+					delta: { message: { role: "assistant" } },
+				}),
+				payload({
+					type: "content-delta",
+					index: 0,
+					delta: { message: { content: { text: "ok" } } },
+				}),
+				payload({ type: "message-end", delta: { finish_reason: "COMPLETE" } }),
+				payload({
+					type: "content-delta",
+					index: 0,
+					delta: { message: { content: { text: "late" } } },
+				}),
+			],
+		],
+		[
+			"LSA-X302",
+			openaiCompatibleAdapter({ provider: "groq" }),
+			[
+				payload({ choices: [{ index: 0, delta: { content: "ok" }, finish_reason: "stop" }] }),
+				payload({ choices: [{ index: 0, delta: { content: "late" }, finish_reason: null }] }),
+			],
+		],
+	] as const)("%s drops post-finish late text", async (_id, adapter, lines) => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					for (const line of lines) yield line;
+				})(),
+				adapter,
+			),
+		);
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+		expect(
+			events.some(
+				(event) => event.type === "text.delta" && event.text.toLowerCase().includes("late"),
+			),
+		).toBe(false);
+	});
+
+	it.each([
+		[
+			"LSA-X303",
+			openaiChatAdapter(),
+			[
+				payload({
+					choices: [
+						{
+							index: 0,
+							delta: {
+								tool_calls: [
+									{ index: 0, id: "call_x303", function: { name: "fn", arguments: "{}" } },
+								],
+							},
+							finish_reason: "tool_calls",
+						},
+					],
+				}),
+			],
+		],
+		[
+			"LSA-X304",
+			anthropicAdapter(),
+			[
+				payload({
+					type: "content_block_start",
+					index: 0,
+					content_block: { type: "tool_use", id: "tool_x304", name: "fn", input: {} },
+				}),
+				payload({
+					type: "content_block_delta",
+					index: 0,
+					delta: { type: "input_json_delta", partial_json: "{}" },
+				}),
+				payload({ type: "message_delta", delta: { stop_reason: "tool_use" } }),
+			],
+		],
+		[
+			"LSA-X305",
+			bedrockAdapter(),
+			[
+				payload({
+					contentBlockStart: {
+						contentBlockIndex: 0,
+						start: { toolUse: { toolUseId: "tool_x305", name: "fn" } },
+					},
+				}),
+				payload({
+					contentBlockDelta: { contentBlockIndex: 0, delta: { toolUse: { input: "{}" } } },
+				}),
+				payload({ messageStop: { stopReason: "tool_use" } }),
+			],
+		],
+		[
+			"LSA-X306",
+			cohereAdapter(),
+			[
+				payload({
+					type: "message-start",
+					id: "m306",
+					delta: { message: { role: "assistant" } },
+				}),
+				payload({
+					type: "tool-call-start",
+					index: 0,
+					delta: {
+						message: {
+							tool_calls: {
+								id: "tool_x306",
+								type: "function",
+								function: { name: "fn", arguments: "" },
+							},
+						},
+					},
+				}),
+				payload({
+					type: "tool-call-delta",
+					index: 0,
+					delta: { message: { tool_calls: { function: { arguments: "{}" } } } },
+				}),
+				payload({ type: "message-end", delta: { finish_reason: "TOOL_CALL" } }),
+			],
+		],
+		[
+			"LSA-X307",
+			geminiAdapter(),
+			[
+				payload({
+					candidates: [
+						{
+							index: 0,
+							content: {
+								parts: [{ functionCall: { name: "fn", args: { ok: true } } }],
+							},
+						},
+					],
+				}),
+				payload({ candidates: [{ index: 0, finishReason: "STOP", content: { parts: [] } }] }),
+			],
+		],
+		[
+			"LSA-X308",
+			openaiResponsesAdapter(),
+			[
+				payload({
+					type: "response.output_item.added",
+					output_index: 0,
+					item: { type: "function_call", id: "fc308", name: "fn", call_id: "fc308" },
+				}),
+				payload({
+					type: "response.function_call_arguments.delta",
+					output_index: 0,
+					call_id: "fc308",
+					delta: "{}",
+				}),
+				payload({ type: "response.completed", response: {} }),
+			],
+		],
+		[
+			"LSA-X309",
+			openaiCompatibleAdapter({ provider: "groq" }),
+			[
+				payload({
+					choices: [
+						{
+							index: 0,
+							delta: {
+								tool_calls: [
+									{ index: 0, id: "call_x309", function: { name: "fn", arguments: "{}" } },
+								],
+							},
+							finish_reason: "tool_calls",
+						},
+					],
+				}),
+			],
+		],
+	])("%s strictToolArgs accepts valid tool payloads", async (_id, adapter, lines) => {
+		const events = await collectAsync(
+			assembleFromPayloads(
+				(async function* () {
+					for (const line of lines) yield line;
+				})(),
+				adapter,
+				{ strictToolArgs: true },
+			),
+		);
+		expect(events.some((event) => event.type === "finish")).toBe(true);
+	});
+
+	it("LSA-X310: openai-chat and compatible keep chunk-1 parity on text-basic fixture", async () => {
+		const fixture = openAITextFixture("text-basic", "sse");
+		const chatEvents = normalizeEvents(
+			await collectAsync(assembleStream(byteStreamFromStrings(fixture), openaiChatAdapter())),
+		);
+		const compatibleEvents = normalizeEvents(
+			await collectAsync(
+				assembleStream(
+					byteStreamFromStrings(fixture),
+					openaiCompatibleAdapter({ provider: "generic" }),
+				),
+			),
+		);
+		expect(chatEvents.some((event) => event.type === "finish")).toBe(true);
+		expect(compatibleEvents.some((event) => event.type === "finish")).toBe(true);
 	});
 });

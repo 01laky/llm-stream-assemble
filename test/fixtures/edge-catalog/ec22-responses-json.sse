@@ -1,0 +1,8 @@
+data: {"type":"response.created","response":{"id":"resp_ec22"}}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"{\"z\":"}
+
+data: {"type":"response.output_text.delta","output_index":0,"delta":"3}"}
+
+data: {"type":"response.completed","response":{"id":"resp_ec22","status":"completed"}}
+

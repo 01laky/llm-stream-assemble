@@ -1,0 +1,90 @@
+[
+	{
+		"type": "message.start",
+		"id": "chatcmpl_lp"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "chatcmpl_lp",
+		"created": 1710000001
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "Hello",
+		"logprob": -0.12,
+		"bytes": [
+			72,
+			101,
+			108,
+			108,
+			111
+		],
+		"topLogprobs": [
+			{
+				"token": "Hello",
+				"logprob": -0.12,
+				"bytes": [
+					72,
+					101,
+					108,
+					108,
+					111
+				]
+			},
+			{
+				"token": " Hi",
+				"logprob": -2.4,
+				"bytes": [
+					32,
+					72,
+					105
+				]
+			}
+		],
+		"position": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "Hello"
+	},
+	{
+		"type": "logprob",
+		"channel": "content",
+		"token": "!",
+		"logprob": -0.006,
+		"bytes": [
+			33
+		],
+		"topLogprobs": [
+			{
+				"token": "!",
+				"logprob": -0.006,
+				"bytes": [
+					33
+				]
+			},
+			{
+				"token": ".",
+				"logprob": -5.1,
+				"bytes": [
+					46
+				]
+			}
+		],
+		"position": 1
+	},
+	{
+		"type": "text.delta",
+		"text": "!"
+	},
+	{
+		"type": "text.done",
+		"text": "Hello!"
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

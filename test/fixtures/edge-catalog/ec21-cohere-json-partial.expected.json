@@ -1,0 +1,35 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-json"
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"answer\":",
+		"partial": {}
+	},
+	{
+		"type": "json.delta",
+		"delta": "42}",
+		"partial": {
+			"answer": 42
+		}
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"answer": 42
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

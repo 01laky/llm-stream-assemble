@@ -1,0 +1,20 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec42"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec42",
+		"created": 1710000000
+	},
+	{
+		"type": "error",
+		"recoverable": false
+	},
+	{
+		"type": "finish",
+		"reason": "error"
+	}
+]

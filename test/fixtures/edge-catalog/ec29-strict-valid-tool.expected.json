@@ -1,0 +1,38 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec29"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec29",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "sv",
+		"name": "fn",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "sv",
+		"delta": "{\"valid\":true}",
+		"partial": {
+			"valid": true
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "sv",
+		"name": "fn",
+		"args": {
+			"valid": true
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

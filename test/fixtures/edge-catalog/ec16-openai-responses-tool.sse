@@ -1,0 +1,12 @@
+data: {"type":"response.created","response":{"id":"resp_ec16"}}
+
+data: {"type":"response.output_item.added","output_index":0,"item":{"type":"function_call","id":"fc1","call_id":"call_ec16","name":"fn","arguments":""}}
+
+data: {"type":"response.function_call_arguments.delta","output_index":0,"delta":"{\"x\":"}
+
+data: {"type":"response.function_call_arguments.delta","output_index":0,"delta":"1}"}
+
+data: {"type":"response.output_item.done","output_index":0,"item":{"type":"function_call","id":"fc1","call_id":"call_ec16","name":"fn","arguments":"{\"x\":1}"}}
+
+data: {"type":"response.completed","response":{"id":"resp_ec16","status":"completed"}}
+

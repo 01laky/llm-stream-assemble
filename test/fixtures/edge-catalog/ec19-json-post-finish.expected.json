@@ -1,0 +1,29 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec19"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec19",
+		"created": 1710000000
+	},
+	{
+		"type": "json.delta",
+		"delta": "{\"ok\":true}",
+		"partial": {
+			"ok": true
+		}
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"ok": true
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

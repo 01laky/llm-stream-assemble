@@ -1,0 +1,3833 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`parseChunk atom matrix > 'anthropic A86 text content_block_star…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A87 text content_block_delt…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": " there",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A88 reasoning content_block…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "analyze",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A89 reasoning thinking_delt…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "step2",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A90 partial tools tool_use …' 1`] = `
+[
+  {
+    "id": "a_tool_1",
+    "index": 2,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A91 partial tools input_jso…' 1`] = `
+[
+  {
+    "delta": "{"q":"anth",
+    "id": "a_tool_2",
+    "index": 2,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A92 partial tools content_b…' 1`] = `
+[
+  {
+    "id": "a_tool_3",
+    "index": 2,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A93 finish reasons message_…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "output_tokens": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A94 finish reasons message_…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "output_tokens": 2,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A95 finish reasons message_…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "tool_calls",
+  },
+  {
+    "kind": "usage",
+    "outputTokens": 3,
+    "raw": {
+      "output_tokens": 3,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A96 finish reasons message_…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A97 usage-only message_delt…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "outputTokens": 9,
+    "raw": {
+      "output_tokens": 9,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A98 errors error payload ov…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A99 unknown keys ping ignor…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A100 unknown keys signature…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A101 message.start message_…' 1`] = `
+[
+  {
+    "id": "a_start_1",
+    "kind": "message-start",
+  },
+  {
+    "inputTokens": 4,
+    "kind": "usage",
+    "outputTokens": 0,
+    "raw": {
+      "input_tokens": 4,
+      "output_tokens": 0,
+    },
+  },
+  {
+    "kind": "metadata",
+    "model": "claude-3-5-sonnet",
+    "raw": {
+      "id": "a_start_1",
+      "model": "claude-3-5-sonnet",
+      "usage": {
+        "input_tokens": 4,
+        "output_tokens": 0,
+      },
+    },
+    "responseId": "a_start_1",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A102 message.start message_…' 1`] = `
+[
+  {
+    "id": "a_start_2",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "claude-3-haiku",
+    "raw": {
+      "id": "a_start_2",
+      "model": "claude-3-haiku",
+    },
+    "responseId": "a_start_2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A103 refusal refusal block …' 1`] = `
+[
+  {
+    "kind": "refusal-delta",
+    "text": "policy block",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A104 refusal refusal text d…' 1`] = `
+[
+  {
+    "kind": "refusal-delta",
+    "text": "still no",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A105 partial tools json blo…' 1`] = `
+[
+  {
+    "delta": "{"a":",
+    "kind": "json-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A106 partial tools json blo…' 1`] = `
+[
+  {
+    "delta": "1}",
+    "kind": "json-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A107 reasoning redacted thi…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A108 partial tools tool_use…' 1`] = `
+[
+  {
+    "delta": "{"city":"Bratislava"}",
+    "id": "a_tool_7",
+    "index": 7,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "a_tool_7",
+    "index": 7,
+    "kind": "tool-start",
+    "name": "lookup",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A109 partial tools input_js…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A110 whitespace text_delta …' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A111 unknown keys content_b…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic A112 unknown keys message_d…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "output_tokens": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A113 unknown keys message_s…' 1`] = `
+[
+  {
+    "id": "a_unknown",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "claude-3-5-sonnet",
+    "raw": {
+      "id": "a_unknown",
+      "model": "claude-3-5-sonnet",
+    },
+    "responseId": "a_unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A114 citations text block c…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "cited",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A115 logprobs text delta ca…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "lp",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A116 finish reasons content…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "content_filter",
+  },
+  {
+    "kind": "usage",
+    "outputTokens": 4,
+    "raw": {
+      "output_tokens": 4,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A117 finish reasons unknown…' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "kind": "usage",
+    "outputTokens": 5,
+    "raw": {
+      "output_tokens": 5,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A118 multichoice text event…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "choice-11",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A119 multichoice tool event…' 1`] = `
+[
+  {
+    "id": "a_tool_12",
+    "index": 12,
+    "kind": "tool-start",
+    "name": "multi",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A120 errors error payload w…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic A121 text text block multil…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "l1
+l2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic PC02 whitespace whitespace …' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'anthropic PC03 message.start message_…' 1`] = `
+[
+  {
+    "id": "pc03",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "claude-3-5-sonnet",
+    "raw": {
+      "id": "pc03",
+      "model": "claude-3-5-sonnet",
+    },
+    "responseId": "pc03",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic PC04 usage-only message_del…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "output_tokens": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'anthropic PC05 unknown keys message_s…' 1`] = `
+[
+  {
+    "id": "pc05",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "claude-3-haiku",
+    "raw": {
+      "id": "pc05",
+      "model": "claude-3-haiku",
+    },
+    "responseId": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B93 message.start messageStar…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "role": "assistant",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B94 message.start messageStar…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "role": "model",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B95 text contentBlockDelta te…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B96 text contentBlockDelta te…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "Ahoj 😀",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B97 partial tools contentBloc…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "b_tool_1",
+    "index": 1,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B98 partial tools toolUse str…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"bed",
+    "id": "b_tool_2",
+    "index": 1,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B99 partial tools toolUse obj…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"bedrock"}",
+    "id": "b_tool_3",
+    "index": 1,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B100 partial tools contentBlo…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "b_tool_4",
+    "index": 1,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B101 finish reasons messageSt…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "stopReason": "end_turn",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B102 finish reasons messageSt…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "stopReason": "max_tokens",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B103 finish reasons messageSt…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "tool_calls",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "stopReason": "tool_use",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B104 usage-only metadata usag…' 1`] = `
+[
+  {
+    "inputTokens": 10,
+    "kind": "usage",
+    "outputTokens": 5,
+    "raw": {
+      "inputTokens": 10,
+      "outputTokens": 5,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B105 usage-only metadata usag…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "raw": {
+      "totalTokenCount": 33,
+      "totalTokens": 33,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B106 unknown keys metadata me…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "metrics": {
+        "latencyMs": 120,
+      },
+      "trace": {
+        "requestId": "abc",
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B107 errors internalServerExc…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B108 errors validationExcepti…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B109 unknown keys unknown obj…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "oddEnvelope": {
+        "value": 1,
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B110 reasoning reasoningConte…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "reason",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B111 reasoning reasoningConte…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock B112 text json-like text delta' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "{"k":",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B113 usage-only metadata usag…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock B114 usage-only metadata usag…' 1`] = `
+[
+  {
+    "inputTokens": 4,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "inputTokenCount": 4,
+      "outputTokenCount": 2,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B115 unknown keys contentBloc…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock B116 unknown keys contentBloc…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock B117 message.start messageSta…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B118 multichoice non-zero con…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "index-two",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B119 multichoice non-zero too…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "b_tool_4a",
+    "index": 4,
+    "kind": "tool-start",
+    "name": "idx4",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B120 finish reasons messageSt…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "additionalModelResponseFields": {
+        "stop_sequence": "###",
+      },
+      "stopReason": "end_turn",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B121 partial tools incrementa…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": ","b":2}",
+    "id": "b_tool_5",
+    "index": 5,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B122 unknown keys metadata tr…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "trace": {
+        "route": "x",
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B123 unknown keys metadata me…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "metrics": {
+        "latencyMs": 88,
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B124 errors serviceUnavailabl…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B125 errors throttlingExcepti…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B126 errors modelStreamErrorE…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B127 citations citation-like …' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "trace": {
+        "citations": [
+          {
+            "url": "https://cite.test",
+          },
+        ],
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B128 logprobs logprob-like tr…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "trace": {
+        "logprobs": [
+          {
+            "logprob": -0.1,
+            "token": "x",
+          },
+        ],
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock B129 text multiline text delta' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "l1
+l2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock PC02 whitespace whitespace pa…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'bedrock PC03 message.start messageSta…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "role": "assistant",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock PC04 usage-only metadata usag…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "inputTokens": 1,
+      "outputTokens": 2,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'bedrock PC05 unknown keys unknown env…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "mystery": {
+        "zeta": 6,
+      },
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO119 message.start message-st…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "co_msg_1",
+      "role": "assistant",
+    },
+    "responseId": "co_msg_1",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO120 text content-delta basic' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO121 text content-delta unico…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "čau 😀",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO122 reasoning tool-plan-delta' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "I will call a tool",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO123 partial tools tool-call-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO124 partial tools tool-call-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"co",
+    "id": "co_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO125 partial tools tool-call-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_3",
+    "index": 0,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO126 citations citation-start…' 1`] = `
+[
+  {
+    "index": 0,
+    "kind": "citation",
+    "raw": {
+      "citation": {
+        "end": 4,
+        "start": 0,
+        "text": "cite",
+      },
+      "index": 0,
+    },
+    "span": {
+      "end": 4,
+      "start": 0,
+      "text": "cite",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO127 finish reasons message-e…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "inputTokens": 12,
+    "kind": "usage",
+    "outputTokens": 4,
+    "raw": {
+      "input_tokens": 12,
+      "output_tokens": 4,
+    },
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "finish_reason": "COMPLETE",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO128 finish reasons message-e…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "finish_reason": "MAX_TOKENS",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO129 finish reasons message-e…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "tool_calls",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "finish_reason": "TOOL_CALL",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO130 finish reasons message-e…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "error",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "finish_reason": "ERROR",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO131 errors type error payload' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO132 unknown keys unknown eve…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "mystery": {
+        "x": 1,
+      },
+      "type": "mystery-event",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO133 unknown keys missing typ…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "mystery": "no-type",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO134 whitespace empty content…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere CO135 multichoice content-delt…' 1`] = `
+[
+  {
+    "choiceIndex": 1,
+    "kind": "text-delta",
+    "text": "one",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO136 multichoice tool-call-st…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_2x",
+    "index": 2,
+    "kind": "tool-start",
+    "name": "fetch",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO137 partial tools tool-call-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"a":1}",
+    "id": "co_tool_late",
+    "index": 3,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_late",
+    "index": 3,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO138 partial tools tool-call-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_late",
+    "index": 3,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO139 usage-only usage tokens …' 1`] = `
+[
+  {
+    "inputTokens": 2,
+    "kind": "usage",
+    "outputTokens": 3,
+    "raw": {
+      "input_tokens": 2,
+      "output_tokens": 3,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO140 usage-only usage billed_…' 1`] = `
+[
+  {
+    "inputTokens": 5,
+    "kind": "usage",
+    "outputTokens": 6,
+    "raw": {
+      "input_tokens": 5,
+      "output_tokens": 6,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO141 citations citation with …' 1`] = `
+[
+  {
+    "index": 1,
+    "kind": "citation",
+    "raw": {
+      "citation": {
+        "sources": [
+          {
+            "type": "web",
+            "url": "https://x.test",
+          },
+        ],
+        "text": "src",
+      },
+      "index": 1,
+    },
+    "sources": [
+      {
+        "type": "web",
+        "url": "https://x.test",
+      },
+    ],
+    "span": {
+      "end": 3,
+      "start": 0,
+      "text": "src",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO142 citations citation text …' 1`] = `
+[
+  {
+    "index": 2,
+    "kind": "citation",
+    "raw": {
+      "citation": {
+        "text": "snippet",
+      },
+      "index": 2,
+    },
+    "span": {
+      "end": 7,
+      "start": 0,
+      "text": "snippet",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO143 logprobs content delta w…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "lp",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO144 partial tools tool args …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"k":"v",
+    "id": "co_tool_4",
+    "index": 4,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO145 partial tools tool args …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "alue"}",
+    "id": "co_tool_5",
+    "index": 4,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO146 usage-only message-end u…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "input_tokens": 1,
+      "output_tokens": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO147 finish reasons message-e…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "finish_reason": "STOP_SEQUENCE",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO148 unknown keys message-sta…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "co_extra",
+      "role": "assistant",
+    },
+    "responseId": "co_extra",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO149 unknown keys citation-en…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere CO150 unknown keys content-sta…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere CO151 unknown keys content-end…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere CO152 multichoice tool-call-st…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_a",
+    "index": 5,
+    "kind": "tool-start",
+    "name": "a",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_b",
+    "index": 6,
+    "kind": "tool-start",
+    "name": "b",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO153 multichoice tool-call-de…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"x":1}",
+    "id": "co_tool_a",
+    "index": 5,
+    "kind": "tool-args-delta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO154 multichoice tool-call-en…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "co_tool_c",
+    "index": 5,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere CO155 text multiline content t…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "l1
+l2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere PC02 whitespace whitespace pay…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'cohere PC03 message.start message-sta…' 1`] = `
+[
+  {
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "pc03",
+      "role": "assistant",
+    },
+    "responseId": "pc03",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere PC04 usage-only message-end us…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "input_tokens": 1,
+      "output_tokens": 2,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'cohere PC05 unknown keys content-delt…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G119 text text part basic' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G120 text text part unicode' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "你好 🌍",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G121 whitespace empty text ign…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G122 reasoning thought text to…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "think",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G123 reasoning thought without…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G124 partial tools function ca…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"hi"}",
+    "id": "g_tool_1",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_1",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G125 partial tools function ca…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"city":"Bra",
+    "id": "g_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "lookup",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G126 partial tools function ca…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "tislava"}",
+    "id": "g_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_2",
+    "index": 0,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G127 finish reasons finish STOP' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G128 finish reasons finish MAX…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G129 finish reasons finish SAF…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "content_filter",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "filtered",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G130 finish reasons finish MAL…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "err",
+  },
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G131 usage-only usage metadata…' 1`] = `
+[
+  {
+    "inputTokens": 7,
+    "kind": "usage",
+    "outputTokens": 9,
+    "raw": {
+      "candidatesTokenCount": 9,
+      "promptTokenCount": 7,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G132 usage-only usage total on…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "raw": {
+      "totalTokenCount": 15,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G133 message.start response me…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "meta",
+  },
+  {
+    "id": "g_meta_1",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "gemini-2.5-pro",
+    "raw": {
+      "modelVersion": "gemini-2.5-pro",
+      "responseId": "g_meta_1",
+    },
+    "responseId": "g_meta_1",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G134 message.start response id…' 1`] = `
+[
+  {
+    "id": "g_meta_2",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "g_meta_2",
+    },
+    "responseId": "g_meta_2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G135 errors prompt feedback bl…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G136 errors error payload' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G137 citations citation metada…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "cite",
+  },
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        {
+          "endIndex": 4,
+          "startIndex": 0,
+        },
+      ],
+    },
+    "sources": [
+      {
+        "endIndex": 4,
+        "startIndex": 0,
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G138 citations grounding metad…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "ground",
+  },
+  {
+    "chunks": [
+      {
+        "chunk": "a",
+      },
+    ],
+    "kind": "grounding",
+    "queries": [
+      "llm",
+    ],
+    "raw": {
+      "groundingChunks": [
+        {
+          "chunk": "a",
+        },
+      ],
+      "groundingSupports": [
+        {
+          "support": "b",
+        },
+      ],
+      "webSearchQueries": [
+        "llm",
+      ],
+    },
+    "supports": [
+      {
+        "support": "b",
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G139 citations citation and gr…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "both",
+  },
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        {
+          "id": "c1",
+        },
+      ],
+    },
+    "sources": [
+      {
+        "id": "c1",
+      },
+    ],
+  },
+  {
+    "kind": "grounding",
+    "queries": [
+      "q1",
+    ],
+    "raw": {
+      "webSearchQueries": [
+        "q1",
+      ],
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G140 multichoice two candidate…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "left",
+  },
+  {
+    "choiceIndex": 1,
+    "kind": "text-delta",
+    "text": "right",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G141 multichoice two candidate…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "a",
+  },
+  {
+    "choiceIndex": 2,
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "choiceIndex": 2,
+    "kind": "text-delta",
+    "text": "b",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G142 unknown keys unknown part…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G143 unknown keys inlineData i…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G144 unknown keys fileData ign…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G145 unknown keys functionResp…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G146 unknown keys executableCo…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini G147 logprobs unknown logprob-…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "lp",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G148 citations citation on non…' 1`] = `
+[
+  {
+    "choiceIndex": 3,
+    "kind": "text-delta",
+    "text": "idx3",
+  },
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        {
+          "id": "cx",
+        },
+      ],
+    },
+    "sources": [
+      {
+        "id": "cx",
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G149 partial tools partial arg…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"n":4}",
+    "id": "g_tool_num",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_num",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_num",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G150 partial tools partial arg…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"ok":true}",
+    "id": "g_tool_bool",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_bool",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_bool",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G151 partial tools partial arg…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"x":null}",
+    "id": "g_tool_null",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_null",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "g_tool_null",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G152 usage-only usage and cand…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "combo",
+  },
+  {
+    "inputTokens": 2,
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "candidatesTokenCount": 1,
+      "promptTokenCount": 2,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini G153 text multiline text' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "l1
+l2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini PC02 whitespace whitespace pay…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini PC03 message.start responseId …' 1`] = `
+[
+  {
+    "id": "pc03",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "gemini-2.5-flash",
+    "raw": {
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "pc03",
+    },
+    "responseId": "pc03",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini PC04 usage-only usageMetadata …' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "candidatesTokenCount": 2,
+      "promptTokenCount": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini PC05 unknown keys unknown key …' 1`] = `
+[
+  {
+    "id": "pc05",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "pc05",
+    },
+    "responseId": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV137 text response wra…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "vertex-response",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV138 text result wrapp…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "vertex-result",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV139 text predictions …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "vertex-pred",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV140 usage-only respon…' 1`] = `
+[
+  {
+    "inputTokens": 3,
+    "kind": "usage",
+    "outputTokens": 4,
+    "raw": {
+      "candidatesTokenCount": 4,
+      "promptTokenCount": 3,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV141 message.start res…' 1`] = `
+[
+  {
+    "id": "gv_meta_1",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "gemini-2.5-flash",
+    "raw": {
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "gv_meta_1",
+    },
+    "responseId": "gv_meta_1",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV142 finish reasons ve…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV143 finish reasons ve…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "length",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV144 finish reasons ve…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "content_filter",
+  },
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "filtered",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV145 finish reasons ve…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "bad",
+  },
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV146 unknown keys unkn…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "raw": {
+      "status": "OK",
+      "vertexTraceId": "trace-gv-1",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV147 errors response w…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV148 errors response w…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV149 partial tools wra…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"vertex"}",
+    "id": "gv_tool_1",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_1",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV150 partial tools wra…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"k":"ve",
+    "id": "gv_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "lookup",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV151 partial tools wra…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "rtex"}",
+    "id": "gv_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_2",
+    "index": 0,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV152 citations wrapped…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "c1",
+  },
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        {
+          "id": "v1",
+        },
+      ],
+    },
+    "sources": [
+      {
+        "id": "v1",
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV153 citations wrapped…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "g1",
+  },
+  {
+    "kind": "grounding",
+    "queries": [
+      "vertex query",
+    ],
+    "raw": {
+      "webSearchQueries": [
+        "vertex query",
+      ],
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV154 citations wrapped…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "cg",
+  },
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        {
+          "id": "v2",
+        },
+      ],
+    },
+    "sources": [
+      {
+        "id": "v2",
+      },
+    ],
+  },
+  {
+    "kind": "grounding",
+    "queries": [
+      "q2",
+    ],
+    "raw": {
+      "webSearchQueries": [
+        "q2",
+      ],
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV155 multichoice wrapp…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "left",
+  },
+  {
+    "choiceIndex": 1,
+    "kind": "text-delta",
+    "text": "right",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV156 multichoice wrapp…' 1`] = `
+[
+  {
+    "choiceIndex": 2,
+    "kind": "text-delta",
+    "text": "two",
+  },
+  {
+    "choiceIndex": 4,
+    "kind": "text-delta",
+    "text": "four",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV157 whitespace wrappe…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "   ",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV158 reasoning wrapped…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "vertex-think",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV159 logprobs wrapped …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "logprob",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV160 usage-only wrappe…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "combo",
+  },
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "candidatesTokenCount": 1,
+      "promptTokenCount": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV161 message.start res…' 1`] = `
+[
+  {
+    "id": "gv_meta_2",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "gv_meta_2",
+    },
+    "responseId": "gv_meta_2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV162 message.start mod…' 1`] = `
+[
+  {
+    "kind": "metadata",
+    "model": "gemini-2.5-pro",
+    "raw": {
+      "modelVersion": "gemini-2.5-pro",
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV163 unknown keys wrap…' 1`] = `
+[
+  {
+    "id": "gv_empty",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "gv_empty",
+    },
+    "responseId": "gv_empty",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV164 unknown keys wrap…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV165 unknown keys wrap…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV166 unknown keys wrap…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV167 usage-only result…' 1`] = `
+[
+  {
+    "id": "gv_result_meta",
+    "kind": "message-start",
+  },
+  {
+    "inputTokens": 9,
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "candidatesTokenCount": 1,
+      "promptTokenCount": 9,
+    },
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "gv_result_meta",
+    },
+    "responseId": "gv_result_meta",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV168 errors prediction…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV169 unknown keys resp…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "known",
+  },
+  {
+    "id": "gv_unknown",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "gv_unknown",
+    },
+    "responseId": "gv_unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV170 partial tools par…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"n":8}",
+    "id": "gv_tool_num",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_num",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_num",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV171 partial tools par…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"ok":true}",
+    "id": "gv_tool_bool",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_bool",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_bool",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV172 partial tools par…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"x":null}",
+    "id": "gv_tool_null",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_null",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "gv_tool_null",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "set",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex GV173 text wrapped mult…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "v1
+v2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex PC02 whitespace whitesp…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex PC03 message.start vert…' 1`] = `
+[
+  {
+    "id": "pc03",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "model": "gemini-2.5-flash",
+    "raw": {
+      "modelVersion": "gemini-2.5-flash",
+      "responseId": "pc03",
+    },
+    "responseId": "pc03",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex PC04 usage-only vertex …' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "candidatesTokenCount": 2,
+      "promptTokenCount": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'gemini-vertex PC05 unknown keys verte…' 1`] = `
+[
+  {
+    "id": "pc05",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "responseId": "pc05",
+    },
+    "responseId": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC451 text simple content…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC452 text unicode conten…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "Ahoj 😀",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC453 refusal refusal del…' 1`] = `
+[
+  {
+    "kind": "refusal-delta",
+    "text": "cannot comply",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC454 reasoning reasoning…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "inspect plan",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC455 reasoning reasoning…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "short summary",
+    "variant": "summary",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC456 partial tools tool …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "oc_tool_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC457 partial tools tool …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"q":"hi",
+    "id": "oc_tool_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "oc_tool_2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC458 partial tools tool …' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"topic":"llm"}",
+    "index": 1,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "index": 1,
+    "kind": "tool-start",
+    "name": "lookup",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC459 partial tools legac…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "id": "legacy_function:0",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "legacy_fn",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC460 partial tools legac…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{"legacy":true}",
+    "id": "legacy_function:0",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "legacy_function:0",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC461 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC462 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "length",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC463 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "content_filter",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC464 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "tool_calls",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC465 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "tool_calls",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC466 finish reasons fini…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "error",
+  },
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": true,
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC467 usage-only usage in…' 1`] = `
+[
+  {
+    "inputTokens": 9,
+    "kind": "usage",
+    "outputTokens": 3,
+    "raw": {
+      "completion_tokens": 3,
+      "prompt_tokens": 9,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC468 usage-only usage wi…' 1`] = `
+[
+  {
+    "inputTokens": 4,
+    "kind": "usage",
+    "outputTokens": 8,
+    "raw": {
+      "completion_tokens": 8,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2,
+      },
+      "prompt_tokens": 4,
+    },
+    "reasoningTokens": 2,
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC469 errors provider err…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC470 errors string error…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC471 logprobs content lo…' 1`] = `
+[
+  {
+    "channel": "content",
+    "choiceIndex": 0,
+    "kind": "logprob",
+    "logprob": -0.1,
+    "position": 0,
+    "raw": {
+      "logprob": -0.1,
+      "token": "Hi",
+    },
+    "token": "Hi",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC472 logprobs refusal lo…' 1`] = `
+[
+  {
+    "channel": "refusal",
+    "choiceIndex": 0,
+    "kind": "logprob",
+    "logprob": -1.1,
+    "position": 0,
+    "raw": {
+      "logprob": -1.1,
+      "token": "No",
+    },
+    "token": "No",
+  },
+  {
+    "kind": "refusal-delta",
+    "text": "no",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC473 logprobs content lo…' 1`] = `
+[
+  {
+    "channel": "content",
+    "choiceIndex": 0,
+    "kind": "logprob",
+    "logprob": -0.3,
+    "position": 0,
+    "raw": {
+      "logprob": -0.3,
+      "token": "x",
+      "top_logprobs": [
+        {
+          "logprob": -0.3,
+          "token": "x",
+        },
+        {
+          "logprob": -1.2,
+          "token": "y",
+        },
+      ],
+    },
+    "token": "x",
+    "topLogprobs": [
+      {
+        "logprob": -0.3,
+        "token": "x",
+      },
+      {
+        "logprob": -1.2,
+        "token": "y",
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC474 citations citations…' 1`] = `
+[
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        "https://a.test",
+        "https://b.test",
+      ],
+    },
+    "urls": [
+      "https://a.test",
+      "https://b.test",
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC475 citations search_re…' 1`] = `
+[
+  {
+    "kind": "citation",
+    "raw": {
+      "search_results": [
+        {
+          "title": "Doc",
+          "url": "https://docs.test",
+        },
+      ],
+    },
+    "searchResults": [
+      {
+        "title": "Doc",
+        "url": "https://docs.test",
+      },
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC476 citations citations…' 1`] = `
+[
+  {
+    "kind": "citation",
+    "raw": {
+      "citations": [
+        "https://c.test",
+      ],
+      "search_results": [
+        {
+          "title": "R1",
+        },
+        {
+          "title": "R2",
+        },
+      ],
+    },
+    "searchResults": [
+      {
+        "title": "R1",
+      },
+      {
+        "title": "R2",
+      },
+    ],
+    "urls": [
+      "https://c.test",
+    ],
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC477 multichoice two cho…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "left",
+  },
+  {
+    "choiceIndex": 1,
+    "kind": "text-delta",
+    "text": "right",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC478 multichoice two cho…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "finish",
+    "reason": "stop",
+  },
+  {
+    "choiceIndex": 1,
+    "kind": "finish",
+    "reason": "length",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC479 multichoice two cho…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "delta": "{}",
+    "id": "oc_m1",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 0,
+    "id": "oc_m1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "a",
+  },
+  {
+    "choiceIndex": 1,
+    "delta": "{}",
+    "id": "oc_m2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "choiceIndex": 1,
+    "id": "oc_m2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "b",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC480 unknown keys unknow…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC481 unknown keys unknow…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "known",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC482 message.start metad…' 1`] = `
+[
+  {
+    "created": 10,
+    "kind": "metadata",
+    "model": "gpt-4o",
+    "raw": {
+      "choices": [],
+      "created": 10,
+      "id": "oc_meta_1",
+      "model": "gpt-4o",
+    },
+    "responseId": "oc_meta_1",
+  },
+  {
+    "id": "oc_meta_1",
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC483 message.start objec…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "x",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC484 usage-only usage ou…' 1`] = `
+[
+  {
+    "kind": "usage",
+    "outputTokens": 11,
+    "raw": {
+      "completion_tokens": 11,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat OC485 text multiline cont…' 1`] = `
+[
+  {
+    "choiceIndex": 0,
+    "kind": "text-delta",
+    "text": "line1
+line2",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat PC01 empty empty payload' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-chat PC02 whitespace whitespac…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-chat PC03 message.start role-o…' 1`] = `
+[
+  {
+    "created": 1,
+    "kind": "metadata",
+    "model": "gpt-4o-mini",
+    "raw": {
+      "choices": [
+        {
+          "delta": {
+            "role": "assistant",
+          },
+          "finish_reason": null,
+          "index": 0,
+        },
+      ],
+      "created": 1,
+      "id": "pc03",
+      "model": "gpt-4o-mini",
+    },
+    "responseId": "pc03",
+  },
+  {
+    "id": "pc03",
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat PC04 usage-only usage-onl…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "completion_tokens": 2,
+      "prompt_tokens": 1,
+    },
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-chat PC05 unknown keys unknown…' 1`] = `
+[
+  {
+    "id": "pc05",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "choices": [],
+      "id": "pc05",
+      "mystery": {
+        "alpha": 1,
+      },
+    },
+    "responseId": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses PC01 empty empty pay…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-responses PC02 whitespace whit…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-responses PC03 message.start r…' 1`] = `
+[
+  {
+    "created": 1,
+    "kind": "metadata",
+    "model": "gpt-4.1-mini",
+    "raw": {
+      "created_at": 1,
+      "id": "pc03",
+      "model": "gpt-4.1-mini",
+    },
+    "responseId": "pc03",
+  },
+  {
+    "id": "pc03",
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses PC04 usage-only comp…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 2,
+    "raw": {
+      "input_tokens": 1,
+      "output_tokens": 2,
+    },
+  },
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses PC05 unknown keys kn…' 1`] = `
+[
+  {
+    "id": "pc05",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "pc05",
+    },
+    "responseId": "pc05",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R100 message.start r…' 1`] = `
+[
+  {
+    "created": 2,
+    "kind": "metadata",
+    "model": "gpt-4.1",
+    "raw": {
+      "created_at": 2,
+      "id": "r100",
+      "model": "gpt-4.1",
+    },
+    "responseId": "r100",
+  },
+  {
+    "id": "r100",
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R101 text output_tex…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "hello",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R102 text output_tex…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "🚀 launch",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R103 text output_tex…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "done text",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R104 refusal refusal…' 1`] = `
+[
+  {
+    "kind": "refusal-delta",
+    "text": "cannot",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R105 reasoning reaso…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "chain summary",
+    "variant": "summary",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R106 text content_pa…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "part-add",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R107 text content_pa…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "part-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R108 partial tools o…' 1`] = `
+[
+  {
+    "delta": "{"q":"hi"}",
+    "id": "call_1",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "call_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R109 partial tools o…' 1`] = `
+[
+  {
+    "delta": "{"q":"partial",
+    "id": "item_1",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "item_1",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "search",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R110 partial tools o…' 1`] = `
+[
+  {
+    "id": "call_1",
+    "index": 0,
+    "kind": "tool-done",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R111 partial tools f…' 1`] = `
+[
+  {
+    "delta": "{"city":"Bratis",
+    "id": "call_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "call_2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R112 partial tools f…' 1`] = `
+[
+  {
+    "delta": "{"city":"Bratislava"}",
+    "id": "call_2",
+    "index": 0,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "call_2",
+    "index": 0,
+    "kind": "tool-done",
+  },
+  {
+    "id": "call_2",
+    "index": 0,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R113 finish reasons …' 1`] = `
+[
+  {
+    "inputTokens": 5,
+    "kind": "usage",
+    "outputTokens": 7,
+    "raw": {
+      "input_tokens": 5,
+      "output_tokens": 7,
+    },
+  },
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R114 finish reasons …' 1`] = `
+[
+  {
+    "inputTokens": 3,
+    "kind": "usage",
+    "outputTokens": 1,
+    "raw": {
+      "input_tokens": 3,
+      "output_tokens": 1,
+    },
+  },
+  {
+    "kind": "finish",
+    "reason": "incomplete",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R115 errors response…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R116 errors typed er…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R117 usage-only usag…' 1`] = `
+[
+  {
+    "inputTokens": 1,
+    "kind": "usage",
+    "outputTokens": 0,
+    "raw": {
+      "input_tokens": 1,
+      "output_tokens": 0,
+    },
+  },
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R118 logprobs output…' 1`] = `
+[
+  {
+    "channel": "content",
+    "kind": "logprob",
+    "logprob": -0.2,
+    "position": 0,
+    "raw": {
+      "logprob": -0.2,
+      "token": "A",
+    },
+    "token": "A",
+  },
+  {
+    "kind": "text-delta",
+    "text": "A",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R119 logprobs refusa…' 1`] = `
+[
+  {
+    "channel": "refusal",
+    "kind": "logprob",
+    "logprob": -1.3,
+    "position": 0,
+    "raw": {
+      "logprob": -1.3,
+      "token": "N",
+    },
+    "token": "N",
+  },
+  {
+    "kind": "refusal-delta",
+    "text": "N",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R120 logprobs conten…' 1`] = `
+[
+  {
+    "channel": "content",
+    "choiceIndex": 1,
+    "kind": "logprob",
+    "logprob": -0.4,
+    "position": 0,
+    "raw": {
+      "logprob": -0.4,
+      "token": "B",
+    },
+    "token": "B",
+  },
+  {
+    "kind": "text-delta",
+    "text": "B",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R121 citations outpu…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "cited",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R122 multichoice out…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "choice-1",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R123 multichoice out…' 1`] = `
+[
+  {
+    "kind": "refusal-delta",
+    "text": "choice-2-refuse",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R124 message.start r…' 1`] = `
+[
+  {
+    "created": 24,
+    "kind": "metadata",
+    "model": "gpt-4.1-mini",
+    "raw": {
+      "created_at": 24,
+      "id": "r124",
+      "model": "gpt-4.1-mini",
+    },
+    "responseId": "r124",
+  },
+  {
+    "id": "r124",
+    "kind": "message-start",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R125 unknown keys kn…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "known",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R126 text output ite…' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "item-text",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R127 reasoning outpu…' 1`] = `
+[
+  {
+    "kind": "reasoning-delta",
+    "text": "trace this",
+    "variant": "detail",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R128 text json-like …' 1`] = `
+[
+  {
+    "kind": "text-delta",
+    "text": "{"ok":",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R129 whitespace outp…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-responses R130 unknown keys ou…' 1`] = `[]`;
+
+exports[`parseChunk atom matrix > 'openai-responses R131 partial tools a…' 1`] = `
+[
+  {
+    "delta": "{"z":1}",
+    "id": "response_tool:3",
+    "index": 3,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "response_tool:3",
+    "index": 3,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R132 partial tools a…' 1`] = `
+[
+  {
+    "delta": "{"z":2}",
+    "id": "response_tool:3",
+    "index": 3,
+    "kind": "tool-args-delta",
+  },
+  {
+    "id": "response_tool:3",
+    "index": 3,
+    "kind": "tool-done",
+  },
+  {
+    "id": "response_tool:3",
+    "index": 3,
+    "kind": "tool-start",
+    "name": "unknown",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R133 message.start r…' 1`] = `
+[
+  {
+    "id": "r132",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "r132",
+    },
+    "responseId": "r132",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R134 message.start r…' 1`] = `
+[
+  {
+    "id": "r133",
+    "kind": "message-start",
+  },
+  {
+    "kind": "metadata",
+    "raw": {
+      "id": "r133",
+    },
+    "responseId": "r133",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R135 finish reasons …' 1`] = `
+[
+  {
+    "kind": "finish",
+    "reason": "stop",
+  },
+]
+`;
+
+exports[`parseChunk atom matrix > 'openai-responses R136 errors failed w…' 1`] = `
+[
+  {
+    "error": {},
+    "kind": "provider-error",
+    "recoverable": false,
+  },
+  {
+    "kind": "finish",
+    "reason": "error",
+  },
+]
+`;

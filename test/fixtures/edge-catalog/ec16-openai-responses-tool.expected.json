@@ -1,0 +1,54 @@
+[
+	{
+		"type": "message.start",
+		"id": "resp_ec16"
+	},
+	{
+		"type": "metadata",
+		"responseId": "resp_ec16"
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_ec16",
+		"name": "fn",
+		"index": 0
+	},
+	{
+		"type": "tool_call.start",
+		"id": "response_tool:0",
+		"name": "unknown",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "response_tool:0",
+		"delta": "{\"x\":",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "response_tool:0",
+		"delta": "1}",
+		"partial": {
+			"x": 1
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_ec16",
+		"name": "fn",
+		"args": ""
+	},
+	{
+		"type": "tool_call.done",
+		"id": "response_tool:0",
+		"name": "unknown",
+		"args": {
+			"x": 1
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop"
+	}
+]

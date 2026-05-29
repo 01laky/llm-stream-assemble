@@ -26,6 +26,34 @@ function terminalFinishIndex(events: StreamEvent[]): number {
 	);
 }
 
+export function assertEventOrdering(events: StreamEvent[], profile: InvariantProfile): void {
+	const assertDeltaThenDone = (deltaType: StreamEvent["type"], doneType: StreamEvent["type"]) => {
+		const firstDelta = events.findIndex((event) => event.type === deltaType);
+		const firstDone = events.findIndex((event) => event.type === doneType);
+		if (firstDone !== -1 && firstDelta === -1) {
+			throw new Error(`${profile.name}: ${doneType} without ${deltaType}`);
+		}
+		if (firstDelta !== -1 && firstDone !== -1 && firstDone < firstDelta) {
+			throw new Error(`${profile.name}: ${doneType} before ${deltaType}`);
+		}
+	};
+
+	assertDeltaThenDone("text.delta", "text.done");
+	assertDeltaThenDone("reasoning.delta", "reasoning.done");
+	assertDeltaThenDone("refusal.delta", "refusal.done");
+	assertDeltaThenDone("json.delta", "json.done");
+
+	const finishIndex = terminalFinishIndex(events);
+	if (finishIndex !== -1) {
+		for (const doneType of ["text.done", "reasoning.done", "refusal.done", "json.done"] as const) {
+			const doneIndex = events.findIndex((event) => event.type === doneType);
+			if (doneIndex !== -1 && doneIndex > finishIndex) {
+				throw new Error(`${profile.name}: ${doneType} emitted after terminal finish`);
+			}
+		}
+	}
+}
+
 export function assertStreamInvariants(events: StreamEvent[], profile: InvariantProfile): void {
 	const hasTextDelta = events.some((event) => event.type === "text.delta");
 	const hasTextDone = events.some((event) => event.type === "text.done");
@@ -90,6 +118,8 @@ export function assertStreamInvariants(events: StreamEvent[], profile: Invariant
 			throw new Error(`${profile.name}: usage after terminal finish`);
 		}
 	}
+
+	assertEventOrdering(events, profile);
 }
 
 const ADAPTER_PROFILE_MAP: Record<string, InvariantProfile> = {

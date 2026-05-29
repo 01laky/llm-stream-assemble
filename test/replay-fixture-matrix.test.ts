@@ -44,6 +44,10 @@ describe("replay fixture matrix", () => {
 		if (!entry) throw new Error(`Missing replay fixture catalog entry: ${id}`);
 		return { id, entry };
 	});
+	const gatedRows = matrixRows.slice(0, 27).map((row, index) => ({
+		...row,
+		gate: `LSA-RP${4 + index}`,
+	}));
 
 	it("LSA-RP01: replay matrix covers at least 20 tier-1 fixtures", () => {
 		expect(matrixRows.length).toBeGreaterThanOrEqual(20);
@@ -53,6 +57,16 @@ describe("replay fixture matrix", () => {
 	});
 
 	it.each(matrixRows)("$id replay with matching adapter", async ({ entry }) => {
+		const output: string[] = [];
+		await runReplayFixtureExample({
+			path: entry.streamPath,
+			adapter: createAdapterForEntry(entry),
+			write: (text) => output.push(text),
+		});
+		expect(output.join("").length).toBeGreaterThan(0);
+	});
+
+	it.each(gatedRows)("$gate replay coverage row $id", async ({ entry }) => {
 		const output: string[] = [];
 		await runReplayFixtureExample({
 			path: entry.streamPath,

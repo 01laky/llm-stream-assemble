@@ -1,0 +1,7 @@
+data: {"choices":[{"delta":{"content":"before"}}]}
+
+data: [DONE]
+
+not-a-data-line
+<<<garbage>>>
+

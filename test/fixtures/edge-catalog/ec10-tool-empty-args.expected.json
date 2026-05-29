@@ -1,0 +1,34 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec10"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec10",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_ec10",
+		"name": "noop",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_ec10",
+		"delta": "{}",
+		"partial": {}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_ec10",
+		"name": "noop",
+		"args": {}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

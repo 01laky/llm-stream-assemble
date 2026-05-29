@@ -10,6 +10,7 @@ import { openaiChatAdapter } from "../../src/adapters/openai-chat";
 import { openaiCompatibleAdapter } from "../../src/adapters/openai-compatible";
 import { openaiResponsesAdapter } from "../../src/adapters/openai-responses";
 import { hostFixtureAdapterOptions } from "./compatible-fixtures";
+import { evilOffsetChunkSizes } from "./byte-stream";
 
 const fixturesRoot = join(dirname(fileURLToPath(import.meta.url)), "../fixtures");
 
@@ -53,6 +54,57 @@ const CHUNK_MATRIX_EXCLUSIONS = new Set([
 	"cohere/response-format-json.jsonl",
 ]);
 
+let edgeCatalogManifest:
+	| Record<
+			string,
+			{ adapterKey: string; adapterOptions?: Record<string, unknown>; transport?: FixtureTransport }
+	  >
+	| undefined;
+let cachedEdgeCatalogFixtures: FixtureCatalogEntry[] | undefined;
+
+function loadEdgeCatalogManifest(): typeof edgeCatalogManifest {
+	if (edgeCatalogManifest !== undefined) return edgeCatalogManifest;
+	const manifestPath = join(fixturesRoot, "edge-catalog/manifest.json");
+	if (!existsSync(manifestPath)) {
+		edgeCatalogManifest = {};
+		return edgeCatalogManifest;
+	}
+	edgeCatalogManifest = JSON.parse(readFileSync(manifestPath, "utf8")) as NonNullable<
+		typeof edgeCatalogManifest
+	>;
+	for (const id of Object.keys(edgeCatalogManifest)) {
+		CHUNK_MATRIX_EXCLUSIONS.add(id);
+	}
+	return edgeCatalogManifest;
+}
+
+export function discoverEdgeCatalogFixtures(): FixtureCatalogEntry[] {
+	if (!cachedEdgeCatalogFixtures) {
+		const manifest = loadEdgeCatalogManifest();
+		const entries: FixtureCatalogEntry[] = [];
+		for (const [id, meta] of Object.entries(manifest)) {
+			const streamPath = join(fixturesRoot, id);
+			const transport = meta.transport ?? streamExtension(id);
+			if (!transport || !existsSync(streamPath)) continue;
+			const expectedPath = streamPath.replace(/\.(sse|jsonl)$/, ".expected.json");
+			if (!existsSync(expectedPath)) continue;
+			const raw = readFileSync(streamPath, "utf8");
+			entries.push({
+				id,
+				adapterKey: meta.adapterKey,
+				streamPath,
+				expectedPath,
+				format: transport,
+				transport,
+				tier: assignTier(raw, transport, id),
+				adapterOptions: meta.adapterOptions,
+			});
+		}
+		cachedEdgeCatalogFixtures = entries.sort((a, b) => a.id.localeCompare(b.id));
+	}
+	return cachedEdgeCatalogFixtures;
+}
+
 const TIER3_IDS = new Set(["transforms/malformed.sse", "bedrock/event-stream-bytes.jsonl"]);
 
 function isExcludedStreamFile(name: string, dir: string): boolean {
@@ -80,6 +132,10 @@ function resolveAdapterMeta(
 	id: string,
 	baseName: string,
 ): { adapterKey: string; adapterOptions?: Record<string, unknown> } {
+	const edgeMeta = loadEdgeCatalogManifest()[id];
+	if (edgeMeta) {
+		return { adapterKey: edgeMeta.adapterKey, adapterOptions: edgeMeta.adapterOptions };
+	}
 	if (id.startsWith("openai-chat/")) {
 		return {
 			adapterKey: "openai-chat",
@@ -301,7 +357,7 @@ export function chunkSizesForEntry(
 	if (entry.tier === 1) {
 		for (const size of TIER1_CHUNK_SIZES) sizes.add(size);
 		if (includeEvilOffsets && entry.evilOffsetSample) {
-			for (const size of evilOffsetSizes(byteLen)) sizes.add(size);
+			for (const size of evilOffsetChunkSizes(byteLen)) sizes.add(size);
 		}
 	} else if (entry.tier === 2) {
 		for (const size of TIER2_CHUNK_SIZES) sizes.add(size);
@@ -312,11 +368,9 @@ export function chunkSizesForEntry(
 	return [...sizes].sort((a, b) => a - b);
 }
 
-function evilOffsetSizes(byteLength: number): number[] {
-	if (byteLength <= 1) return [1];
-	return [
-		...new Set([Math.floor(byteLength / 2), Math.floor(byteLength / 3), byteLength - 1]),
-	].filter((n) => n >= 1);
+export function evilOffsetSizesForEntry(entry: FixtureCatalogEntry): number[] {
+	const raw = readFileSync(entry.streamPath, "utf8");
+	return evilOffsetChunkSizes(Buffer.byteLength(raw, "utf8"));
 }
 
 export function tier1FixtureCount(): number {

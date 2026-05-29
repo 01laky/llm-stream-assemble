@@ -1,0 +1,4 @@
+data: {"candidates":[{"content":{"parts":[{"text":"{\"k\":"}],"role":"model"},"index":0}]}
+
+data: {"candidates":[{"content":{"parts":[{"text":"1}"}],"role":"model"},"finishReason":"STOP","index":0}]}
+

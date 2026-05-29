@@ -1,0 +1,25 @@
+[
+	{
+		"type": "json.delta",
+		"delta": "{\"k\":",
+		"partial": {}
+	},
+	{
+		"type": "json.delta",
+		"delta": "1}",
+		"partial": {
+			"k": 1
+		}
+	},
+	{
+		"type": "json.done",
+		"value": {
+			"k": 1
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

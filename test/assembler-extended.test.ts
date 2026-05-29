@@ -189,4 +189,27 @@ describe("EventAssembler extended edge cases", () => {
 			assembler.push({ kind: "usage", inputTokens: 3, outputTokens: 4, raw: { x: 1 } }),
 		).toEqual([{ type: "usage", inputTokens: 3, outputTokens: 4, raw: { x: 1 } }]);
 	});
+
+	it("LSA-C-EXT36: tool-done without prior tool-start emits unknown tool_call.done", () => {
+		const assembler = new EventAssembler();
+		expect(assembler.push({ kind: "tool-done", id: "missing" })).toEqual([
+			{ type: "tool_call.done", id: "missing", name: "unknown", args: "" },
+		]);
+	});
+
+	it("LSA-C-EXT37: flush with aborted terminal reason emits text.done then aborted finish", () => {
+		const assembler = new EventAssembler();
+		assembler.push({ kind: "text-delta", text: "ab" });
+		expect(assembler.flush({ terminalReason: "aborted" })).toEqual([
+			{ type: "text.done", text: "ab" },
+			{ type: "finish", reason: "aborted" },
+		]);
+	});
+
+	it("LSA-C-EXT38: message-start passes through id and choiceIndex", () => {
+		const assembler = new EventAssembler();
+		expect(assembler.push({ kind: "message-start", id: "m38", choiceIndex: 2 })).toEqual([
+			{ type: "message.start", id: "m38", choiceIndex: 2 },
+		]);
+	});
 });

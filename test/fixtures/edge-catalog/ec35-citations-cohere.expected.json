@@ -1,0 +1,53 @@
+[
+	{
+		"type": "message.start"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg-cite"
+	},
+	{
+		"type": "text.delta",
+		"text": "Benefits include "
+	},
+	{
+		"type": "citation",
+		"index": 0,
+		"span": {
+			"start": 18,
+			"end": 33,
+			"text": "gym memberships"
+		},
+		"sources": [
+			{
+				"type": "document",
+				"id": "doc:1",
+				"document": {
+					"id": "doc:1",
+					"text": "Wellness benefits include gym memberships."
+				}
+			}
+		]
+	},
+	{
+		"type": "text.delta",
+		"text": " and more."
+	},
+	{
+		"type": "usage",
+		"inputTokens": 20,
+		"outputTokens": 12
+	},
+	{
+		"type": "metadata"
+	},
+	{
+		"type": "text.done",
+		"text": "Benefits include  and more."
+	},
+	{
+		"type": "finish",
+		"reason": "stop",
+		"choiceIndex": 0
+	}
+]

@@ -1,0 +1,38 @@
+[
+	{
+		"type": "message.start",
+		"id": "ec11"
+	},
+	{
+		"type": "metadata",
+		"model": "gpt-4o-mini",
+		"responseId": "ec11",
+		"created": 1710000000
+	},
+	{
+		"type": "tool_call.start",
+		"id": "call_ec11",
+		"name": "city",
+		"index": 0
+	},
+	{
+		"type": "tool_call.args.delta",
+		"id": "call_ec11",
+		"delta": "{\"name\":\"東京\"}",
+		"partial": {
+			"name": "東京"
+		}
+	},
+	{
+		"type": "tool_call.done",
+		"id": "call_ec11",
+		"name": "city",
+		"args": {
+			"name": "東京"
+		}
+	},
+	{
+		"type": "finish",
+		"reason": "tool_calls"
+	}
+]

@@ -1,0 +1,148 @@
+{
+	"edge-catalog/ec01-sse-midline-split.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec02-sse-crlf-blank.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec03-sse-blank-line.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec04-sse-duplicate-data.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec05-sse-split-data-prefix.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse"
+	},
+	"edge-catalog/ec06-sse-done-marker.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec07-sse-empty-data.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec08-sse-trailing-newline.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec09-tool-partial-args.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec10-tool-empty-args.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec11-tool-unicode-args.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec12-tool-parallel.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec13-tool-late-id.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec14-anthropic-tool-partial.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec15-cohere-tool-partial.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec16-openai-responses-tool.sse": {
+		"adapterKey": "openai-responses",
+		"transport": "sse"
+	},
+	"edge-catalog/ec17-json-mode-partial.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec18-json-mode-invalid.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec19-json-post-finish.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec20-gemini-json-partial.sse": {
+		"adapterKey": "gemini",
+		"transport": "sse",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec21-cohere-json-partial.jsonl": {
+		"adapterKey": "cohere",
+		"transport": "jsonl",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec22-responses-json.sse": {
+		"adapterKey": "openai-responses",
+		"transport": "sse",
+		"adapterOptions": { "jsonMode": true }
+	},
+	"edge-catalog/ec23-post-finish-usage.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec24-post-finish-metadata.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec25-post-finish-reasoning.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec26-post-finish-logprob.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec27-post-finish-gemini.sse": { "adapterKey": "gemini", "transport": "sse" },
+	"edge-catalog/ec28-post-finish-cohere.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec29-strict-valid-tool.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec30-strict-invalid-tool.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec31-anthropic-valid-tool.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec32-bedrock-valid-tool.jsonl": { "adapterKey": "bedrock", "transport": "jsonl" },
+	"edge-catalog/ec33-cohere-valid-tool.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec34-gemini-valid-tool.sse": { "adapterKey": "gemini", "transport": "sse" },
+	"edge-catalog/ec35-citations-cohere.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec36-grounding-gemini.sse": { "adapterKey": "gemini", "transport": "sse" },
+	"edge-catalog/ec37-logprobs-openai.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec38-openai-responses-logprobs.sse": {
+		"adapterKey": "openai-responses",
+		"transport": "sse"
+	},
+	"edge-catalog/ec39-gemini-vertex-grounding.jsonl": {
+		"adapterKey": "gemini-vertex",
+		"transport": "jsonl",
+		"adapterOptions": { "apiSurface": "vertex" }
+	},
+	"edge-catalog/ec40-citation-order.sse": {
+		"adapterKey": "openai-compatible/perplexity",
+		"transport": "sse",
+		"adapterOptions": { "provider": "perplexity" }
+	},
+	"edge-catalog/ec41-oai-recoverable-error.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse"
+	},
+	"edge-catalog/ec42-oai-terminal-error.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec43-anthropic-error.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec44-gemini-error.sse": { "adapterKey": "gemini", "transport": "sse" },
+	"edge-catalog/ec45-cohere-error.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec46-bedrock-error.jsonl": { "adapterKey": "bedrock", "transport": "jsonl" },
+	"edge-catalog/ec47-responses-error.sse": { "adapterKey": "openai-responses", "transport": "sse" },
+	"edge-catalog/ec48-vertex-error.jsonl": {
+		"adapterKey": "gemini-vertex",
+		"transport": "jsonl",
+		"adapterOptions": { "apiSurface": "vertex" }
+	},
+	"edge-catalog/ec49-incomplete-mid-text.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec50-incomplete-mid-tool.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec51-anthropic-incomplete.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec52-cohere-incomplete.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec53-gemini-incomplete.sse": { "adapterKey": "gemini", "transport": "sse" },
+	"edge-catalog/ec54-bedrock-incomplete.jsonl": { "adapterKey": "bedrock", "transport": "jsonl" },
+	"edge-catalog/ec55-responses-incomplete.sse": {
+		"adapterKey": "openai-responses",
+		"transport": "sse"
+	},
+	"edge-catalog/ec56-abort-empty.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec57-vertex-envelope.jsonl": {
+		"adapterKey": "gemini-vertex",
+		"transport": "jsonl",
+		"adapterOptions": { "apiSurface": "vertex" }
+	},
+	"edge-catalog/ec58-jsonl-midline.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec59-bedrock-tail.jsonl": { "adapterKey": "bedrock", "transport": "jsonl" },
+	"edge-catalog/ec60-vertex-jsonl-split.jsonl": {
+		"adapterKey": "gemini-vertex",
+		"transport": "jsonl",
+		"adapterOptions": { "apiSurface": "vertex" }
+	},
+	"edge-catalog/ec61-bedrock-usage-trail.jsonl": { "adapterKey": "bedrock", "transport": "jsonl" },
+	"edge-catalog/ec62-gemini-jsonl-line.jsonl": {
+		"adapterKey": "gemini-vertex",
+		"transport": "jsonl",
+		"adapterOptions": { "apiSurface": "vertex" }
+	},
+	"edge-catalog/ec63-cohere-jsonl-unicode.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec64-openai-chunk-boundary.sse": {
+		"adapterKey": "openai-chat",
+		"transport": "sse"
+	},
+	"edge-catalog/ec65-emoji-text.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec66-zwj-emoji.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec67-rtl-text.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec68-unicode-tool-args.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec69-surrogate-split.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/ec70-jsonl-unicode-split.jsonl": { "adapterKey": "cohere", "transport": "jsonl" },
+	"edge-catalog/ec71-emoji-reasoning.sse": { "adapterKey": "anthropic", "transport": "sse" },
+	"edge-catalog/ec72-multibyte-logprob.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-1.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-2.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-3.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-4.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-5.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-6.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-7.sse": { "adapterKey": "openai-chat", "transport": "sse" },
+	"edge-catalog/tier2-large-8.sse": { "adapterKey": "openai-chat", "transport": "sse" }
+}

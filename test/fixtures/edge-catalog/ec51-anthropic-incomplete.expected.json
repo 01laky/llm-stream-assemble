@@ -1,0 +1,28 @@
+[
+	{
+		"type": "message.start",
+		"id": "msg_incomplete"
+	},
+	{
+		"type": "metadata",
+		"responseId": "msg_incomplete",
+		"model": "claude-3-5-sonnet"
+	},
+	{
+		"type": "usage",
+		"inputTokens": 5,
+		"outputTokens": 0
+	},
+	{
+		"type": "text.delta",
+		"text": "partial"
+	},
+	{
+		"type": "text.done",
+		"text": "partial"
+	},
+	{
+		"type": "finish",
+		"reason": "incomplete"
+	}
+]
